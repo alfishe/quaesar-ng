@@ -1,6 +1,8 @@
 # Minimum CMake version requirement
 cmake_minimum_required(VERSION 3.6)
 
+#set(CMAKE_GENERATOR_TOOLSET "ClangCl") # test compilation on clang-c
+
 option(ENABLE_CODE_GENERATION "Enable code generation" OFF)
 
 # Project name and languages used
@@ -25,8 +27,10 @@ if (APPLE OR LINUX OR UNIX)
     find_package(SDL2 REQUIRED)
 endif()
 
+if(NOT DEFINED SDL2_INCLUDE_DIRS)
+    set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/sdl2/include")
+endif()
 
-add_definitions(-DEASTL_EASTDC_VSNPRINTF=0)
 
 if (WIN32)
   add_definitions(-D_HAS_STD_BYTE=0)
@@ -35,6 +39,10 @@ if (WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
     add_link_options("/INCREMENTAL")
     add_compile_options("/MP") # multiprocessor build
+	
+	if(NOT CMAKE_GENERATOR_PLATFORM)
+		set(CMAKE_GENERATOR_PLATFORM "Win32") # add Win32 platform to solution
+	endif()
   endif()
 endif()
 
@@ -220,16 +228,16 @@ target_sources(quaesar PRIVATE ${CROSS_FILES} ${QUAE_HEADERS})
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${QUAE_HEADERS} ${CROSS_FILES} ${SDL2_INCLUDE_DIRS})
 
+target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
+
 if (APPLE OR LINUX OR UNIX)
 	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DFILEFLAG_WRITE=1 -DOS_NAME=\"linux\")
 	target_compile_options(quaesar PRIVATE -DUSHORT=uint16_t -DHWND=uint32_t -DHRESULT=uint32_t -DWPARAM=uint16_t -DLPARAM=uint32_t)
     target_compile_definitions(quaesar PRIVATE FSUAE)
-    target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
     target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES})
 endif()
 
 if (WIN32)
-    target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/include")
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
        target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/sdl2.lib")
        target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/SDL2main.lib")
@@ -252,10 +260,7 @@ if (LINUX OR UNIX)
 endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/dear_imgui")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/capstone/include")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/EASTL/include")
 target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui capstone EASTL)
 
 
