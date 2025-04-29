@@ -7,6 +7,15 @@
 namespace qd {
 namespace window {
 
+#define REG_A 0x00
+#define REG_D 0x08
+#define REG_PC 0x10
+
+static const char* s_regLookup[] = {
+    "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7",
+    "D0", "D1", "D2", "D3", "D4", "D5", "D6", "D7",
+    "PC",
+};
 
 void RegistersView::drawContent() {
     Debugger* dbg = getDbg();
@@ -16,15 +25,15 @@ void RegistersView::drawContent() {
     QImPushFloatLock st;
     st.pushFloat(&ImGui::GetStyle().CellPadding.y, 0);
 
-    eastl::fixed_string<char, 128, false> stReg, stVal, stCmd, stId;
+    eastl::fixed_string<char, 128, false> stVal, stCmd, stId;
 
-    auto editCommonRegVal = [&](uint32_t reg_val) {
+    auto editCommonRegVal = [&](uint32_t reg_val, uint32_t reg_nr) {
         stVal.sprintf("%08X", reg_val);
-        stId.assign("##") += stReg;
+        stId.assign("##") += reg_nr;
         ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
         ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegValue));
         if (ImGui::InputText(stId.c_str(), &stVal, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            stCmd.sprintf("r %s %s", stReg.c_str(), stVal.c_str());
+            stCmd.sprintf("r %s %s", s_regLookup[reg_nr], stVal.c_str());
             dbg->execConsoleCmd(stCmd.c_str());
         }
         ImGui::PopStyleColor();
@@ -42,7 +51,7 @@ void RegistersView::drawContent() {
             ImGui::Text("A%d", i);
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getRegA(i));
+            editCommonRegVal(cpu->getRegA(i), REG_A + 8);
             ImGui::TableNextColumn();
 
             // Dx col
@@ -50,7 +59,7 @@ void RegistersView::drawContent() {
             ImGui::Text("D%d", i);
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getRegD(i));
+            editCommonRegVal(cpu->getRegD(i), REG_D + i);
             // ImGui::TableNextColumn();
         }
 
@@ -60,10 +69,10 @@ void RegistersView::drawContent() {
 
             // PC
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
-            ImGui::Text("PC");
+            ImGui::Text("##PC");
             ImGui::PopStyleColor();
             ImGui::TableNextColumn();
-            editCommonRegVal(cpu->getPC());
+            editCommonRegVal(cpu->getPC(), REG_PC);
             ImGui::TableNextColumn();
 
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));
