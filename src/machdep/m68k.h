@@ -49,11 +49,11 @@ extern struct flag_struct regflags;
 #define FLAGVAL_V (1 << FLAGBIT_V)
 #define FLAGVAL_X (1 << FLAGBIT_X)
 
-#define SET_ZFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_Z) | (((y)&1) << FLAGBIT_Z))
-#define SET_CFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_C) | (((y)&1) << FLAGBIT_C))
-#define SET_VFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_V) | (((y)&1) << FLAGBIT_V))
-#define SET_NFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_N) | (((y)&1) << FLAGBIT_N))
-#define SET_XFLG(y) (regflags.x = ((y)&1) << FLAGBIT_X)
+#define SET_ZFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_Z) | (((y) & 1) << FLAGBIT_Z))
+#define SET_CFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_C) | (((y) & 1) << FLAGBIT_C))
+#define SET_VFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_V) | (((y) & 1) << FLAGBIT_V))
+#define SET_NFLG(y) (regflags.cznv = (regflags.cznv & ~FLAGVAL_N) | (((y) & 1) << FLAGBIT_N))
+#define SET_XFLG(y) (regflags.x = ((y) & 1) << FLAGBIT_X)
 
 #define GET_ZFLG() ((regflags.cznv >> FLAGBIT_Z) & 1)
 #define GET_CFLG() ((regflags.cznv >> FLAGBIT_C) & 1)
@@ -106,11 +106,11 @@ extern struct flag_struct regflags;
 #define FLAGVAL_V (1 << FLAGBIT_V)
 #define FLAGVAL_X (1 << FLAGBIT_X)
 
-#define SET_ZFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_Z) | (((y)&1) << FLAGBIT_Z))
-#define SET_CFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_C) | (((y)&1) << FLAGBIT_C))
-#define SET_VFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_V) | (((y)&1) << FLAGBIT_V))
-#define SET_NFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_N) | (((y)&1) << FLAGBIT_N))
-#define SET_XFLG(y) (regflags.x = ((y)&1) << FLAGBIT_X)
+#define SET_ZFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_Z) | (((y) & 1) << FLAGBIT_Z))
+#define SET_CFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_C) | (((y) & 1) << FLAGBIT_C))
+#define SET_VFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_V) | (((y) & 1) << FLAGBIT_V))
+#define SET_NFLG(y) (regflags.cznv = (((uae_u32)regflags.cznv) & ~FLAGVAL_N) | (((y) & 1) << FLAGBIT_N))
+#define SET_XFLG(y) (regflags.x = ((y) & 1) << FLAGBIT_X)
 
 #define GET_ZFLG() ((regflags.cznv >> FLAGBIT_Z) & 1)
 #define GET_CFLG() ((regflags.cznv >> FLAGBIT_C) & 1)
