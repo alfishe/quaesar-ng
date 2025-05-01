@@ -211,11 +211,11 @@ void CopperDbgWnd::drawContent() {
             ImGui::TableNextColumn();
 
             // col:addr
-            ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_Addr),"%06X", curAddr);
+            ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_Addr), "%06X", curAddr);
             ImGui::TableNextColumn();
 
             // col:code bytes
-            ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_OpCodeBytes),"%04X %04X", curEntry.w1, curEntry.w2);
+            ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_OpCodeBytes), "%04X %04X", curEntry.w1, curEntry.w2);
             ImGui::TableNextColumn();
 
             // col:instr
