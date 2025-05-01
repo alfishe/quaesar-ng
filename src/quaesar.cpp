@@ -221,8 +221,8 @@ void App::createUaeWindow() {
     mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
 
     // Create a window
-    app->mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mAmigaWidth, mAmigaHeight,
-                                       window_flags);
+    app->mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mAmigaWidth,
+                                       mAmigaHeight, window_flags);
 
     if (!app->mUaeWindow) {
         SDL_Log("Could not create window: %s", SDL_GetError());
@@ -237,8 +237,8 @@ void App::createUaeWindow() {
         return;
     }
 
-    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
-                                       mAmigaWidth, mAmigaHeight);
+    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, mAmigaWidth,
+                                       mAmigaHeight);
 
     if (!mUaeScrTexture) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
@@ -248,7 +248,7 @@ void App::createUaeWindow() {
     }
 }
 
- // Function to recreate a dynamic texture with new dimensions
+// Function to recreate a dynamic texture with new dimensions
 void App::recreateTexture(int newWidth, int newHeight) {
     int currentWidth = 0;
     int currentHeight = 0;
@@ -266,13 +266,9 @@ void App::recreateTexture(int newWidth, int newHeight) {
     SDL_DestroyTexture(mUaeScrTexture);
 
     // Create a new texture with the desired dimensions
-    mUaeScrTexture = SDL_CreateTexture(
-        mUaeRenderer,
-        format,
-        access,  // Using the same access pattern as the original
-        newWidth,
-        newHeight
-    );
+    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, format,
+                                       access,  // Using the same access pattern as the original
+                                       newWidth, newHeight);
 }
 
 void App::renderUaeWindow() {
@@ -303,7 +299,7 @@ void App::renderUaeWindow() {
     SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
     SDL_RenderClear(mUaeRenderer);
     if (mUaeScrTextureMutex.tryLock()) {
-        recreateTexture(mAmigaWidth, mAmigaHeight); // Recreate texture if needed
+        recreateTexture(mAmigaWidth, mAmigaHeight);  // Recreate texture if needed
         uint32_t* texture_pixels = nullptr;
         int pitch = 0;
         if (SDL_LockTexture(mUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
@@ -325,7 +321,7 @@ uint32_t* App::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     mUaeScrTextureMutex.lock();
 
     if (amiga_width > mAmigaWidth || amiga_height > mAmigaHeight) {
-        delete [] mAmigaBuffer;
+        delete[] mAmigaBuffer;
         mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
     }
 
