@@ -53,7 +53,6 @@ bool ends_with(const char* str, const char* suffix) {
 }
 
 
-
 static std::vector<std::string> uaeCliArgVals;
 
 int uae_thread_main_func(void*) {
@@ -73,7 +72,6 @@ int uae_thread_main_func(void*) {
 
 // Quaesar main
 int SDL_main(int argc, char* argv[]) {
-    //SDL_assert(0);
     for (int i = 0; i < argc; ++i)
         SDL_Log("arg_%i: '%s'", i, argv[i]);
 
@@ -83,14 +81,14 @@ int SDL_main(int argc, char* argv[]) {
     Options options;
     CLI::App cliApp{"Quaesar"};
     cliApp.allow_extras();
-    cliApp.add_option("input", options.input, "Executable or image file (adf, dms)"); // ->check(CLI::ExistingFile);
-    cliApp.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM"); // ->check(CLI::ExistingFile);
+    cliApp.add_option("input", options.input, "Executable or image file (adf, dms)");     // ->check(CLI::ExistingFile);
+    cliApp.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM");  // ->check(CLI::ExistingFile);
     cliApp.add_option("--serial_port", options.serial_port, "Serial port path");
 
     cliApp.add_option("-s", uaeCliArgVals, "UAE");
 
-//     CLI::App* pUae = cliApp.add_subcommand("u", "Send command to UAE");
-//     pUae->add_option("args", uaeCliArgVals);
+    //     CLI::App* pUae = cliApp.add_subcommand("u", "Send command to UAE");
+    //     pUae->add_option("args", uaeCliArgVals);
 
     cliApp.parse(argc, argv);
 
@@ -105,8 +103,7 @@ int SDL_main(int argc, char* argv[]) {
                 fclose(check_file);
                 Adf::create_for_exefile(options.input.c_str());
                 strcpy(currprefs.floppyslots[0].df, "dummy.adf");
-            }
-            else {
+            } else {
                 SDL_Log("can't open input file:'%s'", options.input.c_str());
             }
         } else {
@@ -127,7 +124,7 @@ int SDL_main(int argc, char* argv[]) {
     //    currprefs.turbo_emulation = 1; // it disables sound
     currprefs.sound_stereo_separation = 0;
     currprefs.uaeboard = 1;
-    currprefs.win32_filesystem_mangle_reserved_names = true; // required for FS
+    currprefs.win32_filesystem_mangle_reserved_names = true;  // required for FS
 
     strcpy(currprefs.romfile, options.kickstart.c_str());
 

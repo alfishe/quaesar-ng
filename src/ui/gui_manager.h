@@ -1,7 +1,7 @@
 #pragma once
-#include <generic/base.h>
 #include <EASTL/vector.h>
 #include <debugger/debugger.h>
+#include <generic/base.h>
 #include <src/ui/ui_view.h>
 
 

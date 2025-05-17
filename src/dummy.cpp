@@ -65,7 +65,7 @@
 #endif
 #define TRACE() SDL_Log("WARN: Using of unimplemented function: '%s()'", __func__)
 
-#define debug(x, ...) SDL_Log("[%s()] "x, __func__, __VA_ARGS__)
+#define debug(x, ...) SDL_Log("[%s()] " x, __func__, __VA_ARGS__)
 
 
 int avioutput_enabled = 0;
@@ -91,6 +91,7 @@ uae_u8* cubo_nvram = nullptr;
 int dos_errno(void) {
     return errno;
 }
+
 
 void pausevideograb(int) {
     UNIMPLEMENTED();
@@ -868,7 +869,7 @@ int graphics_init(bool) {
     const int amiga_height = 576;
     const int depth = 32;
 
-    int monitor_id = 0;
+    //int monitor_id = 0;
     struct vidbuf_description* avidinfo = &adisplays[0].gfxvidinfo;
 
     avidinfo->drawbuffer.inwidth = avidinfo->drawbuffer.outwidth = amiga_width;
@@ -942,7 +943,7 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
 
 
 void graphics_leave() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 
     int monitor_id = 0;
     struct vidbuf_description* avidinfo = &adisplays[monitor_id].gfxvidinfo;
@@ -953,7 +954,7 @@ void graphics_leave() {
 }
 
 void graphics_reset(bool) {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 int graphics_setup() {
@@ -1021,7 +1022,7 @@ void logging_init() {
 }
 
 void machdep_free() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 int machdep_init() {
@@ -1041,7 +1042,6 @@ void mtecmastercard_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 void multievolution_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
     UNIMPLEMENTED();
 }
-
 
 
 bool ncr710_a4091_autoconfig_init(autoconfig_info*) {
@@ -1192,7 +1192,7 @@ bool samepath(char const*, char const*) {
 }
 
 void sampler_free() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 uae_u8 sampler_getsample(int) {
@@ -1227,7 +1227,7 @@ void serial_hsynchandler() {
 }
 
 void serial_rbf_clear() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 uae_u8 serial_readstatus(uae_u8 v, uae_u8) {
@@ -1254,7 +1254,7 @@ int sleep_millis_main(int) {
 }
 
 void sndboard_free_capture() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 int sndboard_get_buffer(int*) {
@@ -1381,23 +1381,23 @@ void target_paste_to_keyboard() {
 }
 
 void target_quit() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 void target_reset() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 void target_restart() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 void target_run() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 void target_save_options(zfile*, uae_prefs*) {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 void tekmagic_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
@@ -1439,7 +1439,7 @@ void* uaenative_get_uaevar() {
 }
 
 void uaeser_clearbuffers(void*) {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 int uaeser_getdatalength() {
@@ -1472,7 +1472,7 @@ void uaeser_trigger(void*) {
 }
 
 void uae_slirp_cleanup() {
-    SDL_Log("quaesar: %s()", __FUNCTION__);
+    SDL_Log("quaesar: %s()", __func__);
 }
 
 void uae_slirp_end() {
@@ -1867,8 +1867,7 @@ static int dummy_stop_func(int deviceID) {
 
 static int dummy_play_func(int deviceID, int track, int index, int flags, play_status_callback /*status_callback*/,
                            play_subchannel_callback /*subchannel_callback*/) {
-    debug("Dummy play_func called with deviceID: %d, track: %d, index: %d, flags: %d\n", deviceID, track, index,
-           flags);
+    debug("Dummy play_func called with deviceID: %d, track: %d, index: %d, flags: %d\n", deviceID, track, index, flags);
     return 0;
 }
 
@@ -1893,8 +1892,8 @@ static int dummy_read_func(int deviceID, uae_u8* /*buffer*/, int size, int flags
 }
 
 static int dummy_rawread_func(int deviceID, uae_u8* /*buffer*/, int size, int subcode, int flags, uae_u32 offset) {
-    debug("Dummy rawread_func called with deviceID: %d, size: %d, subcode: %d, flags: %d, offset: %u\n", deviceID,
-           size, subcode, flags, offset);
+    debug("Dummy rawread_func called with deviceID: %d, size: %d, subcode: %d, flags: %d, offset: %u\n", deviceID, size,
+          subcode, flags, offset);
     return 0;
 }
 

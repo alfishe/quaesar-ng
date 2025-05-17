@@ -11,13 +11,13 @@
 
 #include <SDL_log.h>
 #include <stdio.h>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 
 #ifdef WIN32
 #include <Shlwapi.h>
 #pragma comment(lib, "Shlwapi.lib")
-#endif // WIN32
+#endif  // WIN32
 
 #undef min
 
@@ -118,7 +118,7 @@ int my_getvolumeinfo(char const* root) {
                 ret |= MYVOLUMEINFO_STREAMS;
         }
     }
-#endif // WINDOWS
+#endif  // WINDOWS
 
     return ret;
 }
@@ -410,8 +410,6 @@ int my_readdir(struct my_opendir_s* mod, TCHAR* name) {
 }
 
 
-
-
 struct my_opendir_s* my_opendir(const TCHAR* name, const TCHAR* mask) {
     struct my_opendir_s* mod;
     TCHAR tmp[MAX_DPATH];
@@ -474,7 +472,6 @@ void fetch_configurationpath(TCHAR* out, int size) {
     out[1] = _T('.');
     out[2] = 0;
 }
-
 
 
 /* Return nonzero for any name we can't create on the native filesystem.  */
@@ -818,7 +815,6 @@ int fsdb_exists(char const*) {
     UNIMPLEMENTED();
     return 0;
 }
-
 
 
 static TCHAR* make_uaefsdbpath(const TCHAR* dir, const TCHAR* name) {
@@ -1207,7 +1203,6 @@ int my_mkdir(const TCHAR* name) {
     }
     return CreateDirectory(namep, NULL) == 0 ? -1 : 0;
 }
-
 
 
 struct my_openfile_s* my_open(const TCHAR* name, int flags) {

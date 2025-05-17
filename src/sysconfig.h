@@ -611,10 +611,16 @@ typedef long uae_atomic;
 /* Define to 1 if `S_un' is a member of `struct in_addr'. */
 // #define HAVE_STRUCT_IN_ADDR_S_UN 1
 
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER) && !defined(__clang__)
+#define UNIMP_FUNC_NAME __FUNCTION__
+#else
+#define UNIMP_FUNC_NAME
+#endif
+
 #define UNIMPLEMENTED()                                                            \
     do {                                                                           \
         fprintf(stderr, "Function '%s' is unimplemented. Exiting...\n", __func__); \
-        assert(0 && "FUNCTION " __FUNCTION__ " NOT IMPLEMENTED");                  \
+        assert(0 && "function: '" UNIMP_FUNC_NAME "' NOT IMPLEMENTED");            \
         exit(EXIT_FAILURE);                                                        \
     } while (0)
 

@@ -1,5 +1,5 @@
 #include "gui_manager.h"
-#include <../../external/dear_imgui/imgui_internal.h>
+#include <dear_imgui/imgui_internal.h>
 #include <debugger/action_mgr.h>
 #include <src/shortcut/shortcut_mgr.h>
 
@@ -13,7 +13,7 @@ GuiManager::GuiManager(Debugger* in_dbg) : dbg(in_dbg) {
     // create all windows
     UiViewCreate cv(this);
     auto viewMgr = UiViewClassRegistry::get();
-    for (auto it : viewMgr->mСlassInfoMap) {
+    for (auto it : viewMgr->mClassInfoMap) {
         UiView* curView = viewMgr->makeInstance(it.first, &cv);
         addView(curView);
     }

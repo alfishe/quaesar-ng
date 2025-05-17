@@ -74,6 +74,6 @@ int Vsnprintf(wchar_t* EA_RESTRICT pDestination, size_t n, const wchar_t* EA_RES
     return Vsnprintf16(pDestination, n, pFormat, arguments);
 }
 #endif
-};      // namespace StdC
-};      // namespace EA
+};  // namespace StdC
+};  // namespace EA
 #endif  // EASTL_EASTDC_VSNPRINTF

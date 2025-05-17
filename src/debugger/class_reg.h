@@ -21,7 +21,7 @@ public:
         void registerClass();
     };  // MetaInfo
 
-    eastl::vector_map<uint32_t, TThis::MetaInfo> mСlassInfoMap;
+    eastl::vector_map<uint32_t, TThis::MetaInfo> mClassInfoMap;
     typedef eastl::vector_map<uint32_t, TThis::MetaInfo> TClassInfoMap;
 
 public:
@@ -35,15 +35,15 @@ public:
     ~ClassInfoRegistry_(void) = default;
 
     void registerClass(TThis::MetaInfo&& meta) {
-        auto insIt = mСlassInfoMap.insert(eastl::make_pair(meta.classId, eastl::move(meta)));
+        auto insIt = mClassInfoMap.insert(eastl::make_pair(meta.classId, eastl::move(meta)));
         if (insIt.second == false) {
             ASSERT_F(0, "Registered classId:%u already exists", meta.classId);
         }
     }
 
     const MetaInfo* findClassInfo(uint32_t class_id) const {
-        typename TClassInfoMap::const_iterator it = mСlassInfoMap.find(class_id);
-        if (it == mСlassInfoMap.end()) {
+        typename TClassInfoMap::const_iterator it = mClassInfoMap.find(class_id);
+        if (it == mClassInfoMap.end()) {
             ASSERT_F(0, "classId:%u not registered", class_id);
             return nullptr;
         }
