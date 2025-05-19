@@ -74,11 +74,12 @@ void GuiManager::_drawMainToolBar() {
         uv0 = ImVec2(0.0f, 0.0f);  // TODO ICONS
         uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
 
-        pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto);
-        if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1))) {
-            shMgr->triggerShortcut(pCurShortcut);
+        if (pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto)) {
+            if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1))) {
+                shMgr->triggerShortcut(pCurShortcut);
+            }
+            ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
         }
-        ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
         //
         ImGui::Separator();
         //

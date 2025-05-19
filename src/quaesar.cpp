@@ -84,11 +84,9 @@ int SDL_main(int argc, char* argv[]) {
     cliApp.add_option("input", options.input, "Executable or image file (adf, dms)");     // ->check(CLI::ExistingFile);
     cliApp.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM");  // ->check(CLI::ExistingFile);
     cliApp.add_option("--serial_port", options.serial_port, "Serial port path");
-
-    cliApp.add_option("-s", uaeCliArgVals, "UAE");
-
-    //     CLI::App* pUae = cliApp.add_subcommand("u", "Send command to UAE");
-    //     pUae->add_option("args", uaeCliArgVals);
+    cliApp.add_option("-s", uaeCliArgVals,
+                      "key followed by the original WinUAE commands. Example:\n"
+                      "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
 
     cliApp.parse(argc, argv);
 
@@ -125,6 +123,7 @@ int SDL_main(int argc, char* argv[]) {
     currprefs.sound_stereo_separation = 0;
     currprefs.uaeboard = 1;
     currprefs.win32_filesystem_mangle_reserved_names = true;  // required for FS
+    currprefs.filesys_custom_uaefsdb = false;                 // hack to not implement 'custom_fsdb_*' funcs now
 
     strcpy(currprefs.romfile, options.kickstart.c_str());
 

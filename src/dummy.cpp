@@ -51,22 +51,29 @@
 #include "drawing.h"
 // clang-format on
 
+#include <EASTL/fixed_string.h>
 #include <SDL.h>
 #include <debugger/debugger.h>
 #include <log.h>
 #include <src/generic/thread.h>
 #include <src/quaesar.h>
 #include <src/sounddep/sound.h>
+#include <cstdarg>
 #include <filesystem>
-
 
 #ifdef TRACE
 #undef TRACE
 #endif
 #define TRACE() SDL_Log("WARN: Using of unimplemented function: '%s()'", __func__)
 
-#define debug(x, ...) SDL_Log("[%s()] " x, __func__, __VA_ARGS__)
-
+void debug(const char* format, ...) {
+    eastl::fixed_string<char, 1024, false> formatBuffer;
+    formatBuffer.sprintf("[%s] %s", __func__, format);
+    va_list args;
+    va_start(args, format);
+    SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG, formatBuffer.c_str(), args);
+    va_end(args);
+}
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
@@ -130,7 +137,8 @@ void screenshot(int /*monid*/, int, int) {
 
 
 int same_aname(const TCHAR* an1, const TCHAR* an2) {
-    return CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, an1, -1, an2, -1) == CSTR_EQUAL;
+    //return CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, an1, -1, an2, -1) == CSTR_EQUAL;
+    return SDL_strcasecmp(an1, an2) == 0;
 }
 
 int input_get_default_keyboard(int /*i*/) {
