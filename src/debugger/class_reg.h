@@ -1,8 +1,8 @@
 #pragma once
 #include <EASTL/string.h>
 #include <EASTL/vector_map.h>
-#include <src/generic/base.h>
-#include "imgui_eastl.h"
+#include <qdIce/qdBase/base.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 
 namespace qd {
 

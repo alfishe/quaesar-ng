@@ -1,5 +1,6 @@
 #pragma once
-#include <src/generic/types.h>
+#include <debugger/vm/memory.h>
+#include <qdIce/qdBase/types.h>
 #include <src/ui/ui_view.h>
 
 namespace qd {

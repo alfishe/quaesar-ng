@@ -1,6 +1,6 @@
 #include "custom_regs_wnd.h"
 #include <debugger/debugger.h>
-#include <imgui_eastl.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 #include <ui/ui_style.h>
 
 namespace qd {

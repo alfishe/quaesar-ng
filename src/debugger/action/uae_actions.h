@@ -18,7 +18,7 @@
 #include <debugger/action_mgr.h>
 #include <debugger/debugger.h>
 #include <debugger/msg_list.h>
-#include <imgui_eastl.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 #include <quaesar.h>
 #include <src/shortcut/shortcut_list.h>
 #include <uae_src/include/debug.h>

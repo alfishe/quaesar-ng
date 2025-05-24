@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL_atomic.h>
-#include <src/generic/base.h>
-#include <src/generic/thread.h>
+#include <qdIce/qdBase/base.h>
+#include <qdIce/qdThread/thread.h>
 
 FORWARD_DECLARATION_3(qd, thread, Event);
 FORWARD_DECLARATION_2(qd, Debugger);

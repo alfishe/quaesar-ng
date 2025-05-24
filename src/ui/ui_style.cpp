@@ -1,5 +1,5 @@
 #include "ui_style.h"
-#include <dear_imgui/imgui.h>
+#include <imgui/imgui.h>
 
 namespace qd {
 

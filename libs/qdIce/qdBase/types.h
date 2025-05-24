@@ -1,7 +1,6 @@
 #pragma once
 #include <EASTL/internal/config.h>
 #include <SDL_endian.h>
-#include <debugger/vm/memory.h>
 #include <stdint.h>
 
 #if !defined(NOMINMAX)
@@ -146,7 +145,7 @@ struct EFlow {
 //////////////////////////////////////////////////////////////////////////
 
 
-// endan bit's swaping from littlendian to bigendian
+// Endian bit's swaping from littlendian to bigendian
 template <int TBytesCount>
 inline void swapBytes_(void* p);
 

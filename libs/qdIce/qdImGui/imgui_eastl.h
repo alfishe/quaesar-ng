@@ -2,8 +2,8 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/string.h>
 #include <EASTL/utility.h>
-#include <dear_imgui/imgui.h>
-#include "eastl.h"
+#include <imgui/imgui.h>
+#include <qdIce/qdEASTL/eastl.h>
 
 #ifdef _MSC_VER
 #define _PRISizeT "I"

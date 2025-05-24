@@ -3,7 +3,7 @@
 #include <EASTL/vector_map.h>
 #include <debugger/class_reg.h>
 #include <debugger/ui_defs.h>
-#include <src/generic/types.h>
+#include <qdIce/qdBase/types.h>
 #include <src/shortcut/shortcut_list.h>
 
 namespace qd {

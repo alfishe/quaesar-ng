@@ -6,7 +6,7 @@
 #include <debugger/debugger.h>
 #include <debugger/msg_list.h>
 #include <debugger/vm/vm.h>
-#include <imgui_eastl.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 #include <src/ui/ui_style.h>
 
 namespace qd {

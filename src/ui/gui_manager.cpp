@@ -1,6 +1,6 @@
 #include "gui_manager.h"
-#include <dear_imgui/imgui_internal.h>
 #include <debugger/action_mgr.h>
+#include <imgui/imgui_internal.h>
 #include <src/shortcut/shortcut_mgr.h>
 
 namespace qd {

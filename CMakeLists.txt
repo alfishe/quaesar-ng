@@ -23,6 +23,7 @@ add_subdirectory(external/dear_imgui)
 add_subdirectory(external/capstone)
 add_subdirectory(external/EASTL)
 
+#SDL2
 if (APPLE OR LINUX OR UNIX)
     find_package(SDL2 REQUIRED)
 endif()
@@ -30,6 +31,9 @@ endif()
 if(NOT DEFINED SDL2_INCLUDE_DIRS)
     set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/sdl2/include")
 endif()
+
+
+add_subdirectory(libs/qdIce)
 
 
 if (WIN32)
@@ -217,7 +221,9 @@ set(UAE_SOURCE_LIST
     uae_src/blit.h
 )
 add_executable(quaesar ${UAE_SOURCE_LIST})
+
 if (WIN32)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT quaesar) # makes startup project
     add_dependencies(quaesar quaesar-clang-format)
 endif()
 
@@ -237,7 +243,6 @@ target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
 if (APPLE OR LINUX OR UNIX)
 	target_compile_options(quaesar PRIVATE -DUAE=1 -D_cdecl= -DOS_NAME=\"linux\")
     target_compile_definitions(quaesar PRIVATE FSUAE)
-    target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES})
 endif()
 
 if (WIN32)
@@ -250,7 +255,6 @@ if (WIN32)
     endif()
     target_link_libraries(quaesar PRIVATE Ws2_32.lib Winmm.lib Version.lib Imm32.lib Setupapi.lib)
 	set_target_properties(quaesar PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT quaesar) # makes startup project
 endif()
 
 if (APPLE)
@@ -263,7 +267,7 @@ endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui capstone EASTL)
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} qdIce zlibstatic adf imgui capstone EASTL)
 
 
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")

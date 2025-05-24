@@ -5,7 +5,7 @@
 #include <EASTL/string.h>
 #include <debugger/vm/memory.h>
 #include <debugger/vm/vm.h>
-#include <src/generic/base.h>
+#include <qdIce/qdBase/base.h>
 
 struct SDL_Window;
 struct SDL_Renderer;

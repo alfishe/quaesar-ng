@@ -3,8 +3,8 @@
 #include <SDL.h>
 #include <debugger/debugger.h>
 #include <debugger/vm/vm.h>
-#include <imgui_eastl.h>
-#include <imgui_internal.h>
+#include <imgui/imgui_internal.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 #include <quaesar.h>
 
 

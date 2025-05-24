@@ -4,7 +4,7 @@
 #include <EASTL/span.h>
 #include <EASTL/string.h>
 #include <debugger/class_reg.h>
-#include <imgui.h>
+#include <imgui/imgui.h>
 #include <src/shortcut/shortcut_list.h>
 
 

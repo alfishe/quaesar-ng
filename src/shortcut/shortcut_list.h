@@ -1,5 +1,5 @@
 #pragma once
-#include <src/generic/base.h>
+#include <qdIce/qdBase/base.h>
 
 
 FORWARD_DECLARATION_2(qd, Shortcut);

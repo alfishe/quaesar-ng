@@ -2,8 +2,8 @@
 #include <debugger/action/comps.h>
 #include <debugger/action_mgr.h>
 #include <debugger/msg_list.h>
-#include <generic/thread.h>
-#include <src/generic/base.h>
+#include <qdIce/qdBase/base.h>
+#include <qdIce/qdThread/thread.h>
 
 
 namespace qd {

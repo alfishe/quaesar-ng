@@ -2,7 +2,7 @@
 #include <debugger/action_mgr.h>
 #include <debugger/vm/memory.h>
 #include <debugger/vm/vm.h>
-#include <src/generic/types.h>
+#include <qdIce/qdBase/types.h>
 
 
 namespace qd {

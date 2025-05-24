@@ -19,7 +19,7 @@
 #include <debugger/msg_list.h>
 #include <debugger/vm/imp/vm_uae_imp.h>
 #include <debugger/vm/vm.h>
-#include <src/generic/thread.h>
+#include <qdIce/qdThread/thread.h>
 #include <src/quaesar.h>
 #include <src/shortcut/shortcut_mgr.h>
 #include <src/ui/gui_manager.h>

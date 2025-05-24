@@ -2,8 +2,8 @@
 #include <EASTL/fixed_vector.h>
 #include <debugger/debugger.h>
 #include <debugger/vm/vm.h>
-#include <imgui_eastl.h>
-#include <src/generic/color.h>
+#include <qdIce/qdBase/color.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 
 namespace qd {
 namespace window {

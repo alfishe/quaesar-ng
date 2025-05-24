@@ -14,8 +14,8 @@
 #include <debugger/vm/memory.h>
 #include <debugger/vm/vm.h>
 #include <debugger/vm/vm_defs.h>
-#include <src/generic/color.h>
-#include <src/generic/types.h>
+#include <qdIce/qdBase/color.h>
+#include <qdIce/qdBase/types.h>
 
 
 namespace qd {

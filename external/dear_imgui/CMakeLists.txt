@@ -9,13 +9,16 @@ endif()
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+get_filename_component(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui ABSOLUTE)
+get_filename_component(IMGUI_PARENT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
+
 # Add ImGui source files
-file(GLOB IMGUI_SOURCES *.cpp)
-list(APPEND IMGUI_SOURCES backends/imgui_impl_sdl2.cpp)
-list(APPEND IMGUI_SOURCES backends/imgui_impl_sdlrenderer2.cpp)
+file(GLOB IMGUI_SOURCES ${IMGUI_DIR}/*.cpp)
+list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp)
+list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/backends/imgui_impl_sdlrenderer2.cpp)
 
 # Include directories for ImGui (SDL2 include paths should be handled in the main CMakeLists.txt)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/backends)
+include_directories(${IMGUI_DIR}/backends)
 
 # Create static library
 add_library(imgui STATIC ${IMGUI_SOURCES})
@@ -28,4 +31,4 @@ else()
 endif()
 
 # Include dirs
-target_include_directories(imgui PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(imgui PUBLIC ${IMGUI_PARENT})

@@ -1,5 +1,5 @@
 #include "log.h"
-#include <src/generic/base.h>
+#include <qdIce/qdBase/base.h>
 
 
 namespace qd {

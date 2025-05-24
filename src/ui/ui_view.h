@@ -1,8 +1,9 @@
 #pragma once
 #include <debugger/class_reg.h>
 #include <debugger/ui_defs.h>
-#include <imgui_eastl.h>
-#include <src/generic/color.h>
+#include <qdIce/qdBase/color.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
+
 
 namespace qd {
 

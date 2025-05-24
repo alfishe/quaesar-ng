@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <debugger/debugger.h>
 #include <debugger/vm/vm.h>
-#include <imgui_eastl.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 #include <quaesar.h>
 
 namespace qd {

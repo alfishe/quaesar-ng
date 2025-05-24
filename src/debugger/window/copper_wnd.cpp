@@ -4,8 +4,8 @@
 #include <debugger/msg_list.h>
 #include <debugger/vm/memory.h>
 #include <debugger/vm/vm.h>
-#include <imgui_eastl.h>
-#include <src/generic/color.h>
+#include <qdIce/qdBase/color.h>
+#include <qdIce/qdImGui/imgui_eastl.h>
 #include <src/shortcut/shortcut_mgr.h>
 #include <src/ui/ui_style.h>
 #include <src/ui/ui_view.h>

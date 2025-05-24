@@ -55,7 +55,7 @@
 #include <SDL.h>
 #include <debugger/debugger.h>
 #include <log.h>
-#include <src/generic/thread.h>
+#include <qdIce/qdThread/thread.h>
 #include <src/quaesar.h>
 #include <src/sounddep/sound.h>
 #include <cstdarg>
