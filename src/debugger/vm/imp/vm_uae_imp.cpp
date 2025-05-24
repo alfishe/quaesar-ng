@@ -15,7 +15,10 @@
 #include <uae_src/include/debug.h>
 // clang-format on
 #include <SDL_log.h>
-#include <debugger/vm/vm.h>
+#include <amDebugger/debugger.h>
+#include <amDebugger/msg_list.h>
+#include <amDebugger/vm/vm.h>
+#include <quaesar.h>
 
 
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
@@ -118,8 +121,80 @@ void UaeEmuVmImp::Copper::fetch() {
 }
 
 
+void UaeEmuVmImp::Emu::setDebugMode(DebuggerMode debug_mode) {
+    if (debug_mode == DebuggerMode_Break) {
+        while (!Debugger::isDebugActivatedFull()) {
+            ::debugger_active = 0;
+            ::debugging = 0;
+            ::activate_debugger_new();
+        }
+    } else if (debug_mode == DebuggerMode_Live) {
+        action::msg::DoDebugTraceContinue m;
+        Debugger::get()->getActions()->applyActionMsg(&m);
+        ::debugger_active = 0;
+    }
+}
+
+
 };  // namespace imp
 //////////////////////////////////////////////////////////////////////////
 
 };  // namespace vm
+
+
+bool Debugger::isDebugActivated() {
+    return ::debugging > 0 && (::debugger_active > 0);
+}
+
+bool Debugger::isDebugActivatedFull() {
+    return ::debugging > 0 && (::debugger_active > 0 && ::regs.spcflags & SPCFLAG_BRK);
+}
+
+
+void Debugger::applyImmediateConsoleCmd(eastl::string&& cmd) {
+    qd::uae::do_console_cmd_immediate(cmd.c_str());
+}
+
+
+static bool uae_bp_reg_convert(int uae_reg, EReg& out) {
+    if (uae_reg >= qd::breakpoint_reg_end)
+        return false;
+    out = (EReg::Type)uae_reg;
+    return true;
+}
+
+
+void BreakpointsSortedList::init() {
+    static_assert(qd::BREAKPOINTS_MAX == BREAKPOINT_TOTAL);
+
+    mBreakpoints.clear();
+    for (int i = 0; i < BREAKPOINT_TOTAL; i++) {
+        const ::breakpoint_node& uaeCurBrpt = ::bpnodes[i];
+        if (uaeCurBrpt.value1 == 0 || uaeCurBrpt.enabled <= 0)
+            continue;
+        qd::Breakpoint& curBp = mBreakpoints.emplace_back();
+        curBp.addr1 = uaeCurBrpt.value1;
+        curBp.addr2 = uaeCurBrpt.value2;
+        curBp.enabled = uaeCurBrpt.enabled;
+        qd::uae_bp_reg_convert(uaeCurBrpt.type, curBp.reg);
+
+        if (uaeCurBrpt.oper == BREAKPOINT_CMP_EQUAL && uaeCurBrpt.enabled > 0) {
+            OneAddrBp bp;
+            bp.addr = curBp.addr1;
+            bp.bpIdx = (int)mBreakpoints.size() - 1;
+            mOneAddrBps.insert(bp);
+        }
+    }
+}
+
+
+void* impFactoryCreateInstance(const std::type_info& type) {
+    if (type == typeid(qd::VM)) {
+        return new qd::vm::imp::UaeEmuVmImp();
+    }
+    UNIMPLEMENTED();
+    return nullptr;
+}
+
+
 };  // namespace qd

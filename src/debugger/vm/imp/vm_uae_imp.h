@@ -10,15 +10,17 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/span.h>
 #include <EASTL/vector.h>
-#include <debugger/vm/custom_regs.h>
-#include <debugger/vm/memory.h>
-#include <debugger/vm/vm.h>
-#include <debugger/vm/vm_defs.h>
+#include <amDebugger/vm/custom_regs.h>
+#include <amDebugger/vm/memory.h>
+#include <amDebugger/vm/vm.h>
+#include <amDebugger/vm/vm_defs.h>
 #include <qdIce/qdBase/color.h>
 #include <qdIce/qdBase/types.h>
 
 
 namespace qd {
+
+
 namespace vm {
 namespace imp {
 
@@ -119,6 +121,12 @@ public:
         virtual AddrRef getCopperAddr(CopperAddr_ copno) override;
     };  // class Copper
     Copper instCopper;
+
+
+    class Emu final : public VM::Emu {
+    public:
+        virtual void setDebugMode(DebuggerMode debug_mode) override;
+    };  // class Emu
 
 
 };  // class UaeEmuVM

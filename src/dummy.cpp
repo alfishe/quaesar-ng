@@ -53,8 +53,8 @@
 
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
-#include <debugger/debugger.h>
-#include <log.h>
+#include <amDebugger/debugger.h>
+#include <qdIce/qdLog/log.h>
 #include <qdIce/qdThread/thread.h>
 #include <src/quaesar.h>
 #include <src/sounddep/sound.h>

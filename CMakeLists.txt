@@ -20,8 +20,8 @@ set(CAPSTONE_M68K_SUPPORT ON CACHE BOOL "" FORCE)
 add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
-add_subdirectory(external/capstone)
 add_subdirectory(external/EASTL)
+add_subdirectory(external/capstone)
 
 #SDL2
 if (APPLE OR LINUX OR UNIX)
@@ -32,8 +32,8 @@ if(NOT DEFINED SDL2_INCLUDE_DIRS)
     set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/sdl2/include")
 endif()
 
-
 add_subdirectory(libs/qdIce)
+add_subdirectory(libs/amDebugger)
 
 
 if (WIN32)
@@ -267,7 +267,7 @@ endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} qdIce zlibstatic adf imgui capstone EASTL)
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} qdIce zlibstatic adf imgui EASTL amDebugger)
 
 
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")

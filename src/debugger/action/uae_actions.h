@@ -14,13 +14,13 @@
 #include <uae_src/include/uae.h>
 // clang-format on
 #include <SDL.h>
-#include <debugger/action/comps.h>
-#include <debugger/action_mgr.h>
-#include <debugger/debugger.h>
-#include <debugger/msg_list.h>
+#include <amDebugger/action/comps.h>
+#include <amDebugger/action_mgr.h>
+#include <amDebugger/debugger.h>
+#include <amDebugger/msg_list.h>
+#include <amDebugger/shortcut/shortcut_list.h>
 #include <qdIce/qdImGui/imgui_eastl.h>
 #include <quaesar.h>
-#include <src/shortcut/shortcut_list.h>
 #include <uae_src/include/debug.h>
 
 

@@ -1,6 +1,6 @@
 #include "quaesar.h"
 #include <SDL.h>
-#include <debugger/debugger.h>
+#include <amDebugger/debugger.h>
 #include <qdIce/qdThread/thread.h>
 #include <stdarg.h>
 #include <stdio.h>
