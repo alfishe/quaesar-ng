@@ -45,11 +45,11 @@ void GuiManager::drawImGuiMainFrame() {
 
 
 void GuiManager::_drawMainToolBar() {
-    ImGuiIO& io = ImGui::GetIO();
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
     if (ImGui::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags)) {
+        ImGuiIO& io = ImGui::GetIO();
         ImGuiWindow* window = ImGui::GetCurrentWindow();
 
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;

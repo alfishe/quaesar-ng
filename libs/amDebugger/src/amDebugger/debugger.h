@@ -6,6 +6,9 @@
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdBase/base.h>
+#include <qdIce/qdApp/appPart.h>
+#include <qdIce/qdBase/classIdCC.h>
+
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -63,7 +66,10 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class Debugger {
+class Debugger : public qd::BaseAppPart
+{
+    CLASSID_CC(Debugger, qd::BaseAppPart);
+
     SDL_Window* mWindow = nullptr;
     SDL_Renderer* mRenderer = nullptr;
 
@@ -117,6 +123,7 @@ public:
         mWaitScanLines = waitScanLines;
     }
 
+    static Debugger *gInst;
     static Debugger* get();
 
     BreakpointsSortedList getBreakpointsSorted() const {
@@ -125,10 +132,11 @@ public:
         return bp;
     }
 
+    Debugger(qd::Application *p_app) : BaseAppPart(p_app) {}
+
 private:
     void createRenderWindow();
     void initImGui();
-    Debugger() = default;
     ~Debugger();
 };  // class Debugger
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

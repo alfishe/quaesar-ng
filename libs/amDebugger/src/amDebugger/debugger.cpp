@@ -18,6 +18,9 @@
 
 namespace qd {
 
+Debugger *Debugger::gInst = nullptr;
+
+
 void Debugger::update() {
     qd::ShortcutsMgr::get()->update();
 
@@ -181,8 +184,9 @@ int Debugger::waitConsoleCmd(char* out, int maxlen) {
 
 
 qd::Debugger* Debugger::get() {
-  static Debugger instance;
-  return &instance;
+  //static Debugger instance;
+  //return &instance;
+    return gInst;
 }
 
 void qd::Debugger::execConsoleCmd(eastl::string&& cmd) {

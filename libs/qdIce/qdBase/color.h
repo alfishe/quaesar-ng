@@ -1,8 +1,14 @@
 #pragma once
 #include <qdIce/qdBase/types.h>
+#include <qdIce/qdMath/mathBase.h>
+#include <qdIce/qdMath/float.h>
+
 
 namespace qd {
 
+
+
+//////////////////////////////////////////////////////////////////////////
 class Color {
 public:
     enum EColor : uint32_t {

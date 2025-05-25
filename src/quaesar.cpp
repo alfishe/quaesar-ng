@@ -1,6 +1,8 @@
 #include "quaesar.h"
 #include <SDL.h>
 #include <amDebugger/debugger.h>
+#include <qdIce/qdApp/appPartsMgr.h>
+#include <qdIce/qdApp/appliction.h>
 #include <qdIce/qdThread/thread.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -23,6 +25,7 @@
 // WTF SDL2MAIN_LIBRARY - I can't to build it on MacOs
 #define SDL_main main
 #endif  // WIN32
+
 
 qd::App* app = nullptr;
 
@@ -177,7 +180,11 @@ bool App::hasQuitRequest() const {
 
 void App::init() {
     createUaeWindow();
-    mDebugger = Debugger::get();
+    qd::CreateApplicationParams prm;
+    mQDApp = new qd::Application(&prm);
+    mDebugger = new Debugger(mQDApp);
+    Debugger::gInst = mDebugger;
+    mQDApp->getAppParts()->addPart(mDebugger);
     mDebugger->init();
     mDebugger->toggleWndVisible(qd::DebuggerMode_Live);
 }
@@ -373,6 +380,7 @@ extern void on_app_exit_drawing();
 
 void App::destroy() {
     SAFE_DESTROY(mDebugger);
+    SAFE_DELETE(mQDApp);
     destroyUaeWindow();
 
     qd::uae::on_app_exit_debug();

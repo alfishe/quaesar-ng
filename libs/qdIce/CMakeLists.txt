@@ -19,12 +19,16 @@ endfunction()
 # Use the function to add subdirectories
 add_source_group("qdBase")
 add_source_group("qdThread")
-add_source_group("qdGeom")
-add_source_group("qdEASTL")
+add_source_group("qdSTL")
 add_source_group("qdLog")
 add_source_group("qdImGui")
 add_source_group("qdUI")
-
+add_source_group("qdApp")
+add_source_group("qdMath")
+add_source_group("qdMem")
+add_source_group("qdDebug")
+add_source_group("qdEnum")
+add_source_group("qdPlatform")
 
 add_library(qdIce ${QDICE_HDR} ${QDICE_SRC})
 

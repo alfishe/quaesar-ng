@@ -1,5 +1,12 @@
 #pragma once
+#include <EABase/eabase.h>
 #include <stdint.h>
+
+
+template <typename T>
+T c_def(T v) {
+    return v;
+}
 
 
 #define SAFE_DELETE(p) \
@@ -36,29 +43,36 @@
 //////////////////////////////////////////////////////////////////////////
 // forward for classes
 #define FORWARD_DECLARATION_1(c) class c;
+
 #define FORWARD_DECLARATION_2(n1, c) \
     namespace n1 {                   \
     FORWARD_DECLARATION_1(c);        \
     }
+
 #define FORWARD_DECLARATION_3(n1, n2, c) \
     namespace n1 {                       \
     FORWARD_DECLARATION_2(n2, c);        \
     }
+
 #define FORWARD_DECLARATION_4(n1, n2, n3, c) \
     namespace n1 {                           \
     FORWARD_DECLARATION_3(n2, n3, c);        \
     }
 
-// forward for structs
+
+// forward for struct`
 #define FORWARD_DECLARATION_1S(c) struct c;
+
 #define FORWARD_DECLARATION_2S(n1, c) \
     namespace n1 {                    \
     FORWARD_DECLARATION_1S(c)         \
     }
+
 #define FORWARD_DECLARATION_3S(n1, n2, c) \
     namespace n1 {                        \
     FORWARD_DECLARATION_2S(n2, c);        \
     }
+
 #define FORWARD_DECLARATION_4S(n1, n2, n3, c) \
     namespace n1 {                            \
     FORWARD_DECLARATION_3S(n2, n3, c);        \

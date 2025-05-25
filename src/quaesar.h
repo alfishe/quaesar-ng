@@ -5,6 +5,8 @@
 
 FORWARD_DECLARATION_3(qd, thread, Event);
 FORWARD_DECLARATION_2(qd, Debugger);
+FORWARD_DECLARATION_2(qd, Application);
+
 struct SDL_Window;
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -24,6 +26,7 @@ class App {
     uint32_t* mAmigaBuffer = nullptr;
 
 public:
+    qd::Application* mQDApp = nullptr;
     qd::Debugger* mDebugger = nullptr;
     SDL_Window* mUaeWindow = nullptr;
     SDL_Renderer* mUaeRenderer = nullptr;
