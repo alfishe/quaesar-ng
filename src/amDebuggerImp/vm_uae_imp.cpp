@@ -35,6 +35,7 @@ UaeEmuVmImp::UaeEmuVmImp() {
     custom = &instCustomRegs;
     copper = &instCopper;
     blitter = &instBlitter;
+    emu = &instEmu;
 }
 
 

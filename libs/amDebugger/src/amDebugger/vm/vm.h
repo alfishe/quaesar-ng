@@ -107,7 +107,7 @@ public:
 
     struct Emu {
     public:
-        virtual void setDebugMode(DebuggerMode debug_mode) /*base*/;
+        virtual void setDebugMode(DebuggerMode debug_mode) /*base*/ {}
     };
     qd::VM::Emu* emu = nullptr;
 

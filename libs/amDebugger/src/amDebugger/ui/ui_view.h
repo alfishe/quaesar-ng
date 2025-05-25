@@ -102,7 +102,7 @@ using UiViewClassRegistry = ClassInfoRegistry_<UiView>;
 
 template <class TClass>
 struct UiViewClassRegistrator_ {
-    inline UiViewClassRegistrator_() {
+    UiViewClassRegistrator_() {
         UiViewClassRegistry::MetaInfo metaInfo;
         metaInfo.classId = TClass::CLASS_ID;
         metaInfo.createCallback = (void*)&createClassCb;
@@ -119,6 +119,6 @@ struct UiViewClassRegistrator_ {
 
 #define QDB_WINDOW_REGISTER(className) \
     ;                                  \
-    static UiViewClassRegistrator_<className> EA_PREPROCESSOR_JOIN(reg, __COUNTER__);
+    static UiViewClassRegistrator_<className> EA_PREPROCESSOR_JOIN(reg_instance_, __COUNTER__);
 
 };  // namespace qd

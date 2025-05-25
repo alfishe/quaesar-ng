@@ -30,6 +30,9 @@ add_source_group("emuDrivers")
 
 add_library(${PROJECT_NAME} ${AM_SRC})
 
+#Whole archive option is needed to ensure that all windows are linked in the final binary
+target_link_options(${PROJECT_NAME} INTERFACE "/WHOLEARCHIVE:${PROJECT_NAME}")
+
 # Include dirs
 target_include_directories(${PROJECT_NAME} PUBLIC ${AM_SRC_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 

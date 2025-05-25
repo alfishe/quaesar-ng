@@ -127,6 +127,7 @@ public:
     public:
         virtual void setDebugMode(DebuggerMode debug_mode) override;
     };  // class Emu
+    Emu instEmu;
 
 
 };  // class UaeEmuVM

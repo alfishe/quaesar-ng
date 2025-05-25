@@ -27,7 +27,6 @@ public:
 } QDB_WINDOW_REGISTER(BlitterWnd);
 //////////////////////////////////////////////////////////////////////////
 
-// struct UiDmaSrc
 
 
 struct DeclareDmaSrcUiArgs {
