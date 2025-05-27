@@ -38,14 +38,14 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-#define CLASSID_PRIME(TName, TEnumIdx, TBaseClass) \
-private:                                           \
-    typedef TBaseClass TSuper;                     \
-    typedef TName TThis;                           \
-                                                   \
-public:                                            \
-    constexpr static Scene::ClassIdPrime CLASSID = \
-        Scene::ClassIdPrime::makeByInd((uint32_t)TEnumIdx, TBaseClass::CLASSID);
+#define CLASSID_PRIME(TName, TEnumIdx, TBaseClass)  \
+private:                                            \
+    typedef TBaseClass TSuper;                      \
+    typedef TName TThis;                            \
+                                                    \
+public:                                             \
+    constexpr static Scene::ClassIdPrime CLASS_ID = \
+        Scene::ClassIdPrime::makeByInd((uint32_t)TEnumIdx, TBaseClass::CLASS_ID);
 
 
 };  // namespace qd

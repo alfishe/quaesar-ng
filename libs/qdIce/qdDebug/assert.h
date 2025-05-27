@@ -1,5 +1,6 @@
 #include <SDL_assert.h>
 #include <qdIce/qdBase/string.h>
+#include <EASTL/internal/config.h>
 
 
 #ifndef assert
@@ -33,3 +34,7 @@
 #else
 #define assert2(expr, pFormat, ...) SDL_assert(c_def(0 != (expr)) && pFormat)
 #endif  // #if SDL_ASSERT_LEVEL
+
+
+
+#define QD_HALT() { SDL_ASSERT_LEVEL( __FILE__, __LINE__, "HALT" ); EASTL_DEBUG_BREAK(); }

@@ -2,25 +2,24 @@
 
 
 namespace qd {
-namespace thread {
 
-Event::Event(bool auto_reset_event) : mbState(false), mbAutoReset(auto_reset_event) {
+ThreadEvent::ThreadEvent(bool auto_reset_event) : mbState(false), mbAutoReset(auto_reset_event) {
     mpCondition = SDL_CreateCond();
     if (!mpCondition) {
-        SDL_Log("Thread::Event::create() : FAILED");
+        SDL_Log("Thread::ThreadEvent::create() : FAILED");
         return;
     }
     mpMutex = SDL_CreateMutex();
     if (!mpMutex) {
         SDL_DestroyCond(mpCondition);
         mpCondition = nullptr;
-        SDL_Log("Thread::Event::create() (mutex)");
+        SDL_Log("Thread::ThreadEvent::create() (mutex)");
         return;
     }
 }
 
 
-void Event::set() {
+void ThreadEvent::set() {
     if (SDL_LockMutex(mpMutex)) {
         SDL_Log("cannot signal event (lock)");
         return;
@@ -36,7 +35,7 @@ void Event::set() {
 }
 
 
-void Event::wait() {
+void ThreadEvent::wait() {
     if (SDL_LockMutex(mpMutex) != 0) {
         SDL_Log("wait for event failed (lock)");
         return;
@@ -54,7 +53,7 @@ void Event::wait() {
 }
 
 
-bool Event::wait(uint32_t time_out_ms) {
+bool ThreadEvent::wait(uint32_t time_out_ms) {
     if (SDL_LockMutex(mpMutex) != 0) {
         SDL_Log("wait for event failed (lock)");
         return false;
@@ -78,7 +77,7 @@ bool Event::wait(uint32_t time_out_ms) {
 }
 
 
-void Event::reset() {
+void ThreadEvent::reset() {
     if (SDL_LockMutex(mpMutex) != 0) {
         SDL_Log("Cannot reset event");
         return;
@@ -88,11 +87,10 @@ void Event::reset() {
 }
 
 
-Event::~Event() {
+ThreadEvent::~ThreadEvent() {
     SDL_DestroyCond(mpCondition);
     SDL_DestroyMutex(mpMutex);
 }
 
 
-};  // namespace thread
 };  // namespace qd

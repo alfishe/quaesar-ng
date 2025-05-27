@@ -7,7 +7,7 @@ class RegistersView : public UiWindow {
     QDB_CLASS_ID(WndId::Registers);
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Registers";
     }

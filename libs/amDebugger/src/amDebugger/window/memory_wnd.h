@@ -138,7 +138,7 @@ public:
     };
 
     MemoryView();
-    virtual void onCreate(UiViewCreate* cp) override;
+    virtual void onCreate(UiViewCreateCtx* cp) override;
     virtual void drawContent() override;
 
     void goto_address_and_highlight(size_t addr_min, size_t addr_max);

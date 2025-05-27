@@ -8,7 +8,7 @@ class ColorsWnd : public UiWindow {
     QDB_CLASS_ID(WndId::Colors);
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Palette";
     }

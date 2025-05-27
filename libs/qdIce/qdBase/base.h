@@ -1,6 +1,7 @@
 #pragma once
 #include <EABase/eabase.h>
 #include <stdint.h>
+#include <EASTL/internal/config.h>
 
 
 template <typename T>

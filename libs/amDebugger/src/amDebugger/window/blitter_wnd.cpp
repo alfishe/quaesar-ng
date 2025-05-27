@@ -7,7 +7,6 @@
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdBase/color.h>
 #include <qdIce/qdImGui/imgui_eastl.h>
-#include <amDebugger/shortcut/shortcut_mgr.h>
 #include <amDebugger/ui/ui_view.h>
 
 
@@ -17,7 +16,7 @@ class BlitterWnd : public UiWindow {
     QDB_CLASS_ID(WndId::BlitterWnd);
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Blitter";
     }

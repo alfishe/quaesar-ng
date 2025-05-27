@@ -1,9 +1,10 @@
-#include "shortcut_mgr.h"
-#include <amDebugger/action/comps.h>
-#include <amDebugger/action_mgr.h>
-#include <amDebugger/msg_list.h>
+#include "shortcutMgr.h"
+#include <qdIce/qdUi/actionComps.h>
+#include <qdIce/qdUi/actionMgr.h>
 #include <qdIce/qdBase/base.h>
 #include <qdIce/qdThread/thread.h>
+#include <qdIce/qdUi/actionMsg.h>
+#include <qdIce/qdUi/actionBase.h>
 
 
 namespace qd {
@@ -69,9 +70,9 @@ bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const {
 }
 
 
-bool ShortcutsMgr::triggerShortcut(qd::shortcut::EId id) {
+bool ShortcutsMgr::triggerShortcut(uint32_t id) {
     const Shortcut* pShortcut = getShortcut(id);
-    if (action::Action* pAction = findActionByShortcut(pShortcut)) {
+    if (UiAction* pAction = findActionByShortcut(pShortcut)) {
         action::msg::DoAction t;
         pAction->applyMsgProc(&t);
         return true;
@@ -85,15 +86,17 @@ ShortcutsMgr::~ShortcutsMgr() {
 }
 
 
-void ShortcutsMgr::init() {
-    assert(qd::thread::isMainThread());
+void ShortcutsMgr::init(eastl::span<ShortcutSetupFunc> shortcuts_list) {
     done();
-    for (int id = 0; id < (int)shortcut::EId::MAX_COUNT; ++id) {
-        Shortcut* curShortcut = shortcut::makeInstance((shortcut::EId)id);
-        if (!curShortcut)
-            continue;
+    for (int id = 0; id < (int)shortcuts_list.size(); ++id) {
+
+        ShortcutSetupFunc setupFunc = shortcuts_list[id];
+        qd::Shortcut* curShortcut = new qd::Shortcut();
+        curShortcut->mId = id;
+        setupFunc(*curShortcut);
+
         EASTL_ASSERT((int)curShortcut->mId == id);
-        if (getShortcut((shortcut::EId)id)) {
+        if (getShortcut(id)) {
             ASSERT_F(0, "Shortcut ID:%i already registered", id);
             continue;
         }
@@ -103,7 +106,6 @@ void ShortcutsMgr::init() {
 
 
 void ShortcutsMgr::done() {
-    assert(qd::thread::isMainThread());
     while (!mShortcuts.empty()) {
         auto& p = mShortcuts.back();
         delete p.second;
@@ -113,22 +115,22 @@ void ShortcutsMgr::done() {
 
 
 void ShortcutsMgr::update() {
-    auto pActionMgr = action::ActionManager::get();
-    for (action::Action* pCurAction : pActionMgr->getActions()) {
+    auto pActionMgr = findParentMixin_<ActionManager>();
+    for (UiAction* pCurAction : pActionMgr->getActions()) {
         action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
             if (isShortcutTriggered(curShortcut)) {
                 action::msg::DoAction t;
-                pCurAction->applyMsgProc(&t);
+                pCurAction->onNodeMessageProc(&t);
             }
         }
     }
 }
 
 
-const qd::Shortcut* ShortcutsMgr::getShortcut(shortcut::EId shortcut_id) const {
+const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
     auto it = mShortcuts.find((int)shortcut_id);
     if (it == mShortcuts.end())
         return nullptr;
@@ -136,9 +138,9 @@ const qd::Shortcut* ShortcutsMgr::getShortcut(shortcut::EId shortcut_id) const {
 }
 
 
-qd::action::Action* ShortcutsMgr::findActionByShortcut(const qd::Shortcut* pShortcut) const {
-    auto pActionMgr = action::ActionManager::get();
-    for (action::Action* pCurAction : pActionMgr->getActions()) {
+UiAction* ShortcutsMgr::findActionByShortcut(const qd::Shortcut* pShortcut) const {
+    auto pActionMgr = findParentMixin_<ActionManager>();
+    for (UiAction* pCurAction : pActionMgr->getActions()) {
         action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
         if (!pShortcuts)
             continue;

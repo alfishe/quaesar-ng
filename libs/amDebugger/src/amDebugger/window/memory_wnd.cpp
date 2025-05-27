@@ -79,7 +79,7 @@ QDB_WINDOW_REGISTER(MemoryView);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::onCreate(UiViewCreate* cp) {
+void MemoryView::onCreate(UiViewCreateCtx* cp) {
     UiWindow::onCreate(cp);
     mTitle = "Memory";
     mVisible = true;

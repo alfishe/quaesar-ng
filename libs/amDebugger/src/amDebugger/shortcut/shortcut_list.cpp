@@ -1,12 +1,10 @@
 #include "shortcut_list.h"
-#include <amDebugger/shortcut/shortcut_mgr.h>
+#include <qdIce/qdUI/shortcutMgr.h>
 
 
 namespace qd {
 namespace shortcut {
 
-
-typedef void (*ShortcutSetupFunc)(qd::Shortcut&);
 
 static ShortcutSetupFunc shortcuts_list[] = {
 #define SHORTCUT(name, setup_func) setup_func,
@@ -15,13 +13,6 @@ static ShortcutSetupFunc shortcuts_list[] = {
 };  // ShortcutList
 
 
-qd::Shortcut* makeInstance(shortcut::EId id) {
-    ShortcutSetupFunc setupFunc = shortcuts_list[(int)id];
-    qd::Shortcut* pInst = new qd::Shortcut();
-    pInst->mId = id;
-    setupFunc(*pInst);
-    return pInst;
-};
 
 };  // namespace shortcut
 };  // namespace qd

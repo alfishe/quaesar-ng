@@ -21,9 +21,8 @@ FORWARD_DECLARATION_4S(qd, action, msg, Base);
 namespace qd {
 class GuiManager;
 class VM;
-namespace action {
 class ActionManager;
-};  // namespace action
+
 
 constexpr static int BREAKPOINTS_MAX = 20;
 
@@ -68,7 +67,8 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class Debugger : public qd::BaseAppPart
 {
-    CLASSID_CC(Debugger, qd::BaseAppPart);
+    QD_REFLECT_TYPE(Debugger);
+    //CLASSID_CC(Debugger, qd::BaseAppPart);
 
     SDL_Window* mWindow = nullptr;
     SDL_Renderer* mRenderer = nullptr;
@@ -77,7 +77,7 @@ public:
     csh* capstone = nullptr;
     VM* vm = nullptr;
     GuiManager* gui = nullptr;
-    action::ActionManager* mActions = nullptr;
+    ActionManager* mActions = nullptr;
 
     SDL_Renderer* getRenderer() const {
         return mRenderer;
@@ -100,7 +100,7 @@ public:
         return vm;
     }
 
-    action::ActionManager* getActions() const {
+    ActionManager* getActions() const {
         return mActions;
     }
 

@@ -6,9 +6,10 @@
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdBase/color.h>
 #include <qdIce/qdImGui/imgui_eastl.h>
-#include <amDebugger/shortcut/shortcut_mgr.h>
 #include <amDebugger/ui/ui_style.h>
 #include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/gui_manager.h>
+#include <qdIce/qdUI/shortcutMgr.h>
 
 
 namespace qd {
@@ -17,7 +18,7 @@ class CopperDbgWnd : public UiWindow {
     QDB_CLASS_ID(WndId::CopperDbgWnd);
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Copper debug";
     }
@@ -169,7 +170,7 @@ void CopperDbgWnd::drawContent() {
     ImGui::SameLine();
 
     if (ImGui::Button("Trace")) {
-        ShortcutsMgr::get()->triggerShortcut(shortcut::EId::CopperToggleBreakpoint);
+        this->ui->getShortcuts()->triggerShortcut((int)shortcut::EId::CopperToggleBreakpoint);
     }
 
     AddrRef pcAddr = vm->copper->getCopperAddr(qd::CopperAddr_ip);

@@ -14,7 +14,6 @@
 #include <uae_src/include/uae.h>
 // clang-format on
 #include <SDL.h>
-#include <amDebugger/action/comps.h>
 #include <amDebugger/action_mgr.h>
 #include <amDebugger/debugger.h>
 #include <amDebugger/msg_list.h>

@@ -10,7 +10,7 @@ namespace window {
 
 class ConsoleLogWriter : public ILogWriter {
     eastl::vector<LogEntry> msgList;
-    qd::thread::Mutex mMutex;
+    qd::Mutex mMutex;
 
 public:
     struct EntriesList;
@@ -30,7 +30,7 @@ protected:
 
 struct ConsoleLogWriter::EntriesList {
     ConsoleLogWriter* mOwner;
-    qd::thread::Mutex* mpMutex;
+    qd::Mutex* mpMutex;
 
 public:
     EntriesList(ConsoleLogWriter* in_owner) : mOwner(in_owner), mpMutex(&mOwner->mMutex) {
@@ -81,7 +81,7 @@ void ConsoleWnd::drawContent() {
 }
 
 
-void ConsoleWnd::onCreate(UiViewCreate* cp) {
+void ConsoleWnd::onCreate(UiViewCreateCtx* cp) {
     UiWindow::onCreate(cp);
     mTitle = "Console";
     mpConsoleWriter = qd::logConsole().createWriter_<ConsoleLogWriter>();

@@ -34,30 +34,30 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-#define CLASSID_CC_BASE(TName)                                                 \
-private:                                                                       \
-    typedef TName TThis;                                                       \
-                                                                               \
-public:                                                                        \
-    constexpr static qd::ClassIdCC CLASSID = qd::ClassIdCC::makeByInd(#TName); \
-    virtual const qd::ClassIdCC& classId() {                                   \
-        return TName::CLASSID;                                                 \
-    }                                                                          \
-                                                                               \
+#define CLASSID_CC_BASE(TName)                                                  \
+private:                                                                        \
+    typedef TName TThis;                                                        \
+                                                                                \
+public:                                                                         \
+    constexpr static qd::ClassIdCC CLASS_ID = qd::ClassIdCC::makeByInd(#TName); \
+    virtual const qd::ClassIdCC& getClassId() const {                           \
+        return TName::CLASS_ID;                                                 \
+    }                                                                           \
+                                                                                \
 private:
 
 
-#define CLASSID_CC(TName, TBaseClass)                                          \
-private:                                                                       \
-    typedef TBaseClass TSuper;                                                 \
-    typedef TName TThis;                                                       \
-                                                                               \
-public:                                                                        \
-    constexpr static qd::ClassIdCC CLASSID = qd::ClassIdCC::makeByInd(#TName); \
-    virtual const qd::ClassIdCC& classId() override {                          \
-        return TName::CLASSID;                                                 \
-    }                                                                          \
-                                                                               \
+#define CLASSID_CC(TName, TBaseClass)                                           \
+private:                                                                        \
+    typedef TBaseClass TSuper;                                                  \
+    typedef TName TThis;                                                        \
+                                                                                \
+public:                                                                         \
+    constexpr static qd::ClassIdCC CLASS_ID = qd::ClassIdCC::makeByInd(#TName); \
+    virtual const qd::ClassIdCC& getClassId() const override {                  \
+        return TName::CLASS_ID;                                                 \
+    }                                                                           \
+                                                                                \
 private:
 
 

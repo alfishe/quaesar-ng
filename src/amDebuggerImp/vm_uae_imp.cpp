@@ -19,6 +19,7 @@
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdBase/endian.h>
+#include <qdIce/qdUI/actionMgr.h>
 #include <quaesar.h>
 
 

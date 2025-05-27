@@ -1,7 +1,10 @@
 #include "gui_manager.h"
 #include <amDebugger/action_mgr.h>
 #include <imgui/imgui_internal.h>
-#include <amDebugger/shortcut/shortcut_mgr.h>
+#include <qdIce/qdUI/shortcutMgr.h>
+#include <amDebugger/shortcut/shortcut_list.h>
+#include <qdIce/qdUI/actionMgr.h>
+
 
 namespace qd {
 
@@ -10,8 +13,11 @@ using namespace action;
 GuiManager::GuiManager(Debugger* in_dbg) : dbg(in_dbg) {
     windows.resize((size_t)WndId::MostCommonCount);
 
+    m_pActionMgr = createComp_<ActionManager>();
+    m_pShortcutMgr = createComp_<ShortcutsMgr>();
+
     // create all windows
-    UiViewCreate cv(this);
+    UiViewCreateCtx cv(this);
     auto viewMgr = UiViewClassRegistry::get();
     for (auto it : viewMgr->mClassInfoMap) {
         UiView* curView = viewMgr->makeInstance(it.first, &cv);
@@ -25,6 +31,9 @@ GuiManager::~GuiManager() {
 
 
 void GuiManager::drawImGuiMainFrame() {
+
+    getShortcuts()->update();
+
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -55,7 +64,7 @@ void GuiManager::_drawMainToolBar() {
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;
 
         Debugger* dbg = getDbg();
-        ShortcutsMgr* shMgr = ShortcutsMgr::get();
+        ShortcutsMgr* shMgr = getShortcuts();
         const Shortcut* pCurShortcut;
         eastl::string hint;
 
@@ -118,7 +127,7 @@ void GuiManager::_drawDebuggerWindows() {
 }
 
 void GuiManager::_drawMainMenuBar() {
-    auto pActionMgr = action::ActionManager::get();
+    auto pActionMgr = getActionMgr();
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             ImGui::EndMenu();
@@ -126,7 +135,7 @@ void GuiManager::_drawMainMenuBar() {
 
         if (ImGui::BeginMenu("Emulator")) {
             ActionManager::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Emul);
-            for (action::Action* curAction : actionsList) {
+            for (UiAction* curAction : actionsList) {
                 curAction->onDrawMainMenuItem(UiDrawEvent::MainMenu_Emul);
             }
             ImGui::EndMenu();
@@ -134,7 +143,7 @@ void GuiManager::_drawMainMenuBar() {
 
         if (ImGui::BeginMenu("Debug")) {
             ActionManager::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Debug);
-            for (action::Action* curAction : actionsList) {
+            for (UiAction* curAction : actionsList) {
                 curAction->onDrawMainMenuItem(UiDrawEvent::MainMenu_Debug);
             }
             ImGui::EndMenu();

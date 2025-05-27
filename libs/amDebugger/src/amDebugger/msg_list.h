@@ -13,21 +13,12 @@ static constexpr int AUTO_ID_START = (__COUNTER__ - 1);
 #define AUTO_ID (__COUNTER__ - AUTO_ID_START)
 
 
-template <int TClassId>
-struct Base_ : public Base {
-    static constexpr int ID = TClassId;
-    Base_() : Base(TClassId) {
-    }
-};  // struct Base_
-
 
 struct MenuItemStateGet : Base_<AUTO_ID> {
     UiDrawEvent::Type menuType = UiDrawEvent::Undef;
     int checked = -1;
 };
 
-
-struct DoAction : Base_<AUTO_ID> {};
 
 
 struct DoDebugTraceContinue : Base_<AUTO_ID> {};

@@ -12,7 +12,7 @@ class DisassemblyView : public UiWindow {
     eastl::optional<AddrRef> mDisasmAddr;
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Disassembly";
     }

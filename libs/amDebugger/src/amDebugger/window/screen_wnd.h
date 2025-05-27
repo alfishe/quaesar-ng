@@ -10,7 +10,7 @@ class ScreenWnd : public UiWindow {
     ImTextureID mTextureId = 0;
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Screen";
     }

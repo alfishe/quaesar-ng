@@ -142,7 +142,7 @@ int SDL_main(int argc, char* argv[]) {
     uae_thread_handler = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
 
     // wait UAE initialization
-    qd::onUaeInitialized = new qd::thread::Event(true);
+    qd::onUaeInitialized = new qd::ThreadEvent(true);
     qd::onUaeInitialized->wait();
 
     // quaesar main loop
@@ -166,7 +166,7 @@ int SDL_main(int argc, char* argv[]) {
 //////////////////////////////////////////////////////////////////////////
 namespace qd {
 
-qd::thread::Event* onUaeInitialized = nullptr;
+qd::ThreadEvent* onUaeInitialized = nullptr;
 
 void App::requestToQuit() {
     mQuitRequestPosted = true;

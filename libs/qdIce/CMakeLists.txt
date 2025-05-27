@@ -29,6 +29,9 @@ add_source_group("qdMem")
 add_source_group("qdDebug")
 add_source_group("qdEnum")
 add_source_group("qdPlatform")
+add_source_group("qdCore")
+add_source_group("qdTypeSystem")
+
 
 add_library(qdIce ${QDICE_HDR} ${QDICE_SRC})
 

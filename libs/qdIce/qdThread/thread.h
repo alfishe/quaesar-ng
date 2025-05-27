@@ -4,7 +4,6 @@
 #include <SDL_thread.h>
 
 namespace qd {
-namespace thread {
 
 class Mutex {
     SDL_mutex* mpMutex;
@@ -61,21 +60,21 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class Event {
+class ThreadEvent {
     SDL_cond* mpCondition;
     SDL_mutex* mpMutex;
     volatile bool mbState;
     bool mbAutoReset;
 
 public:
-    Event(bool auto_reset_event = true);
-    ~Event();
+    ThreadEvent(bool auto_reset_event = true);
+    ~ThreadEvent();
     void reset();
     void set();
     void wait();
     bool wait(uint32_t time_out_ms);
 
-};  // class thread::Event
+};  // class thread::ThreadEvent
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -83,5 +82,4 @@ inline bool isMainThread() {
     return SDL_ThreadID() == SDL_GetThreadID(nullptr);
 }
 
-};  // namespace thread
 };  // namespace qd

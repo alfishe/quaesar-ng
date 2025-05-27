@@ -1,8 +1,9 @@
 #pragma once
-#include <amDebugger/class_reg.h>
+#include <qdIce/qdBase/classInfoReg.h>
 #include <amDebugger/ui_defs.h>
 #include <qdIce/qdBase/color.h>
 #include <qdIce/qdImGui/imgui_eastl.h>
+#include <qdIce/qdCore/nodeBase.h>
 
 
 namespace qd {
@@ -10,11 +11,11 @@ namespace qd {
 class GuiManager;
 class Debugger;
 
-struct UiViewCreate {
+struct UiViewCreateCtx {
     GuiManager* gui;
     bool visible = true;
 
-    UiViewCreate(GuiManager* _ui) : gui(_ui) {
+    UiViewCreateCtx(GuiManager* _ui) : gui(_ui) {
     }
 };  // struct CreateUiViewParams
 
@@ -29,9 +30,9 @@ private:                                               \
 //
 // Base class of all ui
 //
-class UiView {
+class UiView : public qd::Node {
 public:
-    eastl::string mTitle;
+    qd::string mTitle;
     bool mVisible = true;
     GuiManager* ui = nullptr;
     uint32_t mClassId = 0;
@@ -39,7 +40,7 @@ public:
 public:
     UiView() = default;
 
-    virtual void onCreate(UiViewCreate* cp) {
+    virtual void onCreate(UiViewCreateCtx* cp) {
         mVisible = cp->visible;
         ui = cp->gui;
     }
@@ -66,12 +67,13 @@ public:
 };  // class UiView
 //////////////////////////////////////////////////////////////////////////
 
+
 class UiWindow : public UiView {
 public:
     // QDB_CLASS_ID();
     UiWindow() = default;
 
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiView::onCreate(cp);
     }
     virtual void draw() override;
@@ -79,12 +81,13 @@ public:
 };  // class UiWindow
 //////////////////////////////////////////////////////////////////////////
 
+
 namespace window {
 class ImGuiDemoWindow : public UiWindow {
     QDB_CLASS_ID(WndId::ImGuiDemo);
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "ImGui Demo";
         mVisible = false;
@@ -98,6 +101,7 @@ public:
 };  // namespace window
 //////////////////////////////////////////////////////////////////////////
 
+
 using UiViewClassRegistry = ClassInfoRegistry_<UiView>;
 
 template <class TClass>
@@ -109,7 +113,7 @@ struct UiViewClassRegistrator_ {
         metaInfo.registerClass();
     }
 
-    static UiView* createClassCb(const UiViewClassRegistry::MetaInfo& meta, UiViewCreate* cp) {
+    static UiView* createClassCb(const UiViewClassRegistry::MetaInfo& meta, UiViewCreateCtx* cp) {
         TClass* newInst = new TClass();
         newInst->mClassId = meta.classId;
         newInst->onCreate(cp);

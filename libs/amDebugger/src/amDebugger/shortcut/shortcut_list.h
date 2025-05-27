@@ -40,7 +40,6 @@ enum class EId {
 };  // enum
 
 
-extern qd::Shortcut* makeInstance(qd::shortcut::EId id);
 
 };  // namespace shortcut
 };  // namespace qd

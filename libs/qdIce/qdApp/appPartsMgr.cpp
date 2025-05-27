@@ -48,10 +48,10 @@ namespace qd {
 
         const qd::string& strPartName = pPart->getPartName();
         if (strPartName.empty())
-            pPart->setPartName(pPart->classId().className);
+            pPart->setPartName(pPart->getTypeId().ToStringID().c_str());
 
 	    if (!addPartTry(pPart)) {
-	        G_THROW_OR_DO(Exception("AddPartError: Duplicate Part Found: \"%s\"", strPartName.c_str()), assert(0));
+	        G_THROW_OR_DO(Exception("AddPartError: Duplicate Part Found: \"%s\"", strPartName.c_str()), return);
 	    }
 	}
 

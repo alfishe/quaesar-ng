@@ -11,7 +11,7 @@ class CustomRegsWnd : public UiWindow {
     ImGuiTextFilter mRegsFilter;
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override {
+    virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Custom regs";
     }

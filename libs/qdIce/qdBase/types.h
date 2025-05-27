@@ -1,6 +1,5 @@
 #pragma once
-#include <EASTL/internal/config.h>
-#include <stdint.h>
+#include <qdIce/qdBase/base.h>
 
 
 namespace qd {

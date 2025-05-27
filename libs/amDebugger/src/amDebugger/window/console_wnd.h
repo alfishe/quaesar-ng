@@ -12,7 +12,7 @@ class ConsoleWnd : public UiWindow {
     ConsoleLogWriter* mpConsoleWriter = nullptr;
 
 public:
-    virtual void onCreate(UiViewCreate* cp) override;
+    virtual void onCreate(UiViewCreateCtx* cp) override;
 
     virtual void drawContent() override;
 

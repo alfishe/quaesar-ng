@@ -11,9 +11,9 @@
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdThread/thread.h>
-#include <amDebugger/shortcut/shortcut_mgr.h>
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui/ui_style.h>
+#include <qdIce/qdUI/actionMgr.h>
 
 
 namespace qd {
@@ -22,8 +22,6 @@ Debugger *Debugger::gInst = nullptr;
 
 
 void Debugger::update() {
-    qd::ShortcutsMgr::get()->update();
-
     // Start the Dear ImGui frame
     ImGui_ImplSDLRenderer2_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -38,13 +36,13 @@ namespace imp {
 class ConsoleQueue {
 public:
     eastl::queue<eastl::string> mConsoleCmdQueue;
-    qd::thread::Event* mpEvent;
-    qd::thread::Mutex* mpMutex;
+    qd::ThreadEvent* mpEvent;
+    qd::Mutex* mpMutex;
 
 public:
     ConsoleQueue() {
-        mpEvent = new qd::thread::Event(true);
-        mpMutex = new qd::thread::Mutex();
+        mpEvent = new qd::ThreadEvent(true);
+        mpMutex = new qd::Mutex();
     }
 
     void addCmdToQueue(eastl::string cmd) {
@@ -58,7 +56,7 @@ public:
 
     bool waitConsoleCmd(eastl::string& out) {
         mpEvent->wait(100);
-        qd::thread::MutexLock ml(*mpMutex);
+        qd::MutexLock ml(*mpMutex);
         if (mConsoleCmdQueue.empty())
             return false;
         const eastl::string& cmd = mConsoleCmdQueue.front();
@@ -97,8 +95,11 @@ void Debugger::init() {
     vm = VM::setVmInst(createByFactory<qd::VM>());
     vm->init();
     gui = new GuiManager(this);
-    mActions = action::ActionManager::get();
-    mActions->create(gui, this);
+    mActions = gui->getActionMgr();
+    action::AmDebuggerActionCreator actionCreate;
+    actionCreate.gui = gui;
+    actionCreate.dbg = this;
+    mActions->createActions(&actionCreate);
     capstone = new csh();
 
     // TODO: Pick correct CPU depending on starting CPU

@@ -1,21 +1,19 @@
 #pragma once
 #include <EASTL/span.h>
-#include <amDebugger/action_mgr.h>
-#include <amDebugger/shortcut/shortcut_mgr.h>
+#include <qdIce/qdUI/actionBase.h>
 
 
 namespace qd {
 namespace action {
 namespace comp {
 
-class ShortcutComp : public comp::Base {
+class ShortcutComp : public qd::CompBase {
+    QD_REFLECT_TYPE(ShortcutComp);
 public:
     static constexpr uint32_t CLASSID = (uint32_t)EActionCompsClassId::Shortcuts;
     eastl::fixed_vector<const Shortcut*, 2> mShortcuts;
 
 public:
-    ShortcutComp(action::ActionCreator* cp) : comp::Base(cp, CLASSID) {
-    }
     virtual ~ShortcutComp() {
     }
 
@@ -48,10 +46,3 @@ public:
 };  // namespace qd
 
 
-inline void qd::action::Action::addShortcut(shortcut::EId sid) {
-    auto pMgr = qd::ShortcutsMgr::get();
-    const Shortcut* pShortcut = pMgr->getShortcut(sid);
-    EASTL_ASSERT(pShortcut);
-    auto pShortComp = createComp_<qd::action::comp::ShortcutComp>();
-    pShortComp->addShortcut(pShortcut);
-}

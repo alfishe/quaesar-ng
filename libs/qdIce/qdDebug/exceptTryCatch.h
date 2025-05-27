@@ -24,17 +24,19 @@ namespace qd {
 #else  // EASTL_EXCEPTIONS_ENABLED
 
 #define G_THROW_OR_DO(TException, action, ...) \
-    if (1) {                                   \
-        c_def(TException);                     \
+    if (c_def(true)) {                         \
+        const auto& _tmp_ex_v = TException;    \
+        EA_UNUSED(_tmp_ex_v);                  \
         action;                                \
         __VA_ARGS__;                           \
     }
 
 #define G_TRY if (1)
 
-#define G_CATCH(x) \
-    if (0)         \
-    auto _tmp_cb##__LINE__ = [&](x)
+// turning exception into lambda
+#define G_CATCH(TException) \
+    if (c_def(0))           \
+    auto _tmp_cb##__LINE__ = [&](TException)
 
 #endif  // EASTL_EXCEPTIONS_ENABLED
 //////////////////////////////////////////////////////////////////////////

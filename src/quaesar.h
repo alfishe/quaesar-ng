@@ -3,7 +3,7 @@
 #include <qdIce/qdBase/base.h>
 #include <qdIce/qdThread/thread.h>
 
-FORWARD_DECLARATION_3(qd, thread, Event);
+FORWARD_DECLARATION_2(qd, ThreadEvent);
 FORWARD_DECLARATION_2(qd, Debugger);
 FORWARD_DECLARATION_2(qd, Application);
 
@@ -13,11 +13,11 @@ struct SDL_Renderer;
 
 
 namespace qd {
-extern qd::thread::Event* onUaeInitialized;
+extern qd::ThreadEvent* onUaeInitialized;
 
 class App {
     SDL_Texture* mUaeScrTexture = nullptr;
-    qd::thread::Mutex mUaeScrTextureMutex;
+    qd::Mutex mUaeScrTextureMutex;
     SDL_atomic_t scrFrameNo = {};
     int renderedFrameNo = -1;
     bool mQuitRequestPosted = false;
