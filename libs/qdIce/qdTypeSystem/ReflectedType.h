@@ -1,5 +1,7 @@
 #pragma once
-#include "TypeInfo.h"
+#include <qdIce/qdTypeSystem/typeInfoReflector.h>
+#include <qdIce/qdMem/fnvHash.h>
+
 
 //-------------------------------------------------------------------------
 // Type Reflection
@@ -8,6 +10,13 @@
 namespace qd {
 class TypeRegistry;
 class PropertyInfo;
+class TypeInfo;
+class TypeId;
+
+
+
+
+
 
 // Base type for reflection
 //-------------------------------------------------------------------------
@@ -26,18 +35,11 @@ public:
     IReflectedType& operator= (IReflectedType const& rhs) = default;
 
     virtual const qd::TypeInfo* getTypeInfo() const = 0;
-    virtual qd::TypeId getTypeId() const = 0;
-};
+    // virtual const qd::TypeId& getTypeId() const = 0;
+}; // class IReflectedType
+//////////////////////////////////////////////////////////////////////////
 
-// Default instance constructor
-//-------------------------------------------------------------------------
-// In some cases, you might need a custom constructor for the default instance
-// If you define a ctor with this argument in your reflected type it will use that ctor instead of the default one
-// e.g. Foo::Foo( DefaultInstanceCtor_t ) { ... }
 
-enum DefaultInstanceCtor_t {
-    DefaultInstanceCtor
-};
 
 // Helper methods
 //-------------------------------------------------------------------------
@@ -50,15 +52,15 @@ bool IsOfType(IReflectedType const* pType)
         return false;
     }
 
-    return pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID());
+    return pType->GetTypeInfo()->isDerivedFrom_(T::GetStaticTypeID());
 }
 
 // This is a assumed safe cast, it will validate the cast only in dev builds. Doesnt accept null arguments
 template<typename T>
 T* Cast(IReflectedType* pType)
 {
-    EE_ASSERT(pType != nullptr);
-    EE_ASSERT(pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
+    assert(pType != nullptr);
+    assert(pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
     return reinterpret_cast<T*>(pType);
 }
 
@@ -66,8 +68,8 @@ T* Cast(IReflectedType* pType)
 template<typename T>
 T const* Cast(IReflectedType const* pType)
 {
-    EE_ASSERT(pType != nullptr);
-    EE_ASSERT(pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
+    assert(pType != nullptr);
+    assert(pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
     return reinterpret_cast<T const*>(pType);
 }
 
@@ -75,7 +77,7 @@ T const* Cast(IReflectedType const* pType)
 template<typename T>
 T* TryCast(IReflectedType* pType)
 {
-    if (pType != nullptr && pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()))
+    if (pType != nullptr && pType->GetTypeInfo()->isDerivedFrom_(T::GetStaticTypeID()))
     {
         return reinterpret_cast<T*>(pType);
     }
@@ -87,7 +89,7 @@ T* TryCast(IReflectedType* pType)
 template<typename T>
 T const* TryCast(IReflectedType const* pType)
 {
-    if (pType != nullptr && pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()))
+    if (pType != nullptr && pType->GetTypeInfo()->isDerivedFrom_(T::GetStaticTypeID()))
     {
         return reinterpret_cast<T const*>(pType);
     }
@@ -95,38 +97,7 @@ T const* TryCast(IReflectedType const* pType)
     return nullptr;
 }
 
-//-------------------------------------------------------------------------
 
-inline void validateStaticTypeInfoPtr(qd::TypeInfo const* pPtr)
-{
-    assert(pPtr && "Invalid TypeInfo Ptr");
-}
-} // namespace qd
+}; // namespace qd
+//////////////////////////////////////////////////////////////////////////
 
-
-//-------------------------------------------------------------------------
-// Reflection Macros
-//-------------------------------------------------------------------------
-
-#define QD_REFLECT_TYPE(TypeName)                            \
-    friend qd::TypeInfo;                                     \
-    template<typename T>                                     \
-    friend class qd::TypeInfo_;                              \
-                                                             \
-public:                                                      \
-    static const qd::TypeInfo* s_pTypeInfo;                  \
-    static qd::TypeId getStaticTypeId()                      \
-    {                                                        \
-        validateStaticTypeInfoPtr(s_pTypeInfo);              \
-        return TypeName::s_pTypeInfo->m_ID;                  \
-    }                                                        \
-    virtual const qd::TypeInfo* getTypeInfo() const override \
-    {                                                        \
-        validateStaticTypeInfoPtr(TypeName::s_pTypeInfo);    \
-        return TypeName::s_pTypeInfo;                        \
-    }                                                        \
-    virtual qd::TypeId getTypeId() const override            \
-    {                                                        \
-        validateStaticTypeInfoPtr(TypeName::s_pTypeInfo);    \
-        return TypeName::s_pTypeInfo->m_ID;                  \
-    }\

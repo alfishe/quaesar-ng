@@ -1,5 +1,7 @@
 #include "ui_view.h"
 #include <amDebugger/ui/gui_manager.h>
+#include <qdIce/qdTypeSystem/typeInfo.h>
+
 
 namespace qd {
 
@@ -16,12 +18,19 @@ void UiWindow::draw() {
 
 namespace window {
 
-QDB_WINDOW_REGISTER(window::ImGuiDemoWindow);
-
 void ImGuiDemoWindow::draw() {
     ImGui::ShowDemoWindow(&mVisible);
 }
 
 };  // namespace window
+
+
+void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, UiWindow *newInst)
+{
+    if (auto typeIdAttr = meta.getAttribute_<qd::CustomTypeId32Attr>())
+        newInst->mClassId = typeIdAttr->getId32();
+    newInst->onCreate(cp);
+}
+
 
 };  // namespace qd

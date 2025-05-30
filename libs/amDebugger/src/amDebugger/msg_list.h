@@ -9,22 +9,22 @@ namespace qd {
 namespace action {
 namespace msg {
 
-static constexpr int AUTO_ID_START = (__COUNTER__ - 1);
-#define AUTO_ID (__COUNTER__ - AUTO_ID_START)
 
-
-
-struct MenuItemStateGet : Base_<AUTO_ID> {
+struct MenuItemStateGet : Base {
+    TS_REFLECT_CLASS(MenuItemStateGet, action::msg::Base);
     UiDrawEvent::Type menuType = UiDrawEvent::Undef;
     int checked = -1;
 };
 
 
 
-struct DoDebugTraceContinue : Base_<AUTO_ID> {};
+struct DoDebugTraceContinue : Base {
+    TS_REFLECT_CLASS(DoDebugTraceContinue, action::msg::Base);
+};
 
 
-struct DisasmToggleBreakpoint : Base_<AUTO_ID> {
+struct DisasmToggleBreakpoint : Base {
+    TS_REFLECT_CLASS(DisasmToggleBreakpoint, action::msg::Base);
     AddrRef address = {};
     EReg reg = EReg::PC;
     int setBreakpoint = -1;
@@ -32,15 +32,16 @@ struct DisasmToggleBreakpoint : Base_<AUTO_ID> {
 };
 
 
-struct CopperToggleBreakpoint : Base_<AUTO_ID> {
+struct CopperToggleBreakpoint : Base {
+    TS_REFLECT_CLASS(CopperToggleBreakpoint, action::msg::Base);
     AddrRef address = {};
 };
 
-struct CopperTraceStep : Base_<AUTO_ID> {};
+struct CopperTraceStep : Base {
+    TS_REFLECT_CLASS(CopperTraceStep, action::msg::Base);
+};
 
 
-#undef AUTO_ID
-#undef AUTO_ID_START
 };  // namespace msg
 };  // namespace action
 };  // namespace qd

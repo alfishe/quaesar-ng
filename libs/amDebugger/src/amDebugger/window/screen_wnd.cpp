@@ -7,7 +7,6 @@
 
 namespace qd {
 namespace window {
-QDB_WINDOW_REGISTER(ScreenWnd);
 
 void ScreenWnd::drawContent() {
     VM* vm = getDbg()->getVm();

@@ -6,6 +6,7 @@
 #include <qdIce/qdEnum/enumBase.h>
 #include <qdIce/qdMath/fixedPoint.h>
 #include <qdIce/qdTypeSystem/ReflectedType.h>
+#include <qdIce/qdCore/nodeBase.h>
 
 
 namespace qd {
@@ -73,8 +74,8 @@ struct RENDER_IMGUI_DEBUG_INFO_TREE : EAppPartEvent::Msg_<PAUTO_ID> {
 
 //////////////////////////////////////////////////////////////////////////
 // CrioGen Application Parts
-class BaseAppPart : public qd::RefCounted, public qd::IReflectedType {
-    QD_REFLECT_TYPE(BaseAppPart);
+class BaseAppPart : public qd::Node {
+    TS_REFLECT_CLASS(qd::BaseAppPart, qd::Node);
     friend class AppPartsManager;
 
 protected:

@@ -49,7 +49,7 @@ StringID::StringID(char const* pStr) {
         qd::MutexLock lock(*g_pStringCacheMutex);
         auto iter = g_pStringCache->find(m_ID);
         if (iter == g_pStringCache->end()) {
-            (*g_pStringCache)[m_ID] = String(pStr);
+            (*g_pStringCache)[m_ID] = string(pStr);
 
         } else {
             assert(iter->second == pStr);
@@ -57,7 +57,7 @@ StringID::StringID(char const* pStr) {
     }
 }
 
-StringID::StringID(String const& str) : StringID(str.c_str()) {
+StringID::StringID(string const& str) : StringID(str.c_str()) {
 }
 
 StringID::StringID(InlineString const& str) : StringID(str.c_str()) {

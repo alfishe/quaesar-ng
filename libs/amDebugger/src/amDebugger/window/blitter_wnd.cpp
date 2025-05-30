@@ -12,18 +12,18 @@
 
 namespace qd {
 namespace window {
-class BlitterWnd : public UiWindow {
-    QDB_CLASS_ID(WndId::BlitterWnd);
+class BlitterWnd : public qd::UiWindow {
+    QDB_WINDOW_REGISTER(WndId::BlitterWnd, qd::window::BlitterWnd, qd::UiWindow);
 
 public:
-    virtual void onCreate(UiViewCreateCtx* cp) override {
+    virtual void onCreate(UiViewCreateCtx *cp) override {
         UiWindow::onCreate(cp);
         mTitle = "Blitter";
     }
 
     virtual void drawContent() override;
 
-} QDB_WINDOW_REGISTER(BlitterWnd);
+};
 //////////////////////////////////////////////////////////////////////////
 
 

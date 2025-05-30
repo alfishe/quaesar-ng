@@ -10,7 +10,6 @@
 
 namespace qd {
 namespace window {
-QDB_WINDOW_REGISTER(MemoryGraphWnd);
 
 void MemoryGraphWnd::drawContent() {
     VM* vm = getDbg()->getVm();

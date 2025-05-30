@@ -7,7 +7,7 @@ namespace window {
 
 
 class CustomRegsWnd : public UiWindow {
-    QDB_CLASS_ID(WndId::CustomRegsWnd);
+    QDB_WINDOW_REGISTER(WndId::CustomRegsWnd, qd::window::CustomRegsWnd, qd::UiWindow);
     ImGuiTextFilter mRegsFilter;
 
 public:
@@ -18,7 +18,7 @@ public:
 
     virtual void drawContent() override;
 
-} QDB_WINDOW_REGISTER(CustomRegsWnd);
+}; // CustomRegsWnd;
 //////////////////////////////////////////////////////////////////////////
 
 

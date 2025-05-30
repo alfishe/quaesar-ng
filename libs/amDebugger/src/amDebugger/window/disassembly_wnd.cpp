@@ -12,8 +12,6 @@
 namespace qd {
 namespace window {
 
-QDB_WINDOW_REGISTER(DisassemblyView);
-
 
 void DisassemblyView::drawContent() {
     Debugger* dbg = getDbg();

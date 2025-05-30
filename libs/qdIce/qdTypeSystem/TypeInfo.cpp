@@ -1,25 +1,53 @@
 #include "TypeInfo.h"
+#include <qdIce/qdDebug/assert.h>
 
 //-------------------------------------------------------------------------
 
 namespace qd {
-bool TypeInfo::IsDerivedFrom(TypeId const potentialParentTypeID) const {
-    if (potentialParentTypeID == m_ID) {
+bool TypeInfo::isDerivedFrom(const TypeInfo& type) const {
+    if (getStdTypeId() == type.getStdTypeId())
         return true;
-    }
 
-    if (m_pParentTypeInfo != nullptr) {
-        if (m_pParentTypeInfo->m_ID == potentialParentTypeID) {
+    for (auto i = m_pBaseSuperTypes.begin(); i != m_pBaseSuperTypes.end(); ++i)
+    {
+        const TypeInfo* pCurBaseType = *i;
+        if (pCurBaseType->getStdTypeId() == type.getStdTypeId())
             return true;
-        }
-
-        // Check inheritance hierarchy
-        if (m_pParentTypeInfo->IsDerivedFrom(potentialParentTypeID)) {
-            return true;
+        if (!pCurBaseType->m_pBaseSuperTypes.empty())
+        {
+            if (pCurBaseType->isDerivedFrom(type)) // RECURSIVE
+                return true;
         }
     }
-
     return false;
 }
+
+
+bool TypeInfo::checkDefined() const
+{
+    if (c_def(this) && isDefined())
+        return true;
+    QD_HALT("TypeInfo not defined");
+    return false;
+}
+
+
+void TypeInfo::onTypeCreated()
+{
+    m_bDefined = true;
+}
+
+
+void TypeInfo::getInheritedProviders(_Out_ eastl::vector<const TypeInfoBase* >& out_list) const
+{
+    out_list.reserve(m_pBaseSuperTypes.size());
+    for (TBaseSuperTypes::const_iterator i = m_pBaseSuperTypes.begin(); i != m_pBaseSuperTypes.end(); ++i)
+    {
+        const TypeInfo* pType = *i;
+        const TypeInfoBase* pProvider = static_cast<const TypeInfoBase*>(pType);
+        out_list.push_back(pProvider);
+    }
+}
+
 
 };  //namespace qd

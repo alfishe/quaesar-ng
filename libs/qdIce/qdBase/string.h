@@ -1,12 +1,9 @@
 #pragma once
 #include <EASTL/string.h>
-
+#include "qdIce/qdSTL/forwardDecl.h"
 
 namespace qd
 {
-	
-using string = eastl::string;
-
 
 inline string stringFormat(const char* pFormat, ...) {
     va_list argList;

@@ -3,6 +3,7 @@
 #include <EASTL/string.h>
 #include <cstdarg>
 #include <ctime>
+#include <SDL_log.h>
 
 
 namespace qd {

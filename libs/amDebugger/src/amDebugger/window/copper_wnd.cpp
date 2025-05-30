@@ -14,8 +14,8 @@
 
 namespace qd {
 namespace window {
-class CopperDbgWnd : public UiWindow {
-    QDB_CLASS_ID(WndId::CopperDbgWnd);
+class CopperDbgWnd : public qd::UiWindow {
+    QDB_WINDOW_REGISTER(WndId::CopperDbgWnd, qd::window::CopperDbgWnd, qd::UiWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
@@ -25,7 +25,7 @@ public:
 
     virtual void drawContent() override;
 
-} QDB_WINDOW_REGISTER(CopperDbgWnd);
+}; // CopperDbgWnd
 //////////////////////////////////////////////////////////////////////////
 
 };  // namespace window

@@ -7,7 +7,8 @@ namespace qd {
 namespace window {
 
 class MemoryGraphWnd : public UiWindow {
-    QDB_CLASS_ID(WndId::MemoryGraph);
+    QDB_WINDOW_REGISTER(WndId::MemoryGraph, qd::window::MemoryGraphWnd, qd::UiWindow);
+
 
     ImTextureID mTextureId = 0;
     Int2 mTextureSize = {-1, -1};

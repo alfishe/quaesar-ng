@@ -1,82 +1,129 @@
 #pragma once
-
-#include <typeinfo>
-#include <EASTL/hash_map.h>
+#include <EASTL/span.h>
+#include <EASTL/vector_map.h>
+#include <qdIce/qdTypeSystem/stdTypeId.h>
 #include <qdIce/qdTypeSystem/TypeID.h>
+#include <qdIce/qdTypeSystem/typeInfo.h>
+
 
 //-------------------------------------------------------------------------
 
-namespace qd
-{
-}
-
-//-------------------------------------------------------------------------
-
-namespace qd
-{
+namespace qd {
 class IReflectedType;
 class TypeInfo;
 class EnumInfo;
 class PropertyInfo;
 class PropertyPath;
+class TypeInfoSpan;
 struct ResourceInfo;
 struct DataFileInfo;
+
+
+
+struct CTypeInfoCmp {
+    inline bool operator() (const std::type_info* t1, const std::type_info* t2) const { return t1->before(*t2) != 0; }
+}; // struct CTypeInfoCmp
+
+typedef eastl::vector_map<const std::type_info*, TypeInfo*, CTypeInfoCmp> TypeInfoMap;
+// typedef eastl::vector_map<CGuid32, eastl::fixed_vector<TypeInfo*, 1, true>> TypeMapByGuid;
+//------------------------------------------------------------------------
+
+
 
 //-------------------------------------------------------------------------
 
 class TypeRegistry
 {
-    eastl::hash_map<TypeId, TypeInfo const*> m_registeredTypes;
+    struct SharedData;
+    TypeRegistry::SharedData* m_pSharedData = nullptr;
 
 public:
-
-    TypeRegistry() = default;
+    TypeRegistry();
     ~TypeRegistry();
 
-    void RegisterInternalTypes();
-    void UnregisterInternalTypes();
+    static TypeRegistry* get();
+    SharedData* getSharedData() const;
+    const TypeInfo& getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined = false);
+    void bindNamedTypeInfo(const TypeInfo& type_info);
 
-    //-------------------------------------------------------------------------
-    // Type Info
-    //-------------------------------------------------------------------------
+    inline const TypeInfoMap& getTypesMap();
 
-    const TypeInfo* RegisterType(TypeInfo const* pType);
-    void UnregisterType(TypeInfo const* pType);
+    // Finds all inherited classes from the current
+    // BRUTEFORCE may be very slowly
+    eastl::vector<const TypeInfo*> findAllDerivedFromTypes(const TypeInfo& rBaseType, bool bIncludeBaseInList = false);
 
-    // Returns the type information for a given type ID
-    TypeInfo const* GetTypeInfo(TypeId typeID) const;
+    template<class TBaseClass>
+    static TypeInfoSpan findAllDerivedFromTypesCached_(bool bIncludeBaseInList = false);
 
-    // Returns the type information for a given type
-    template<typename T, typename = std::enable_if_t<std::is_base_of<qd::IReflectedType, T>::value>>
-    TypeInfo const* GetTypeInfo() const
+
+protected:
+    const TypeInfo& _createUnNamedTypeInfoByStdType(const StdTypeId& ti);
+    void _createSharedData() const;
+}; // class TypeRegistry
+//////////////////////////////////////////////////////////////////////////
+
+
+
+// ARRAY OF REFLECTION TYPES
+class TypeInfoSpan : public eastl::span<const TypeInfo* const>
+{
+    using TType = const TypeInfo* const;
+    typedef eastl::span<TType> TSuper;
+
+public:
+    using TSuper::TSuper;
+
+    template<class TAttr>
+    const TypeInfo* findTypeByAttrValue(const TAttr& attr, bool inherit = false) const
     {
-        return T::s_pTypeInfo;
+        const TypeInfo& attrType = typeof_<TAttr>();
+        for (const TypeInfo* curType : *this)
+        {
+            const TypeInfoAttribute* foundBaseAttr = curType->findCustomAttribute(attrType, inherit);
+            if (!foundBaseAttr)
+                continue;
+            TAttr* foundAttr = static_cast<TAttr *>(foundBaseAttr);
+            if (attr == *foundAttr) // operator ==
+                return curType;
+        }
+        return nullptr;
     }
 
-    // Returns the resolved property info for a given path
-    PropertyInfo const* ResolvePropertyPath(TypeInfo const* pTypeInfo, PropertyPath const& pathID) const;
 
-    // Is this type registered?
-    inline bool IsRegisteredType(TypeId typeID) const { return m_registeredTypes.find(typeID) != m_registeredTypes.end(); }
-
-    // Does a given type derive from a given parent type
-    bool IsTypeDerivedFrom(TypeId typeID, TypeId parentTypeID) const;
-
-    // Return all known types
-    TVector<TypeInfo const*> GetAllTypes(bool includeAbstractTypes = true, bool sortAlphabetically = false) const;
-
-    // Return all types that derived from a specified type
-    TVector<TypeInfo const*> GetAllDerivedTypes(TypeId parentTypeID, bool includeParentTypeInResults = false, bool includeAbstractTypes = true, bool sortAlphabetically = false) const;
-
-    // Get all the types that this type is allowed to be cast to
-    TInlineVector<TypeId, 5> GetAllCastableTypes(IReflectedType const* pType) const;
-
-    // Are these two types in the same derivation chain (i.e. does either derive from the other )
-    bool AreTypesInTheSameHierarchy(TypeId typeA, TypeId typeB) const;
-
-    // Are these two types in the same derivation chain (i.e. does either derive from the other )
-    bool AreTypesInTheSameHierarchy(TypeInfo const* pTypeInfoA, TypeInfo const* pTypeInfoB) const;
+}; // class ReflectionTypesSpan
+//////////////////////////////////////////////////////////////////////////
 
 
-}; // class TypeRegistry
+
+
+struct TypeRegistry::SharedData {
+    TypeInfoMap m_TypeMap;
+    const TypeInfo* m_pTypeVoid = nullptr;
+    eastl::vector_map<THash32, const TypeInfo* > m_TypeByFullName; // Hash from full name
+
+    SharedData() = default;
+    ~SharedData();
+
+}; // struct
+//////////////////////////////////////////////////////////////////////////
+
+
+
+template<class TBaseClass>
+TypeInfoSpan TypeRegistry::findAllDerivedFromTypesCached_(bool bIncludeBaseInList/* = false*/)
+{
+    static eastl::vector<const TypeInfo*> derivedClasses; // CACHED CLASSES
+    if (derivedClasses.empty())
+    {
+        derivedClasses.clear(); // for debug
+        const TypeInfo& refBaseType = qd::typeof_<TBaseClass>();
+        TypeRegistry* pReflection = get();
+        derivedClasses = pReflection->findAllDerivedFromTypes(refBaseType, bIncludeBaseInList);
+        assert(!derivedClasses.empty() && "No reflect declared class found");
+    }
+    return TypeInfoSpan(derivedClasses);
+}
+
+
+
 }; // namespace qd

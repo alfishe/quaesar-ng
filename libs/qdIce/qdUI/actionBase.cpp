@@ -6,8 +6,8 @@
 namespace qd {
 
 void UiAction::addShortcut(int sid) {
-    auto pActMgr = findParentMixin_<ShortcutsMgr>();
-    assert(pActMgr);
+    auto pActMgr = findParentComp_<qd::ShortcutsMgr>();
+    QD_LOGERR_AND_DO(pActMgr, return, "");
     const Shortcut* pShortcut = pActMgr->getShortcut(sid);
     assert(pShortcut);
     auto pShortComp = createComp_<qd::action::comp::ShortcutComp>();
@@ -24,9 +24,6 @@ qd::EFlow UiAction::_applyMsgProcDefImp(action::msg::Base* pBaseMtd) {
     return EFlow::NO_RESULT;
 }
 
-
-UiAction::~UiAction() {
-}
 
 
 };  // namespace qd

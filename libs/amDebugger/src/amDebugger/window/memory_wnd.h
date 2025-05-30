@@ -65,7 +65,8 @@ namespace qd {
 namespace window {
 
 class MemoryView : public UiWindow {
-    QDB_CLASS_ID(WndId::MemoryView);
+    QDB_WINDOW_REGISTER(WndId::MemoryView, qd::window::MemoryView, qd::UiWindow);
+
     void* m_memAddr = 0;
     size_t m_memSize = 0;
     size_t m_baseDisplayAddr = 0x0000;

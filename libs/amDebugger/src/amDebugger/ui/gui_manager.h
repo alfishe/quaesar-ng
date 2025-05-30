@@ -11,19 +11,21 @@ FORWARD_DECLARATION_3(qd, action, Action);
 
 namespace qd {
 class ShortcutsMgr;
-class ActionManager;
+class UiActionMgr;
 
 //------------------------------------------------------------------------
 class GuiManager : public qd::UiNode {
-  QD_REFLECT_TYPE(GuiManager);
+  TS_REFLECT_CLASS(qd::GuiManager, qd::UiNode);
   eastl::vector<ref_ptr<UiView>> windows;
-  Debugger* dbg = nullptr;
+  Debugger* m_pDbg = nullptr;
 
-  ActionManager* m_pActionMgr = nullptr;
+  UiActionMgr* m_pActionMgr = nullptr;
   ShortcutsMgr* m_pShortcutMgr = nullptr;
 
  public:
   GuiManager(Debugger* dbg);
+  virtual void onNodeCreated(NodeCreator *mk) override;
+
   virtual ~GuiManager();
 
   void drawImGuiMainFrame();
@@ -32,7 +34,7 @@ class GuiManager : public qd::UiNode {
   void _drawDebuggerWindows();
   void destroy();
 
-  Debugger* getDbg() const { return dbg; }
+  Debugger* getDbg() const { return m_pDbg; }
 
   template <class T>
   inline T* getWnd_() const {
@@ -43,7 +45,7 @@ class GuiManager : public qd::UiNode {
 
   void addView(UiView* view);
 
-  qd::ActionManager* getActionMgr() const { return m_pActionMgr; }
+  qd::UiActionMgr* getActionMgr() const { return m_pActionMgr; }
   qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 
  private:

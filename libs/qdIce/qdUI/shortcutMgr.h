@@ -6,6 +6,7 @@
 #include <imgui/imgui.h>
 #include <qdIce/qdBase/classInfoReg.h>
 #include <qdIce/qdCore/nodeBase.h>
+#include <qdIce/qdTypeSystem/typeDeclare.h>
 
 
 FORWARD_DECLARATION_3(qd, action, Action);
@@ -69,7 +70,7 @@ public:
 
 class ShortcutsMgr : public qd::Node
 {
-    QD_REFLECT_TYPE(ShortcutsMgr);
+    TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::Node);
     eastl::vector_map<int /*shortcut::ETypeId*/, Shortcut*> mShortcuts;
 
 public:

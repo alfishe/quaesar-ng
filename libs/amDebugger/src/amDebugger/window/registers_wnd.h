@@ -3,8 +3,8 @@
 
 namespace qd {
 namespace window {
-class RegistersView : public UiWindow {
-    QDB_CLASS_ID(WndId::Registers);
+class RegistersView : public qd::UiWindow {
+    QDB_WINDOW_REGISTER(WndId::Registers, qd::window::RegistersView, qd::UiWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
@@ -14,7 +14,7 @@ public:
 
     virtual void drawContent() override;
 
-} QDB_WINDOW_REGISTER(RegistersView);  // class
+}; // RegistersView
 
 };  // namespace window
 };  // namespace qd

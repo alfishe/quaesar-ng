@@ -4,26 +4,53 @@
 #include <qdIce/qdUI/shortcutMgr.h>
 #include <amDebugger/shortcut/shortcut_list.h>
 #include <qdIce/qdUI/actionMgr.h>
+#include <qdIce/qdTypeSystem/TypeRegistry.h>
+#include <qdIce/qdLog/log.h>
 
 
 namespace qd {
 
 using namespace action;
 
-GuiManager::GuiManager(Debugger* in_dbg) : dbg(in_dbg) {
-    windows.resize((size_t)WndId::MostCommonCount);
+GuiManager::GuiManager(Debugger* in_dbg) : m_pDbg(in_dbg) {
+}
 
-    m_pActionMgr = createComp_<ActionManager>();
+
+void GuiManager::onNodeCreated(NodeCreator* mk)
+{
+    createComp_<qd::NodesChildList>();
+    TSuper::onNodeCreated(mk);
+
+    windows.resize((size_t)WndId::MostCommonCount);
+    m_pParent = m_pDbg;
+    m_pActionMgr = createComp_<UiActionMgr>();
     m_pShortcutMgr = createComp_<ShortcutsMgr>();
 
     // create all windows
-    UiViewCreateCtx cv(this);
-    auto viewMgr = UiViewClassRegistry::get();
-    for (auto it : viewMgr->mClassInfoMap) {
-        UiView* curView = viewMgr->makeInstance(it.first, &cv);
-        addView(curView);
+    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<qd::UiWindow>(false);
+    for (const qd::TypeInfo* curWndType : windowTypes)
+    {
+        auto* pCreator = curWndType->getAttribute_<qd::CreateClassCbAttr>();
+        if (!pCreator)
+        {
+            SDL_Log("Creator not defined in class:'%s'", curWndType->getFullName().c_str());
+            continue;
+        }
+        UiViewCreateCtx cv(this);
+        qd::UiWindow* pCurWnd = pCreator->makeInstance_<UiWindow>(cv);
+        assert(pCurWnd);
+        addView(pCurWnd);
     }
+
+    //     auto viewMgr = UiViewClassRegistry::get();
+    //     for (auto it : viewMgr->mClassInfoMap) {
+    //         UiView* curView = viewMgr->makeInstance(it.first, &cv);
+    //         addView(curView);
+    //     }
+
 }
+
+
 
 GuiManager::~GuiManager() {
     assert(windows.empty());
@@ -88,21 +115,24 @@ void GuiManager::_drawMainToolBar() {
                 shMgr->triggerShortcut(pCurShortcut);
             }
             ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
-        }
-        //
-        ImGui::Separator();
-        //
 
-        // wait scanlines
-        int nScanLines = dbg->getWaitScanLines();
-        ImGui::SetNextItemWidth(30);
-        if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1)) {
-            if (nScanLines < 0)
-                nScanLines = 1;
-            dbg->setWaitScanLines(nScanLines);
+            //
+            ImGui::Separator();
+            //
+
+            // wait scanlines
+            int nScanLines = dbg->getWaitScanLines();
+            ImGui::SetNextItemWidth(30);
+            if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
+            {
+                if (nScanLines < 0)
+                    nScanLines = 1;
+                dbg->setWaitScanLines(nScanLines);
+            }
+            if (pCurShortcut)
+                hint.sprintf("Scanlines number(%s)", pCurShortcut->toString().c_str());
+            ImGui::SetItemTooltipV(hint.c_str(), nullptr);
         }
-        hint.sprintf("Scanlines number(%s)", pCurShortcut->toString().c_str());
-        ImGui::SetItemTooltipV(hint.c_str(), nullptr);
         // wait button
         ImGui::SameLine();
         pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugWaitScanLines);
@@ -134,17 +164,21 @@ void GuiManager::_drawMainMenuBar() {
         }
 
         if (ImGui::BeginMenu("Emulator")) {
-            ActionManager::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Emul);
+            UiActionMgr::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Emul);
+            qd::action::msg::OnDrawMainMenuItem dr;
+            dr.drawElement = UiDrawEvent::MainMenu_Emul;
             for (UiAction* curAction : actionsList) {
-                curAction->onDrawMainMenuItem(UiDrawEvent::MainMenu_Emul);
+                curAction->applyActionMsgProc(&dr);
             }
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Debug")) {
-            ActionManager::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Debug);
+            UiActionMgr::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Debug);
+            qd::action::msg::OnDrawMainMenuItem dr;
+            dr.drawElement = UiDrawEvent::MainMenu_Debug;
             for (UiAction* curAction : actionsList) {
-                curAction->onDrawMainMenuItem(UiDrawEvent::MainMenu_Debug);
+                curAction->applyActionMsgProc(&dr);
             }
             ImGui::EndMenu();
         }
@@ -173,11 +207,17 @@ void GuiManager::destroy() {
 
 void GuiManager::addView(UiView* view) {
     uint32_t idx = view->mClassId;
+
+    NodesChildList* pList = getComp_<NodesChildList>();
+    pList->addChild(view);
+
     if (idx < (size_t)WndId::MostCommonCount) {
         assert(!windows[idx] && "already set");
         windows[idx] = view;
     } else
         windows.push_back(view);
 }
+
+
 
 };  // namespace qd

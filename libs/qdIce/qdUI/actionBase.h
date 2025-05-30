@@ -1,5 +1,6 @@
 #pragma once
 #include <qdIce/qdBase/base.h>
+#include <qdIce/qdDebug/assert.h>
 #include <qdIce/qdUI/actionMsg.h>
 #include <qdIce/qdBase/types.h>
 #include <EASTL/fixed_vector.h>
@@ -7,6 +8,7 @@
 #include <EASTL/string.h>
 #include <qdIce/qdBase/classInfoReg.h>
 #include <qdIce/qdCore/nodeBase.h>
+#include <qdIce/qdTypeSystem/typeDeclare.h>
 
 
 namespace qd
@@ -19,17 +21,8 @@ enum class EActionCompsClassId {
     MOST_COMMON_COMPS,
 };
 
-struct UiActionCreator {};
-
-
-namespace action
-{
-	
-struct ActionCreator : public UiActionCreator {};
-
-	
-}; // namespace action
-
+struct UiActionCreator : public qd::NodeCreator
+{};
 
 
 
@@ -37,45 +30,40 @@ struct ActionCreator : public UiActionCreator {};
 //////////////////////////////////////////////////////////////////////////
 class UiAction : public qd::Node
 {
+    TS_REFLECT_CLASS_BASE(200, qd::UiAction, qd::Node);
+
 public:
     uint32_t mClassId = -1;
-    eastl::bitset<64> supportMtd;
     eastl::string mName;
     eastl::string mDesc;
 
 public:
     UiAction() = default;
+    virtual ~UiAction() = default;
 
 
-    void onCreate(UiActionCreator* cp) {
-        //gui = cp->gui;
-        supportMtd.none();
-        mName = "NO NAME";
+    virtual void onActionCreate(qd::UiActionCreator* cp) {
+        onNodeCreated(cp);
     }
 
     virtual void destroy() {
     }
 
-    virtual ~UiAction();
-
-    bool hasMtd(int id) const {
-        return supportMtd[id];
-    }
-
-    virtual void onDrawMainMenuItem(int event, void* = nullptr);
-
     void doActionBase();
 
-    virtual EFlow applyMsgProc(action::msg::Base* msg) {
+    virtual EFlow applyActionMsgProc(action::msg::Base* msg) {
         return _applyMsgProcDefImp(msg);
     }
 
     void addShortcut(int sid);
 
+    virtual bool hasMtd(int id) const { return false; /*supportMtd[id];*/ }
+
+
 protected:
     EFlow _applyMsgProcDefImp(action::msg::Base* pBaseMtd);
 
-};  // class Action
+};  // class UiAction
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -113,5 +101,5 @@ struct AutoRegistrator {
 //////////////////////////////////////////////////////////////////////////
 
 
-	
+
 }; // namespace qd

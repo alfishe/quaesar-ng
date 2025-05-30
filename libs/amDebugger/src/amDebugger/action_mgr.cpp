@@ -16,13 +16,28 @@ Debugger* Action::getDbg() const
 }
 
 
-void Action::onNodeCreated(NodeMaker* cp)
+qd::EFlow Action::applyActionMsgProc(action::msg::Base* p_msg)
+{
+    switch (p_msg->id)
+    {
+    case msg::OnDrawMainMenuItem::CID:
+    {
+        auto p = p_msg->cast_<msg::OnDrawMainMenuItem>();
+        onDrawMainMenuItem(p->drawElement);
+    }
+    break;
+    }
+    return TSuper::_applyMsgProcDefImp(p_msg);
+}
+
+
+void Action::onNodeCreated(NodeCreator* cp)
 {
     gui = cp->parent->findParentNode_<GuiManager>();
+    assert(gui);
     supportMtd.none();
     mName = "NO NAME";
 }
-
 
 void Action::onDrawMainMenuItem(UiDrawEvent::Type event, void* /*= nullptr*/)
 {
@@ -40,7 +55,7 @@ void Action::onDrawMainMenuItem(UiDrawEvent::Type event, void* /*= nullptr*/)
     {
         action::msg::MenuItemStateGet menuState;
         menuState.menuType = event;
-        action->applyMsgProc(&menuState);
+        action->applyActionMsgProc(&menuState);
         bSelected = menuState.checked > 0 ? menuState.checked != 0 : false;
     }
 
@@ -48,15 +63,14 @@ void Action::onDrawMainMenuItem(UiDrawEvent::Type event, void* /*= nullptr*/)
     if (ImGui::MenuItem(mName.c_str(), shortcutName.c_str(), &bSelected, enabled))
     {
         action::msg::DoAction msg;
-        action->applyMsgProc(&msg);
+        action->applyActionMsgProc(&msg);
     }
 }
-
 
 void Action::doActionBase()
 {
     action::msg::DoAction ms;
-    applyMsgProc(&ms);
+    applyActionMsgProc(&ms);
 }
 
 

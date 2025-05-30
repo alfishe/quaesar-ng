@@ -1,14 +1,16 @@
 #pragma once
 #include <EASTL/span.h>
 #include <qdIce/qdUI/actionBase.h>
+#include <qdIce/qdTypeSystem/typeInfoReflector.h>
 
 
 namespace qd {
 namespace action {
 namespace comp {
 
-class ShortcutComp : public qd::CompBase {
-    QD_REFLECT_TYPE(ShortcutComp);
+class ShortcutComp : public qd::NodeComp {
+    TS_REFLECT_CLASS(qd::action::comp::ShortcutComp, qd::NodeComp);
+
 public:
     static constexpr uint32_t CLASSID = (uint32_t)EActionCompsClassId::Shortcuts;
     eastl::fixed_vector<const Shortcut*, 2> mShortcuts;

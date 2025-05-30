@@ -5,183 +5,146 @@
 #include "ReflectedType.h"
 #include "TypeInfo.h"
 #include <qdIce/qdDebug/assert.h>
+#include <qdIce/qdDebug/exceptTryCatch.h>
+#include <qdIce/qdMem/fnvHash.h>
 
 
 //-------------------------------------------------------------------------
 
 namespace qd {
-template<>
-class TypeInfo_<IReflectedType> final : public TypeInfo
+
+
+TypeRegistry::SharedData::~SharedData()
 {
-public:
-    static void RegisterType(TypeRegistry& typeRegistry)
+    for (TypeInfoMap::iterator Iter = m_TypeMap.begin(); Iter != m_TypeMap.end(); ++Iter)
     {
-        IReflectedType::s_pTypeInfo = new TypeInfo_<IReflectedType>();
-        typeRegistry.RegisterType(IReflectedType::s_pTypeInfo);
+        TypeInfo* pTypeInfo = Iter->second;
+        delete pTypeInfo;
     }
+    m_TypeMap.clear();
+}
 
-    static void UnregisterType(TypeRegistry& typeRegistry)
-    {
-        typeRegistry.UnregisterType(IReflectedType::s_pTypeInfo);
-        delete IReflectedType::s_pTypeInfo;
-    }
+//------------------------------------------------------------------------
 
-public:
-    TypeInfo_()
-    {
-        m_ID = TypeId("qd::IReflectedType");
-        m_size = sizeof(IReflectedType);
-        m_alignment = alignof(IReflectedType);
-    }
-};
-} // namespace qd
 
-//-------------------------------------------------------------------------
+TypeRegistry::TypeRegistry() {}
 
-namespace qd {
+
 TypeRegistry::~TypeRegistry()
 {
-    assert(m_registeredTypes.empty());
-}
-
-void TypeRegistry::RegisterInternalTypes()
-{
-    TypeInfo_<IReflectedType>::RegisterType(*this);
-}
-
-void TypeRegistry::UnregisterInternalTypes()
-{
-    TypeInfo_<IReflectedType>::UnregisterType(*this);
-}
-
-//-------------------------------------------------------------------------
-// Type Info
-//-------------------------------------------------------------------------
-
-const TypeInfo* TypeRegistry::RegisterType(TypeInfo const* pTypeInfo)
-{
-    assert(pTypeInfo != nullptr);
-    assert(pTypeInfo->m_ID.IsValid());
-    assert(m_registeredTypes.find(pTypeInfo->m_ID) == m_registeredTypes.end());
-    m_registeredTypes.insert(eastl::pair<TypeId, TypeInfo const*>(pTypeInfo->m_ID, pTypeInfo));
-    return m_registeredTypes[pTypeInfo->m_ID];
-}
-
-void TypeRegistry::UnregisterType(const TypeInfo* pTypeInfo)
-{
-    assert(pTypeInfo != nullptr);
-    assert(pTypeInfo->m_ID.IsValid());
-    auto iter = m_registeredTypes.find(pTypeInfo->m_ID);
-    assert(iter != m_registeredTypes.end());
-    assert(iter->second == pTypeInfo);
-    m_registeredTypes.erase(iter);
-}
-
-TypeInfo const* TypeRegistry::GetTypeInfo(TypeId typeID) const
-{
-    assert(typeID.IsValid());
-    auto iter = m_registeredTypes.find(typeID);
-    if (iter != m_registeredTypes.end())
-        return iter->second;
-    else
-        return nullptr;
+    delete m_pSharedData;
 }
 
 
-bool TypeRegistry::IsTypeDerivedFrom(TypeId typeID, TypeId parentTypeID) const
+qd::TypeRegistry* TypeRegistry::get()
 {
-    assert(typeID.IsValid() && parentTypeID.IsValid());
-
-    auto pTypeInfo = GetTypeInfo(typeID);
-    assert(pTypeInfo != nullptr);
-
-    return pTypeInfo->IsDerivedFrom(parentTypeID);
+    static TypeRegistry instance;
+    return &instance;
 }
 
 
-TVector<TypeInfo const*> TypeRegistry::GetAllTypes(bool includeAbstractTypes, bool sortAlphabetically) const
+const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined /*= false*/)
 {
-    TVector<TypeInfo const*> types;
+    TypeInfoMap& typeMap = getSharedData()->m_TypeMap;
+    TypeInfoMap::iterator Iter = typeMap.find(ti.getTypePtr());
+    if (Iter != typeMap.end())
+        return *Iter->second;
+    return _createUnNamedTypeInfoByStdType(ti);
+}
 
-    for (auto const& typeInfoPair : m_registeredTypes)
+
+void TypeRegistry::bindNamedTypeInfo(const TypeInfo& ti)
+{
+    assert(ti.isDefined());
+    SharedData* pSharedData = getSharedData();
+
+    assert(& getTypeInfo(ti.getStdTypeId()) == &ti && "Type not registered yet");
+
+    const string& name = ti.getFullName();
+    THash32 nameHash = fnv1aHash(name.c_str(), (uint32_t)name.size());
+    auto it = pSharedData->m_TypeByFullName.find(nameHash);
+
+    if (it != pSharedData->m_TypeByFullName.end())
     {
-        if (!includeAbstractTypes && typeInfoPair.second->IsAbstractType())
-            continue;
-        types.emplace_back(typeInfoPair.second);
-    }
-
-    if (sortAlphabetically)
-    {
-        auto sortPredicate = [](TypeInfo const* const& pTypeInfoA, TypeInfo const* const& pTypeInfoB) {
-            return strcmp(pTypeInfoA->m_ID.c_str(), pTypeInfoB->m_ID.c_str());
-        };
-
-        eastl::sort(types.begin(), types.end(), sortPredicate);
-    }
-
-    return types;
+        if (it->second->getStdTypeId() == ti.getStdTypeId())
+            return;
+        G_THROW_OR_DO(Exception("Duplicate type name found: " + name), return);
+    };
+    pSharedData->m_TypeByFullName.insert(eastl::make_pair(nameHash, &ti));
 }
 
 
-TVector<TypeInfo const*> TypeRegistry::GetAllDerivedTypes(TypeId parentTypeID, bool includeParentTypeInResults,
-    bool includeAbstractTypes, bool sortAlphabetically) const
+const TypeInfo& TypeRegistry::_createUnNamedTypeInfoByStdType(const StdTypeId& ti)
 {
-    TVector<TypeInfo const*> matchingTypes;
+    SharedData* pSharedData = getSharedData();
+    TypeInfoMap& typeMap = pSharedData->m_TypeMap;
+    assert(typeMap.find(ti.getTypePtr()) == typeMap.end());
+    //     if (Iter != typeMap.end())
+    //     {
+    //         TypeInfo* pOldType = Iter->second;
+    //         assert(pOldType->getStdTypeId() == ti);
+    //         return pOldType;
+    //     }
 
-    for (auto const& typeInfoPair : m_registeredTypes)
-    {
-        if (!includeParentTypeInResults && typeInfoPair.first == parentTypeID)
-            continue;
-
-        if (!includeAbstractTypes && typeInfoPair.second->IsAbstractType())
-            continue;
-
-        if (typeInfoPair.second->IsDerivedFrom(parentTypeID))
-            matchingTypes.emplace_back(typeInfoPair.second);
-    }
-
-    if (sortAlphabetically)
-    {
-        auto sortPredicate = [](TypeInfo const* const& pTypeInfoA, TypeInfo const* const& pTypeInfoB) {
-            return strcmp(pTypeInfoA->m_ID.c_str(), pTypeInfoB->m_ID.c_str());
-        };
-
-        eastl::sort(matchingTypes.begin(), matchingTypes.end(), sortPredicate);
-    }
-
-    return matchingTypes;
+    TypeInfo* pType = new TypeInfo(ti);
+    typeMap[ti.getTypePtr()] = pType;
+    return *pType;
 }
 
 
-TInlineVector<qd::TypeId, 5> TypeRegistry::GetAllCastableTypes(IReflectedType const* pType) const
+void TypeRegistry::_createSharedData() const
 {
-    assert(pType != nullptr);
-    TInlineVector<qd::TypeId, 5> parentTypeIDs;
-    auto pParentTypeInfo = pType->getTypeInfo()->m_pParentTypeInfo;
-    while (pParentTypeInfo != nullptr)
-    {
-        parentTypeIDs.emplace_back(pParentTypeInfo->m_ID);
-        pParentTypeInfo = pParentTypeInfo->m_pParentTypeInfo;
+    TypeRegistry* pThis = const_cast<TypeRegistry*>(this);
+    assert(pThis == TypeRegistry::get());
+    pThis->m_pSharedData = new SharedData();
+
+    TypeRegistry::SharedData* pData = pThis->m_pSharedData;
+
+    TypeInfoBuilder voidBldr(makeStdTypeId_<void>(), pThis);
+    voidBldr.declareType("void");
+}
+
+
+
+TypeRegistry::SharedData* TypeRegistry::getSharedData() const
+{
+    if (!m_pSharedData)
+        _createSharedData();
+    return m_pSharedData;
+}
+
+const TypeInfoMap& TypeRegistry::getTypesMap()
+{
+    return getSharedData()->m_TypeMap;
+}
+
+
+eastl::vector<const TypeInfo*> TypeRegistry::findAllDerivedFromTypes(const TypeInfo& rBaseType, bool bIncludeBaseInList)
+{
+    // TODO: too slow to iterate all types in the system
+    // It's better to store index of all Inherited types to separate types
+    eastl::vector<const TypeInfo*> result;
+
+    if (bIncludeBaseInList)
+        result.push_back(&rBaseType);
+
+    const TypeInfoMap& Types = this->getTypesMap();
+    for (TypeInfoMap::const_iterator it = Types.begin(); it != Types.end(); ++it)
+    { // iterates all
+        const TypeInfo* pCurType = it->second;
+        if (pCurType->isDerivedFrom(rBaseType) && pCurType != &rBaseType)
+            result.push_back(pCurType);
     }
-    return parentTypeIDs;
+    return eastl::move(result);
 }
 
-bool TypeRegistry::AreTypesInTheSameHierarchy(TypeId typeA, TypeId typeB) const
+
+const qd::TypeInfo& getTypeInfo(const StdTypeId& ti)
 {
-    auto pTypeInfoA = GetTypeInfo(typeA);
-    auto pTypeInfoB = GetTypeInfo(typeB);
-    return AreTypesInTheSameHierarchy(pTypeInfoA, pTypeInfoB);
+    TypeRegistry* pRegistry = TypeRegistry::get();
+    const qd::TypeInfo& pTypeInfo = pRegistry->getTypeInfo(ti);
+    return pTypeInfo;
 }
 
-bool TypeRegistry::AreTypesInTheSameHierarchy(TypeInfo const* pTypeInfoA, TypeInfo const* pTypeInfoB) const
-{
-    if (pTypeInfoA->IsDerivedFrom(pTypeInfoB->m_ID))
-        return true;
-
-    if (pTypeInfoB->IsDerivedFrom(pTypeInfoA->m_ID))
-        return true;
-
-    return false;
-}
 
 }; // namespace qd

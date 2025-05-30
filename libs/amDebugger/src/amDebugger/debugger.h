@@ -1,5 +1,4 @@
 #pragma once
-
 #include <EASTL/fixed_set.h>
 #include <EASTL/fixed_vector.h>
 #include <EASTL/string.h>
@@ -21,7 +20,7 @@ FORWARD_DECLARATION_4S(qd, action, msg, Base);
 namespace qd {
 class GuiManager;
 class VM;
-class ActionManager;
+class UiActionMgr;
 
 
 constexpr static int BREAKPOINTS_MAX = 20;
@@ -67,8 +66,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class Debugger : public qd::BaseAppPart
 {
-    QD_REFLECT_TYPE(Debugger);
-    //CLASSID_CC(Debugger, qd::BaseAppPart);
+    TS_REFLECT_CLASS(qd::Debugger, qd::BaseAppPart);
 
     SDL_Window* mWindow = nullptr;
     SDL_Renderer* mRenderer = nullptr;
@@ -77,7 +75,7 @@ public:
     csh* capstone = nullptr;
     VM* vm = nullptr;
     GuiManager* gui = nullptr;
-    ActionManager* mActions = nullptr;
+    UiActionMgr* mActions = nullptr;
 
     SDL_Renderer* getRenderer() const {
         return mRenderer;
@@ -100,7 +98,7 @@ public:
         return vm;
     }
 
-    ActionManager* getActions() const {
+    UiActionMgr* getActions() const {
         return mActions;
     }
 

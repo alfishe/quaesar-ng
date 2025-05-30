@@ -1,6 +1,6 @@
 #pragma once
-#include <qdIce/qdSTL/forwardDecl.h>
 #include <qdIce/qdBase/string.h>
+#include <qdIce/qdSTL/forwardDecl.h>
 
 
 //-------------------------------------------------------------------------
@@ -11,28 +11,22 @@
 
 
 namespace eastl {
-template <typename Value, bool CacheHashCode>
+template<typename Value, bool CacheHashCode>
 struct hash_node;
 
-template <typename T1, typename T2>
+template<typename T1, typename T2>
 struct pair;
-}  //namespace eastl
+} // namespace eastl
 
 //-------------------------------------------------------------------------
 
 namespace qd {
-class StringID {
+class StringID
+{
+    uint32_t m_ID = 0;
+
 public:
     using StringIDHashNode = eastl::hash_node<eastl::pair<const uint32_t, string>, false>;
-
-    struct DebuggerInfo {
-        StringIDHashNode const* const* m_pBuckets = nullptr;
-        size_t m_numBuckets = 0;
-    };
-
-#if EE_DEVELOPMENT_TOOLS
-    static DebuggerInfo* s_pDebuggerInfo;
-#endif
 
     // Initialize global state for StringID system
     static void Initialize();
@@ -42,53 +36,45 @@ public:
 
 public:
     StringID() = default;
-    explicit StringID(nullptr_t) : m_ID(0) {
-    }
+    explicit StringID(nullptr_t)
+        : m_ID(0)
+    {}
     explicit StringID(char const* pStr);
-    explicit StringID(uint32_t ID) : m_ID(ID) {
-    }
-    explicit StringID(String const& str);
+    explicit StringID(uint32_t ID)
+        : m_ID(ID)
+    {}
+    explicit StringID(string const& str);
     explicit StringID(InlineString const& str);
 
-    inline bool IsValid() const {
-        return m_ID != 0;
-    }
-    inline uint32_t ToUint() const {
-        return m_ID;
-    }
-    inline operator uint32_t() const {
-        return m_ID;
-    }
+    inline bool IsValid() const { return m_ID != 0; }
+    inline uint32_t ToUint() const { return m_ID; }
+    inline operator uint32_t () const { return m_ID; }
 
-    inline void Clear() {
-        m_ID = 0;
-    }
+    inline void Clear() { m_ID = 0; }
 
     char const* c_str() const;
 
-    inline bool operator==(StringID const& rhs) const {
-        return m_ID == rhs.m_ID;
-    }
-    inline bool operator!=(StringID const& rhs) const {
-        return m_ID != rhs.m_ID;
-    }
+    inline bool operator== (StringID const& rhs) const { return m_ID == rhs.m_ID; }
+    inline bool operator!= (StringID const& rhs) const { return m_ID != rhs.m_ID; }
+}; // class StringID
+//////////////////////////////////////////////////////////////////////////
 
-private:
-    uint32_t m_ID = 0;
-};
 
 // Statically defined StringID
 //-------------------------------------------------------------------------
 // Use this for all static members and translation unit globals
 
-class StaticStringID {
+class StaticStringID
+{
 public:
     // General constructor
     StaticStringID(char const* pStr);
 
     // Lazily construct the ID on first use
-    inline StringID const& GetID() const {
-        if (!m_isCreated) {
+    inline StringID const& GetID() const
+    {
+        if (!m_isCreated)
+        {
             m_ID = StringID(m_buffer);
             m_isCreated = true;
         }
@@ -96,15 +82,9 @@ public:
         return m_ID;
     }
 
-    inline operator StringID() const {
-        return GetID();
-    }
-    inline bool operator==(StringID const& rhs) const {
-        return GetID() == rhs;
-    }
-    inline char const* c_str() const {
-        return GetID().c_str();
-    }
+    inline operator StringID () const { return GetID(); }
+    inline bool operator== (StringID const& rhs) const { return GetID() == rhs; }
+    inline char const* c_str() const { return GetID().c_str(); }
 
 private:
     StaticStringID() = delete;
@@ -114,18 +94,17 @@ private:
     mutable StringID m_ID;
     mutable bool m_isCreated = false;
 };
-}  //namespace qd
+} // namespace qd
+//////////////////////////////////////////////////////////////////////////
 
 //-------------------------------------------------------------------------
 
 namespace eastl {
-template <typename T>
+template<typename T>
 struct hash;
 
-template <>
+template<>
 struct hash<qd::StringID> {
-    size_t operator()(qd::StringID const& ID) const {
-        return (uint64_t)ID;
-    }
+    size_t operator() (qd::StringID const& ID) const { return (uint64_t)ID; }
 };
-}  //namespace eastl
+} // namespace eastl

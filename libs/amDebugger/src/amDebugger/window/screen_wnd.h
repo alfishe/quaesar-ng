@@ -5,7 +5,7 @@ namespace qd {
 namespace window {
 
 class ScreenWnd : public UiWindow {
-    QDB_CLASS_ID(WndId::Screen);
+    QDB_WINDOW_REGISTER(WndId::Screen, qd::window::ScreenWnd, qd::UiWindow);
 
     ImTextureID mTextureId = 0;
 

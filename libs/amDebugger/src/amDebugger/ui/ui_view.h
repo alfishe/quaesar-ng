@@ -4,6 +4,9 @@
 #include <qdIce/qdBase/color.h>
 #include <qdIce/qdImGui/imgui_eastl.h>
 #include <qdIce/qdCore/nodeBase.h>
+#include <qdIce/qdTypeSystem/attributesCommon.h>
+
+
 
 
 namespace qd {
@@ -11,26 +14,31 @@ namespace qd {
 class GuiManager;
 class Debugger;
 
+
 struct UiViewCreateCtx {
     GuiManager* gui;
     bool visible = true;
 
-    UiViewCreateCtx(GuiManager* _ui) : gui(_ui) {
-    }
-};  // struct CreateUiViewParams
+    UiViewCreateCtx(GuiManager* _ui)
+        : gui(_ui)
+    {}
+}; // struct CreateUiViewParams
+
+
 
 #define QDB_CLASS_ID(wnd_id)                           \
 public:                                                \
     static const uint32_t CLASS_ID = (uint32_t)wnd_id; \
                                                        \
-private:                                               \
-    typedef UiView TSuper;
 
 //////////////////////////////////////////////////////////////////////////
 //
 // Base class of all ui
 //
 class UiView : public qd::Node {
+    TS_BEGIN_REFLECT_CLASS_BASE(10000, qd::UiView, qd::Node);
+    TS_END();
+
 public:
     qd::string mTitle;
     bool mVisible = true;
@@ -69,7 +77,11 @@ public:
 
 
 class UiWindow : public UiView {
+    TS_BEGIN_REFLECT_CLASS_BASE(50, qd::UiWindow, qd::UiView);
+    TS_END();
+
 public:
+
     // QDB_CLASS_ID();
     UiWindow() = default;
 
@@ -82,9 +94,29 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+
+#define QDB_WINDOW_REGISTER(enumId, ClassName, BaseClass)             \
+    TS_BEGIN_REFLECT_CLASS(ClassName, BaseClass);                     \
+    TS_ATTRIBUTE(qd::CustomTypeId32Attr(enumId));                     \
+    TS_ATTRIBUTE(qd::CreateClassCbAttr(&createWindowCb_<ClassName>)); \
+    TS_END() \
+
+
+
+void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, UiWindow* newInst);
+
+template<class TClass>
+static UiView* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
+{
+    TClass* pNewInst = new TClass();
+    _onUiWindowCreated(meta, cp, pNewInst);
+    return pNewInst;
+}
+
+
 namespace window {
-class ImGuiDemoWindow : public UiWindow {
-    QDB_CLASS_ID(WndId::ImGuiDemo);
+
+class ImGuiDemoWindow : public qd::UiWindow {
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
@@ -102,27 +134,8 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-using UiViewClassRegistry = ClassInfoRegistry_<UiView>;
 
-template <class TClass>
-struct UiViewClassRegistrator_ {
-    UiViewClassRegistrator_() {
-        UiViewClassRegistry::MetaInfo metaInfo;
-        metaInfo.classId = TClass::CLASS_ID;
-        metaInfo.createCallback = (void*)&createClassCb;
-        metaInfo.registerClass();
-    }
 
-    static UiView* createClassCb(const UiViewClassRegistry::MetaInfo& meta, UiViewCreateCtx* cp) {
-        TClass* newInst = new TClass();
-        newInst->mClassId = meta.classId;
-        newInst->onCreate(cp);
-        return newInst;
-    }
-};  // struct
 
-#define QDB_WINDOW_REGISTER(className) \
-    ;                                  \
-    static UiViewClassRegistrator_<className> EA_PREPROCESSOR_JOIN(reg_instance_, __COUNTER__);
 
 };  // namespace qd

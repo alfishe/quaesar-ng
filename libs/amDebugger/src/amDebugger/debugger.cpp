@@ -94,12 +94,20 @@ void Debugger::init() {
     initImGui();
     vm = VM::setVmInst(createByFactory<qd::VM>());
     vm->init();
-    gui = new GuiManager(this);
+
+    NodeCreator mk;
+    mk.parent = nullptr;
+    gui = mk.createNode_<GuiManager>(this);
+
     mActions = gui->getActionMgr();
+    assert(mActions);
     action::AmDebuggerActionCreator actionCreate;
     actionCreate.gui = gui;
     actionCreate.dbg = this;
     mActions->createActions(&actionCreate);
+
+    assert(mActions->getNumChild());
+
     capstone = new csh();
 
     // TODO: Pick correct CPU depending on starting CPU

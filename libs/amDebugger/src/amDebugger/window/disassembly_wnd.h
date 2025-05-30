@@ -7,7 +7,8 @@ namespace qd {
 namespace window {
 
 class DisassemblyView : public UiWindow {
-    QDB_CLASS_ID(WndId::Disassembly);
+    QDB_WINDOW_REGISTER(WndId::Disassembly, qd::window::DisassemblyView, qd::UiWindow);
+
     eastl::string addrInputStr;
     eastl::optional<AddrRef> mDisasmAddr;
 

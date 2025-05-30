@@ -1,59 +1,88 @@
 #pragma once
-#include "TypeId.h"
+#include <qdIce/qdTypeSystem/TypeId.h>
+#include <qdIce/qdTypeSystem/typeInfoBase.h>
+#include <EASTL/fixed_vector.h>
 #include <qdIce/qdBase/stringId.h>
 #include <qdIce/qdDebug/assert.h>
+#include <qdIce/qdTypeSystem/stdTypeId.h>
 
 
-namespace qd
+namespace qd {
+
+
+class TypeInfo : public TypeInfoBase
 {
-class IReflectedType;
+    TypeId m_ID;
+    StdTypeId m_StdTypeId;
 
-class TypeInfo
-    {
+    string m_FullName;
+    string_view m_ShortName;
+    string_view m_Namespace;
 
-    public:
+    int32_t m_size = -1;
+    int32_t m_alignment = -1;
+    bool m_isAbstract = false;
+    bool m_bDefined = false;
+    bool m_bFinal = false;
 
-        TypeInfo() = default;
-        TypeInfo( TypeInfo const& ) = default;
-        virtual ~TypeInfo() = default;
+    // parents (super) classes of this type
+    eastl::fixed_vector<const TypeInfo*, 2, true> m_pBaseSuperTypes;
+    typedef eastl::fixed_vector<const TypeInfo*, 2, true> TBaseSuperTypes;
 
-        TypeInfo& operator=( TypeInfo const& rhs ) = default;
+    friend class TypeRegistry;
+    friend struct TypeInfoBuilder;
 
-        inline IReflectedType const* GetDefaultInstance() const { return m_pDefaultInstance; }
+public:
 
-        // Basic Type Info
-        //-------------------------------------------------------------------------
+    const string& getFullName() const {
+        return m_FullName;
+    }
 
-        inline char const* GetTypeName() const { return m_ID.ToStringID().c_str(); }
-
-        bool IsAbstractType() const { return m_isAbstract; }
-
-        bool IsDerivedFrom( TypeId const parentTypeID ) const;
-
-        template<typename T>
-        inline bool IsDerivedFrom() const { return IsDerivedFrom( T::GetStaticTypeID() ); }
-
-        // Function declaration for generated property registration functions
-        template<typename T>
-        void RegisterProperties( IReflectedType const* pDefaultTypeInstance )
-        {
-            QD_HALT(); // Default implementation should never be called
-        }
-
-
-    public:
-
-        TypeId                                  m_ID;
-        IReflectedType const*                   m_pDefaultInstance;
-        TypeInfo const*                         m_pParentTypeInfo = nullptr;
-        int32_t                                 m_size = -1;
-        int32_t                                 m_alignment = -1;
-        bool                                    m_isAbstract = false;
-    };
-
+    // Basic Type Info
     //-------------------------------------------------------------------------
 
+
+    const TypeId& getId() const { return m_ID; }
+    const StdTypeId& getStdTypeId() const { return m_StdTypeId; }
+
+    inline const string& getTypeName() const { return m_FullName; }
+
+    bool isAbstractType() const { return m_isAbstract; }
+
+    bool isDerivedFrom(const TypeInfo& parentTypeID) const;
+
     template<typename T>
-    class TypeInfo_ : public TypeInfo
-    {};
-}
+    inline bool isDerivedFrom_() const
+    {
+        checkDefined();
+        return isDerivedFrom(qd::typeof_<T>());
+    }
+
+    bool isDefined() const {
+        return m_bDefined;
+    }
+
+
+public:
+    TypeInfo() = default;
+    TypeInfo(TypeInfo const&) = default;
+
+    TypeInfo(const StdTypeId& typeInfo)
+        : m_StdTypeId(typeInfo)
+    {}
+    virtual ~TypeInfo() = default;
+    TypeInfo& operator= (TypeInfo const& rhs) = default;
+
+    bool checkDefined() const;
+
+protected:
+    void onTypeCreated();
+
+    virtual void getInheritedProviders(_Out_ eastl::vector<const TypeInfoBase* >& out_list) const override;
+
+}; // class TypeInfo
+//////////////////////////////////////////////////////////////////////////
+
+
+
+}; // namespace qd

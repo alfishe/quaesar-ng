@@ -7,7 +7,8 @@ namespace window {
 class ConsoleLogWriter;
 
 class ConsoleWnd : public UiWindow {
-    QDB_CLASS_ID(WndId::Console);
+    QDB_WINDOW_REGISTER(WndId::Console, qd::window::ConsoleWnd, qd::UiWindow);
+
     eastl::string inputStr;
     ConsoleLogWriter* mpConsoleWriter = nullptr;
 
@@ -18,7 +19,7 @@ public:
 
     virtual void destroy() override;
 
-} QDB_WINDOW_REGISTER(ConsoleWnd);
+}; // class ConsoleWnd
 //////////////////////////////////////////////////////////////////////////
 
 };  // namespace window

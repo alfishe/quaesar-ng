@@ -3,6 +3,7 @@
 #include <EASTL/vector_map.h>
 #include <qdIce/qdBase/base.h>
 #include <qdIce/qdImGui/imgui_eastl.h>
+#include <qdIce/qdDebug/assert.h>
 
 namespace qd {
 
@@ -55,9 +56,9 @@ public:
         const TThis::MetaInfo* pClassInfo = findClassInfo(class_id);
         if (!pClassInfo)
             return nullptr;
-        typedef TBaseClass* (*TCreateInstanceFunc)(const TThis::MetaInfo&, TArgs...);
-        auto fn = reinterpret_cast<TCreateInstanceFunc>(pClassInfo->createCallback);
-        TBaseClass* pInstance = (*fn)(*pClassInfo, args...);
+        using TCreateInstanceFunc = TBaseClass* (*)(const TThis::MetaInfo&, TArgs...);
+        auto makeInstFn = reinterpret_cast<TCreateInstanceFunc>(pClassInfo->createCallback);
+        TBaseClass* pInstance = (*makeInstFn)(*pClassInfo, args...);
         return pInstance;
     }
 

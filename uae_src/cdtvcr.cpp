@@ -482,7 +482,7 @@ static void cdtvcr_read_data(uae_u32 start, uae_u32 addr, uae_u32 len)
 {
 	uae_u8 buffer[2048];
 	int didread;
-	
+
 	cdtvcr_wait_sectors = 0;
 	while (len) {
 		didread = sys_command_cd_read (unitnum, buffer, start, 1);
@@ -1364,7 +1364,7 @@ typedef struct drivecpu_context_s
 #define STORE_ZERO(a, b)  (drv->cpud->store_func[0](drv, (WORD)(a), \
                           (BYTE)(b)))
 
-#define JUMP(addr) reg_pc = (unsigned int)(addr); 
+#define JUMP(addr) reg_pc = (unsigned int)(addr);
 
 #define P_SIGN          0x80
 #define P_OVERFLOW      0x40

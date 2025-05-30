@@ -74,7 +74,7 @@ bool ShortcutsMgr::triggerShortcut(uint32_t id) {
     const Shortcut* pShortcut = getShortcut(id);
     if (UiAction* pAction = findActionByShortcut(pShortcut)) {
         action::msg::DoAction t;
-        pAction->applyMsgProc(&t);
+        pAction->applyActionMsgProc(&t);
         return true;
     }
     return false;
@@ -115,7 +115,8 @@ void ShortcutsMgr::done() {
 
 
 void ShortcutsMgr::update() {
-    auto pActionMgr = findParentMixin_<ActionManager>();
+    auto pActionMgr = findParentComp_<UiActionMgr>();
+    assert(pActionMgr);
     for (UiAction* pCurAction : pActionMgr->getActions()) {
         action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
         if (!pShortcuts)
@@ -139,7 +140,8 @@ const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
 
 
 UiAction* ShortcutsMgr::findActionByShortcut(const qd::Shortcut* pShortcut) const {
-    auto pActionMgr = findParentMixin_<ActionManager>();
+    auto pActionMgr = findParentComp_<UiActionMgr>();
+    assert(pActionMgr);
     for (UiAction* pCurAction : pActionMgr->getActions()) {
         action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
         if (!pShortcuts)

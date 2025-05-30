@@ -5,7 +5,7 @@ namespace qd {
 namespace action {
 namespace uae {
 
-void DebugDmaOption::onDrawMainMenuItem(UiDrawEvent::Type event, void*) {
+void DebugDmaOption::onDrawMainMenuItem(UiDrawEvent::Type event) {
     switch (event) {
         case UiDrawEvent::MainMenu_Debug: {
             const char* options =
@@ -24,6 +24,16 @@ void DebugDmaOption::onDrawMainMenuItem(UiDrawEvent::Type event, void*) {
             break;
     }
 }
+
+
+qd::EFlow DebugDmaOption::applyActionMsgProc(action::msg::Base* p_msg) {
+    if (p_msg->id == msg::OnDrawMainMenuItem::CID) {
+        auto p = p_msg->cast_<msg::OnDrawMainMenuItem>();
+        onDrawMainMenuItem(p->drawElement);
+    }
+    return TSuper::applyActionMsgProc(p_msg);
+}
+
 
 };  // namespace uae
 };  // namespace action
