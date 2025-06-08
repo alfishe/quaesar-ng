@@ -2,7 +2,7 @@
 
 
 namespace qd {
-namespace action {
+namespace operation {
 
 void DebugDmaOption::onDrawMainMenuItem(UiDrawEvent::Type event) {
     switch (event) {
@@ -25,28 +25,28 @@ void DebugDmaOption::onDrawMainMenuItem(UiDrawEvent::Type event) {
 }
 
 
-qd::EFlow DebugDmaOption::applyActionMsgProc(action::msg::Base* p_msg) {
+qd::EFlow DebugDmaOption::applyOperationMsgProc(operation::msg::Base* p_msg) {
     //     if (auto p = p_msg->cast_<msg::OnDrawMainMenuItem>()) {
     //         onDrawMainMenuItem(p->drawElement);
     //     }
-    return TSuper::applyActionMsgProc(p_msg);
+    return TSuper::applyOperationMsgProc(p_msg);
 }
 
 
-qd::EFlow UaeWndAlwaysOnTop::applyActionMsgProc(action::msg::Base* msg) {
-    if (auto p = msg->cast_<action::msg::DoAction>()) {
+qd::EFlow UaeWndAlwaysOnTop::applyOperationMsgProc(operation::msg::Base* msg) {
+    if (auto p = msg->cast_<operation::msg::DoOperation>()) {
         Uint32 flags = SDL_GetWindowFlags(app->mUaeWindow);
         bool setOnTop = (flags & SDL_WINDOW_ALWAYS_ON_TOP) != 0;
         SDL_SetWindowAlwaysOnTop(app->mUaeWindow, (SDL_bool)(!setOnTop));
         return EFlow::SUCCESS;
-    } else if (auto p = msg->cast_<action::msg::MenuItemStateGet>()) {
+    } else if (auto p = msg->cast_<operation::msg::MenuItemStateGet>()) {
         Uint32 flags = SDL_GetWindowFlags(app->mUaeWindow);
         p->checked = (flags & SDL_WINDOW_ALWAYS_ON_TOP) ? 1 : 0;
         return EFlow::SUCCESS;
     } else
-        return Action::applyActionMsgProc(msg);
+        return Operation::applyOperationMsgProc(msg);
 }
 
 
-};  // namespace action
+};  // namespace operation
 };  // namespace qd

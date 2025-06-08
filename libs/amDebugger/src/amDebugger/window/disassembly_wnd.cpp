@@ -74,10 +74,10 @@ void DisassemblyView::drawContentImp() {
                 strTmp = curBp->enabled ? "0" : "O";
             }
             if (ImGui::Selectable(strTmp.c_str(), false, 0, ImVec2(0, row_min_height))) {
-                action::msg::DisasmToggleBreakpoint p;
+                operation::msg::DisasmToggleBreakpoint p;
                 p.address = curAddr;
                 p.reg = EReg::PC;
-                dbg->applyActionMsg(&p);
+                dbg->applyOperationMsg(&p);
             }
             ImGui::TableNextColumn();
 

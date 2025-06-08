@@ -1,0 +1,74 @@
+#pragma once
+#include <amDebugger/shortcut/shortcut_list.h>
+#include <amDebugger/ui_defs.h>
+#include <EASTL/bitset.h>
+#include "qdIce/qdSTL/vector_map.h"
+#include "qdIce/qdBase/classInfoReg.h"
+#include "qdIce/qdBase/types.h"
+#include "qdIce/qdTypeSystem/ReflectedType.h"
+#include "qdIce/qdUI/uiOperation.h"
+#include "qdIce/qdUI/uiOperationMessages.h"
+
+
+namespace qd {
+class Debugger;
+class GuiManager;
+
+namespace operation {
+class Operation;
+
+
+//////////////////////////////////////////////////////////////////////////
+template<class TClass>
+static qd::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd::UiOperationCreator* cp)
+{
+    TClass* pNewInst = new TClass();
+    pNewInst->onOperationCreate(cp);
+    pNewInst->setup();
+    return pNewInst;
+}
+
+
+#define QDB_REG_OPERATION(ClassName)                                     \
+    TS_BEGIN_REFLECT_CLASS(ClassName, qd::operation::Operation);            \
+    TS_ATTRIBUTE(qd::CreateClassCbAttr(&createOperationCb_<ClassName>)); \
+    TS_END();                                                         \
+                                                                      \
+public:
+
+//////////////////////////////////////////////////////////////////////////
+
+
+struct AmDebuggerOperationCreator : public qd::UiOperationCreator {
+    GuiManager* gui = nullptr;
+    Debugger* dbg = nullptr;
+}; // struct AmDebuggerOperationCreator
+//////////////////////////////////////////////////////////////////////////
+
+
+class Operation : public qd::UiOperation
+{
+    TS_REFLECT_CLASS(qd::operation::Operation, qd::UiOperation);
+
+public:
+    GuiManager* gui = nullptr;
+    Debugger* dbg = nullptr;
+
+public:
+    virtual void onDebuggerOperationCreate(qd::operation::AmDebuggerOperationCreator* cp) {}
+
+    void doOperationBase();
+    void addShortcut(shortcut::EId sid) { UiOperation::addShortcut((int)sid); }
+    Debugger* getDbg() const;
+
+    virtual EFlow applyOperationMsgProc(operation::msg::Base* p_msg) override;
+
+private:
+    virtual void onNodeCreated(NodeCreator* cp) override;
+
+}; // class Operation
+//////////////////////////////////////////////////////////////////////////
+
+
+}; // namespace operation
+}; // namespace qd

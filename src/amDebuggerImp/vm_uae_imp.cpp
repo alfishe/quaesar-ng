@@ -19,7 +19,7 @@
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdBase/endian.h>
-#include <qdIce/qdUI/actionMgr.h>
+#include <qdIce/qdUI/uiOperationManager.h>
 #include <quaesar.h>
 
 
@@ -132,8 +132,8 @@ void UaeEmuVmImp::Emu::setDebugMode(DebuggerMode debug_mode) {
             ::activate_debugger_new();
         }
     } else if (debug_mode == DebuggerMode_Live) {
-        action::msg::DoDebugTraceContinue m;
-        Debugger::get()->getActions()->applyActionMsg(&m);
+        operation::msg::DoDebugTraceContinue m;
+        Debugger::get()->getOperations()->applyOperationMsg(&m);
         ::debugger_active = 0;
     }
 }

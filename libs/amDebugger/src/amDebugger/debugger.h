@@ -14,13 +14,13 @@ struct SDL_Renderer;
 union SDL_Event;
 typedef size_t csh;
 
-FORWARD_DECLARATION_4S(qd, action, msg, Base);
+FORWARD_DECLARATION_4S(qd, operation, msg, Base);
 
 //////////////////////////////////////////////////////////////////////////
 namespace qd {
 class GuiManager;
 class VM;
-class UiActionMgr;
+class UiOperationMgr;
 
 
 constexpr static int BREAKPOINTS_MAX = 20;
@@ -75,7 +75,7 @@ public:
     csh* capstone = nullptr;
     VM* vm = nullptr;
     GuiManager* gui = nullptr;
-    UiActionMgr* m_pActions = nullptr;
+    UiOperationMgr* m_pOperations = nullptr;
 
     SDL_Renderer* getRenderer() const {
         return mRenderer;
@@ -98,15 +98,15 @@ public:
         return vm;
     }
 
-    UiActionMgr* getActions() const {
-        return m_pActions;
+    UiOperationMgr* getOperations() const {
+        return m_pOperations;
     }
 
     static bool isDebugActivated();
     static bool isDebugActivatedFull();
     void setDebugMode(DebuggerMode debug_mode);
 
-    EFlow applyActionMsg(qd::action::msg::Base* p_msg) const;
+    EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
 
     void execConsoleCmd(eastl::string&& cmd);
 

@@ -7,7 +7,7 @@
 
 FORWARD_DECLARATION_2(qd, Application);
 FORWARD_DECLARATION_2(qd, UiView);
-FORWARD_DECLARATION_3(qd, action, Action);
+FORWARD_DECLARATION_3(qd, operation, Operation);
 
 
 namespace qd {

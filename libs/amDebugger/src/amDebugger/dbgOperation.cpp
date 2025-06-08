@@ -1,28 +1,27 @@
-#include "action_mgr.h"
+#include "dbgOperation.h"
 #include <amDebugger/msg_list.h>
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui_defs.h>
-#include <qdIce/qdUi/actionComps.h>
 #include <qdIce/qdUI/shortcutMgr.h>
 
 
 namespace qd {
-namespace action {
+namespace operation {
 
 
-Debugger* Action::getDbg() const
+Debugger* Operation::getDbg() const
 {
     return gui->getDbg();
 }
 
 
-qd::EFlow Action::applyActionMsgProc(action::msg::Base* p_msg)
+qd::EFlow Operation::applyOperationMsgProc(operation::msg::Base* p_msg)
 {
     return TSuper::_applyMsgProcDefImp(p_msg);
 }
 
 
-void Action::onNodeCreated(NodeCreator* cp)
+void Operation::onNodeCreated(NodeCreator* cp)
 {
     TSuper::onNodeCreated(cp);
     gui = cp->parent->findParentNode_<GuiManager>();
@@ -31,10 +30,10 @@ void Action::onNodeCreated(NodeCreator* cp)
 }
 
 
-void Action::doActionBase()
+void Operation::doOperationBase()
 {
-    action::msg::DoAction ms;
-    applyActionMsgProc(&ms);
+    operation::msg::DoOperation ms;
+    applyOperationMsgProc(&ms);
 }
 
 
@@ -42,5 +41,5 @@ void Action::doActionBase()
 //////////////////////////////////////////////////////////////////////////
 
 
-}; // namespace action
+}; // namespace operation
 }; // namespace qd

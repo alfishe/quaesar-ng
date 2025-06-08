@@ -1,3 +1,4 @@
+// Add va_stdafx.h file in directory of one of your sln or vcxproj files: <https://support.wholetomato.com/default.asp?W783>
 
 #define CLI CLI
 

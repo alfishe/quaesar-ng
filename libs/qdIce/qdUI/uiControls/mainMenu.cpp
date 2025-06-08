@@ -1,7 +1,7 @@
 #include "mainMenu.h"
 #include "qdIce/qdTypeSystem/typeRegistry.h"
-#include "qdIce/qdUI/actionMgr.h"
-#include "qdIce/qdUI/actionComps.h"
+#include "qdIce/qdUI/uiOperationManager.h"
+#include "qdIce/qdUI/shortcutComp.h"
 #include "qdIce/qdUI/shortcutMgr.h"
 
 
@@ -32,8 +32,8 @@ namespace qd
         if (!m_pOperation)
             return;
 
-        auto pShortcuts = m_pOperation->getComp_<qd::action::comp::ShortcutComp>();
-        eastl::string shortcutName;
+        auto pShortcuts = m_pOperation->getComp_<qd::ShortcutComp>();
+        qd::string shortcutName;
         if (pShortcuts && pShortcuts->getNumShortcuts() > 0)
         {
             const qd::Shortcut* pSh = pShortcuts->getShortcut(0);
@@ -48,7 +48,7 @@ namespace qd
         bool bEnabled = m_pOperation->isActive();
         if (ImGui::MenuItem(m_pOperation->m_name.c_str(), shortcutName.c_str(), &bChecked, bEnabled))
         {
-            m_pOperation->doAction();
+            m_pOperation->doOperation();
         }
 
 	}

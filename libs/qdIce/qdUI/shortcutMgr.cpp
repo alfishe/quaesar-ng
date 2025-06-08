@@ -1,10 +1,10 @@
 #include "shortcutMgr.h"
-#include <qdIce/qdUi/actionComps.h>
-#include <qdIce/qdUi/actionMgr.h>
-#include <qdIce/qdBase/base.h>
-#include <qdIce/qdThread/thread.h>
-#include <qdIce/qdUi/actionMsg.h>
-#include <qdIce/qdUi/actionBase.h>
+#include "qdIce/qdUi/shortcutComp.h"
+#include "qdIce/qdUi/uiOperationManager.h"
+#include "qdIce/qdBase/base.h"
+#include "qdIce/qdThread/thread.h"
+#include "qdIce/qdUi/uiOperationMessages.h"
+#include "qdIce/qdUi/uiOperation.h"
 
 
 namespace qd {
@@ -72,9 +72,9 @@ bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const {
 
 bool ShortcutsMgr::triggerShortcut(uint32_t id) {
     const Shortcut* pShortcut = getShortcut(id);
-    if (UiAction* pAction = findActionByShortcut(pShortcut)) {
-        action::msg::DoAction t;
-        pAction->applyActionMsgProc(&t);
+    if (UiOperation* pOperation = findOperationByShortcut(pShortcut)) {
+        operation::msg::DoOperation t;
+        pOperation->applyOperationMsgProc(&t);
         return true;
     }
     return false;
@@ -132,15 +132,15 @@ void ShortcutsMgr::done() {
 
 
 void ShortcutsMgr::update() {
-    IUiOperationsProvider* pActionMgr = findParentCompI_<IUiOperationsProvider>();
-    assert(pActionMgr);
-    for (UiAction* pCurAction : pActionMgr->getOperationsList()) {
-        action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
+    IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
+    assert(pOperationMgr);
+    for (UiOperation* pCurOperation : pOperationMgr->getOperationsList()) {
+        ShortcutComp* pShortcuts = pCurOperation->getComp_<qd::ShortcutComp>();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
             if (isShortcutTriggered(curShortcut)) {
-                pCurAction->doAction();
+                pCurOperation->doOperation();
             }
         }
     }
@@ -155,16 +155,16 @@ const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
 }
 
 
-UiAction* ShortcutsMgr::findActionByShortcut(const qd::Shortcut* pShortcut) const {
-    IUiOperationsProvider* pActionMgr = findParentCompI_<IUiOperationsProvider>();
-    assert(pActionMgr);
-    for (UiAction* pCurAction : pActionMgr->getOperationsList()) {
-        action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
+UiOperation* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut) const {
+    IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
+    assert(pOperationMgr);
+    for (UiOperation* pCurOperation : pOperationMgr->getOperationsList()) {
+        ShortcutComp* pShortcuts = pCurOperation->getComp_<ShortcutComp>();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
             if (curShortcut == pShortcut) {
-                return pCurAction;
+                return pCurOperation;
             }
         }
     }

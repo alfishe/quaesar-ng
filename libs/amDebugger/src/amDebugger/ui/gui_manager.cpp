@@ -2,19 +2,19 @@
 #include "EASTL/span.h"
 #include "qdIce/qdUI/uiControls/lambda.h"
 #include "qdIce/qdUI/uiControls/mainMenu.h"
-#include <amDebugger/action_mgr.h>
+#include <amDebugger/dbgOperation.h>
 #include <amDebugger/shortcut/shortcut_list.h>
 #include <imgui/imgui_internal.h>
-#include <qdIce/qdLog/log.h>
-#include <qdIce/qdTypeSystem/TypeRegistry.h>
-#include <qdIce/qdUI/actionMgr.h>
-#include <qdIce/qdUI/shortcutMgr.h>
+#include "qdIce/qdLog/log.h"
+#include "qdIce/qdTypeSystem/typeRegistry.h"
+#include "qdIce/qdUI/uiOperationManager.h"
+#include "qdIce/qdUI/shortcutMgr.h"
 
 
 
 namespace qd {
 
-using namespace action;
+using namespace operation;
 
 GuiManager::GuiManager(Debugger* in_dbg)
     : m_pDbg(in_dbg)
@@ -26,7 +26,7 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
     TSuper::onNodeCreated(mk);
 
     windows.resize((size_t)WndId::MostCommonCount);
-    m_pActionMgr = createComp_<UiActionMgr>();
+    m_pOperationMgr = createComp_<UiOperationMgr>();
     m_pShortcutMgr = createComp_<ShortcutsMgr>();
 
     m_pShortcutMgr->init(eastl::span(&shortcut::g_shortcuts_list[0], (size_t)shortcut::EId::MAX_COUNT));
@@ -34,34 +34,34 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
     // create all windows
     createAllUiWndows();
 
-    action::AmDebuggerActionCreator actionCreate;
-    actionCreate.gui = this;
-    actionCreate.dbg = m_pDbg;
-    m_pActionMgr->createActions(&actionCreate);
+    operation::AmDebuggerOperationCreator operationCreate;
+    operationCreate.gui = this;
+    operationCreate.dbg = m_pDbg;
+    m_pOperationMgr->createOperations(&operationCreate);
 
     qd::UiMainMenu* pMenu = this->addChild_<qd::UiMainMenu>();
 
     auto* pFile = pMenu->addChild_<qd::UiMenu>("File");
     auto* pEmulator = pMenu->addChild_<qd::UiMenu>("Emulator");
     {
-        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::ToggleTurboEmulation));
-        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::UaeWndAlwaysOnTop));
-        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::UaeResetAmiga));
+        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::ToggleTurboEmulation));
+        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::UaeWndAlwaysOnTop));
+        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::UaeResetAmiga));
     }
 
     auto* pDebug = pMenu->addChild_<qd::UiMenu>("Debug");
     {
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DebugTraceStart));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceStart));
         pDebug->addChild_<qd::UiSeparator>();
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DisasmTraceStep));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DisasmTraceStepOut));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DebugTraceContinue));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DisasmToggleBreakpoint));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStep));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStepOut));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceContinue));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DisasmToggleBreakpoint));
         pDebug->addChild_<qd::UiSeparator>();
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::CopperTraceStep));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::CopperToggleBreakpoint));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::CopperTraceStep));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::CopperToggleBreakpoint));
         pDebug->addChild_<qd::UiSeparator>();
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DebugDmaOption));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DebugDmaOption));
 
         //typeid();
 //         const TypeInfo& act = typeof_<>();
@@ -227,7 +227,7 @@ void GuiManager::_drawMainMenuBar()
 {
 
 #if 0
-    auto pActionMgr = getActionMgr();
+    auto pOperationMgr = getOperationMgr();
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             ImGui::EndMenu();
@@ -235,15 +235,15 @@ void GuiManager::_drawMainMenuBar()
 
         if (ImGui::BeginMenu("Emulator")) {
 //             dr.drawElement = UiDrawEvent::MainMenu_Emul;
-//             pActionMgr->sendActionMsgT(dr);
+//             pOperationMgr->sendOperationMsgT(dr);
 
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Debug")) {
-//             qd::action::msg::OnDrawMainMenuItem dr;
+//             qd::operation::msg::OnDrawMainMenuItem dr;
 //             dr.drawElement = UiDrawEvent::MainMenu_Debug;
-//             pActionMgr->sendActionMsgT(dr
+//             pOperationMgr->sendOperationMsgT(dr
             ImGui::EndMenu();
         }
 

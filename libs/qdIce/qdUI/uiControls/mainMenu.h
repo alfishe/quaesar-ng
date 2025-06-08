@@ -5,7 +5,7 @@
 
 namespace qd {
 class TypeInfo;
-class UiAction;
+class UiOperation;
 
 
 class UiMainMenu : public qd::UiNode
@@ -90,7 +90,7 @@ class UiMenuOperation : public qd::UiNode
 {
     TS_REFLECT_CLASS(qd::UiMenuOperation, qd::UiNode);
     const qd::TypeInfo* m_pOperationType = nullptr;
-    qd::UiAction* m_pOperation = nullptr;
+    qd::UiOperation* m_pOperation = nullptr;
 
 
 public:

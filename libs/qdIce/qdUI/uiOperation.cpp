@@ -1,21 +1,21 @@
-#include "actionBase.h"
-#include <qdIce/qdUI/shortcutMgr.h>
-#include <qdIce/qdUI/actionComps.h>
+#include "uiOperation.h"
+#include "qdIce/qdUI/shortcutMgr.h"
+#include "qdIce/qdUI/shortcutComp.h"
 
 
 namespace qd {
 
-void UiAction::addShortcut(int sid) {
+void UiOperation::addShortcut(int sid) {
     auto pActMgr = findParentComp_<qd::ShortcutsMgr>();
     QD_ASSERT_AND_DO(pActMgr, return, "");
     const Shortcut* pShortcut = pActMgr->getShortcut(sid);
     assert(pShortcut);
-    auto pShortComp = createComp_<qd::action::comp::ShortcutComp>();
+    auto pShortComp = createComp_<qd::ShortcutComp>();
     pShortComp->addShortcut(pShortcut);
 }
 
 
-qd::EFlow UiAction::_applyMsgProcDefImp(action::msg::Base* pBaseMtd) {
+qd::EFlow UiOperation::_applyMsgProcDefImp(operation::msg::Base* pBaseMtd) {
 /*
     for (Node* curComp : m_pComps) {
         EFlow flow = curComp->onNodeMessageProc(pBaseMtd);

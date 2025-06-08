@@ -9,13 +9,13 @@
 #include <qdIce/qdTypeSystem/typeDeclare.h>
 
 
-FORWARD_DECLARATION_3(qd, action, Action);
+FORWARD_DECLARATION_3(qd, operation, Operation);
 
 namespace qd {
 
 class Shortcut;
 using ShortcutSetupFunc = void (*)(qd::Shortcut&);
-class UiAction;
+class UiOperation;
 
 class Key
 {
@@ -92,7 +92,7 @@ public:
         return getShortcut((uint32_t)shortcut_id);
     }
 
-    UiAction* findActionByShortcut(const Shortcut* pShortcut) const;
+    UiOperation* findOperationByShortcut(const Shortcut* pShortcut) const;
 
     bool isShortcutTriggered(const qd::Shortcut* shortcut) const;
     bool triggerShortcut(uint32_t id);

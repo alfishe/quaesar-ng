@@ -1,27 +1,26 @@
 #pragma once
-#include <qdIce/qdBase/base.h>
-#include <qdIce/qdDebug/assert.h>
-#include <qdIce/qdUI/actionMsg.h>
-#include <qdIce/qdBase/types.h>
-#include <EASTL/fixed_vector.h>
-#include <EASTL/bitset.h>
-#include <EASTL/string.h>
-#include <qdIce/qdBase/classInfoReg.h>
-#include <qdIce/qdCore/nodeBase.h>
-#include <qdIce/qdTypeSystem/typeDeclare.h>
+#include "qdIce/qdBase/base.h"
+#include "qdIce/qdBase/classInfoReg.h"
+#include "qdIce/qdBase/types.h"
+#include "qdIce/qdCore/nodeBase.h"
+#include "qdIce/qdDebug/assert.h"
+#include "qdIce/qdSTL/string.h"
+#include "qdIce/qdSTL/fixed_vector.h"
+#include "qdIce/qdTypeSystem/typeDeclare.h"
+#include "qdIce/qdUI/uiOperationManager.h"
 
 
 namespace qd
 {
 class GuiManager;
 
-// Action's component classId
-enum class EActionCompsClassId {
+// Operation's component classId
+enum class EOperationCompsClassId {
     Shortcuts,
     MOST_COMMON_COMPS,
 };
 
-struct UiActionCreator : public qd::NodeCreator
+struct UiOperationCreator : public qd::NodeCreator
 {};
 
 
@@ -32,9 +31,9 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class UiAction : public qd::Node
+class UiOperation : public qd::Node
 {
-    TS_REFLECT_CLASS_BASE(200, qd::UiAction, qd::Node);
+    TS_REFLECT_CLASS_BASE(200, qd::UiOperation, qd::Node);
 
 public:
     uint32_t mClassId = -1;
@@ -43,20 +42,20 @@ public:
     bool m_bActive = true;
 
 public:
-    UiAction() = default;
-    virtual ~UiAction() = default;
+    UiOperation() = default;
+    virtual ~UiOperation() = default;
 
 
-    virtual void onActionCreate(qd::UiActionCreator* cp) {
+    virtual void onOperationCreate(qd::UiOperationCreator* cp) {
         onNodeCreated(cp);
     }
 
     virtual void destroy() {
     }
 
-    void doActionBase();
+    void doOperationBase();
 
-    virtual EFlow applyActionMsgProc(action::msg::Base* msg) {
+    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) {
         return _applyMsgProcDefImp(msg);
     }
 
@@ -64,10 +63,10 @@ public:
 
     virtual bool hasMtd(int id) const { return false; /*supportMtd[id];*/ }
 
-    virtual void doAction(OperationHistory& history = OperationHistory())
+    virtual void doOperation(OperationHistory& history = OperationHistory())
     {
-        action::msg::DoAction msg;
-        applyActionMsgProc(&msg);
+        operation::msg::DoOperation msg;
+        applyOperationMsgProc(&msg);
     }
     virtual void undoOperation(OperationHistory& history)
     {
@@ -78,30 +77,30 @@ public:
 
 
 protected:
-    EFlow _applyMsgProcDefImp(action::msg::Base* pBaseMtd);
+    EFlow _applyMsgProcDefImp(operation::msg::Base* pBaseMtd);
 
-};  // class UiAction
+};  // class UiOperation
 //////////////////////////////////////////////////////////////////////////
 
 
 
 
 namespace details {
-using ActionClassRegistry = ClassInfoRegistry_<UiAction>;
-extern uint32_t qdbActionAutoClassId;
+using OperationClassRegistry = ClassInfoRegistry_<UiOperation>;
+extern uint32_t qdbOperationAutoClassId;
 
 template <class TClass>
 struct AutoRegistrator {
     AutoRegistrator(uint32_t class_id) {
         EASTL_ASSERT(class_id != 0);
-        ActionClassRegistry::MetaInfo metaInfo;
-        metaInfo.classId = class_id != 0 ? class_id : ++qdbActionAutoClassId;
+        OperationClassRegistry::MetaInfo metaInfo;
+        metaInfo.classId = class_id != 0 ? class_id : ++qdbOperationAutoClassId;
         metaInfo.createCallback = (void*)&createClassCb;
         metaInfo.rtti = &typeid(TClass);
         metaInfo.registerClass();
     }
 
-    static UiAction* createClassCb(const ActionClassRegistry::MetaInfo& meta, UiActionCreator* cp) {
+    static UiOperation* createClassCb(const OperationClassRegistry::MetaInfo& meta, UiOperationCreator* cp) {
         TClass* pInst = new TClass();
         pInst->mClassId = meta.classId;
         pInst->onCreate(cp);
@@ -111,8 +110,8 @@ struct AutoRegistrator {
 };  // struct AutoRegistrator
 //////////////////////////////////////////////////////////////////////////
 
-#define QDB_ACTION_REGISTER(TClass, classId) \
-    static action::details::AutoRegistrator<TClass> EA_PREPROCESSOR_JOIN(_rgact_no_, __COUNTER__)((uint32_t)classId);
+#define QDB_OPERATION_REGISTER(TClass, classId) \
+    static operation::details::AutoRegistrator<TClass> EA_PREPROCESSOR_JOIN(_rgact_no_, __COUNTER__)((uint32_t)classId);
 
 };  // namespace details
 //////////////////////////////////////////////////////////////////////////

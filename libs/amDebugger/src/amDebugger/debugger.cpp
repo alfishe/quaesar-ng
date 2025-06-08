@@ -7,13 +7,13 @@
 #include <imgui/backends/imgui_impl_sdlrenderer2.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include <amDebugger/action_mgr.h>
+#include <amDebugger/dbgOperation.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
 #include <qdIce/qdThread/thread.h>
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui/ui_style.h>
-#include <qdIce/qdUI/actionMgr.h>
+#include "qdIce/qdUI/uiOperationManager.h"
 
 
 namespace qd {
@@ -98,11 +98,11 @@ void Debugger::init() {
     NodeCreator mk;
     mk.parent = nullptr;
     gui = mk.createNode_<GuiManager>(this);
-    
-    m_pActions = gui->getActionMgr();
-    assert(m_pActions);
 
-    assert(m_pActions->getNumChild());
+    m_pOperations = gui->getOperationMgr();
+    assert(m_pOperations);
+
+    assert(m_pOperations->getNumChild());
 
     capstone = new csh();
 
@@ -169,8 +169,8 @@ void Debugger::setDebugMode(DebuggerMode debug_mode) {
     return;
 }
 
-qd::EFlow Debugger::applyActionMsg(qd::action::msg::Base* p_msg) const {
-    return m_pActions->applyActionMsg(p_msg);
+qd::EFlow Debugger::applyOperationMsg(qd::operation::msg::Base* p_msg) const {
+    return m_pOperations->applyOperationMsg(p_msg);
 }
 
 
@@ -203,9 +203,9 @@ void Debugger::destroy() {
     if (gui)
         gui->destroy();
     imp::console_queue.destroy();
-    if (m_pActions)
-        m_pActions->destroy();
-    m_pActions = nullptr;
+    if (m_pOperations)
+        m_pOperations->destroy();
+    m_pOperations = nullptr;
 
     // Cleanup
     ImGui_ImplSDLRenderer2_Shutdown();

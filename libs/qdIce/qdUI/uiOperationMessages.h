@@ -3,14 +3,14 @@
 #include <qdIce/qdMem/fnvHash.h>
 
 
-namespace qd::action::msg {
+namespace qd::operation::msg {
 
 template<int>
 struct Base_;
 
 
 struct Base {
-    TS_REFLECT_CLASS(action::msg::Base, void);
+    TS_REFLECT_CLASS(operation::msg::Base, void);
     template<int TClassId>
     friend struct Base_;
 
@@ -44,9 +44,9 @@ struct Base_ : public Base {
 }; // struct Base_
 
 
-struct DoAction : public Base
+struct DoOperation : public Base
 {
-    TS_REFLECT_CLASS(DoAction, action::msg::Base);
+    TS_REFLECT_CLASS(DoOperation, operation::msg::Base);
 };
 
 

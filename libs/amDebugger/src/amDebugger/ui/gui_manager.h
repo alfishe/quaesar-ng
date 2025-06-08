@@ -7,11 +7,11 @@
 #include <qdIce/qdUI/uiNode.h>
 
 FORWARD_DECLARATION_2(qd, UiView);
-FORWARD_DECLARATION_3(qd, action, Action);
+FORWARD_DECLARATION_3(qd, operation, Operation);
 
 namespace qd {
 class ShortcutsMgr;
-class UiActionMgr;
+class UiOperationMgr;
 
 //------------------------------------------------------------------------
 class GuiManager : public qd::UiNode {
@@ -20,7 +20,7 @@ class GuiManager : public qd::UiNode {
 
 public:
   Debugger* m_pDbg = nullptr;
-  UiActionMgr* m_pActionMgr = nullptr;
+  UiOperationMgr* m_pOperationMgr = nullptr;
   ShortcutsMgr* m_pShortcutMgr = nullptr;
 
  public:
@@ -46,7 +46,7 @@ public:
 
   void addView(UiView* view);
 
-  qd::UiActionMgr* getActionMgr() const { return m_pActionMgr; }
+  qd::UiOperationMgr* getOperationMgr() const { return m_pOperationMgr; }
   qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 
  private:
