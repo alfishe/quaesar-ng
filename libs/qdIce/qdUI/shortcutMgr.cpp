@@ -102,6 +102,23 @@ void ShortcutsMgr::init(eastl::span<ShortcutSetupFunc> shortcuts_list) {
         }
         mShortcuts[id] = curShortcut;
     }
+
+#if 0
+    for (int id = 0; id < (int)shortcut::EId::MAX_COUNT; ++id)
+    {
+        Shortcut* curShortcut = shortcut::makeInstance((shortcut::EId)id);
+        if (!curShortcut)
+            continue;
+        EASTL_ASSERT((int)curShortcut->mId == id);
+        if (getShortcut((shortcut::EId)id))
+        {
+            ASSERT_F(0, "Shortcut ID:%i already registered", id);
+            continue;
+        }
+        mShortcuts[id] = curShortcut;
+    }
+#endif //
+
 }
 
 
@@ -115,16 +132,15 @@ void ShortcutsMgr::done() {
 
 
 void ShortcutsMgr::update() {
-    auto pActionMgr = findParentComp_<UiActionMgr>();
+    IUiOperationsProvider* pActionMgr = findParentCompI_<IUiOperationsProvider>();
     assert(pActionMgr);
-    for (UiAction* pCurAction : pActionMgr->getActions()) {
+    for (UiAction* pCurAction : pActionMgr->getOperationsList()) {
         action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
             if (isShortcutTriggered(curShortcut)) {
-                action::msg::DoAction t;
-                pCurAction->onNodeMessageProc(&t);
+                pCurAction->doAction();
             }
         }
     }
@@ -140,9 +156,9 @@ const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
 
 
 UiAction* ShortcutsMgr::findActionByShortcut(const qd::Shortcut* pShortcut) const {
-    auto pActionMgr = findParentComp_<UiActionMgr>();
+    IUiOperationsProvider* pActionMgr = findParentCompI_<IUiOperationsProvider>();
     assert(pActionMgr);
-    for (UiAction* pCurAction : pActionMgr->getActions()) {
+    for (UiAction* pCurAction : pActionMgr->getOperationsList()) {
         action::comp::ShortcutComp* pShortcuts = pCurAction->getComp_<action::comp::ShortcutComp>();
         if (!pShortcuts)
             continue;

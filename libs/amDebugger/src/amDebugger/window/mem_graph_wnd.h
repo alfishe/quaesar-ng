@@ -23,10 +23,10 @@ class MemoryGraphWnd : public UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Memory graph";
+        m_title = "Memory graph";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 };  // class
 

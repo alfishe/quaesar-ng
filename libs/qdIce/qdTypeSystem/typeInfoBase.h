@@ -1,7 +1,7 @@
 #pragma once
 #include <qdIce/qdTypeSystem/stdTypeId.h>
-#include <EASTL/vector.h>
-#include <qdIce/qdTypeSystem/typeInfoReflector.h>
+#include "qdIce/qdSTL/vector.h"
+#include "qdIce/qdTypeSystem/typeInfoBuilder.h"
 
 
 namespace qd {

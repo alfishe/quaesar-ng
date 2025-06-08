@@ -1,5 +1,5 @@
 #include <EASTL/internal/config.h>
-#include <qdIce/qdBase/string.h>
+#include <qdIce/qdSTL/string.h>
 #include <SDL_assert.h>
 
 
@@ -48,7 +48,7 @@
 #define QD_HALT(pFormat, ...) QDSDL_enabled_assert_2(0, pFormat, ##__VA_ARGS__)
 
 
-#define QD_LOGERR_AND_DO(expression, do_action, ...)                                    \
+#define QD_ASSERT_AND_DO(expression, do_action, ...)                                    \
     if (EASTL_UNLIKELY(!(expression)))                                                  \
     {                                                                                   \
         qd::string textFormat = qd::stringFormat(__VA_ARGS__);                          \

@@ -25,6 +25,10 @@ struct UiActionCreator : public qd::NodeCreator
 {};
 
 
+class OperationHistory
+{
+public:
+};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -34,8 +38,9 @@ class UiAction : public qd::Node
 
 public:
     uint32_t mClassId = -1;
-    eastl::string mName;
-    eastl::string mDesc;
+    eastl::string m_name;
+    eastl::string m_description;
+    bool m_bActive = true;
 
 public:
     UiAction() = default;
@@ -58,6 +63,18 @@ public:
     void addShortcut(int sid);
 
     virtual bool hasMtd(int id) const { return false; /*supportMtd[id];*/ }
+
+    virtual void doAction(OperationHistory& history = OperationHistory())
+    {
+        action::msg::DoAction msg;
+        applyActionMsgProc(&msg);
+    }
+    virtual void undoOperation(OperationHistory& history)
+    {
+    }
+
+    bool isActive() const { return m_bActive; }
+    void setActive(bool Active) { m_bActive = Active; }
 
 
 protected:

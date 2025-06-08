@@ -1,6 +1,7 @@
 #include <EASTL/fixed_function.h>
 #include <qdIce/qdCore/nodeBase.h>
 #include <qdIce/qdTypeSystem/typeInfo.h>
+#include "qdIce/qdSTL/algorithm.h"
 
 
 namespace qd {
@@ -18,18 +19,19 @@ EFlow Node::onNodeMessageProc(NodeMessage* in_msg)
 
 
 
-void Node::addComp(Node* pNewComp)
+void Node::addComp(NodeComp* pNewComp)
 {
-    if (pNewComp->getStaticTypeInfo()->isDerivedFrom_<qd::INodeChildList>())
-        m_pChildList = static_cast<INodeChildList *>(pNewComp);
+    const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
+    if (typeInfo.isDerivedFrom_<qd::INodesChildList>())
+        m_pChildList = static_cast<INodesChildList *>(pNewComp);
     m_pComps.push_back(pNewComp);
 }
 
 
-Node* Node::findComp(const THash32& id) const
+NodeComp* Node::findComp(const qd::TypeInfo& comp) const
 {
     auto it = eastl::find_if(m_pComps.begin(), m_pComps.end(),
-        [id](const Node* pCurComp) { return pCurComp ? pCurComp->getCID() == id : false; });
+        [comp](const NodeComp* pCurComp) { return pCurComp ? pCurComp->getTypeInfo().isDerivedFrom(comp) : false; });
     if (it != m_pComps.end())
         return *it;
     return nullptr;
@@ -54,6 +56,38 @@ qd::Node* Node::findChildNode(const qd::TypeInfo& ti)
 }
 
 
+qd::Node* Node::findParentNode(const qd::TypeInfo& needType) const
+{
+    Node* pCurNode = m_pParent;
+    while (pCurNode)
+    {
+        const qd::TypeInfo& curTypeInfo = pCurNode->getTypeInfo();
+        if (curTypeInfo.isDerivedFrom(needType))
+            return pCurNode;
+        pCurNode = pCurNode->m_pParent;
+    }
+    return nullptr;
+}
+
+
+void Node::setParent(qd::Node* Parent)
+{
+    const_cast<qd::Node*&>(m_pParent) = Parent;
+}
+
+
+void Node::destroy()
+{
+    for (int i = 0; i < m_pComps.size(); ++i)
+    {
+        Node* pCurComp = m_pComps[i];
+        if (!pCurComp)
+            continue;
+        pCurComp->destroy();
+    }
+}
+
+
 Node::~Node()
 {
     while (!m_pComps.empty())
@@ -68,7 +102,7 @@ Node::~Node()
 void Node::onNodeCreated(NodeCreator* mk)
 {
     if (!m_pParent && mk->parent)
-        m_pParent = mk->parent;
+        setParent(mk->parent);
 }
 
 
@@ -141,6 +175,12 @@ NodesChildList::~NodesChildList()
 }
 
 
+int NodesChildList::getNumChild()
+{
+    return static_cast<int>(m_ChildNodes.size());
+}
+
+
 int Node::getNumChild() const
 {
     return m_pChildList ? m_pChildList->getNumChild() : 0;
@@ -158,6 +198,12 @@ qd::Node* NodesChildList::getChild(int idx)
     if (idx >= 0 && idx < static_cast<int>(m_ChildNodes.size()))
         return m_ChildNodes[idx];
     return nullptr;
+}
+
+
+bool NodeMessage::tryCast(const qd::TypeInfo& msg_type) const
+{
+    return msg_type.isDerivedFrom(getTypeInfo());
 }
 
 

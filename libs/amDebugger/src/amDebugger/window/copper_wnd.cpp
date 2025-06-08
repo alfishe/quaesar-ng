@@ -20,10 +20,10 @@ class CopperDbgWnd : public qd::UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Copper debug";
+        m_title = "Copper debug";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 }; // CopperDbgWnd
 //////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ public:
 namespace window {
 
 
-void CopperDbgWnd::drawContent() {
+void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
 

@@ -15,7 +15,7 @@ class ConsoleWnd : public UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override;
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
     virtual void destroy() override;
 

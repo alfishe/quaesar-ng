@@ -1,6 +1,5 @@
 #pragma once
-#include <qdIce/qdMem/fnvHash.h>
-#include <qdIce/qdTypeSystem/typeInfoReflector.h>
+#include "qdIce/qdTypeSystem/typeInfoBuilder.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -9,6 +8,7 @@
 //------------------------------------------------------------------------
 // clang-format off
 #define TS_EXPAND(x) x
+#define TS_FIRST_ARG(X, ...) X
 #define TS_FOR_EACH_1(WHAT, X)       WHAT(X)
 #define TS_FOR_EACH_2(WHAT, X, ...)  WHAT(X) TS_EXPAND(TS_FOR_EACH_1(WHAT, __VA_ARGS__))
 #define TS_FOR_EACH_3(WHAT, X, ...)  WHAT(X) TS_EXPAND(TS_FOR_EACH_2(WHAT, __VA_ARGS__))
@@ -28,23 +28,23 @@
 //-------------------------------------------------------------------------
 // Reflection Macros
 //-------------------------------------------------------------------------
-#define TS_BEGIN_REFLECT_TYPE(ObjectClass, BaseClass, ...)                          \
+#define TS_BEGIN_REFLECT_TYPE(ObjectClass, BaseClass)                          \
 private:                                                                            \
     struct ClassMeta;                                                               \
     using TSuper = BaseClass;                                                       \
                                                                                     \
 public:                                                                             \
     inline static const qd::TypeInfo* s_pTypeInfo = qd::_regTypeInfo_<ClassMeta>(); \
-    constexpr static THash32 CID = qd::fnv1aHash(#ObjectClass);                     \
+    constexpr static THash32 CID = qd::hash_type_info_name(#ObjectClass);           \
                                                                                     \
-    virtual THash32 getCID() const                                                  \
+    virtual THash32 getCid() const /*override*/                                     \
     {                                                                               \
         return ObjectClass::CID; /* constexpr ID from fnv1hhash of type name */     \
     }                                                                               \
-    const qd::TypeInfo* getStaticTypeInfo()                                         \
+    static const qd::TypeInfo& getStaticTypeInfo()                                  \
     {                                                                               \
         validateStaticTypeInfoPtr(ObjectClass::s_pTypeInfo);                        \
-        return ObjectClass::s_pTypeInfo;                                            \
+        return *ObjectClass::s_pTypeInfo;                                           \
     }                                                                               \
     virtual const qd::TypeInfo& getTypeInfo() const /*override*/                    \
     {                                                                               \
@@ -53,10 +53,10 @@ public:                                                                         
     }                                                                               \
                                                                                     \
 private:                                                                            \
-    struct ClassMeta : public qd::TypeInfoFillerObject_<ObjectClass> {              \
+    struct ClassMeta : public qd::TypeInfoBuilderObject_<ObjectClass> {             \
                                                                                     \
         ClassMeta()                                                                 \
-            : Inherited(#ObjectClass)                                               \
+            : qd::TypeInfoBuilderObject_<ObjectClass>(#ObjectClass)                 \
         {                                                                           \
             qd::TypeInfo* pCurTypeInfo = m_pType;                                   \
             (void)(pCurTypeInfo);
@@ -95,33 +95,33 @@ public:
 
 
 #define TS_BEGIN_REFLECT_CLASS_BASE(nApproxInherited, ObjectType, ...) \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, __VA_ARGS__)                     \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__))                     \
     TS_BASE_FOR_N_TYPES(nApproxInherited);                             \
     TS_FOR_EACH(TS_DECLARE_BASE_TYPE, __VA_ARGS__)
 
 
 // Declare reflected TypeInfo with class and derives. Use `void` as null base class
 #define TS_BEGIN_REFLECT_CLASS(ObjectType, ...)    \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, __VA_ARGS__) \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
     TS_FOR_EACH(TS_DECLARE_BASE_TYPE, __VA_ARGS__)
 
 
 #define TS_REFLECT_CLASS_BASE(nApproxInherited, ObjectType, ...) \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, __VA_ARGS__)               \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__))               \
     TS_BASE_FOR_N_TYPES(nApproxInherited);                       \
     TS_FOR_EACH(TS_DECLARE_BASE_TYPE, __VA_ARGS__)               \
     TS_END()
 
 
 #define TS_REFLECT_CLASS_FINAL(ObjectType, ...)    \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, __VA_ARGS__) \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
     TS_MARK_AS_FINAL();                            \
     TS_FOR_EACH(TS_DECLARE_BASE_TYPE, __VA_ARGS__) \
     TS_END()
 
 
 #define TS_REFLECT_CLASS(ObjectType, ...)          \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, __VA_ARGS__) \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
     TS_FOR_EACH(TS_DECLARE_BASE_TYPE, __VA_ARGS__) \
     TS_END()
 
@@ -135,4 +135,5 @@ const qd::TypeInfo* _regTypeInfo_()
     TMetaClassReg registrator;
     return registrator.m_pType;
 }
+
 }; // namespace qd

@@ -8,7 +8,7 @@
 namespace qd {
 namespace window {
 
-void ColorsWnd::drawContent() {
+void ColorsWnd::drawContentImp() {
     VM* vm = getDbg()->getVm();
 
     eastl::fixed_vector<Color, 256> palette;

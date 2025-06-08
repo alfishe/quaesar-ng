@@ -3,24 +3,21 @@
 #include <EASTL/internal/config.h>
 #include <stdint.h>
 
-
-// clang-format off
 using THash32 = uint32_t;
 
-template<typename T> T c_def(T v) {
-    return v;
-}
+#define SIDENT(x)      x
+#define STRINGIFY(x)   _STRINGIFY2(x) /* #x */
+#define _STRINGIFY2(x) #x
+#define CON(a, b)      a##b
+#define PASTE(a, b)    CON(a, b)
 
 
-#define CON(a, b)   a##b
-#define PASTE(a, b) CON(a, b)
-
+// clang-format off
 
 #define SAFE_DELETE(p)          { delete (p); (p) = nullptr; }
 #define SAFE_FREE(p)            { free(p); (p) = nullptr; }
 #define SAFE_DESTROY(p)         { if (p) { (p)->destroy(); (p) = nullptr; } }
 #define SAFE_DESTROY_AND_DELETE(p) { if (p) { (p)->destroy(); delete (p); (p) = nullptr; } }
-
 
 //------------------------------------------------------------------------
 // forward for class and struct
@@ -34,5 +31,11 @@ template<typename T> T c_def(T v) {
 #define FORWARD_DECLARATION_3S(n1, n2, c) namespace n1 { namespace n2 { struct c; } }
 #define FORWARD_DECLARATION_4S(n1, n2, n3, c) namespace n1 { namespace n2 { namespace n3 { struct c; } } }
 //------------------------------------------------------------------------
-
 // clang-format on
+
+
+template<typename T>
+T c_def(T v)
+{
+    return v;
+}

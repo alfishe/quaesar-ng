@@ -1,5 +1,6 @@
 #pragma once
-#include <qdIce/qdBase/base.h>
+#include "qdIce/qdBase/base.h"
+#include "qdIce/qdUI/shortcutMgr.h"
 
 
 FORWARD_DECLARATION_2(qd, Shortcut);
@@ -39,6 +40,15 @@ enum class EId {
         MAX_COUNT
 };  // enum
 
+
+inline static qd::ShortcutSetupFunc g_shortcuts_list[] = {
+#define SHORTCUT(name, setup_func) setup_func,
+    SHORTCUT_LIST(SHORTCUT)
+#undef SHORTCUT
+}; // ShortcutList
+
+
+//extern qd::Shortcut *makeInstance(qd::shortcut::EId id);
 
 
 };  // namespace shortcut

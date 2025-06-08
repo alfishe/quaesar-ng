@@ -1,6 +1,5 @@
 #pragma once
-#include <qdIce/qdBase/string.h>
-#include <qdIce/qdSTL/forwardDecl.h>
+#include <qdIce/qdSTL/string.h>
 
 
 //-------------------------------------------------------------------------

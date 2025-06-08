@@ -1,63 +1,117 @@
 #include "gui_manager.h"
+#include "EASTL/span.h"
+#include "qdIce/qdUI/uiControls/lambda.h"
+#include "qdIce/qdUI/uiControls/mainMenu.h"
 #include <amDebugger/action_mgr.h>
-#include <imgui/imgui_internal.h>
-#include <qdIce/qdUI/shortcutMgr.h>
 #include <amDebugger/shortcut/shortcut_list.h>
-#include <qdIce/qdUI/actionMgr.h>
-#include <qdIce/qdTypeSystem/TypeRegistry.h>
+#include <imgui/imgui_internal.h>
 #include <qdIce/qdLog/log.h>
+#include <qdIce/qdTypeSystem/TypeRegistry.h>
+#include <qdIce/qdUI/actionMgr.h>
+#include <qdIce/qdUI/shortcutMgr.h>
+
 
 
 namespace qd {
 
 using namespace action;
 
-GuiManager::GuiManager(Debugger* in_dbg) : m_pDbg(in_dbg) {
-}
+GuiManager::GuiManager(Debugger* in_dbg)
+    : m_pDbg(in_dbg)
+{}
 
 
 void GuiManager::onNodeCreated(NodeCreator* mk)
 {
-    createComp_<qd::NodesChildList>();
     TSuper::onNodeCreated(mk);
 
     windows.resize((size_t)WndId::MostCommonCount);
-    m_pParent = m_pDbg;
     m_pActionMgr = createComp_<UiActionMgr>();
     m_pShortcutMgr = createComp_<ShortcutsMgr>();
 
+    m_pShortcutMgr->init(eastl::span(&shortcut::g_shortcuts_list[0], (size_t)shortcut::EId::MAX_COUNT));
+
     // create all windows
-    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<qd::UiWindow>(false);
-    for (const qd::TypeInfo* curWndType : windowTypes)
+    createAllUiWndows();
+
+    action::AmDebuggerActionCreator actionCreate;
+    actionCreate.gui = this;
+    actionCreate.dbg = m_pDbg;
+    m_pActionMgr->createActions(&actionCreate);
+
+    qd::UiMainMenu* pMenu = this->addChild_<qd::UiMainMenu>();
+
+    auto* pFile = pMenu->addChild_<qd::UiMenu>("File");
+    auto* pEmulator = pMenu->addChild_<qd::UiMenu>("Emulator");
     {
-        auto* pCreator = curWndType->getAttribute_<qd::CreateClassCbAttr>();
-        if (!pCreator)
-        {
-            SDL_Log("Creator not defined in class:'%s'", curWndType->getFullName().c_str());
-            continue;
-        }
-        UiViewCreateCtx cv(this);
-        qd::UiWindow* pCurWnd = pCreator->makeInstance_<UiWindow>(cv);
-        assert(pCurWnd);
-        addView(pCurWnd);
+        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::ToggleTurboEmulation));
+        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::UaeWndAlwaysOnTop));
+        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::UaeResetAmiga));
     }
 
-    //     auto viewMgr = UiViewClassRegistry::get();
-    //     for (auto it : viewMgr->mClassInfoMap) {
-    //         UiView* curView = viewMgr->makeInstance(it.first, &cv);
-    //         addView(curView);
-    //     }
+    auto* pDebug = pMenu->addChild_<qd::UiMenu>("Debug");
+    {
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DebugTraceStart));
+        pDebug->addChild_<qd::UiSeparator>();
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DisasmTraceStep));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DisasmTraceStepOut));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DebugTraceContinue));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DisasmToggleBreakpoint));
+        pDebug->addChild_<qd::UiSeparator>();
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::CopperTraceStep));
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::CopperToggleBreakpoint));
+        pDebug->addChild_<qd::UiSeparator>();
+        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::action::DebugDmaOption));
 
+        //typeid();
+//         const TypeInfo& act = typeof_<>();
+//         assert(act.isDefined());
+    }
+
+    auto* pWindow = pMenu->addChild_<qd::UiMenu>("Window");
+    {
+        pWindow->addChild_<qd::UiLambda>([this]() {
+            for (UiView* pCurWnd : windows)
+            {
+                if (!pCurWnd)
+                    continue;
+                bool bVis = pCurWnd->isVisible();
+                if (ImGui::MenuItem(pCurWnd->m_title.c_str(), 0, &bVis))
+                    pCurWnd->setVisible(bVis);
+            }
+        });
+    }
 }
 
 
+void GuiManager::createAllUiWndows()
+{
+    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<qd::UiWindow>(false);
+    for (int i = 0; i < windowTypes.size(); ++i)
+    {
+        const qd::TypeInfo* pCurWindowType = windowTypes[i];
+        auto* pCreateAttr = pCurWindowType->getAttribute_<qd::CreateClassCbAttr>();
+        if (!pCreateAttr)
+        {
+            SDL_Log("Creator not defined in class:'%s'", pCurWindowType->getFullName().c_str());
+            continue;
+        }
+        UiViewCreateCtx cv(this);
+        qd::UiWindow* pCurWnd = pCreateAttr->makeInstance_<UiWindow>(cv);
+        assert(pCurWnd);
+        addView(pCurWnd);
+    }
+}
 
-GuiManager::~GuiManager() {
+
+GuiManager::~GuiManager()
+{
     assert(windows.empty());
 }
 
 
-void GuiManager::drawImGuiMainFrame() {
+void GuiManager::drawImGuiMainFrame()
+{
 
     getShortcuts()->update();
 
@@ -71,7 +125,11 @@ void GuiManager::drawImGuiMainFrame() {
     wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
     bool open = true;
-    if (ImGui::Begin("Quaesar debugger", &open, wndFlags)) {
+    if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
+    {
+
+        drawContentImp();
+
         _drawMainMenuBar();
         _drawMainToolBar();
         _drawDebuggerWindows();
@@ -80,11 +138,13 @@ void GuiManager::drawImGuiMainFrame() {
 }
 
 
-void GuiManager::_drawMainToolBar() {
+void GuiManager::_drawMainToolBar()
+{
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
-    if (ImGui::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags)) {
+    if (ImGui::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
+    {
         ImGuiIO& io = ImGui::GetIO();
         ImGuiWindow* window = ImGui::GetCurrentWindow();
 
@@ -96,7 +156,8 @@ void GuiManager::_drawMainToolBar() {
         eastl::string hint;
 
         bool isDbgMode = dbg->isDebugActivated();
-        if (ImGui::Checkbox("Trace", &isDbgMode)) {
+        if (ImGui::Checkbox("Trace", &isDbgMode))
+        {
             dbg->setDebugMode(isDbgMode ? DebuggerMode_Break : DebuggerMode_Live);
         }
         //
@@ -107,11 +168,13 @@ void GuiManager::_drawMainToolBar() {
         float my_tex_h = (float)io.Fonts->TexHeight;
         ImVec2 size, uv0, uv1;
         size = ImVec2(16.0f, 16.0f);
-        uv0 = ImVec2(0.0f, 0.0f);  // TODO ICONS
+        uv0 = ImVec2(0.0f, 0.0f); // TODO ICONS
         uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
 
-        if (pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto)) {
-            if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1))) {
+        if (pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto))
+        {
+            if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
+            {
                 shMgr->triggerShortcut(pCurShortcut);
             }
             ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
@@ -136,7 +199,8 @@ void GuiManager::_drawMainToolBar() {
         // wait button
         ImGui::SameLine();
         pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugWaitScanLines);
-        if (ImGui::Button("Wait Scanlines")) {
+        if (ImGui::Button("Wait Scanlines"))
+        {
             shMgr->triggerShortcut(pCurShortcut);
         }
     }
@@ -145,18 +209,24 @@ void GuiManager::_drawMainToolBar() {
 }
 
 
-void GuiManager::_drawDebuggerWindows() {
+void GuiManager::_drawDebuggerWindows()
+{
     ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
     // Debugger windows
-    for (size_t i = 0; i < windows.size(); ++i) {
+    for (size_t i = 0; i < windows.size(); ++i)
+    {
         UiView* curWnd = windows[i];
-        if (!curWnd || !curWnd->mVisible)
+        if (!curWnd || !curWnd->isVisible())
             continue;
         curWnd->draw();
     }
 }
 
-void GuiManager::_drawMainMenuBar() {
+
+void GuiManager::_drawMainMenuBar()
+{
+
+#if 0
     auto pActionMgr = getActionMgr();
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -164,22 +234,16 @@ void GuiManager::_drawMainMenuBar() {
         }
 
         if (ImGui::BeginMenu("Emulator")) {
-            UiActionMgr::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Emul);
-            qd::action::msg::OnDrawMainMenuItem dr;
-            dr.drawElement = UiDrawEvent::MainMenu_Emul;
-            for (UiAction* curAction : actionsList) {
-                curAction->applyActionMsgProc(&dr);
-            }
+//             dr.drawElement = UiDrawEvent::MainMenu_Emul;
+//             pActionMgr->sendActionMsgT(dr);
+
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Debug")) {
-            UiActionMgr::ListByMtd actionsList = pActionMgr->getFilteredActionsByMtd(UiDrawEvent::MainMenu_Debug);
-            qd::action::msg::OnDrawMainMenuItem dr;
-            dr.drawElement = UiDrawEvent::MainMenu_Debug;
-            for (UiAction* curAction : actionsList) {
-                curAction->applyActionMsgProc(&dr);
-            }
+//             qd::action::msg::OnDrawMainMenuItem dr;
+//             dr.drawElement = UiDrawEvent::MainMenu_Debug;
+//             pActionMgr->sendActionMsgT(dr
             ImGui::EndMenu();
         }
 
@@ -187,17 +251,22 @@ void GuiManager::_drawMainMenuBar() {
             for (UiView* curWnd : windows) {
                 if (!curWnd)
                     continue;
-                ImGui::MenuItem(curWnd->mTitle.c_str(), 0, &curWnd->mVisible);
+                ImGui::MenuItem(curWnd->m_title.c_str(), 0, &curWnd->isVisible());
             }
             ImGui::EndMenu();
         }
 
         ImGui::EndMainMenuBar();
     }
+#endif //
 }
 
-void GuiManager::destroy() {
-    while (!windows.empty()) {
+void GuiManager::destroy()
+{
+    TSuper::destroy();
+
+    while (!windows.empty())
+    {
         UiView* curWnd = windows.back();
         windows.pop_back();
         curWnd->destroy();
@@ -205,19 +274,19 @@ void GuiManager::destroy() {
     }
 }
 
-void GuiManager::addView(UiView* view) {
+void GuiManager::addView(UiView* view)
+{
+    addChild(view);
+
     uint32_t idx = view->mClassId;
-
-    NodesChildList* pList = getComp_<NodesChildList>();
-    pList->addChild(view);
-
-    if (idx < (size_t)WndId::MostCommonCount) {
+    if (idx < (size_t)WndId::MostCommonCount)
+    {
         assert(!windows[idx] && "already set");
         windows[idx] = view;
-    } else
+    }
+    else
         windows.push_back(view);
 }
 
 
-
-};  // namespace qd
+}; // namespace qd

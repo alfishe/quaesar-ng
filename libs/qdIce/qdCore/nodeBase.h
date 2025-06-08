@@ -13,17 +13,28 @@ class Node;
 struct NodeMsgProcVisitor;
 class NodeComp;
 class TypeInfo;
-class INodeChildList;
+class INodesChildList;
 
 
 struct NodeMessage {
     TS_REFLECT_CLASS_BASE(1000, qd::NodeMessage, void);
-    uint32_t id = 0;
 
 public:
-    NodeMessage(uint32_t msg_id = 0)
-        : id(msg_id)
-    {}
+    NodeMessage() = default;
+
+    template<class T>
+    T* cast_() const
+    {
+        if (!c_def(this))
+            return nullptr;
+        const qd::TypeInfo& type = T::getStaticTypeInfo();
+        if (!tryCast(type))
+            return nullptr;
+        return static_cast<T*>(const_cast<NodeMessage*>(this));
+    }
+
+    bool tryCast(const qd::TypeInfo& msg_type) const;
+
 }; // struct
 
 
@@ -80,15 +91,15 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class Node : public qd::RefCounted
+class Node : public RefCounted
 {
-    TS_BEGIN_REFLECT_CLASS_BASE(1000, qd::Node, void);
+    TS_BEGIN_REFLECT_CLASS_BASE(9000, qd::Node, void);
     TS_END();
 
-protected:
-    Node* m_pParent = nullptr;
-    eastl::fixed_vector<Node*, 6, true> m_pComps;
-    INodeChildList* m_pChildList = nullptr;
+ public:
+    Node* const m_pParent = nullptr;
+    INodesChildList* m_pChildList = nullptr;
+    eastl::fixed_vector<NodeComp*, 6, true> m_pComps;
 
 public:
     Node() = default;
@@ -115,14 +126,15 @@ public:
         return newComp;
     }
 
-    void addComp(Node* newComp);
-    Node* findComp(const THash32& id) const;
+    void addComp(NodeComp* newComp);
+    NodeComp* findComp(const qd::TypeInfo& id) const;
     Node* findChildNode(const qd::TypeInfo& ti);
+    Node* findParentNode(const qd::TypeInfo& needType) const;
 
     template<class TComp>
     inline TComp* getComp_() const
     {
-        Node* pComp = findComp(TComp::CID);
+        NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
         return static_cast<TComp*>(pComp);
     }
 
@@ -132,30 +144,48 @@ public:
         Node* pCurNode = m_pParent;
         while (pCurNode)
         {
-            if (Node* pFoundComp = pCurNode->getComp_<T>())
-                return static_cast<T*>(pFoundComp);
+            if (T* pFoundComp = pCurNode->getComp_<T>())
+                return pFoundComp;
             pCurNode = pCurNode->m_pParent;
         }
         return nullptr;
     }
+
+    // find components by interface with dynamic_cast
+    template<class TComp>
+    inline TComp* getCompI_() const
+    {
+        NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
+        return dynamic_cast<TComp*>(pComp);
+    }
+
+    template<class T>
+    T* findParentCompI_() const
+    {
+        Node* pCurNode = m_pParent;
+        while (pCurNode)
+        {
+            if (T* pFoundComp = pCurNode->getCompI_<T>())
+                return pFoundComp;
+            pCurNode = pCurNode->m_pParent;
+        }
+        return nullptr;
+    }
+
 
     template<class T>
     T* findParentNode_() const
     {
         const qd::TypeInfo& needType = qd::typeof_<T>();
-        Node* pCurNode = m_pParent;
-        while (pCurNode)
-        {
-            const qd::TypeInfo& curTypeInfo = pCurNode->getTypeInfo();
-            if (curTypeInfo.isDerivedFrom(needType))
-                return static_cast<T*>(pCurNode);
-            pCurNode = pCurNode->m_pParent;
-        }
-        return nullptr;
+        return static_cast<T*>(findParentNode(needType));
     }
 
     qd::Node* getParent() const { return m_pParent; }
-    void setParent(qd::Node* Parent) { m_pParent = Parent; }
+    void setParent(qd::Node* Parent);
+
+    virtual void destroy();
+
+
 }; // class Node
 //////////////////////////////////////////////////////////////////////////
 
@@ -171,12 +201,13 @@ public:
 
 
 
-class INodeChildList : public qd::NodeComp
+class INodesChildList : public qd::NodeComp
 {
-    TS_REFLECT_CLASS(qd::INodeChildList, qd::NodeComp);
+    TS_REFLECT_CLASS(qd::INodesChildList, qd::NodeComp);
 
 public:
     // clang-format off
+    virtual void onNodeCreated(qd::NodeCreator* mk) { TSuper::onNodeCreated(mk); }
     virtual int getNumChild() { return 0; }
     virtual Node* getChild(int idx) { return nullptr; }
     virtual bool beginIter(NodeIterator& buf) { return false; }
@@ -186,27 +217,27 @@ public:
 };
 
 
-
-//////////////////////////////////////////////////////////////////////////
-class NodesChildList : public INodeChildList
+//------------------------------------------------------------------------
+// Base implementation on NodesList interface
+//
+class NodesChildList : public qd::INodesChildList
 {
+    TS_REFLECT_CLASS(qd::NodesChildList, qd::INodesChildList);
     qd::vector<Node*> m_ChildNodes;
 
 public:
-    virtual int getNumChild() override { return static_cast<int>(m_ChildNodes.size()); }
-
-    virtual Node* getChild(int idx) override;
-
-    virtual bool beginIter(NodeIterator& buf) override;
-    virtual bool addChild(Node* child) override;
-    virtual bool removeChild(Node* child) override;
     virtual ~NodesChildList();
 
-private:
-    TS_REFLECT_CLASS(qd::NodesChildList, qd::INodeChildList);
+public:
+    virtual void onNodeCreated(qd::NodeCreator* mk) { TSuper::onNodeCreated(mk); }
+    virtual int getNumChild() override;
+    virtual Node* getChild(int idx) override;
+    virtual bool addChild(Node* child) override;
+    virtual bool removeChild(Node* child) override;
+    virtual bool beginIter(NodeIterator& buf) override;
 
 }; // class NodesChildList
-
+//////////////////////////////////////////////////////////////////////////
 
 
 

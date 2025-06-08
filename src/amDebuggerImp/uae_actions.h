@@ -31,13 +31,12 @@
 
 namespace qd {
 namespace action {
-namespace uae {
 
 
 struct DebugDmaOption : public Action {
-    QDB_REG_ACTION(DebugDmaOption);
+    QDB_REG_ACTION(qd::action::DebugDmaOption);
     void setup() {
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Debug DMA";
     }
 
     void onDrawMainMenuItem(UiDrawEvent::Type event);
@@ -48,269 +47,206 @@ struct DebugDmaOption : public Action {
 
 
 struct DisasmTraceStep : public Action {
-    QDB_REG_ACTION(DisasmTraceStep);
+    QDB_REG_ACTION(qd::action::DisasmTraceStep);
     void setup() {
-        mName = "Step Into";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Step Into";
         addShortcut(qd::shortcut::EId::DebugTraceStepInto);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DoAction::CID: {
-                getDbg()->setDebugMode(DebuggerMode_Break);
-                getDbg()->execConsoleCmd("t");
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::DoAction>()) {
+            getDbg()->setDebugMode(DebuggerMode_Break);
+            getDbg()->execConsoleCmd("t");
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct DisasmTraceStepOut : public Action {
-    QDB_REG_ACTION(DisasmTraceStepOut)
+    QDB_REG_ACTION(qd::action::DisasmTraceStepOut)
     void setup() {
-        mName = "Step Out";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Step Out";
         addShortcut(qd::shortcut::EId::DebugTraceStepOut);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DoAction::CID: {
-                getDbg()->execConsoleCmd("z");
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::DoAction>()) {
+            getDbg()->execConsoleCmd("z");
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct DebugTraceStart : public Action {
-    QDB_REG_ACTION(DebugTraceStart)
+    QDB_REG_ACTION(qd::action::DebugTraceStart)
     void setup() {
-        mName = "Debug Trace Mode";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Debug Trace Mode";
         addShortcut(qd::shortcut::EId::DebugTraceStart);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DoAction::CID: {
-                getDbg()->setDebugMode(DebuggerMode_Break);
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::DoAction>()) {
+            getDbg()->setDebugMode(DebuggerMode_Break);
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct DebugTraceContinue : public Action {
-    QDB_REG_ACTION(DebugTraceContinue)
+    QDB_REG_ACTION(qd::action::DebugTraceContinue)
     void setup() {
-        mName = "Continue";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Continue";
         addShortcut(qd::shortcut::EId::DebugTraceContinue);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DoAction::CID:
-            case action::msg::DoDebugTraceContinue::CID: {
-                getDbg()->execConsoleCmd("g");
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (msg->cast_<action::msg::DoAction>() || msg->cast_<action::msg::DoDebugTraceContinue>()) {
+            getDbg()->execConsoleCmd("g");
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct DebugWaitScanLines : public Action {
-    QDB_REG_ACTION(DebugWaitScanLines)
+    QDB_REG_ACTION(qd::action::DebugWaitScanLines)
     void setup() {
-        mName = "Wait N scanlines";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Wait N scanlines";
         addShortcut(qd::shortcut::EId::DebugWaitScanLines);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DoAction::CID:
-            case action::msg::DoDebugTraceContinue::CID: {
-                eastl::string cmd;
-                cmd.append_sprintf("fs %i", getDbg()->getWaitScanLines());
-                getDbg()->execConsoleCmd(eastl::move(cmd));
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (msg->cast_<action::msg::DoAction>() || msg->cast_<action::msg::DoDebugTraceContinue>()) {
+            eastl::string cmd;
+            cmd.append_sprintf("fs %i", getDbg()->getWaitScanLines());
+            getDbg()->execConsoleCmd(eastl::move(cmd));
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct DisasmToggleBreakpoint : public Action {
-    QDB_REG_ACTION(DisasmToggleBreakpoint)
+    QDB_REG_ACTION(qd::action::DisasmToggleBreakpoint)
     void setup() {
-        mName = "Disasm breakpoint";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Disasm breakpoint";
         addShortcut(qd::shortcut::EId::DisasmToggleBreakpoint);
     }
 
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DisasmToggleBreakpoint::CID: {
-                auto p = msg->cast_<action::msg::DisasmToggleBreakpoint>();
-                eastl::string cmd;
-                cmd.sprintf("f %08x", (uint32_t)p->address);
-                if (p->nBreakpoint >= 0)
-                    cmd.append_sprintf(" %i", p->nBreakpoint);
-                getDbg()->execConsoleCmd(eastl::move(cmd));
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::DisasmToggleBreakpoint>()) {
+            eastl::string cmd;
+            cmd.sprintf("f %08x", (uint32_t)p->address);
+            if (p->nBreakpoint >= 0)
+                cmd.append_sprintf(" %i", p->nBreakpoint);
+            getDbg()->execConsoleCmd(eastl::move(cmd));
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct CopperTraceStep : public Action {
-    QDB_REG_ACTION(CopperTraceStep)
+    QDB_REG_ACTION(qd::action::CopperTraceStep)
     void setup() {
-        mName = "Copper Trace Step";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Copper Trace Step";
         addShortcut(qd::shortcut::EId::CopperTraceStep);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::CopperTraceStep::CID:
-            case action::msg::DoAction::CID: {
-                getDbg()->execConsoleCmd("ot");
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (msg->cast_<action::msg::DoAction>() || msg->cast_<action::msg::CopperTraceStep>()) {
+            getDbg()->execConsoleCmd("ot");
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct CopperToggleBreakpoint : public Action {
-    QDB_REG_ACTION(CopperToggleBreakpoint)
+    QDB_REG_ACTION(qd::action::CopperToggleBreakpoint)
     void setup() {
-        mName = "Copper breakpoint";
-        supportMtd.set(UiDrawEvent::MainMenu_Debug);
+        m_name = "Copper breakpoint";
         addShortcut(qd::shortcut::EId::CopperToggleBreakpoint);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::CopperToggleBreakpoint::CID: {
-                auto p = msg->cast_<action::msg::CopperToggleBreakpoint>();
-                eastl::string cmd;
-                cmd.sprintf("ob %08x", (uint32_t)p->address);
-                getDbg()->execConsoleCmd(eastl::move(cmd));
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::CopperToggleBreakpoint>()) {
+            eastl::string cmd;
+            cmd.sprintf("ob %08x", (uint32_t)p->address);
+            getDbg()->execConsoleCmd(eastl::move(cmd));
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct ToggleTurboEmulation : public Action {
-    QDB_REG_ACTION(ToggleTurboEmulation);
+    QDB_REG_ACTION(qd::action::ToggleTurboEmulation);
     void setup() {
-        mName = "Turbo Emulation";
-        supportMtd.set(UiDrawEvent::MainMenu_Emul);
+        m_name = "Turbo Emulation";
         addShortcut(qd::shortcut::EId::ToggleTurboEmulation);
     }
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case action::msg::DoAction::CID: {
-                if (currprefs.turbo_emulation != 0) {
-                    // off
-                    warpmode(0);
-                } else {
-                    // on
-                    warpmode(2);
-                }
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::DoAction>()) {
+            if (currprefs.turbo_emulation != 0) {
+                // off
+                warpmode(0);
+            } else {
+                // on
+                warpmode(2);
+            }
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct UaeResetAmiga : public Action {
-    QDB_REG_ACTION(UaeResetAmiga);
+    QDB_REG_ACTION(qd::action::UaeResetAmiga);
     void setup() {
-        mName = "Reset Amiga";
-        supportMtd.set(UiDrawEvent::MainMenu_Emul);
+        m_name = "Reset Amiga";
         addShortcut(qd::shortcut::EId::ResetAmigaEmu);
     }
 
     virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case msg::DoAction::CID: {
-                ::uae_reset(1, 1);
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
+        if (auto p = msg->cast_<action::msg::DoAction>()) {
+            ::uae_reset(1, 1);
+            return EFlow::SUCCESS;
+        } else
+            return Action::applyActionMsgProc(msg);
     }
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 struct UaeWndAlwaysOnTop : public Action {
-    QDB_REG_ACTION(UaeWndAlwaysOnTop);
+    QDB_REG_ACTION(qd::action::UaeWndAlwaysOnTop);
     void setup() {
-        mName = "Always on Top";
-        supportMtd.set(UiDrawEvent::MainMenu_Emul).set(UiDrawEvent::MenuItemStateChecked);
+        m_name = "Always on Top";
+        //supportMtd.set(UiDrawEvent::MainMenu_Emul).set(UiDrawEvent::MenuItemStateChecked);
         addShortcut(qd::shortcut::EId::AlwaysOnTopEmu);
     }
 
-    virtual EFlow applyActionMsgProc(action::msg::Base* msg) override {
-        switch (msg->id) {
-            case msg::DoAction::CID: {
-                Uint32 flags = SDL_GetWindowFlags(app->mUaeWindow);
-                bool setOnTop = (flags & SDL_WINDOW_ALWAYS_ON_TOP) != 0;
-                SDL_SetWindowAlwaysOnTop(app->mUaeWindow, (SDL_bool)(!setOnTop));
-                return EFlow::SUCCESS;
-            } break;
-            case msg::MenuItemStateGet::CID: {
-                auto p = static_cast<msg::MenuItemStateGet*>(msg);
-                Uint32 flags = SDL_GetWindowFlags(app->mUaeWindow);
-                p->checked = (flags & SDL_WINDOW_ALWAYS_ON_TOP) ? 1 : 0;
-                return EFlow::SUCCESS;
-            } break;
-            default:
-                return Action::applyActionMsgProc(msg);
-        }
-    }
+    virtual EFlow applyActionMsgProc(action::msg::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
 
 //#undef QDB_REG_ACTION
 
-};  // namespace uae
 };  // namespace action
 };  // namespace qd

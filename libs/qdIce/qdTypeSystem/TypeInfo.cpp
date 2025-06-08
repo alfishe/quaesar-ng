@@ -4,13 +4,14 @@
 //-------------------------------------------------------------------------
 
 namespace qd {
-bool TypeInfo::isDerivedFrom(const TypeInfo& type) const {
+bool TypeInfo::isDerivedFrom(const TypeInfo& type) const
+{
     if (getStdTypeId() == type.getStdTypeId())
         return true;
 
-    for (auto i = m_pBaseSuperTypes.begin(); i != m_pBaseSuperTypes.end(); ++i)
+    for (auto it = m_pBaseSuperTypes.begin(); it != m_pBaseSuperTypes.end(); ++it)
     {
-        const TypeInfo* pCurBaseType = *i;
+        const TypeInfo* pCurBaseType = *it;
         if (pCurBaseType->getStdTypeId() == type.getStdTypeId())
             return true;
         if (!pCurBaseType->m_pBaseSuperTypes.empty())
@@ -50,4 +51,4 @@ void TypeInfo::getInheritedProviders(_Out_ eastl::vector<const TypeInfoBase* >& 
 }
 
 
-};  //namespace qd
+}; // namespace qd

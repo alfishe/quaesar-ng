@@ -98,15 +98,11 @@ void Debugger::init() {
     NodeCreator mk;
     mk.parent = nullptr;
     gui = mk.createNode_<GuiManager>(this);
+    
+    m_pActions = gui->getActionMgr();
+    assert(m_pActions);
 
-    mActions = gui->getActionMgr();
-    assert(mActions);
-    action::AmDebuggerActionCreator actionCreate;
-    actionCreate.gui = gui;
-    actionCreate.dbg = this;
-    mActions->createActions(&actionCreate);
-
-    assert(mActions->getNumChild());
+    assert(m_pActions->getNumChild());
 
     capstone = new csh();
 
@@ -174,7 +170,7 @@ void Debugger::setDebugMode(DebuggerMode debug_mode) {
 }
 
 qd::EFlow Debugger::applyActionMsg(qd::action::msg::Base* p_msg) const {
-    return mActions->applyActionMsg(p_msg);
+    return m_pActions->applyActionMsg(p_msg);
 }
 
 
@@ -207,9 +203,9 @@ void Debugger::destroy() {
     if (gui)
         gui->destroy();
     imp::console_queue.destroy();
-    if (mActions)
-        mActions->destroy();
-    mActions = nullptr;
+    if (m_pActions)
+        m_pActions->destroy();
+    m_pActions = nullptr;
 
     // Cleanup
     ImGui_ImplSDLRenderer2_Shutdown();

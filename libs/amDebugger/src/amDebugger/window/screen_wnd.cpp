@@ -8,7 +8,7 @@
 namespace qd {
 namespace window {
 
-void ScreenWnd::drawContent() {
+void ScreenWnd::drawContentImp() {
     VM* vm = getDbg()->getVm();
     ImGuiIO& io = ImGui::GetIO();
 

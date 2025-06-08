@@ -5,8 +5,9 @@
 #include "ReflectedType.h"
 #include "TypeInfo.h"
 #include <qdIce/qdDebug/assert.h>
-#include <qdIce/qdDebug/exceptTryCatch.h>
 #include <qdIce/qdMem/fnvHash.h>
+#include "qdIce/qdDebug/exception.h"
+#include "typeInfoBuilder.h"
 
 
 //-------------------------------------------------------------------------
@@ -61,7 +62,7 @@ void TypeRegistry::bindNamedTypeInfo(const TypeInfo& ti)
     assert(& getTypeInfo(ti.getStdTypeId()) == &ti && "Type not registered yet");
 
     const string& name = ti.getFullName();
-    THash32 nameHash = fnv1aHash(name.c_str(), (uint32_t)name.size());
+    THash32 nameHash = hash_type_info_name(name.c_str(), (uint32_t)name.size());
     auto it = pSharedData->m_TypeByFullName.find(nameHash);
 
     if (it != pSharedData->m_TypeByFullName.end())
@@ -136,6 +137,27 @@ eastl::vector<const TypeInfo*> TypeRegistry::findAllDerivedFromTypes(const TypeI
             result.push_back(pCurType);
     }
     return eastl::move(result);
+}
+
+
+const qd::TypeInfo* TypeRegistry::findTypeByName(const char* type_name) const
+{
+    const SharedData::TTypeByFullNameMap& TypeMap = getSharedData()->m_TypeByFullName;
+    THash32 nameHash = hash_type_info_name(type_name);
+    auto iter = TypeMap.find(nameHash);
+    if (iter == TypeMap.end())
+        return nullptr;
+    return iter->second;
+}
+
+
+const qd::TypeInfo& TypeRegistry::getTypeByName(const char* pName) const
+{
+    const TypeInfo* pResType = findTypeByName(pName);
+    if (!pResType)
+        G_THROW_OR_DO(Exception(EException::NOT_FOUND, "ERROR: Reflected type:'%s' - not declared!", CC(pName)),
+            return *m_pVoidType);
+    return *pResType;
 }
 
 

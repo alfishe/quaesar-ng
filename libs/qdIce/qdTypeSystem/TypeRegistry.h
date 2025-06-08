@@ -36,6 +36,7 @@ class TypeRegistry
 {
     struct SharedData;
     TypeRegistry::SharedData* m_pSharedData = nullptr;
+    const TypeInfo* m_pVoidType = nullptr;
 
 public:
     TypeRegistry();
@@ -55,6 +56,9 @@ public:
     template<class TBaseClass>
     static TypeInfoSpan findAllDerivedFromTypesCached_(bool bIncludeBaseInList = false);
 
+    const qd::TypeInfo* findTypeByName(const char* pName) const;
+    const qd::TypeInfo& getTypeByName(const char* pName) const;
+
 
 protected:
     const TypeInfo& _createUnNamedTypeInfoByStdType(const StdTypeId& ti);
@@ -65,13 +69,13 @@ protected:
 
 
 // ARRAY OF REFLECTION TYPES
-class TypeInfoSpan : public eastl::span<const TypeInfo* const>
+class TypeInfoSpan : public eastl::span<const TypeInfo* >
 {
-    using TType = const TypeInfo* const;
-    typedef eastl::span<TType> TSuper;
+    using TType = const TypeInfo*;
+    using TSuper = eastl::span<TType>;
 
 public:
-    using TSuper::TSuper;
+    using TSuper::TSuper; // base constructor
 
     template<class TAttr>
     const TypeInfo* findTypeByAttrValue(const TAttr& attr, bool inherit = false) const
@@ -82,7 +86,7 @@ public:
             const TypeInfoAttribute* foundBaseAttr = curType->findCustomAttribute(attrType, inherit);
             if (!foundBaseAttr)
                 continue;
-            TAttr* foundAttr = static_cast<TAttr *>(foundBaseAttr);
+            TAttr* foundAttr = static_cast<TAttr*>(foundBaseAttr);
             if (attr == *foundAttr) // operator ==
                 return curType;
         }
@@ -100,6 +104,7 @@ struct TypeRegistry::SharedData {
     TypeInfoMap m_TypeMap;
     const TypeInfo* m_pTypeVoid = nullptr;
     eastl::vector_map<THash32, const TypeInfo* > m_TypeByFullName; // Hash from full name
+    typedef eastl::vector_map<THash32, const TypeInfo* > TTypeByFullNameMap;
 
     SharedData() = default;
     ~SharedData();
@@ -110,7 +115,7 @@ struct TypeRegistry::SharedData {
 
 
 template<class TBaseClass>
-TypeInfoSpan TypeRegistry::findAllDerivedFromTypesCached_(bool bIncludeBaseInList/* = false*/)
+TypeInfoSpan TypeRegistry::findAllDerivedFromTypesCached_(bool bIncludeBaseInList /* = false*/)
 {
     static eastl::vector<const TypeInfo*> derivedClasses; // CACHED CLASSES
     if (derivedClasses.empty())

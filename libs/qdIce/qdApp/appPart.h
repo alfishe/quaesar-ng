@@ -2,7 +2,7 @@
 #include <qdIce/qdBase/classIdCC.h>
 #include <qdIce/qdBase/base.h>
 #include <qdIce/qdBase/ref_ptr.h>
-#include <qdIce/qdBase/string.h>
+#include "qdIce/qdSTL/string.h"
 #include <qdIce/qdEnum/enumBase.h>
 #include <qdIce/qdMath/fixedPoint.h>
 #include <qdIce/qdTypeSystem/ReflectedType.h>

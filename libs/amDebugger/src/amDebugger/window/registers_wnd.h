@@ -9,10 +9,10 @@ class RegistersView : public qd::UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Registers";
+        m_title = "Registers";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 }; // RegistersView
 

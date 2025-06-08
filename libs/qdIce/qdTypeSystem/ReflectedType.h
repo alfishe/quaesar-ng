@@ -1,6 +1,6 @@
 #pragma once
-#include <qdIce/qdTypeSystem/typeInfoReflector.h>
-#include <qdIce/qdMem/fnvHash.h>
+#include "qdIce/qdTypeSystem/typeInfoBuilder.h"
+#include "qdIce/qdMem/fnvHash.h"
 
 
 //-------------------------------------------------------------------------

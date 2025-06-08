@@ -6,7 +6,7 @@
 #include <qdIce/qdApp/moduleBase.h>
 #include <EASTL/unique_ptr.h>
 #include <EASTL/fixed_function.h>
-#include <qdIce/qdBase/string.h>
+#include "qdIce/qdSTL/string.h"
 
 
 /* Declares struct that register class module creation */

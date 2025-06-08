@@ -22,7 +22,6 @@ add_source_group("qdThread")
 add_source_group("qdSTL")
 add_source_group("qdLog")
 add_source_group("qdImGui")
-add_source_group("qdUI")
 add_source_group("qdApp")
 add_source_group("qdMath")
 add_source_group("qdMem")
@@ -31,6 +30,8 @@ add_source_group("qdEnum")
 add_source_group("qdPlatform")
 add_source_group("qdCore")
 add_source_group("qdTypeSystem")
+add_source_group("qdUI")
+add_source_group("qdUI/uiControls")
 
 
 add_library(qdIce ${QDICE_HDR} ${QDICE_SRC})
@@ -40,3 +41,9 @@ target_include_directories(qdIce PUBLIC ${QDICE_PARENT} ${SDL2_INCLUDE_DIRS})
 
 #dependencies
 target_link_libraries(qdIce PRIVATE imgui EASTL ${SDL2_LIBRARIES})
+
+
+# Append content from the original va_stdafx.h file to the generated file
+file(READ "${QDICE_DIR}/va_stdafx.h" VA_STDAFX_CONTENT)
+file(WRITE "${PROJECT_BINARY_DIR}/va_stdafx.h" "${VA_STDAFX_CONTENT}")
+

@@ -93,7 +93,7 @@ private:
 };  // struct DrawCustomRegColumn
 
 
-void CustomRegsWnd::drawContent() {
+void CustomRegsWnd::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
 

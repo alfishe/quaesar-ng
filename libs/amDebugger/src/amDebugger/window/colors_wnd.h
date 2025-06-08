@@ -10,10 +10,10 @@ class ColorsWnd : public UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Palette";
+        m_title = "Palette";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 };
 //////////////////////////////////////////////////////////////////////////

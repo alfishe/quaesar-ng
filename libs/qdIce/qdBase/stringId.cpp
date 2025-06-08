@@ -1,7 +1,7 @@
 #include "stringId.h"
 #include <EASTL/fixed_string.h>
 #include <EASTL/hash_map.h>
-#include <qdIce/qdBase/string.h>
+#include "qdIce/qdSTL/string.h"
 #include <qdIce/qdDebug/assert.h>
 #include <qdIce/qdMem/fnvHash.h>
 #include <qdIce/qdThread/thread.h>

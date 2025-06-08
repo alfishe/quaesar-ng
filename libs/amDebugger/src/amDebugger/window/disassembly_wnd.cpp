@@ -13,7 +13,7 @@ namespace qd {
 namespace window {
 
 
-void DisassemblyView::drawContent() {
+void DisassemblyView::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->getVm();
 

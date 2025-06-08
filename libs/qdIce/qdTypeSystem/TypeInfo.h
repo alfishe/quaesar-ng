@@ -1,7 +1,7 @@
 #pragma once
 #include <qdIce/qdTypeSystem/TypeId.h>
 #include <qdIce/qdTypeSystem/typeInfoBase.h>
-#include <EASTL/fixed_vector.h>
+#include "qdIce/qdSTL/vector.h"
 #include <qdIce/qdBase/stringId.h>
 #include <qdIce/qdDebug/assert.h>
 #include <qdIce/qdTypeSystem/stdTypeId.h>
@@ -12,12 +12,13 @@ namespace qd {
 
 class TypeInfo : public TypeInfoBase
 {
-    TypeId m_ID;
-    StdTypeId m_StdTypeId;
+    TypeId m_id;
+    StdTypeId m_stdTypeId;
 
-    string m_FullName;
-    string_view m_ShortName;
-    string_view m_Namespace;
+    qd::string m_fullName;
+    qd::string_view m_shortName;
+    qd::string_view m_namespace;
+    THash32 m_cid = 0; // =hash(m_fullName)
 
     int32_t m_size = -1;
     int32_t m_alignment = -1;
@@ -26,26 +27,25 @@ class TypeInfo : public TypeInfoBase
     bool m_bFinal = false;
 
     // parents (super) classes of this type
-    eastl::fixed_vector<const TypeInfo*, 2, true> m_pBaseSuperTypes;
-    typedef eastl::fixed_vector<const TypeInfo*, 2, true> TBaseSuperTypes;
+    qd::vector<const TypeInfo*> m_pBaseSuperTypes;
+    typedef qd::vector<const TypeInfo*> TBaseSuperTypes;
 
     friend class TypeRegistry;
     friend struct TypeInfoBuilder;
 
 public:
 
-    const string& getFullName() const {
-        return m_FullName;
+    const qd::string& getFullName() const {
+        return m_fullName;
     }
 
     // Basic Type Info
     //-------------------------------------------------------------------------
 
+    const TypeId& getId() const { return m_id; }
+    const StdTypeId& getStdTypeId() const { return m_stdTypeId; }
 
-    const TypeId& getId() const { return m_ID; }
-    const StdTypeId& getStdTypeId() const { return m_StdTypeId; }
-
-    inline const string& getTypeName() const { return m_FullName; }
+    inline const qd::string& getTypeName() const { return m_fullName; }
 
     bool isAbstractType() const { return m_isAbstract; }
 
@@ -62,13 +62,17 @@ public:
         return m_bDefined;
     }
 
+    THash32 getCid() const {
+        return m_cid;
+    }
 
+    //------------------------------------------------------------------------
 public:
     TypeInfo() = default;
     TypeInfo(TypeInfo const&) = default;
 
     TypeInfo(const StdTypeId& typeInfo)
-        : m_StdTypeId(typeInfo)
+        : m_stdTypeId(typeInfo)
     {}
     virtual ~TypeInfo() = default;
     TypeInfo& operator= (TypeInfo const& rhs) = default;
@@ -78,7 +82,7 @@ public:
 protected:
     void onTypeCreated();
 
-    virtual void getInheritedProviders(_Out_ eastl::vector<const TypeInfoBase* >& out_list) const override;
+    virtual void getInheritedProviders(_Out_ qd::vector<const TypeInfoBase* >& out_list) const override;
 
 }; // class TypeInfo
 //////////////////////////////////////////////////////////////////////////

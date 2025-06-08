@@ -17,8 +17,9 @@ class UiActionMgr;
 class GuiManager : public qd::UiNode {
   TS_REFLECT_CLASS(qd::GuiManager, qd::UiNode);
   eastl::vector<ref_ptr<UiView>> windows;
-  Debugger* m_pDbg = nullptr;
 
+public:
+  Debugger* m_pDbg = nullptr;
   UiActionMgr* m_pActionMgr = nullptr;
   ShortcutsMgr* m_pShortcutMgr = nullptr;
 
@@ -50,6 +51,7 @@ class GuiManager : public qd::UiNode {
 
  private:
   void _drawMainMenuBar();
+  void createAllUiWndows();
 
 };  // class GUIManager
 

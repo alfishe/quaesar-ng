@@ -140,7 +140,7 @@ public:
 
     MemoryView();
     virtual void onCreate(UiViewCreateCtx* cp) override;
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
     void goto_address_and_highlight(size_t addr_min, size_t addr_max);
     void setMemAddr(void* mem_data, size_t mem_size, size_t base_display_addr = 0x0000);

@@ -1,6 +1,7 @@
-#include "typeInfoReflector.h"
+#include "typeInfoBuilder.h"
 #include <qdIce/qdTypeSystem/TypeRegistry.h>
 #include <qdIce/qdTypeSystem/TypeInfo.h>
+#include "qdIce/qdMem/fnvHash.h"
 
 
 namespace qd {
@@ -52,9 +53,10 @@ namespace qd {
 
 void TypeInfoBuilder::declareType(const char* full_name) const
 {
-    assert(!m_pType->isDefined());
-    m_pType->m_FullName = full_name;
-    split_qualified_name(m_pType->m_FullName, m_pType->m_ShortName, m_pType->m_Namespace);
+    assert(!m_pType->isDefined() && "Builded type_info already registered!");
+    m_pType->m_cid = qd::fnv1aHash(full_name);
+    m_pType->m_fullName = full_name;
+    split_qualified_name(m_pType->m_fullName, m_pType->m_shortName, m_pType->m_namespace);
     m_pType->m_bDefined = true;
     m_pRegistry->bindNamedTypeInfo(*m_pType);
 }

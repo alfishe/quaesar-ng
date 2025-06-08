@@ -68,7 +68,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class ShortcutsMgr : public qd::Node
+class ShortcutsMgr : public qd::NodeComp
 {
     TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::Node);
     eastl::vector_map<int /*shortcut::ETypeId*/, Shortcut*> mShortcuts;
@@ -79,6 +79,11 @@ public:
     void init(eastl::span<ShortcutSetupFunc> shortcuts_list);
     void done();
     void update();
+
+    virtual void onNodeCreated(NodeCreator* mk) override
+    {
+        TSuper::onNodeCreated(mk);
+    }
 
     const Shortcut* getShortcut(uint32_t shortcut_id) const;
     template<typename T>

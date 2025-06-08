@@ -12,10 +12,10 @@ class ScreenWnd : public UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Screen";
+        m_title = "Screen";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 };  // class
 

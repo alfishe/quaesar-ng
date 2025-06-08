@@ -1,10 +1,11 @@
 #pragma once
-#include <qdIce/qdBase/classInfoReg.h>
-#include <amDebugger/ui_defs.h>
-#include <qdIce/qdBase/color.h>
-#include <qdIce/qdImGui/imgui_eastl.h>
-#include <qdIce/qdCore/nodeBase.h>
-#include <qdIce/qdTypeSystem/attributesCommon.h>
+#include "qdIce/qdBase/classInfoReg.h"
+#include "amDebugger/ui_defs.h"
+#include "qdIce/qdBase/color.h"
+#include "qdIce/qdImGui/imgui_eastl.h"
+#include "qdIce/qdCore/nodeBase.h"
+#include "qdIce/qdTypeSystem/attributesCommon.h"
+#include "qdIce/qdUI/uiNode.h"
 
 
 
@@ -35,39 +36,22 @@ public:                                                \
 //
 // Base class of all ui
 //
-class UiView : public qd::Node {
-    TS_BEGIN_REFLECT_CLASS_BASE(10000, qd::UiView, qd::Node);
+class UiView : public qd::UiNode {
+    TS_BEGIN_REFLECT_CLASS_BASE(100, qd::UiView, qd::UiNode);
     TS_END();
 
 public:
-    qd::string mTitle;
-    bool mVisible = true;
+    qd::string m_title;
     GuiManager* ui = nullptr;
     uint32_t mClassId = 0;
 
 public:
     UiView() = default;
+    virtual ~UiView() {}
 
     virtual void onCreate(UiViewCreateCtx* cp) {
-        mVisible = cp->visible;
+        setVisible(cp->visible);
         ui = cp->gui;
-    }
-
-protected:
-    virtual void updateBeforeDraw() {
-    }
-    virtual void drawContent() {
-    }
-
-public:
-    virtual ~UiView() {
-    }
-
-    virtual void destroy() {
-    }
-
-    virtual void draw() {
-        drawContent();
     }
 
     Debugger* getDbg() const;
@@ -121,8 +105,8 @@ class ImGuiDemoWindow : public qd::UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "ImGui Demo";
-        mVisible = false;
+        m_title = "ImGui Demo";
+        setVisible(false);
     }
 
     virtual void draw() override;

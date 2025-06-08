@@ -10,16 +10,16 @@ Debugger* UiView::getDbg() const {
 }
 
 void UiWindow::draw() {
-    bool vis = ImGui::Begin(mTitle.c_str(), &mVisible, ImGuiWindowFlags_NoScrollbar);
+    bool vis = ImGui::Begin(m_title.c_str(), &m_bVisible, ImGuiWindowFlags_NoScrollbar);
     if (vis)
-        drawContent();
+        drawContentImp();
     ImGui::End();
 }
 
 namespace window {
 
 void ImGuiDemoWindow::draw() {
-    ImGui::ShowDemoWindow(&mVisible);
+    ImGui::ShowDemoWindow(&m_bVisible);
 }
 
 };  // namespace window

@@ -13,10 +13,10 @@ class CustomRegsWnd : public UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Custom regs";
+        m_title = "Custom regs";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 }; // CustomRegsWnd;
 //////////////////////////////////////////////////////////////////////////

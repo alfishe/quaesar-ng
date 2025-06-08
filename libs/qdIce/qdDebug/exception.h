@@ -1,7 +1,8 @@
 #pragma once
-#include <qdIce/qdBase/string.h>
+#include <qdIce/qdSTL/string.h>
 #include <qdIce/qdDebug/assert.h>
 #include <qdIce/qdEnum/enumBase.h>
+#include "qdIce/qdDebug/exceptTryCatch.h"
 
 
 namespace qd {

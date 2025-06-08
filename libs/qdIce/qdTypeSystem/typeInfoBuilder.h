@@ -2,7 +2,7 @@
 #include <qdIce/qdBase/base.h>
 #include <qdIce/qdTypeSystem/stdTypeId.h>
 #include <qdIce/qdTypeSystem/typeInfoBase.h>
-
+#include "qdIce/qdMem/fnvHash.h"
 
 
 
@@ -14,8 +14,8 @@ class TypeRegistry;
 class TypeInfoAttribute;
 
 void validateStaticTypeInfoPtr(qd::TypeInfo const* pPtr);
-
 const TypeInfo& getTypeInfo(const StdTypeId& ti);
+
 
 template<typename T>
 inline const TypeInfo& typeof_()
@@ -29,6 +29,15 @@ inline const TypeInfo& typeof_()
     return *staticType;
 }
 
+constexpr THash32 hash_type_info_name(const char* class_name)
+{
+    return qd::fnv1aHash(class_name);
+}
+
+constexpr THash32 hash_type_info_name(const char* class_name, size_t len)
+{
+    return qd::fnv1aHash(class_name, (uint32_t)len);
+}
 
 //////////////////////////////////////////////////////////////////////////
 struct TypeInfoBuilder {
@@ -77,16 +86,17 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+
 template<typename T>
-struct TypeInfoFillerObject_ : public TypeInfoBuilder_<T> {
+struct TypeInfoBuilderObject_ : public TypeInfoBuilder_<T> {
 public:
     typedef T TRefClass;
-    typedef TypeInfoFillerObject_<T> Inherited;
+    typedef TypeInfoBuilderObject_<T> Inherited;
 
-    TypeInfoFillerObject_(const char* fullName)
+    TypeInfoBuilderObject_(const char* fullName)
         : TypeInfoBuilder_<T>(fullName, false)
     {}
-}; // class TypeInfoFillerObject_
+}; // class TypeInfoBuilderObject_
 //////////////////////////////////////////////////////////////////////////
 
 

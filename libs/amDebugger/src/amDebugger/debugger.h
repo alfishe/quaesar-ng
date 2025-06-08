@@ -75,7 +75,7 @@ public:
     csh* capstone = nullptr;
     VM* vm = nullptr;
     GuiManager* gui = nullptr;
-    UiActionMgr* mActions = nullptr;
+    UiActionMgr* m_pActions = nullptr;
 
     SDL_Renderer* getRenderer() const {
         return mRenderer;
@@ -99,7 +99,7 @@ public:
     }
 
     UiActionMgr* getActions() const {
-        return mActions;
+        return m_pActions;
     }
 
     static bool isDebugActivated();

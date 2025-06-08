@@ -18,10 +18,10 @@ class BlitterWnd : public qd::UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx *cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Blitter";
+        m_title = "Blitter";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 };
 //////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
 }
 
 
-void BlitterWnd::drawContent() {
+void BlitterWnd::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
 

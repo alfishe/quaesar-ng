@@ -11,7 +11,8 @@
 namespace qd {
 namespace window {
 
-void MemoryGraphWnd::drawContent() {
+
+void MemoryGraphWnd::drawContentImp() {
     VM* vm = getDbg()->getVm();
 
     mNewTextureSize.y = (int)ImGui::GetWindowHeight() - 150;

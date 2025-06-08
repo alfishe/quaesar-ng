@@ -35,7 +35,7 @@ static const FlagDef s_flagDefs[] = {
 };
 // clang-format on
 
-void RegistersView::drawContent() {
+void RegistersView::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
     VM::Cpu* cpu = vm->cpu;

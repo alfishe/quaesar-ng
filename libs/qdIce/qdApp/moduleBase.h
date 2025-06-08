@@ -40,7 +40,7 @@ struct ECgModuleID {
         virtual ~ModuleCreateParams() = default;
 	};  // struct CModuleCreateParams
 	//////////////////////////////////////////////////////////////////////////
-	
+
 
 
 
@@ -68,7 +68,7 @@ struct ECgModuleID {
 
 //////////////////////////////////////////////////////////////////////////
     // BASE MODULE INTEFACE
-    class IModuleInterface : public qd::RefCounted {
+    class IModuleInterface : public RefCounted {
         friend class ModuleManager;
 
     public:
@@ -105,7 +105,7 @@ struct ECgModuleID {
 
 
         virtual ~IModuleInterface() = default;
-      
+
 
     private:
         struct t_StateFlags {
@@ -131,5 +131,5 @@ struct ECgModuleID {
     //////////////////////////////////////////////////////////////////////////
 
 
-	
+
 }; // namespace qd

@@ -58,7 +58,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-void ConsoleWnd::drawContent() {
+void ConsoleWnd::drawContentImp() {
     ImVec2 rgn = ImGui::GetContentRegionAvail();
     ImVec2 scrollingChildSize = ImVec2(rgn.x, rgn.y - ImGui::GetTextLineHeightWithSpacing());
     if (ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None,
@@ -83,7 +83,7 @@ void ConsoleWnd::drawContent() {
 
 void ConsoleWnd::onCreate(UiViewCreateCtx* cp) {
     UiWindow::onCreate(cp);
-    mTitle = "Console";
+    m_title = "Console";
     mpConsoleWriter = qd::logConsole().createWriter_<ConsoleLogWriter>();
 }
 

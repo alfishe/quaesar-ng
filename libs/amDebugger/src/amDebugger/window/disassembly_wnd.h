@@ -15,10 +15,10 @@ class DisassemblyView : public UiWindow {
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
         UiWindow::onCreate(cp);
-        mTitle = "Disassembly";
+        m_title = "Disassembly";
     }
 
-    virtual void drawContent() override;
+    virtual void drawContentImp() override;
 
 };  // class DisassemblyView
 

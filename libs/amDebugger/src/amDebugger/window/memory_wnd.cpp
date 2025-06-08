@@ -78,8 +78,8 @@ namespace window {
 
 void MemoryView::onCreate(UiViewCreateCtx* cp) {
     UiWindow::onCreate(cp);
-    mTitle = "Memory";
-    mVisible = true;
+    m_title = "Memory";
+    setVisible(true);
     setMemAddr(VM::get()->mem->getRealAddr(0x0000), 512 * 1024, 0x0000);
 }
 
@@ -162,13 +162,14 @@ void MemoryView::setMemAddr(void* mem_data, size_t mem_size, size_t base_display
     m_baseDisplayAddr = base_display_addr;
 }
 
-void MemoryView::drawContent() {
+void MemoryView::drawContentImp() {
     MemoryView::Sizes s;
     calc_sizes(s, m_memSize, m_baseDisplayAddr);
     ImGui::SetNextWindowSize(ImVec2(s.window_width, s.window_width * 0.60f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, 0.0f), ImVec2(s.window_width, FLT_MAX));
 
-    if (ImGui::Begin(mTitle.c_str(), &mVisible, ImGuiWindowFlags_NoScrollbar)) {
+    bool bVisible = isVisible();
+    if (ImGui::Begin(m_title.c_str(), &bVisible, ImGuiWindowFlags_NoScrollbar)) {
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_RootAndChildWindows) &&
             ImGui::IsMouseReleased(ImGuiMouseButton_Right))
             ImGui::OpenPopup("context");
@@ -178,6 +179,7 @@ void MemoryView::drawContent() {
             ImGui::SetWindowSize(ImVec2(s.window_width, ImGui::GetWindowSize().y));
         }
     }
+    setVisible(bVisible);
     ImGui::End();
 }
 

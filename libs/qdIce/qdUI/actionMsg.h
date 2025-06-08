@@ -3,33 +3,33 @@
 #include <qdIce/qdMem/fnvHash.h>
 
 
-namespace qd {
-namespace action {
-namespace msg {
+namespace qd::action::msg {
 
 template<int>
 struct Base_;
 
 
-struct Base : public qd::NodeMessage {
-    TS_REFLECT_CLASS(action::msg::Base, qd::NodeMessage);
+struct Base {
+    TS_REFLECT_CLASS(action::msg::Base, void);
     template<int TClassId>
     friend struct Base_;
+
+public:
+    inline Base()
+    {}
 
     template<class T>
     T* cast_()
     {
         if (!c_def(this))
             return nullptr;
-        if (id != T::CID)
+        const qd::TypeInfo& type = T::getStaticTypeInfo();
+        if (!tryCast(type))
             return nullptr;
         return static_cast<T*>(this);
     }
 
-public:
-    inline Base(int msg_id = 0)
-        : qd::NodeMessage(msg_id)
-    {}
+    virtual bool tryCast(const qd::TypeInfo& msg_type);
 
 }; // struct msg::Base
 //////////////////////////////////////////////////////////////////////////
@@ -50,6 +50,5 @@ struct DoAction : public Base
 };
 
 
-}; // namespace msg
-}; // namespace action
+
 }; // namespace qd
