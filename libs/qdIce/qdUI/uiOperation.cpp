@@ -7,7 +7,7 @@ namespace qd {
 
 void UiOperation::addShortcut(int sid) {
     auto pActMgr = findParentComp_<qd::ShortcutsMgr>();
-    QD_ASSERT_AND_DO(pActMgr, return, "");
+    ASSERT_AND_DO(pActMgr, return, "");
     const Shortcut* pShortcut = pActMgr->getShortcut(sid);
     assert(pShortcut);
     auto pShortComp = createComp_<qd::ShortcutComp>();

@@ -1,5 +1,6 @@
 #pragma once
 #include "qdIce/qdTypeSystem/typeInfoBuilder.h"
+#include "qdIce/qdTypeSystem/stdTypeId.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,7 +74,7 @@ public:
 
 //------------------------------------------------------------------------
 // Declare parent (derived from) type of object_reflector
-#define TS_DECLARE_BASE_TYPE(x) addBaseType(makeStdTypeId_<x>());
+#define TS_DECLARE_BASE_TYPE(x) addBaseType(qd::makeStdTypeId_<x>());
 
 // Mark class base (parent) for number
 #define TS_BASE_FOR_N_TYPES(x) \

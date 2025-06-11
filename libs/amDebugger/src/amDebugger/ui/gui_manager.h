@@ -31,8 +31,7 @@ public:
 
   void drawImGuiMainFrame();
 
-  void _drawMainToolBar();
-  void _drawDebuggerWindows();
+  void _drawToolBar();
   void destroy();
 
   Debugger* getDbg() const { return m_pDbg; }
@@ -50,7 +49,6 @@ public:
   qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 
  private:
-  void _drawMainMenuBar();
   void createAllUiWndows();
 
 };  // class GUIManager

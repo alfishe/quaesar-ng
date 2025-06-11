@@ -1,10 +1,9 @@
 #pragma once
-#include <qdIce/qdTypeSystem/TypeId.h>
-#include <qdIce/qdTypeSystem/typeInfoBase.h>
 #include "qdIce/qdSTL/vector.h"
-#include <qdIce/qdBase/stringId.h>
+//#include <qdIce/qdBase/stringId.h>
 #include <qdIce/qdDebug/assert.h>
 #include <qdIce/qdTypeSystem/stdTypeId.h>
+#include <qdIce/qdTypeSystem/typeInfoBase.h>
 
 
 namespace qd {
@@ -12,7 +11,6 @@ namespace qd {
 
 class TypeInfo : public TypeInfoBase
 {
-    TypeId m_id;
     StdTypeId m_stdTypeId;
 
     qd::string m_fullName;
@@ -34,15 +32,11 @@ class TypeInfo : public TypeInfoBase
     friend struct TypeInfoBuilder;
 
 public:
-
-    const qd::string& getFullName() const {
-        return m_fullName;
-    }
+    const qd::string& getFullName() const { return m_fullName; }
 
     // Basic Type Info
     //-------------------------------------------------------------------------
 
-    const TypeId& getId() const { return m_id; }
     const StdTypeId& getStdTypeId() const { return m_stdTypeId; }
 
     inline const qd::string& getTypeName() const { return m_fullName; }
@@ -58,13 +52,9 @@ public:
         return isDerivedFrom(qd::typeof_<T>());
     }
 
-    bool isDefined() const {
-        return m_bDefined;
-    }
+    bool isDefined() const { return m_bDefined; }
 
-    THash32 getCid() const {
-        return m_cid;
-    }
+    THash32 getCid() const { return m_cid; }
 
     //------------------------------------------------------------------------
 public:
@@ -74,10 +64,15 @@ public:
     TypeInfo(const StdTypeId& typeInfo)
         : m_stdTypeId(typeInfo)
     {}
+
     virtual ~TypeInfo() = default;
     TypeInfo& operator= (TypeInfo const& rhs) = default;
 
     bool checkDefined() const;
+
+    bool operator== (const TypeInfo& rhs) const { return m_stdTypeId == rhs.m_stdTypeId; }
+    bool operator!= (const TypeInfo& rhs) const { return m_stdTypeId != rhs.m_stdTypeId; }
+
 
 protected:
     void onTypeCreated();

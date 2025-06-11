@@ -96,7 +96,7 @@ int UiNode::findChildIndex(UiNode* pChild) const
 
 qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
 {
-    QD_ASSERT_AND_DO(pChild.get(), return nullptr, "AddChild - Exception: Child is nullptr!");
+    ASSERT_AND_DO(pChild.get(), return nullptr, "AddChild - Exception: Child is nullptr!");
     assert(pChild->getTypeInfo().isDerivedFrom_<qd::UiNode>());
 
     uint32_t id = pChild->getId();

@@ -17,7 +17,7 @@ void DisassemblyView::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->getVm();
 
-    if (ImGui::InputText("##addr", &addrInputStr,
+    if (ImGui::InputText("##disAddr", &addrInputStr,
                          ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue |
                              ImGuiInputTextFlags_AutoSelectAll)) {
         size_t goto_addr;

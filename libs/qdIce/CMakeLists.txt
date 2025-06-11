@@ -32,6 +32,7 @@ add_source_group("qdCore")
 add_source_group("qdTypeSystem")
 add_source_group("qdUI")
 add_source_group("qdUI/uiControls")
+add_source_group("uiImApi")
 
 
 add_library(qdIce ${QDICE_HDR} ${QDICE_SRC})
