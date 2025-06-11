@@ -54,8 +54,8 @@
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
 #include <amDebugger/debugger.h>
-#include <qdIce/qdLog/log.h>
-#include <qdIce/qdThread/thread.h>
+#include <qd/qdLog/log.h>
+#include <qd/qdThread/thread.h>
 #include <src/quaesar.h>
 #include <src/sounddep/sound.h>
 #include <cstdarg>

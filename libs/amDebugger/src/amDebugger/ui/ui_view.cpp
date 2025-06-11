@@ -1,6 +1,6 @@
 #include "ui_view.h"
 #include <amDebugger/ui/gui_manager.h>
-#include <qdIce/qdTypeSystem/typeInfo.h>
+#include <qd/qdTypeSystem/typeInfo.h>
 
 
 namespace qd {

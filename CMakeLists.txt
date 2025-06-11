@@ -32,7 +32,7 @@ if(NOT DEFINED SDL2_INCLUDE_DIRS)
     set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/sdl2/include")
 endif()
 
-add_subdirectory(libs/qdIce)
+add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
 
 
@@ -88,7 +88,7 @@ endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui EASTL qdIce amDebugger)
+target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui EASTL qd amDebugger)
 
 
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
@@ -151,5 +151,5 @@ function(add_option_edit_and_continue target_name)
 endfunction()
 
 add_option_edit_and_continue(quaesar)
-add_option_edit_and_continue(qdIce)
+add_option_edit_and_continue(qd)
 add_option_edit_and_continue(amDebugger)

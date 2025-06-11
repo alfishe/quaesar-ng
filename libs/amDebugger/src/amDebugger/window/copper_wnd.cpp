@@ -4,12 +4,12 @@
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
-#include <qdIce/qdBase/color.h>
-#include <qdIce/qdImGui/imgui_eastl.h>
+#include <qd/qdBase/color.h>
+#include <qd/qdImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_style.h>
 #include <amDebugger/ui/ui_view.h>
 #include <amDebugger/ui/gui_manager.h>
-#include <qdIce/qdUI/shortcutMgr.h>
+#include <qd/qdUI/shortcutMgr.h>
 
 
 namespace qd {

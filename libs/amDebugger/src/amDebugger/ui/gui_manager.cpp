@@ -1,15 +1,15 @@
 #include "gui_manager.h"
 #include "EASTL/span.h"
-#include "qdIce/qdUI/uiControls/lambda.h"
-#include "qdIce/qdUI/uiControls/mainMenu.h"
+#include "qd/qdUI/uiControls/lambda.h"
+#include "qd/qdUI/uiControls/mainMenu.h"
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/shortcut/shortcut_list.h>
 #include <imgui/imgui_internal.h>
-#include "qdIce/qdLog/log.h"
-#include "qdIce/qdTypeSystem/typeRegistry.h"
-#include "qdIce/qdUI/uiOperationManager.h"
-#include "qdIce/qdUI/shortcutMgr.h"
-#include "qdIce/uiImApi/uiImApi.h"
+#include "qd/qdLog/log.h"
+#include "qd/qdTypeSystem/typeRegistry.h"
+#include "qd/qdUI/uiOperationManager.h"
+#include "qd/qdUI/shortcutMgr.h"
+#include "qd/uiImApi/uiImApi.h"
 
 
 

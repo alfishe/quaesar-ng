@@ -10,10 +10,10 @@
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
-#include <qdIce/qdThread/thread.h>
+#include <qd/qdThread/thread.h>
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui/ui_style.h>
-#include "qdIce/qdUI/uiOperationManager.h"
+#include "qd/qdUI/uiOperationManager.h"
 
 
 namespace qd {

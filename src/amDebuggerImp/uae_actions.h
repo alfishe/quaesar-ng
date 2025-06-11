@@ -18,10 +18,10 @@
 #include <amDebugger/debugger.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/shortcut/shortcut_list.h>
-#include <qdIce/qdImGui/imgui_eastl.h>
-#include <qdIce/qdTypeSystem/attributesCommon.h>
 #include <quaesar.h>
 #include <uae_src/include/debug.h>
+#include "qd/qdImGui/imgui_eastl.h"
+#include "qd/qdTypeSystem/attributesCommon.h"
 
 
 //////////////////////////////////////////////////////////////////////////

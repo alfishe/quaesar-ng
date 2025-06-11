@@ -4,9 +4,9 @@
 #include <EASTL/string.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
-#include <qdIce/qdBase/base.h>
-#include <qdIce/qdApp/appPart.h>
-#include <qdIce/qdBase/classIdCC.h>
+#include <qd/qdBase/base.h>
+#include <qd/qdApp/appPart.h>
+#include <qd/qdBase/classIdCC.h>
 
 
 struct SDL_Window;

@@ -1,5 +1,5 @@
 #include "shortcut_list.h"
-#include <qdIce/qdUI/shortcutMgr.h>
+#include <qd/qdUI/shortcutMgr.h>
 
 
 namespace qd {

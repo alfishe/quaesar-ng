@@ -2,9 +2,9 @@
 #include <EASTL/vector.h>
 #include <amDebugger/debugger.h>
 #include <amDebugger/ui/ui_view.h>
-#include <qdIce/qdBase/base.h>
-#include <qdIce/qdCore/nodeBase.h>
-#include <qdIce/qdUI/uiNode.h>
+#include <qd/qdBase/base.h>
+#include <qd/qdCore/nodeBase.h>
+#include <qd/qdUI/uiNode.h>
 
 FORWARD_DECLARATION_2(qd, UiView);
 FORWARD_DECLARATION_3(qd, operation, Operation);

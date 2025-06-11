@@ -37,4 +37,4 @@ target_link_options(${PROJECT_NAME} INTERFACE "/WHOLEARCHIVE:${PROJECT_NAME}")
 target_include_directories(${PROJECT_NAME} PUBLIC ${AM_SRC_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 
 #dependencies
-target_link_libraries(${PROJECT_NAME} PRIVATE qdIce imgui EASTL capstone)
+target_link_libraries(${PROJECT_NAME} PRIVATE qd imgui EASTL capstone)

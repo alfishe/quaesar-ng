@@ -1,9 +1,9 @@
 #include "quaesar.h"
 #include <SDL.h>
 #include <amDebugger/debugger.h>
-#include <qdIce/qdApp/appPartsMgr.h>
-#include <qdIce/qdApp/appliction.h>
-#include <qdIce/qdThread/thread.h>
+#include <qd/qdApp/appPartsMgr.h>
+#include <qd/qdApp/appliction.h>
+#include <qd/qdThread/thread.h>
 #include <stdarg.h>
 #include <stdio.h>
 
