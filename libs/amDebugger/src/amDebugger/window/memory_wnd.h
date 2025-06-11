@@ -56,7 +56,7 @@
 
 #pragma once
 
-#include <qd/qdImGui/imgui_eastl.h>
+#include <qd/ImGui/imgui_eastl.h>
 #include <stdint.h>  // uint8_t, etc.
 #include <stdio.h>   // sprintf, scanf
 #include <amDebugger/ui/ui_view.h>

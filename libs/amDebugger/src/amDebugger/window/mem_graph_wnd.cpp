@@ -4,7 +4,7 @@
 #include <amDebugger/debugger.h>
 #include <amDebugger/vm/vm.h>
 #include <imgui/imgui_internal.h>
-#include <qd/qdImGui/imgui_eastl.h>
+#include <qd/ImGui/imgui_eastl.h>
 //#include <quaesar.h>
 
 

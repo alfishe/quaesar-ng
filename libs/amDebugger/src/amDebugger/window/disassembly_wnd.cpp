@@ -6,7 +6,7 @@
 #include <amDebugger/debugger.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/qdImGui/imgui_eastl.h>
+#include <qd/ImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_style.h>
 
 namespace qd {

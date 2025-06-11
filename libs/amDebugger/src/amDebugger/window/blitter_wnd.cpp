@@ -5,8 +5,8 @@
 #include <amDebugger/vm/custom_regs.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/qdBase/color.h>
-#include <qd/qdImGui/imgui_eastl.h>
+#include <qd/Base/color.h>
+#include <qd/ImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_view.h>
 
 

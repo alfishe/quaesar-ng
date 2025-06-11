@@ -20,8 +20,8 @@
 #include <amDebugger/shortcut/shortcut_list.h>
 #include <quaesar.h>
 #include <uae_src/include/debug.h>
-#include "qd/qdImGui/imgui_eastl.h"
-#include "qd/qdTypeSystem/attributesCommon.h"
+#include "qd/ImGui/imgui_eastl.h"
+#include "qd/TypeSystem/attributesCommon.h"
 
 
 //////////////////////////////////////////////////////////////////////////

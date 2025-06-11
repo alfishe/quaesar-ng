@@ -1,11 +1,11 @@
 #pragma once
-#include "qd/qdBase/classInfoReg.h"
+#include "qd/Base/classInfoReg.h"
 #include "amDebugger/ui_defs.h"
-#include "qd/qdBase/color.h"
-#include "qd/qdImGui/imgui_eastl.h"
-#include "qd/qdCore/nodeBase.h"
-#include "qd/qdTypeSystem/attributesCommon.h"
-#include "qd/qdUI/uiNode.h"
+#include "qd/Base/color.h"
+#include "qd/ImGui/imgui_eastl.h"
+#include "qd/Core/nodeBase.h"
+#include "qd/TypeSystem/attributesCommon.h"
+#include "qd/UI/uiNode.h"
 
 
 

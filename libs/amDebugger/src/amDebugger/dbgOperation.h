@@ -2,12 +2,12 @@
 #include <amDebugger/shortcut/shortcut_list.h>
 #include <amDebugger/ui_defs.h>
 #include <EASTL/bitset.h>
-#include "qd/qdSTL/vector_map.h"
-#include "qd/qdBase/classInfoReg.h"
-#include "qd/qdBase/types.h"
-#include "qd/qdTypeSystem/ReflectedType.h"
-#include "qd/qdUI/uiOperation.h"
-#include "qd/qdUI/uiOperationMessages.h"
+#include "qd/STL/vector_map.h"
+#include "qd/Base/classInfoReg.h"
+#include "qd/Base/types.h"
+#include "qd/TypeSystem/ReflectedType.h"
+#include "qd/UI/uiOperation.h"
+#include "qd/UI/uiOperationMessages.h"
 
 
 namespace qd {

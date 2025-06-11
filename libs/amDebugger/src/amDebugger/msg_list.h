@@ -2,7 +2,7 @@
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/qdBase/types.h>
+#include <qd/Base/types.h>
 
 
 namespace qd {

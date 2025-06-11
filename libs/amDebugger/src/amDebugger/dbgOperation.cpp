@@ -2,7 +2,7 @@
 #include <amDebugger/msg_list.h>
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui_defs.h>
-#include <qd/qdUI/shortcutMgr.h>
+#include <qd/UI/shortcutMgr.h>
 
 
 namespace qd {
