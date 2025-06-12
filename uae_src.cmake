@@ -1,4 +1,6 @@
 
+include_directories(uae_src/include uae_src src .)
+
 
 set(UAE_SOURCE_LIST
     uae_src/aros.rom.cpp
@@ -171,3 +173,6 @@ if (ENABLE_CODE_GENERATION)
     gen_blitter(../uae_src/blittable.cpp t)
 endif()
 
+
+add_executable(quaesar ${UAE_SOURCE_LIST})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${UAE_SOURCE_LIST})

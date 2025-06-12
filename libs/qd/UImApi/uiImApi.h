@@ -241,7 +241,7 @@ inline void _invokeBegin(Context* ctx, ElemantData* pElem)
 
 
 template<class T>
-qim_ptr<T> beginCtrl_(const char* name_id)
+qim_ptr<T> beginChild_(const char* name_id)
 {
     T* pElem = g_pCtx->getOrCreateElem_<T>(name_id);
     if (pElem)

@@ -13,6 +13,7 @@
 #include "qd/UImApi/uiControls/uiMenu.h"
 #include "amDebugger/commonOperations.h"
 #include "imgui/imgui.h"
+#include "EASTL/optional.h"
 
 
 
@@ -50,20 +51,6 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
 
     auto* pFile = pMenu->addChild_<qd::UiMenu>("File");
 
-
-    auto* pWindow = pMenu->addChild_<qd::UiMenu>("Window");
-    {
-        pWindow->addChild_<qd::UiLambda>([this]() {
-            for (UiView* pCurWnd : m_pWindows)
-            {
-                if (!pCurWnd)
-                    continue;
-                bool bVis = pCurWnd->isVisible();
-                if (ImGui::MenuItem(pCurWnd->m_title.c_str(), 0, &bVis))
-                    pCurWnd->setVisible(bVis);
-            }
-        });
-    }
 #endif //
 
 
@@ -114,24 +101,9 @@ void GuiManager::drawImGuiMainFrame()
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
-
         _drawMainMenuBar();
-
         _drawToolBar();
         ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-
-
-
-
-
-        //////////////////////////////////////////////////////////////////////////
-//         qim::MainMenuBar* pMenu = qim::beginCtrl_<qim::MainMenuBar>();
-//         qim::endCtrl(pMenu);
-
-
-//        ctrl<qd::UiMenu> pMenu = pDebug->get_<qd::UiMenu>();
-//        pMenu->operationName = "qd::operation::DebugDmaOption";
-
 
         // draw static nodes
         drawContentImp();
@@ -247,21 +219,19 @@ void GuiManager::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (auto pMenu = qim::beginCtrl_<qim::UiMenu>("File"))
+        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File"))
         {
-            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1"))
-            {
-            }
+            //if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {}
         }
 
-        if (auto pEmulator = qim::beginCtrl_<qim::UiMenu>("Emulator"))
+        if (auto pEmulator = qim::beginChild_<qim::UiMenu>("Emulator"))
         {
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::ToggleTurboEmulation));
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::UaeWndAlwaysOnTop));
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::UaeResetAmiga));
         }
 
-        if (auto pDebug = qim::beginCtrl_<qim::UiMenu>("Debug"))
+        if (auto pDebug = qim::beginChild_<qim::UiMenu>("Debug"); pDebug->isOpen())
         {
             pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceStart));
             ImGui::Separator();
@@ -276,22 +246,36 @@ void GuiManager::_drawMainMenuBar()
 
             if (pDebug->isOpen())
             {
-                operation::DebugDmaOption* pDebugDmaOp =
-                    getOperationMgr()->getOperation_<qd::operation::DebugDmaOption>();
-                if (pDebugDmaOp)
+                static eastl::optional<operation::DebugDmaOption *> pDebugDmaOp = nullptr;
+                if (!pDebugDmaOp.has_value())
+                    pDebugDmaOp = getOperationMgr()->getOperation_<qd::operation::DebugDmaOption>();
+                if (*pDebugDmaOp)
                 {
                     const char* options = "off\0"
                                           "mode 2\0"
                                           "mode 3\0"
                                           "mode 4\0"
                                           "\0";
-                    int dmaMode = pDebugDmaOp->getCurDebugDmaMode();
+                    int dmaMode = (*pDebugDmaOp)->getCurDebugDmaMode();
                     int n = dmaMode > 0 ? dmaMode - 1 : 0;
-                    if (ImGui::Combo(CC(pDebugDmaOp->getName()), &n, options))
-                        pDebugDmaOp->changeDebugDmaMode(n);
+                    if (ImGui::Combo(CC((*pDebugDmaOp)->getName()), &n, options))
+                        (*pDebugDmaOp)->changeDebugDmaMode(n);
                 }
             }
         }
+
+        if (auto pWindow = qim::beginChild_<qim::UiMenu>("Window"); pWindow->isOpen())
+        {
+            for (UiView* pCurWnd : m_pWindows)
+            {
+                if (!pCurWnd)
+                    continue;
+                bool bVis = pCurWnd->isVisible();
+                if (ImGui::MenuItem(pCurWnd->m_title.c_str(), 0, &bVis))
+                    pCurWnd->setVisible(bVis);
+            }
+        }
+
         ImGui::EndMainMenuBar();
     }
 }

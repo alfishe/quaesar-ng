@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL_atomic.h>
+#include "qd/App/appliction.h"
 #include "qd/Base/base.h"
 #include "qd/Thread/thread.h"
 
@@ -15,7 +16,8 @@ struct SDL_Renderer;
 namespace qd {
 extern qd::ThreadEvent* onUaeInitialized;
 
-class App {
+
+class QuasarApp : public qd::Application {
     SDL_Texture* mUaeScrTexture = nullptr;
     qd::Mutex mUaeScrTextureMutex;
     SDL_atomic_t scrFrameNo = {};
@@ -45,8 +47,8 @@ public:
         return mDebugger;
     }
 
-    static App* get() {
-        static App inst;
+    static QuasarApp* get() {
+        static QuasarApp inst;
         return &inst;
     }
 
@@ -67,4 +69,4 @@ extern void do_console_cmd_immediate(const char* cmd);
 
 };  // namespace qd
 
-extern qd::App* app;
+extern qd::QuasarApp* app;

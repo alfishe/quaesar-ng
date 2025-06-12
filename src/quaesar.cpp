@@ -27,7 +27,7 @@
 #endif  // WIN32
 
 
-qd::App* app = nullptr;
+qd::QuasarApp* app = nullptr;
 
 extern void real_main(int argc, TCHAR** argv);
 extern void keyboard_settrans();
@@ -79,7 +79,7 @@ int SDL_main(int argc, char* argv[]) {
         SDL_Log("arg_%i: '%s'", i, argv[i]);
 
     syncbase = 1000000;
-    app = qd::App::get();
+    app = qd::QuasarApp::get();
 
     Options options;
     CLI::App cliApp{"Quaesar"};
@@ -168,17 +168,17 @@ namespace qd {
 
 qd::ThreadEvent* onUaeInitialized = nullptr;
 
-void App::requestToQuit() {
+void QuasarApp::requestToQuit() {
     mQuitRequestPosted = true;
 }
 
 
-bool App::hasQuitRequest() const {
+bool QuasarApp::hasQuitRequest() const {
     return mQuitRequestPosted;
 }
 
 
-void App::init() {
+void QuasarApp::init() {
     createUaeWindow();
     qd::CreateApplicationParams prm;
     mQDApp = new qd::Application(&prm);
@@ -190,7 +190,7 @@ void App::init() {
 }
 
 
-void App::mainLoop() {
+void QuasarApp::mainLoop() {
     SDL_Event event;
     while (true) {
         if (mQuitRequestPosted) {
@@ -237,7 +237,7 @@ void App::mainLoop() {
 }
 
 
-void App::destroyUaeWindow() {
+void QuasarApp::destroyUaeWindow() {
     SDL_DestroyTexture(mUaeScrTexture);
     mUaeScrTexture = nullptr;
     SDL_DestroyRenderer(mUaeRenderer);
@@ -247,7 +247,7 @@ void App::destroyUaeWindow() {
 }
 
 
-void App::createUaeWindow() {
+void QuasarApp::createUaeWindow() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
 
     SDL_AtomicSet(&scrFrameNo, 0);
@@ -285,7 +285,7 @@ void App::createUaeWindow() {
 }
 
 // Function to recreate a dynamic texture with new dimensions
-void App::recreateTexture(int newWidth, int newHeight) {
+void QuasarApp::recreateTexture(int newWidth, int newHeight) {
     int currentWidth = 0;
     int currentHeight = 0;
 
@@ -307,7 +307,7 @@ void App::recreateTexture(int newWidth, int newHeight) {
                                        newWidth, newHeight);
 }
 
-void App::renderUaeWindow() {
+void QuasarApp::renderUaeWindow() {
     // render UAE texture screen
     int curFrame = SDL_AtomicGet(&scrFrameNo);
     if (curFrame == renderedFrameNo) {
@@ -353,7 +353,7 @@ void App::renderUaeWindow() {
     SDL_RenderPresent(mUaeRenderer);
 }
 
-uint32_t* App::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
+uint32_t* QuasarApp::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     mUaeScrTextureMutex.lock();
 
     if (amiga_width > mAmigaWidth || amiga_height > mAmigaHeight) {
@@ -368,7 +368,7 @@ uint32_t* App::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
 }
 
 
-void App::unlockUaeScreenTexBuf() {
+void QuasarApp::unlockUaeScreenTexBuf() {
     mUaeScrTextureMutex.unlock();
     SDL_AtomicIncRef(&scrFrameNo);
 }
@@ -378,7 +378,7 @@ extern void on_app_exit_debug();
 extern void on_app_exit_drawing();
 };  // namespace uae
 
-void App::destroy() {
+void QuasarApp::destroy() {
     SAFE_DESTROY(mDebugger);
     SAFE_DELETE(mQDApp);
     destroyUaeWindow();
