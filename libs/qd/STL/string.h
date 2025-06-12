@@ -1,8 +1,15 @@
 #pragma once
 #include "qd/STL/forwardDecl.h"
 #include <EASTL/string.h>
+#include <EASTL/string_view.h>
+
 
 namespace qd {
+
+using string = eastl::basic_string<char, eastl::allocator>;
+using string_view = eastl::basic_string_view<char>;
+using wstring_view = eastl::basic_string_view<wchar_t>;
+
 
 template<class TString>
 inline const char* CC(const TString& str)

@@ -38,7 +38,10 @@ class UiOperationMgr
     bool mInit = false;
 
 public:
-    UiOperationMgr() = default;
+    inline static UiOperationMgr* g_pInstance = nullptr;
+    static UiOperationMgr* get() { return g_pInstance; }
+
+    UiOperationMgr();
     virtual void onNodeCreated(NodeCreator* mk);
     ~UiOperationMgr() { assert(!mInit); }
 
@@ -59,9 +62,9 @@ public:
     }
 
     template<typename TClass>
-    qd::UiOperation* getOperation_() const
+    TClass* getOperation_() const
     {
-        qd::UiOperation* pAct = findOperationByType(qd::typeof_(TClass));
+        qd::UiOperation* pAct = findOperationByType(TClass::getStaticTypeInfo());
         return static_cast<TClass*>(pAct);
     }
 
@@ -75,6 +78,8 @@ public:
 
 }; // class UiOperationMgr
 //////////////////////////////////////////////////////////////////////////
+
+
 
 struct OperationSupportedMsgVisitor : public operation::msg::Base {
     qd::vector<const qd::TypeInfo*> m_pSupportedMtd;

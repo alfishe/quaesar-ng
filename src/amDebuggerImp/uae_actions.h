@@ -33,32 +33,15 @@ namespace qd {
 namespace operation {
 
 
-struct DebugDmaOption : public Operation {
-    QDB_REG_OPERATION(qd::operation::DebugDmaOption);
-    void setup() {
-        m_name = "Debug DMA";
-    }
-
-    void onDrawMainMenuItem(UiDrawEvent::Type event);
-
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* p_msg) override;
-};
-//////////////////////////////////////////////////////////////////////////
-
-
 struct DisasmTraceStep : public Operation {
     QDB_REG_OPERATION(qd::operation::DisasmTraceStep);
     void setup() {
         m_name = "Step Into";
         addShortcut(qd::shortcut::EId::DebugTraceStepInto);
     }
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) override {
-        if (auto p = msg->cast_<operation::msg::DoOperation>()) {
-            getDbg()->setDebugMode(DebuggerMode_Break);
-            getDbg()->execConsoleCmd("t");
-            return EFlow::SUCCESS;
-        } else
-            return Operation::applyOperationMsgProc(msg);
+    virtual void doOperation(qd::OperationHistory* history = nullptr) override {
+        getDbg()->setDebugMode(DebuggerMode_Break);
+        getDbg()->execConsoleCmd("t");
     }
 };
 //////////////////////////////////////////////////////////////////////////
@@ -70,12 +53,8 @@ struct DisasmTraceStepOut : public Operation {
         m_name = "Step Out";
         addShortcut(qd::shortcut::EId::DebugTraceStepOut);
     }
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) override {
-        if (auto p = msg->cast_<operation::msg::DoOperation>()) {
-            getDbg()->execConsoleCmd("z");
-            return EFlow::SUCCESS;
-        } else
-            return Operation::applyOperationMsgProc(msg);
+    virtual void doOperation(qd::OperationHistory* history = nullptr) override {
+        getDbg()->execConsoleCmd("z");
     }
 };
 //////////////////////////////////////////////////////////////////////////
@@ -87,12 +66,8 @@ struct DebugTraceStart : public Operation {
         m_name = "Debug Trace Mode";
         addShortcut(qd::shortcut::EId::DebugTraceStart);
     }
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) override {
-        if (auto p = msg->cast_<operation::msg::DoOperation>()) {
-            getDbg()->setDebugMode(DebuggerMode_Break);
-            return EFlow::SUCCESS;
-        } else
-            return Operation::applyOperationMsgProc(msg);
+    virtual void doOperation(qd::OperationHistory* history = nullptr) override {
+        getDbg()->setDebugMode(DebuggerMode_Break);
     }
 };
 //////////////////////////////////////////////////////////////////////////
@@ -198,18 +173,14 @@ struct ToggleTurboEmulation : public Operation {
         m_name = "Turbo Emulation";
         addShortcut(qd::shortcut::EId::ToggleTurboEmulation);
     }
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) override {
-        if (auto p = msg->cast_<operation::msg::DoOperation>()) {
-            if (currprefs.turbo_emulation != 0) {
-                // off
-                warpmode(0);
-            } else {
-                // on
-                warpmode(2);
-            }
-            return EFlow::SUCCESS;
-        } else
-            return Operation::applyOperationMsgProc(msg);
+    virtual void doOperation(qd::OperationHistory* history = nullptr) override {
+        if (currprefs.turbo_emulation != 0) {
+            // off
+            warpmode(0);
+        } else {
+            // on
+            warpmode(2);
+        }
     }
 };
 //////////////////////////////////////////////////////////////////////////
@@ -222,26 +193,9 @@ struct UaeResetAmiga : public Operation {
         addShortcut(qd::shortcut::EId::ResetAmigaEmu);
     }
 
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) override {
-        if (auto p = msg->cast_<operation::msg::DoOperation>()) {
-            ::uae_reset(1, 1);
-            return EFlow::SUCCESS;
-        } else
-            return Operation::applyOperationMsgProc(msg);
+    virtual void doOperation(qd::OperationHistory* history = nullptr) override {
+        ::uae_reset(1, 1);
     }
-};
-//////////////////////////////////////////////////////////////////////////
-
-
-struct UaeWndAlwaysOnTop : public Operation {
-    QDB_REG_OPERATION(qd::operation::UaeWndAlwaysOnTop);
-    void setup() {
-        m_name = "Always on Top";
-        //supportMtd.set(UiDrawEvent::MainMenu_Emul).set(UiDrawEvent::MenuItemStateChecked);
-        addShortcut(qd::shortcut::EId::AlwaysOnTopEmu);
-    }
-
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 

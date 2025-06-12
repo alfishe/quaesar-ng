@@ -12,7 +12,6 @@ namespace msg {
 
 struct MenuItemStateGet : Base {
     TS_REFLECT_CLASS(MenuItemStateGet, operation::msg::Base);
-    UiDrawEvent::Type menuType = UiDrawEvent::Undef;
     int checked = -1;
 };
 
@@ -36,6 +35,7 @@ struct CopperToggleBreakpoint : Base {
     TS_REFLECT_CLASS(CopperToggleBreakpoint, operation::msg::Base);
     AddrRef address = {};
 };
+
 
 struct CopperTraceStep : Base {
     TS_REFLECT_CLASS(CopperTraceStep, operation::msg::Base);

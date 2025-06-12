@@ -10,6 +10,9 @@
 #include "qd/UI/uiOperationManager.h"
 #include "qd/UI/shortcutMgr.h"
 #include "qd/UImApi/uiImApi.h"
+#include "qd/UImApi/uiControls/uiMenu.h"
+#include "amDebugger/commonOperations.h"
+#include "imgui/imgui.h"
 
 
 
@@ -26,13 +29,13 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
 {
     TSuper::onNodeCreated(mk);
 
-    windows.resize((size_t)WndId::MostCommonCount);
+    m_pWindows.resize((size_t)WndId::MostCommonCount);
     m_pOperationMgr = createComp_<UiOperationMgr>();
     m_pShortcutMgr = createComp_<ShortcutsMgr>();
 
     m_pShortcutMgr->init(eastl::span(&shortcut::g_shortcuts_list[0], (size_t)shortcut::EId::MAX_COUNT));
 
-    // create all windows
+    // create all m_pWindows
     createAllUiWndows();
 
     operation::AmDebuggerOperationCreator operationCreate;
@@ -42,37 +45,16 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
 
     qim::getContext()->init();
 
+#if 0
     qd::UiMainMenu* pMenu = this->addChild_<qd::UiMainMenu>();
 
     auto* pFile = pMenu->addChild_<qd::UiMenu>("File");
-#if (0)
-    auto* pEmulator = pMenu->addChild_<qd::UiMenu>("Emulator");
-    {
-        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::ToggleTurboEmulation));
-        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::UaeWndAlwaysOnTop));
-        pEmulator->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::UaeResetAmiga));
-    }
-#endif // (0)
 
-    auto* pDebug = pMenu->addChild_<qd::UiMenu>("Debug");
-    {
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceStart));
-        pDebug->addChild_<qd::UiSeparator>();
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStep));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStepOut));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceContinue));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DisasmToggleBreakpoint));
-        pDebug->addChild_<qd::UiSeparator>();
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::CopperTraceStep));
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::CopperToggleBreakpoint));
-        pDebug->addChild_<qd::UiSeparator>();
-        pDebug->addChild_<qd::UiMenuOperation>(STRINGIFY(qd::operation::DebugDmaOption));
-    }
 
     auto* pWindow = pMenu->addChild_<qd::UiMenu>("Window");
     {
         pWindow->addChild_<qd::UiLambda>([this]() {
-            for (UiView* pCurWnd : windows)
+            for (UiView* pCurWnd : m_pWindows)
             {
                 if (!pCurWnd)
                     continue;
@@ -82,6 +64,7 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
             }
         });
     }
+#endif //
 
 
 }
@@ -109,7 +92,7 @@ void GuiManager::createAllUiWndows()
 
 GuiManager::~GuiManager()
 {
-    assert(windows.empty());
+    assert(m_pWindows.empty());
 }
 
 
@@ -131,30 +114,14 @@ void GuiManager::drawImGuiMainFrame()
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
+
+        _drawMainMenuBar();
+
         _drawToolBar();
         ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
 
-        if (ImGui::BeginMainMenuBar())
-        {
-//             if (ImGui::BeginMenu("Test"))
-//             {
-                bool bChecked = false;
-                bool bEnabled = true;
-//                 if (ImGui::MenuItem("current Test", "", &bChecked, bEnabled))
-//                    ImGui::Text("Hello");
-//                 ImGui::EndMenu();
-//
-            if (qim_ptr<qim::Menu> pMenu = qim::beginCtrl_<qim::Menu>("Test2"))
-            {
-                if (qim_ptr<qim::MenuItem> pItem = qim::beginCtrl_<qim::MenuItem>("Item 1"))
-                {
-                }
-            }
 
-
-            ImGui::EndMainMenuBar();
-        }
 
 
         //////////////////////////////////////////////////////////////////////////
@@ -252,10 +219,10 @@ void GuiManager::destroy()
 {
     TSuper::destroy();
 
-    while (!windows.empty())
+    while (!m_pWindows.empty())
     {
-        UiView* curWnd = windows.back();
-        windows.pop_back();
+        UiView* curWnd = m_pWindows.back();
+        m_pWindows.pop_back();
         curWnd->destroy();
         delete curWnd;
     }
@@ -268,11 +235,65 @@ void GuiManager::addView(UiView* view)
     uint32_t idx = view->mClassId;
     if (idx < (size_t)WndId::MostCommonCount)
     {
-        assert(!windows[idx] && "already set");
-        windows[idx] = view;
+        assert(!m_pWindows[idx] && "already set");
+        m_pWindows[idx] = view;
     }
     else
-        windows.push_back(view);
+        m_pWindows.push_back(view);
+}
+
+
+void GuiManager::_drawMainMenuBar()
+{
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (auto pMenu = qim::beginCtrl_<qim::UiMenu>("File"))
+        {
+            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1"))
+            {
+            }
+        }
+
+        if (auto pEmulator = qim::beginCtrl_<qim::UiMenu>("Emulator"))
+        {
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::ToggleTurboEmulation));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::UaeWndAlwaysOnTop));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::UaeResetAmiga));
+        }
+
+        if (auto pDebug = qim::beginCtrl_<qim::UiMenu>("Debug"))
+        {
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceStart));
+            ImGui::Separator();
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStep));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStepOut));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceContinue));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DisasmToggleBreakpoint));
+            ImGui::Separator();
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::CopperTraceStep));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::CopperToggleBreakpoint));
+            ImGui::Separator();
+
+            if (pDebug->isOpen())
+            {
+                operation::DebugDmaOption* pDebugDmaOp =
+                    getOperationMgr()->getOperation_<qd::operation::DebugDmaOption>();
+                if (pDebugDmaOp)
+                {
+                    const char* options = "off\0"
+                                          "mode 2\0"
+                                          "mode 3\0"
+                                          "mode 4\0"
+                                          "\0";
+                    int dmaMode = pDebugDmaOp->getCurDebugDmaMode();
+                    int n = dmaMode > 0 ? dmaMode - 1 : 0;
+                    if (ImGui::Combo(CC(pDebugDmaOp->getName()), &n, options))
+                        pDebugDmaOp->changeDebugDmaMode(n);
+                }
+            }
+        }
+        ImGui::EndMainMenuBar();
+    }
 }
 
 

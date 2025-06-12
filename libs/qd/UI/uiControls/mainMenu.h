@@ -83,7 +83,7 @@ class UiSeparator : public qd::UiNode
 public:
     virtual void draw() override { ImGui::Separator(); }
 }; // class
-
+//////////////////////////////////////////////////////////////////////////
 
 
 class UiMenuOperation : public qd::UiNode

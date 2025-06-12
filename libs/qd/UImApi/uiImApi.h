@@ -28,17 +28,7 @@ public:
     T* operator->() const
     {
         assert(m_ptr);
-
-
-        template<typename T>
-        qim_ptr<T>::~qim_ptr()
-        {
-            if (m_ptr)
-                qim::endCtrl(m_ptr);
-        }
-
-
-        return m_ptr.get();
+        return m_ptr;
     }
 
     explicit operator bool () const { return static_cast<bool>(m_ptr); }
@@ -108,12 +98,12 @@ class ElemantData
 public:
     virtual ~ElemantData() = default;
 
-    virtual const qd::TypeInfo* getBehaviorClass() const { return nullptr; }
+    void setup(const char* text) {}
 
+    virtual const qd::TypeInfo* getBehaviorClass() const { return nullptr; }
     const qim::ElementBeh* getBehavior() const { return m_pBehavior; }
 
     virtual void onAttach(const ElementBeh* pBehavior) { m_pBehavior = pBehavior; }
-
     virtual void onDetach() { m_pBehavior = nullptr; }
 
     virtual void onBegin(qim::Context* ctx) {}
@@ -129,10 +119,24 @@ public:
         return false;
     }
 
+    template<class T>
+    qim_ptr<T> beginChild_(const char* name_id) const;
+
+
 }; // class ElemantData
 //////////////////////////////////////////////////////////////////////////
 
 
+struct ElemBehCreator {};
+
+
+template<class TClass>
+static qim::ElementBeh* createElemBehCb_(const qd::TypeInfo& /*meta*/, qim::ElemBehCreator* cp)
+{
+    TClass* pNewInst = new TClass();
+    pNewInst->onConstruct(cp);
+    return pNewInst;
+}
 
 
 class ElementBeh
@@ -143,7 +147,11 @@ public:
     virtual ~ElementBeh() = default;
 
 public:
-    virtual ElemantData* createElementData(const qd::TypeInfo& type, const char* name) = 0;
+
+    virtual void onConstruct(qim::ElemBehCreator* cp)
+    {
+    }
+    virtual ElemantData* createElementData(const qd::TypeInfo& type) = 0;
 
 }; // class ElementBeh
 
@@ -187,13 +195,17 @@ public:
     ~Context();
 
     ElementBeh* findBehavior(const qd::TypeInfo& pBehClassInfo) const;
-    ElemantData* getElementData(const char* name_id, const qd::TypeInfo& behClass, const qd::TypeInfo& elemClass) const;
+    bool getElementData(const char* name_id, qim::ElemantData** pOut, const qd::TypeInfo& behClass, const qd::TypeInfo& elemClass) const;
 
-    template<class T>
-    T* getOrCreateElem_(const char* name_id) const
+    template<class T, typename... TArgs>
+    T* getOrCreateElem_(const char* name_id, TArgs&&... args) const
     {
-        ElemantData* pElement = getElementData(name_id, T::s_behClass, T::getStaticTypeInfo());
+        ElemantData* pElement;
+        if (getElementData(name_id, &pElement, T::s_behClass, T::getStaticTypeInfo()))
+            return static_cast<T*>(pElement);
+
         T* pInst = static_cast<T*>(pElement);
+        pInst->setup(name_id, std::forward<TArgs>(args)...);
         return pInst;
     }
 
@@ -202,7 +214,7 @@ public:
         m_pElementsStack.push_back(pElem);
     }
 
-    ElemantData* stackGet()
+    ElemantData* getStackTreeTop()
     {
         return m_pElementsStack.back();
     }
@@ -249,71 +261,6 @@ inline void endCtrl(ElemantData* pElem)
 
 
 
-class BehMenu : public qim::ElementBeh
-{
-    TS_REFLECT_CLASS(qim::BehMenu, qim::ElementBeh);
-
-public:
-    ElemantData* createElementData(const qd::TypeInfo& type, const char* name) override;
-
-}; // class BehMenu
-
-
-
-struct Menu : public qim::ElemantData {
-    TS_REFLECT_CLASS(qim::Menu, qim::ElemantData);
-    inline static const qd::TypeInfo& s_behClass = qd::typeof_<qim::BehMenu>();
-    virtual const qd::TypeInfo* getBehaviorClass() const override { return &s_behClass; }
-    friend class qim::BehMenu;
-
-    virtual void onBegin(qim::Context* ctx) override
-    { //
-        m_isOpen = ImGui::BeginMenu(m_text.c_str());
-    }
-    virtual void onEnd(qim::Context* ctx) override
-    {
-        if (m_isOpen)
-            ImGui::EndMenu();
-    }
-
-    bool isOpen() const { return m_isOpen; }
-    void setText(const char* text) { m_text = text; }
-    const char* getText() const { return m_text.c_str(); }
-
-private:
-    qd::string m_text;
-    bool m_isOpen = false;
-
-}; // struct Menu
-
-
-
-struct MenuItem : public qim::ElemantData {
-    TS_REFLECT_CLASS(qim::MenuItem, qim::ElemantData);
-    inline static const qd::TypeInfo& s_behClass = qd::typeof_<qim::BehMenu>();
-    virtual const qd::TypeInfo* getBehaviorClass() const override { return &s_behClass; }
-    friend class qim::BehMenu;
-
-    virtual void onEnd(qim::Context* ctx) override
-    {
-        auto pMenu = ctx->stackGet()->cast_<qim::Menu>();
-        assert(pMenu);
-        if (pMenu && pMenu->isOpen())
-            ImGui::MenuItem(m_text.c_str());
-    }
-
-    bool isOpen() const { return m_isOpen; }
-    void setText(const char* text) { m_text = text; }
-    const char* getText() const { return m_text.c_str(); }
-
-private:
-    qd::string m_text;
-    bool m_isOpen = false;
-
-};
-
-
-
 }; // namespace qim
 //////////////////////////////////////////////////////////////////////////
 
@@ -323,4 +270,15 @@ qim_ptr<T>::~qim_ptr()
 {
     if (m_ptr)
         qim::endCtrl(m_ptr);
+}
+
+
+
+template<class T>
+qim_ptr<T> qim::ElemantData::beginChild_(const char* name_id) const
+{
+    T* pElem = g_pCtx->getOrCreateElem_<T>(name_id);
+    if (pElem)
+        _invokeBegin(g_pCtx, pElem);
+    return qim_ptr<T>(pElem);
 }

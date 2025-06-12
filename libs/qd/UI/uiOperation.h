@@ -4,15 +4,16 @@
 #include "qd/Base/types.h"
 #include "qd/Core/nodeBase.h"
 #include "qd/Debug/assert.h"
-#include "qd/STL/string.h"
 #include "qd/STL/fixed_vector.h"
+#include "qd/STL/string.h"
 #include "qd/TypeSystem/typeDeclare.h"
 #include "qd/UI/uiOperationManager.h"
 
 
-namespace qd
-{
+namespace qd {
 class GuiManager;
+class UiOperation;
+
 
 // Operation's component classId
 enum class EOperationCompsClassId {
@@ -20,14 +21,28 @@ enum class EOperationCompsClassId {
     MOST_COMMON_COMPS,
 };
 
-struct UiOperationCreator : public qd::NodeCreator
-{};
+struct UiOperationCreator : public qd::NodeCreator {};
 
 
 class OperationHistory
 {
 public:
 };
+
+
+template<class TClass>
+static qd::UiOperation* createUiOperationCb_(const qd::TypeInfo& /*meta*/, qd::UiOperationCreator* cp)
+{
+    TClass* pNewInst = new TClass();
+    pNewInst->onOperationCreate(cp);
+    pNewInst->setup();
+    return pNewInst;
+}
+
+#define QD_REG_OPERATION(ClassName)                                        \
+    TS_BEGIN_REFLECT_CLASS(ClassName, qd::operation::Operation);           \
+    TS_ATTRIBUTE(qd::CreateClassCbAttr(&createUiOperationCb_<TRefClass>)); \
+    TS_END();
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,8 +52,8 @@ class UiOperation : public qd::Node
 
 public:
     uint32_t mClassId = -1;
-    eastl::string m_name;
-    eastl::string m_description;
+    qd::string m_name;
+    qd::string m_description;
     bool m_bActive = true;
 
 public:
@@ -46,76 +61,36 @@ public:
     virtual ~UiOperation() = default;
 
 
-    virtual void onOperationCreate(qd::UiOperationCreator* cp) {
-        onNodeCreated(cp);
-    }
+    virtual void onOperationCreate(qd::UiOperationCreator* cp) { onNodeCreated(cp); }
 
-    virtual void destroy() {
-    }
+    virtual void destroy() {}
 
     void doOperationBase();
 
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) {
-        return _applyMsgProcDefImp(msg);
-    }
+    virtual EFlow applyOperationMsgProc(operation::msg::Base* msg) { return _applyMsgProcDefImp(msg); }
 
     void addShortcut(int sid);
 
     virtual bool hasMtd(int id) const { return false; /*supportMtd[id];*/ }
 
-    virtual void doOperation(OperationHistory& history = OperationHistory())
+    virtual void doOperation(qd::OperationHistory* history = nullptr)
     {
         operation::msg::DoOperation msg;
         applyOperationMsgProc(&msg);
     }
-    virtual void undoOperation(OperationHistory& history)
-    {
-    }
+    virtual void undoOperation(OperationHistory& history) {}
 
     bool isActive() const { return m_bActive; }
     void setActive(bool Active) { m_bActive = Active; }
+
+    const qd::string& getName() const { return m_name; }
 
 
 protected:
     EFlow _applyMsgProcDefImp(operation::msg::Base* pBaseMtd);
 
-};  // class UiOperation
+}; // class UiOperation
 //////////////////////////////////////////////////////////////////////////
-
-
-
-
-namespace details {
-using OperationClassRegistry = ClassInfoRegistry_<UiOperation>;
-extern uint32_t qdbOperationAutoClassId;
-
-template <class TClass>
-struct AutoRegistrator {
-    AutoRegistrator(uint32_t class_id) {
-        EASTL_ASSERT(class_id != 0);
-        OperationClassRegistry::MetaInfo metaInfo;
-        metaInfo.classId = class_id != 0 ? class_id : ++qdbOperationAutoClassId;
-        metaInfo.createCallback = (void*)&createClassCb;
-        metaInfo.rtti = &typeid(TClass);
-        metaInfo.registerClass();
-    }
-
-    static UiOperation* createClassCb(const OperationClassRegistry::MetaInfo& meta, UiOperationCreator* cp) {
-        TClass* pInst = new TClass();
-        pInst->mClassId = meta.classId;
-        pInst->onCreate(cp);
-        pInst->TClass::setup();
-        return pInst;
-    }
-};  // struct AutoRegistrator
-//////////////////////////////////////////////////////////////////////////
-
-#define QDB_OPERATION_REGISTER(TClass, classId) \
-    static operation::details::AutoRegistrator<TClass> EA_PREPROCESSOR_JOIN(_rgact_no_, __COUNTER__)((uint32_t)classId);
-
-};  // namespace details
-//////////////////////////////////////////////////////////////////////////
-
 
 
 }; // namespace qd

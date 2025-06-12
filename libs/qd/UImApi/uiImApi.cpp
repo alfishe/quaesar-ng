@@ -1,5 +1,7 @@
 #include "qd/UImApi/uiImApi.h"
 #include "qd/TypeSystem/typeRegistry.h"
+#include "qd/TypeSystem/attributesCommon.h"
+#include "qd/Log/log.h"
 
 
 namespace qim {
@@ -9,7 +11,6 @@ qim::Context* qim::getContext()
     static Context ctx;
     return &ctx;
 }
-
 
 
 Context::~Context()
@@ -23,28 +24,32 @@ Context::~Context()
         delete pBeh;
         m_pBehaviors.pop_back();
     }
-
 }
 
 
-
-qim::ElemantData* Context::getElementData(const char* name_id, const qd::TypeInfo& behClass,
+bool Context::getElementData(const char* name_id, qim::ElemantData** pOutElem, const qd::TypeInfo& behClass,
     const qd::TypeInfo& elemClass) const
 {
     ImGuiID id = ImGui::GetID(name_id);
-
     if (ElemantData* pExist = m_pCurrStorage->findData(id))
-        return pExist;
+    {
+        *pOutElem = pExist;
+        return true;
+    }
+
+    *pOutElem = nullptr;
     ElementBeh* pBeh = findBehavior(behClass);
     ASSERT_F(pBeh, "Behavior class not found for type '%s', name:'%s'", behClass.getFullName().c_str(), name_id);
     if (!pBeh)
-        return nullptr;
-    ElemantData* pBaseCtrl = pBeh->createElementData(elemClass, name_id);
+        return true;
+    ElemantData* pBaseCtrl = pBeh->createElementData(elemClass);
     if (!pBaseCtrl)
-        return nullptr;
+        return true;
+
     m_pCurrStorage->setData(id, pBaseCtrl);
     pBaseCtrl->onAttach(pBeh);
-    return pBaseCtrl;
+    *pOutElem = pBaseCtrl;
+    return false;
 }
 
 
@@ -63,22 +68,6 @@ void Context::addBehavior(const qd::TypeInfo& pBehClassInfo, ElementBeh* pInst)
 }
 
 
-
-
-qim::ElemantData* BehMenu::createElementData(const qd::TypeInfo& type, const char* name)
-{
-    if (type == qd::typeof_<qim::MenuItem>())
-    {
-        auto p = new MenuItem();
-        p->m_text = name;
-        return p;
-    }
-    auto p = new Menu();
-    p->m_text = name;
-    return p;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -86,7 +75,24 @@ qim::ElemantData* BehMenu::createElementData(const qd::TypeInfo& type, const cha
 
 void Context::init()
 {
-    addBehavior(qd::typeof_<qim::BehMenu>(), new qim::BehMenu());
+    auto behClassList = qd::TypeRegistry::get()->findAllDerivedFromTypes(qd::typeof_<qim::ElementBeh>());
+
+    for (const qd::TypeInfo* pCurBehClass : behClassList)
+    {
+        auto* pCreator = pCurBehClass->getAttribute_<qd::CreateClassCbAttr>();
+        if (!pCreator)
+        {
+            SDL_Log("Creator not defined in class:'%s'", pCurBehClass->getFullName().c_str());
+            continue;
+        }
+        qim::ElemBehCreator cv;
+        qim::ElementBeh* pNewInstance = pCreator->makeInstance_<qim::ElementBeh>(&cv);
+        assert(pNewInstance);
+
+        addBehavior(*pCurBehClass, pNewInstance);
+    }
+
+    //addBehavior(qd::typeof_<qim::UiMenuBeh>(), new qim::UiMenuBeh());
 }
 
 void beginFrame() {}

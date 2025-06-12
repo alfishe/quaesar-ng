@@ -1,6 +1,7 @@
 #pragma once
 #include <qd/Core/nodeBase.h>
 #include <qd/Mem/fnvHash.h>
+#include "qd/Base/variant16.h"
 
 
 namespace qd::operation::msg {
@@ -15,8 +16,7 @@ struct Base {
     friend struct Base_;
 
 public:
-    inline Base()
-    {}
+    inline Base() {}
 
     template<class T>
     T* cast_()
@@ -44,11 +44,14 @@ struct Base_ : public Base {
 }; // struct Base_
 
 
-struct DoOperation : public Base
-{
+
+struct DoOperation : public Base {
     TS_REFLECT_CLASS(DoOperation, operation::msg::Base);
+    qd::Var16 arg0;
+
+    DoOperation() = default;
 };
 
 
 
-}; // namespace qd
+}; // namespace qd::operation::msg

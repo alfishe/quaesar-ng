@@ -52,13 +52,13 @@ public:
     }
 
     template <typename... TArgs>
-    inline TBaseClass* makeInstance(uint32_t class_id, TArgs... args) const {
+    inline TBaseClass* makeInstance(uint32_t class_id, TArgs&&... args) const {
         const TThis::MetaInfo* pClassInfo = findClassInfo(class_id);
         if (!pClassInfo)
             return nullptr;
-        using TCreateInstanceFunc = TBaseClass* (*)(const TThis::MetaInfo&, TArgs...);
+        using TCreateInstanceFunc = TBaseClass* (*)(const TThis::MetaInfo&, TArgs&&...);
         auto makeInstFn = reinterpret_cast<TCreateInstanceFunc>(pClassInfo->createCallback);
-        TBaseClass* pInstance = (*makeInstFn)(*pClassInfo, args...);
+        TBaseClass* pInstance = (*makeInstFn)(*pClassInfo, std::forward<TArgs>(args)...);
         return pInstance;
     }
 

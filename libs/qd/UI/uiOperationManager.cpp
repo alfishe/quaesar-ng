@@ -30,6 +30,16 @@ public:
 }; // class NodesChildList
 
 
+UiOperationMgr::UiOperationMgr()
+{
+    if (!g_pInstance)
+        g_pInstance = this;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+
+
 void UiOperationMgr::onNodeCreated(NodeCreator* mk)
 {
     createComp_<OperationMgrOperationsListImp>(this);
@@ -53,9 +63,9 @@ void UiOperationMgr::createOperations(qd::UiOperationCreator* ca)
         }
         qd::UiOperationCreator cv;
         cv.parent = this;
-        qd::UiOperation* pNewOperation = pCreator->makeInstance_<qd::UiOperation>(&cv);
-        assert(pNewOperation);
-        addOperation(pNewOperation);
+        qd::UiOperation* pNewInstance = pCreator->makeInstance_<qd::UiOperation>(&cv);
+        assert(pNewInstance);
+        addOperation(pNewInstance);
     }
 
     mInit = true;

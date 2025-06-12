@@ -33,6 +33,7 @@ add_source_group("TypeSystem")
 add_source_group("UI")
 add_source_group("UI/uiControls")
 add_source_group("UImApi")
+add_source_group("UImApi/uiControls")
 
 
 add_library(qd ${QDICE_HDR} ${QDICE_SRC})

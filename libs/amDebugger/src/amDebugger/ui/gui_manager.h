@@ -1,7 +1,7 @@
 #pragma once
-#include <EASTL/vector.h>
 #include <amDebugger/debugger.h>
 #include <amDebugger/ui/ui_view.h>
+#include <EASTL/vector.h>
 #include <qd/Base/base.h>
 #include <qd/Core/nodeBase.h>
 #include <qd/UI/uiNode.h>
@@ -9,48 +9,53 @@
 FORWARD_DECLARATION_2(qd, UiView);
 FORWARD_DECLARATION_3(qd, operation, Operation);
 
+
 namespace qd {
 class ShortcutsMgr;
 class UiOperationMgr;
 
+
 //------------------------------------------------------------------------
-class GuiManager : public qd::UiNode {
-  TS_REFLECT_CLASS(qd::GuiManager, qd::UiNode);
-  eastl::vector<ref_ptr<UiView>> windows;
+class GuiManager : public qd::UiNode
+{
+    TS_REFLECT_CLASS(qd::GuiManager, qd::UiNode);
+    eastl::vector<ref_ptr<UiView>> m_pWindows;
 
 public:
-  Debugger* m_pDbg = nullptr;
-  UiOperationMgr* m_pOperationMgr = nullptr;
-  ShortcutsMgr* m_pShortcutMgr = nullptr;
+    Debugger* m_pDbg = nullptr;
+    UiOperationMgr* m_pOperationMgr = nullptr;
+    ShortcutsMgr* m_pShortcutMgr = nullptr;
 
- public:
-  GuiManager(Debugger* dbg);
-  virtual void onNodeCreated(NodeCreator *mk) override;
+public:
+    GuiManager(Debugger* dbg);
+    virtual void onNodeCreated(NodeCreator* mk) override;
 
-  virtual ~GuiManager();
+    virtual ~GuiManager();
 
-  void drawImGuiMainFrame();
+    void drawImGuiMainFrame();
 
-  void _drawToolBar();
-  void destroy();
+    void destroy();
 
-  Debugger* getDbg() const { return m_pDbg; }
+    Debugger* getDbg() const { return m_pDbg; }
 
-  template <class T>
-  inline T* getWnd_() const {
-    const uint32_t idx = T::CLASS_ID;
-    UiView* curView = windows[idx];
-    return static_cast<T*>(curView);
-  }
+    template<class T>
+    inline T* getWnd_() const
+    {
+        const uint32_t idx = T::CLASS_ID;
+        UiView* curView = m_pWindows[idx];
+        return static_cast<T*>(curView);
+    }
 
-  void addView(UiView* view);
+    void addView(UiView* view);
 
-  qd::UiOperationMgr* getOperationMgr() const { return m_pOperationMgr; }
-  qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
+    qd::UiOperationMgr* getOperationMgr() const { return m_pOperationMgr; }
+    qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 
- private:
-  void createAllUiWndows();
+private:
+    void createAllUiWndows();
+    void _drawMainMenuBar();
+    void _drawToolBar();
 
-};  // class GUIManager
+}; // class GUIManager
 
-};  // namespace qd
+}; // namespace qd
