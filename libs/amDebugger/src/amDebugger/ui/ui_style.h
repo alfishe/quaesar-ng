@@ -1,7 +1,7 @@
 #pragma once
 #include <EASTL/array.h>
 #include <imgui/imgui.h>
-#include <qd/Base/color.h>
+#include <qd/base/color.h>
 
 namespace qd {
 
@@ -26,6 +26,7 @@ public:
 #define IT(name, color) name,
     enum EColor : uint32_t { UiColorsList(IT) COUNT };  // enum
 #undef IT
+
     struct ColorRec {
         qd::Color colorU32;
         ImVec4 colorF;
@@ -62,15 +63,16 @@ public:
     }
 };  // class UiColors
 //////////////////////////////////////////////////////////////////////////
-extern UiStyle* gUiColors;
+
+extern UiStyle* g_imColors;
 
 
 //////////////////////////////////////////////////////////////////////////
 [[nodiscard]] inline const Color& uiGetColorU(UiStyle::EColor col) {
-    return gUiColors->getColorU(col);
+    return g_imColors->getColorU(col);
 };
 [[nodiscard]] inline const ImVec4& uiGetColorF(UiStyle::EColor col) {
-    return gUiColors->getColorF(col);
+    return g_imColors->getColorF(col);
 };
 
 

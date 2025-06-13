@@ -1,11 +1,11 @@
 #pragma once
-#include "qd/Base/classInfoReg.h"
-#include "qd/Base/types.h"
-#include "qd/TypeSystem/attributesCommon.h"
-#include "qd/UI/uiOperation.h"
-#include "qd/UI/uiOperationMessages.h"
+#include "qd/base/classInfoReg.h"
+#include "qd/base/types.h"
+#include "qd/typeSystem/attributesCommon.h"
+#include "qd/ui/uiOperation.h"
+#include "qd/ui/uiOperationMessages.h"
 #include <amDebugger/shortcut/shortcut_list.h>
-//#include <amDebugger/ui_defs.h>
+// #include <amDebugger/ui_defs.h>
 
 
 namespace qd {
@@ -27,10 +27,10 @@ static qd::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd
 }
 
 
-#define QDB_REG_OPERATION(ClassName)                                     \
-    TS_BEGIN_REFLECT_CLASS(ClassName, qd::operation::Operation);         \
-    TS_ATTRIBUTE(qd::CreateClassCbAttr(&createOperationCb_<TRefClass>)); \
-    TS_END();                                                            \
+#define QDB_REG_OPERATION(ClassName)                                         \
+    TS_BEGIN_REFLECT_CLASS(ClassName, qd::operation::Operation);             \
+    TS_ATTRIBUTE(qd::tsAttr::CreateClassCb(&createOperationCb_<TRefClass>)); \
+    TS_END();
 
 //////////////////////////////////////////////////////////////////////////
 

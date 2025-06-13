@@ -12,6 +12,7 @@
 #include <SDL_filesystem.h>
 #include <SDL_log.h>
 #include <SDL_rwops.h>
+#include <src/quaesar_debug.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <cstring>  // For strcpy, strcat, etc.
@@ -49,12 +50,6 @@
 #undef min
 
 static int fsdb_debug = 0;
-
-#ifdef TRACE
-#undef TRACE
-#endif
-#define TRACE() SDL_Log("WARN: Using of unimplemented function: '%s()'", __func__)
-extern void debug(const char* x, ...);
 
 
 /* these are deadly (but I think allowed on the Amiga): */

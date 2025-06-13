@@ -75,11 +75,11 @@ int uae_thread_main_func(void*) {
 
 // Quaesar main
 int SDL_main(int argc, char* argv[]) {
-    for (int i = 0; i < argc; ++i)
-        SDL_Log("arg_%i: '%s'", i, argv[i]);
+    app = new qd::QuasarApp();
+    qd::CreateApplicationParams prm;
+    app->onCreate(prm);
 
-    syncbase = 1000000;
-    app = qd::QuasarApp::get();
+    ::syncbase = 1000000;
 
     Options options;
     CLI::App cliApp{"Quaesar"};
@@ -146,12 +146,12 @@ int SDL_main(int argc, char* argv[]) {
     qd::onUaeInitialized->wait();
 
     // quaesar main loop
-    ::app->init();
-    ::app->mainLoop();
+    ::app->initialize();
+    ::app->doMainLoop();
 
     // quit
     SDL_Log("Waiting UAE thread over ...");
-    app->mDebugger->execConsoleCmd("q");
+    app->m_pDebugger->execConsoleCmd("q");
 
     // wait UAE done
     SDL_WaitThread(uae_thread_handler, nullptr);
@@ -161,231 +161,3 @@ int SDL_main(int argc, char* argv[]) {
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
     return 0;
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-namespace qd {
-
-qd::ThreadEvent* onUaeInitialized = nullptr;
-
-void QuasarApp::requestToQuit() {
-    mQuitRequestPosted = true;
-}
-
-
-bool QuasarApp::hasQuitRequest() const {
-    return mQuitRequestPosted;
-}
-
-
-void QuasarApp::init() {
-    createUaeWindow();
-    qd::CreateApplicationParams prm;
-    mQDApp = new qd::Application(&prm);
-    mDebugger = new Debugger(mQDApp);
-    Debugger::gInst = mDebugger;
-    mQDApp->getAppParts()->addPart(mDebugger);
-    mDebugger->init();
-    mDebugger->toggleWndVisible(qd::DebuggerMode_Live);
-}
-
-
-void QuasarApp::mainLoop() {
-    SDL_Event event;
-    while (true) {
-        if (mQuitRequestPosted) {
-            ::quit_program = UAE_QUIT;
-            ::currprefs.cpu_cycle_exact = 0;
-            break;
-        }
-        while (SDL_PollEvent(&event) != 0) {
-            switch (event.type) {
-                case SDL_QUIT: {
-                    requestToQuit();
-                    break;
-                }
-                case SDL_KEYDOWN:
-                    if (event.key.keysym.sym == SDLK_ESCAPE) {
-                        // requestToQuit();
-                        break;
-                    } else if (event.key.keysym.sym == SDLK_F12) {
-                        // activate_debugger();
-                        // qd::Debugger_toggle(mDebugger, qd::DebuggerMode_Live);
-                    }
-                    break;
-                case SDL_WINDOWEVENT: {
-                    Uint8 wndEvent = event.window.event;
-                    if (wndEvent == SDL_WINDOWEVENT_CLOSE) {
-                        requestToQuit();
-                        break;
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-            mDebugger->sdlEventProc(&event);
-        }
-
-        if (mDebugger->isVisible()) {
-            mDebugger->update();
-            mDebugger->render();
-        }
-
-        renderUaeWindow();
-    }
-}
-
-
-void QuasarApp::destroyUaeWindow() {
-    SDL_DestroyTexture(mUaeScrTexture);
-    mUaeScrTexture = nullptr;
-    SDL_DestroyRenderer(mUaeRenderer);
-    mUaeRenderer = nullptr;
-    SDL_DestroyWindow(mUaeWindow);
-    mUaeWindow = nullptr;
-}
-
-
-void QuasarApp::createUaeWindow() {
-    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
-
-    SDL_AtomicSet(&scrFrameNo, 0);
-
-    mAmigaWidth = 754;
-    mAmigaHeight = 576;
-    mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
-
-    // Create a window
-    app->mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mAmigaWidth,
-                                       mAmigaHeight, window_flags);
-
-    if (!app->mUaeWindow) {
-        SDL_Log("Could not create window: %s", SDL_GetError());
-        return;
-    }
-
-    app->mUaeRenderer = SDL_CreateRenderer(app->mUaeWindow, -1, SDL_RENDERER_ACCELERATED);
-
-    if (!app->mUaeRenderer) {
-        SDL_Log("Could not create renderer: %s", SDL_GetError());
-        SDL_DestroyWindow(app->mUaeWindow);
-        return;
-    }
-
-    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, mAmigaWidth,
-                                       mAmigaHeight);
-
-    if (!mUaeScrTexture) {
-        SDL_Log("Could not create texture: %s", SDL_GetError());
-        SDL_DestroyRenderer(mUaeRenderer);
-        SDL_DestroyWindow(mUaeWindow);
-        return;
-    }
-}
-
-// Function to recreate a dynamic texture with new dimensions
-void QuasarApp::recreateTexture(int newWidth, int newHeight) {
-    int currentWidth = 0;
-    int currentHeight = 0;
-
-    // Get the format of the old texture
-    Uint32 format;
-    int access;
-    SDL_QueryTexture(mUaeScrTexture, &format, &access, &currentWidth, &currentHeight);
-
-    if (newWidth == currentWidth && newHeight == currentHeight) {
-        return;
-    }
-
-    // Destroy the old texture
-    SDL_DestroyTexture(mUaeScrTexture);
-
-    // Create a new texture with the desired dimensions
-    mUaeScrTexture = SDL_CreateTexture(mUaeRenderer, format,
-                                       access,  // Using the same access pattern as the original
-                                       newWidth, newHeight);
-}
-
-void QuasarApp::renderUaeWindow() {
-    // render UAE texture screen
-    int curFrame = SDL_AtomicGet(&scrFrameNo);
-    if (curFrame == renderedFrameNo) {
-        return;
-    }
-
-    renderedFrameNo = curFrame;
-
-    int new_width = 0;
-    int new_height = 0;
-    int window_width, window_height;
-    SDL_GetWindowSize(mUaeWindow, &window_width, &window_height);
-
-    // Maintain aspect ratio
-    float image_aspect = (float)mAmigaWidth / (float)mAmigaHeight;
-    float window_aspect = (float)window_width / (float)window_height;
-
-    if (window_aspect < image_aspect) {
-        new_width = window_width;
-        new_height = (int)(window_width / image_aspect);
-    } else {
-        new_height = window_height;
-        new_width = (int)(window_height * image_aspect);
-    }
-    SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
-    SDL_RenderClear(mUaeRenderer);
-    if (mUaeScrTextureMutex.tryLock()) {
-        recreateTexture(mAmigaWidth, mAmigaHeight);  // Recreate texture if needed
-        uint32_t* texture_pixels = nullptr;
-        int pitch = 0;
-        if (SDL_LockTexture(mUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
-            for (int y = 0; y < mAmigaHeight; y++) {
-                uint8_t* dest = (uint8_t*)&texture_pixels[y * mAmigaWidth];
-                memcpy(dest, &mAmigaBuffer[y * mAmigaWidth], mAmigaWidth * 4);
-            }
-            SDL_UnlockTexture(mUaeScrTexture);
-        }
-
-        SDL_RenderCopy(mUaeRenderer, mUaeScrTexture, NULL, &rect);
-        mUaeScrTextureMutex.unlock();
-    }
-
-    SDL_RenderPresent(mUaeRenderer);
-}
-
-uint32_t* QuasarApp::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
-    mUaeScrTextureMutex.lock();
-
-    if (amiga_width > mAmigaWidth || amiga_height > mAmigaHeight) {
-        delete[] mAmigaBuffer;
-        mAmigaBuffer = new uint32_t[mAmigaWidth * mAmigaHeight];
-    }
-
-    mAmigaWidth = amiga_width;
-    mAmigaHeight = amiga_height;
-
-    return mAmigaBuffer;
-}
-
-
-void QuasarApp::unlockUaeScreenTexBuf() {
-    mUaeScrTextureMutex.unlock();
-    SDL_AtomicIncRef(&scrFrameNo);
-}
-
-namespace uae {
-extern void on_app_exit_debug();
-extern void on_app_exit_drawing();
-};  // namespace uae
-
-void QuasarApp::destroy() {
-    SAFE_DESTROY(mDebugger);
-    SAFE_DELETE(mQDApp);
-    destroyUaeWindow();
-
-    qd::uae::on_app_exit_debug();
-    qd::uae::on_app_exit_drawing();
-}
-
-
-};  // namespace qd

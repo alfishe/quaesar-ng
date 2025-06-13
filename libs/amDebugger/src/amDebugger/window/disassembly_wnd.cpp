@@ -37,9 +37,9 @@ void DisassemblyView::drawContentImp() {
 
     cs_insn* instructions = nullptr;
     uint32_t count_bytes = 80;
-    cs_option(*dbg->capstone, CS_OPT_SKIPDATA, CS_OPT_ON);
+    cs_option(*dbg->m_pCapstone, CS_OPT_SKIPDATA, CS_OPT_ON);
     size_t instructionCount =
-        cs_disasm(*dbg->capstone, pcAddrDat - offset, count_bytes, start_disasm, 100, &instructions);
+        cs_disasm(*dbg->m_pCapstone, pcAddrDat - offset, count_bytes, start_disasm, 100, &instructions);
     static float row_min_height = 0.0f;  // for auto height
 
     int flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable |

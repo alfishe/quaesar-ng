@@ -10,15 +10,13 @@
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/Thread/thread.h>
+#include <qd/thread/thread.h>
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui/ui_style.h>
-#include "qd/UI/uiOperationManager.h"
+#include "qd/ui/uiOperationManager.h"
 
 
 namespace qd {
-
-Debugger *Debugger::gInst = nullptr;
 
 
 void Debugger::update() {
@@ -35,43 +33,43 @@ void Debugger::update() {
 namespace imp {
 class ConsoleQueue {
 public:
-    eastl::queue<eastl::string> mConsoleCmdQueue;
-    qd::ThreadEvent* mpEvent;
-    qd::Mutex* mpMutex;
+    eastl::queue<eastl::string> m_consoleCmdQueue;
+    qd::ThreadEvent* m_pThreadEvent;
+    qd::Mutex* m_pMutex;
 
 public:
     ConsoleQueue() {
-        mpEvent = new qd::ThreadEvent(true);
-        mpMutex = new qd::Mutex();
+        m_pThreadEvent = new qd::ThreadEvent(true);
+        m_pMutex = new qd::Mutex();
     }
 
     void addCmdToQueue(eastl::string cmd) {
         if (cmd.empty())
             return;
-        mpMutex->lock();
-        mConsoleCmdQueue.push(eastl::move(cmd));
-        mpMutex->unlock();
-        mpEvent->set();
+        m_pMutex->lock();
+        m_consoleCmdQueue.push(eastl::move(cmd));
+        m_pMutex->unlock();
+        m_pThreadEvent->set();
     }
 
     bool waitConsoleCmd(eastl::string& out) {
-        mpEvent->wait(100);
-        qd::MutexLock ml(*mpMutex);
-        if (mConsoleCmdQueue.empty())
+        m_pThreadEvent->wait(100);
+        qd::MutexLock ml(*m_pMutex);
+        if (m_consoleCmdQueue.empty())
             return false;
-        const eastl::string& cmd = mConsoleCmdQueue.front();
+        const eastl::string& cmd = m_consoleCmdQueue.front();
         out = eastl::move(cmd);
-        mConsoleCmdQueue.pop();
+        m_consoleCmdQueue.pop();
         return true;
     }
 
     void destroy() {
-        mConsoleCmdQueue = {};
-        if (mpEvent) {
-            mpEvent->set();
-            SAFE_DELETE(mpEvent);
+        m_consoleCmdQueue = {};
+        if (m_pThreadEvent) {
+            m_pThreadEvent->set();
+            SAFE_DELETE(m_pThreadEvent);
         }
-        SAFE_DELETE(mpMutex);
+        SAFE_DELETE(m_pMutex);
     }
 
     ~ConsoleQueue() {
@@ -97,22 +95,22 @@ void Debugger::init() {
 
     NodeCreator mk;
     mk.parent = nullptr;
-    gui = mk.createNode_<GuiManager>(this);
+    gui = mk.make_<GuiManager>(this);
 
     m_pOperations = gui->getOperationMgr();
     assert(m_pOperations);
 
     assert(m_pOperations->getNumChild());
 
-    capstone = new csh();
+    m_pCapstone = new csh();
 
     // TODO: Pick correct CPU depending on starting CPU
-    cs_err err = cs_open(CS_ARCH_M68K, (cs_mode)(CS_MODE_BIG_ENDIAN | CS_MODE_M68K_000), capstone);
+    cs_err err = cs_open(CS_ARCH_M68K, (cs_mode)(CS_MODE_BIG_ENDIAN | CS_MODE_M68K_000), m_pCapstone);
     if (err) {
         printf("Failed on cs_open() with error returned: %u\n", err);
         abort();
     }
-    cs_option(*capstone, CS_OPT_DETAIL, CS_OPT_ON);
+    cs_option(*m_pCapstone, CS_OPT_DETAIL, CS_OPT_ON);
 }
 
 
@@ -131,13 +129,13 @@ void Debugger::createRenderWindow() {
         return;
     }
 
-    mRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-    if (!mRenderer) {
+    m_pRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (!m_pRenderer) {
         SDL_DestroyWindow(window);
         SDL_Log("Error creating SDL_Renderer!");
         return;
     }
-    mWindow = window;
+    m_pWindow = window;
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
@@ -151,11 +149,11 @@ void Debugger::createRenderWindow() {
 
 void Debugger::initImGui() {
     // Setup Dear ImGui style
-    UiStyle::get()->applyImGuiDarkStyle();
+    qd::UiStyle::get()->applyImGuiDarkStyle();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplSDL2_InitForSDLRenderer(mWindow, mRenderer);
-    ImGui_ImplSDLRenderer2_Init(mRenderer);
+    ImGui_ImplSDL2_InitForSDLRenderer(m_pWindow, m_pRenderer);
+    ImGui_ImplSDLRenderer2_Init(m_pRenderer);
 }
 
 
@@ -189,10 +187,15 @@ int Debugger::waitConsoleCmd(char* out, int maxlen) {
 
 
 qd::Debugger* Debugger::get() {
-  //static Debugger instance;
-  //return &instance;
-    return gInst;
+    return g_pInstance;
 }
+
+
+ Debugger::Debugger()
+{
+    Debugger::g_pInstance = this;
+}
+
 
 void qd::Debugger::execConsoleCmd(eastl::string&& cmd) {
     imp::console_queue.addCmdToQueue(eastl::move(cmd));
@@ -213,16 +216,16 @@ void Debugger::destroy() {
     ImGui::DestroyContext();
 
     delete gui;
-    delete capstone;
-    capstone = nullptr;
+    delete m_pCapstone;
+    m_pCapstone = nullptr;
     gui = nullptr;
     vm = nullptr;
     VM::destrotVmInst();
 
-    SDL_DestroyRenderer(mRenderer);
-    mRenderer = nullptr;
-    SDL_DestroyWindow(mWindow);
-    mWindow = nullptr;
+    SDL_DestroyRenderer(m_pRenderer);
+    m_pRenderer = nullptr;
+    SDL_DestroyWindow(m_pWindow);
+    m_pWindow = nullptr;
 
     mbInit = false;
 }
@@ -233,17 +236,17 @@ void Debugger::render() {
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     ImGuiIO& io = ImGui::GetIO();
     ImGui::Render();
-    SDL_RenderSetScale(debugger->mRenderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-    SDL_SetRenderDrawColor(debugger->mRenderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255),
+    SDL_RenderSetScale(debugger->m_pRenderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
+    SDL_SetRenderDrawColor(debugger->m_pRenderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255),
                            (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
-    SDL_RenderClear(debugger->mRenderer);
-    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), debugger->mRenderer);
-    SDL_RenderPresent(debugger->mRenderer);
+    SDL_RenderClear(debugger->m_pRenderer);
+    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), debugger->m_pRenderer);
+    SDL_RenderPresent(debugger->m_pRenderer);
 }
 
 
 bool Debugger::isVisible() const {
-    uint32_t window_flags = SDL_GetWindowFlags(mWindow);
+    uint32_t window_flags = SDL_GetWindowFlags(m_pWindow);
     if (window_flags & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED)) {
         return false;
     } else {
@@ -254,9 +257,9 @@ bool Debugger::isVisible() const {
 
 void Debugger::toggleWndVisible(DebuggerMode mode) {
     if (!isVisible()) {
-        SDL_ShowWindow(mWindow);
+        SDL_ShowWindow(m_pWindow);
     } else {
-        SDL_HideWindow(mWindow);
+        SDL_HideWindow(m_pWindow);
     }
 }
 

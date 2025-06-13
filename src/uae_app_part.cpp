@@ -1,0 +1,178 @@
+// clang-format off
+#include "sysconfig.h"
+#include "sysdeps.h"
+#include "uae/time.h"
+#include "external/cli11/CLI11.hpp"
+#include "parse_options.h"
+#include "options.h"
+#include "adf.h"
+#include "uae.h"
+// clang-format on
+
+#include "uae_app_part.h"
+#include "SDL.h"
+#include "qd/app/appMessages.h"
+
+
+void UaeAppPart::createUaeWindow() {
+    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
+
+    SDL_AtomicSet(&scrFrameNo, 0);
+
+    m_wndWidth = 754;
+    m_wndHeight = 576;
+    m_pAmigaBuffer = new uint32_t[m_wndWidth * m_wndHeight];
+
+    // Create a window
+    mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_wndWidth, m_wndHeight,
+                                  window_flags);
+
+    if (!mUaeWindow) {
+        SDL_Log("Could not create window: %s", SDL_GetError());
+        return;
+    }
+
+    m_pUaeRenderer = SDL_CreateRenderer(mUaeWindow, -1, SDL_RENDERER_ACCELERATED);
+
+    if (!m_pUaeRenderer) {
+        SDL_Log("Could not create renderer: %s", SDL_GetError());
+        SDL_DestroyWindow(mUaeWindow);
+        return;
+    }
+
+    m_pUaeScrTexture = SDL_CreateTexture(m_pUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
+                                         m_wndWidth, m_wndHeight);
+
+    if (!m_pUaeScrTexture) {
+        SDL_Log("Could not create texture: %s", SDL_GetError());
+        SDL_DestroyRenderer(m_pUaeRenderer);
+        SDL_DestroyWindow(mUaeWindow);
+        return;
+    }
+}
+
+
+void UaeAppPart::renderUaeWindow() {
+    // render UAE texture screen
+    int curFrame = SDL_AtomicGet(&scrFrameNo);
+    if (curFrame == renderedFrameNo) {
+        return;
+    }
+
+    renderedFrameNo = curFrame;
+
+    int new_width = 0;
+    int new_height = 0;
+    int window_width, window_height;
+    SDL_GetWindowSize(mUaeWindow, &window_width, &window_height);
+
+    // Maintain aspect ratio
+    float image_aspect = (float)m_wndWidth / (float)m_wndHeight;
+    float window_aspect = (float)window_width / (float)window_height;
+
+    if (window_aspect < image_aspect) {
+        new_width = window_width;
+        new_height = (int)(window_width / image_aspect);
+    } else {
+        new_height = window_height;
+        new_width = (int)(window_height * image_aspect);
+    }
+    SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
+    SDL_RenderClear(m_pUaeRenderer);
+    if (m_UaeScrTextureMutex.tryLock()) {
+        recreateTexture(m_wndWidth, m_wndHeight);  // Recreate texture if needed
+        uint32_t* texture_pixels = nullptr;
+        int pitch = 0;
+        if (SDL_LockTexture(m_pUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
+            for (int y = 0; y < m_wndHeight; y++) {
+                uint8_t* dest = (uint8_t*)&texture_pixels[y * m_wndWidth];
+                memcpy(dest, &m_pAmigaBuffer[y * m_wndWidth], m_wndWidth * 4);
+            }
+            SDL_UnlockTexture(m_pUaeScrTexture);
+        }
+
+        SDL_RenderCopy(m_pUaeRenderer, m_pUaeScrTexture, NULL, &rect);
+        m_UaeScrTextureMutex.unlock();
+    }
+
+    SDL_RenderPresent(m_pUaeRenderer);
+}
+
+
+// Function to recreate a dynamic texture with new dimensions
+void UaeAppPart::recreateTexture(int newWidth, int newHeight) {
+    int currentWidth = 0;
+    int currentHeight = 0;
+
+    // Get the format of the old texture
+    Uint32 format;
+    int access;
+    SDL_QueryTexture(m_pUaeScrTexture, &format, &access, &currentWidth, &currentHeight);
+
+    if (newWidth == currentWidth && newHeight == currentHeight) {
+        return;
+    }
+
+    // Destroy the old texture
+    SDL_DestroyTexture(m_pUaeScrTexture);
+
+    // Create a new texture with the desired dimensions
+    m_pUaeScrTexture = SDL_CreateTexture(m_pUaeRenderer, format,
+                                         access,  // Using the same access pattern as the original
+                                         newWidth, newHeight);
+}
+
+
+uint32_t* UaeAppPart::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
+    m_UaeScrTextureMutex.lock();
+
+    if (amiga_width > m_wndWidth || amiga_height > m_wndHeight) {
+        delete[] m_pAmigaBuffer;
+        m_pAmigaBuffer = new uint32_t[m_wndWidth * m_wndHeight];
+    }
+
+    m_wndWidth = amiga_width;
+    m_wndHeight = amiga_height;
+
+    return m_pAmigaBuffer;
+}
+
+
+void UaeAppPart::unlockUaeScreenTexBuf() {
+    m_UaeScrTextureMutex.unlock();
+    SDL_AtomicIncRef(&scrFrameNo);
+}
+
+
+void UaeAppPart::update(qd::Fixed32 Delta, qd::Fixed32 Time) {
+}
+
+
+void UaeAppPart::destroyImp() {
+    destroyUaeWindow();
+}
+
+
+qd::EFlow UaeAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
+    switch (in_msg.id) {
+        case qd::appMsg::OnAppRequestToQuit::CID: {
+            ::quit_program = UAE_QUIT;
+            ::currprefs.cpu_cycle_exact = 0;
+            break;
+        }
+        default:
+            break;
+    }
+
+    return qd::EFlow::NO_RESULT;
+}
+
+
+void UaeAppPart::destroyUaeWindow() {
+    SDL_DestroyTexture(m_pUaeScrTexture);
+    m_pUaeScrTexture = nullptr;
+    SDL_DestroyRenderer(m_pUaeRenderer);
+    m_pUaeRenderer = nullptr;
+    SDL_DestroyWindow(mUaeWindow);
+    mUaeWindow = nullptr;
+}

@@ -3,7 +3,7 @@
 
 namespace qd {
 
-UiStyle* gUiColors = UiStyle::get();
+UiStyle* g_imColors = UiStyle::get();
 
 
 void UiStyle::applyColors() {

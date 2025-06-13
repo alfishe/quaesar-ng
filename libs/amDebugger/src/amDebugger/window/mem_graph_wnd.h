@@ -1,6 +1,6 @@
 #pragma once
 #include <amDebugger/vm/memory.h>
-#include <qd/Base/types.h>
+#include <qd/base/types.h>
 #include <amDebugger/ui/ui_view.h>
 
 namespace qd {

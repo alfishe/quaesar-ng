@@ -4,9 +4,9 @@
 #include <EASTL/string.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/Base/base.h>
-#include <qd/App/appPart.h>
-#include <qd/Base/classIdCC.h>
+#include <qd/base/base.h>
+#include <qd/app/appPart.h>
+#include <qd/base/classIdCC.h>
 
 
 struct SDL_Window;
@@ -15,6 +15,7 @@ union SDL_Event;
 typedef size_t csh;
 
 FORWARD_DECLARATION_4S(qd, operation, msg, Base);
+
 
 //////////////////////////////////////////////////////////////////////////
 namespace qd {
@@ -64,21 +65,21 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class Debugger : public qd::BaseAppPart
+class Debugger : public qd::AppPartBase
 {
-    TS_REFLECT_CLASS(qd::Debugger, qd::BaseAppPart);
+    TS_REFLECT_CLASS(qd::Debugger, qd::AppPartBase);
 
-    SDL_Window* mWindow = nullptr;
-    SDL_Renderer* mRenderer = nullptr;
+    SDL_Window* m_pWindow = nullptr;
+    SDL_Renderer* m_pRenderer = nullptr;
 
 public:
-    csh* capstone = nullptr;
+    csh* m_pCapstone = nullptr;
     VM* vm = nullptr;
     GuiManager* gui = nullptr;
     UiOperationMgr* m_pOperations = nullptr;
 
     SDL_Renderer* getRenderer() const {
-        return mRenderer;
+        return m_pRenderer;
     }
 
 private:
@@ -86,6 +87,11 @@ private:
     int mbInit = false;
 
 public:
+
+    Debugger();
+    inline static Debugger* g_pInstance = nullptr;
+    static Debugger* get();
+
     void init();
     void destroy();
     void update();
@@ -121,8 +127,6 @@ public:
         mWaitScanLines = waitScanLines;
     }
 
-    static Debugger *gInst;
-    static Debugger* get();
 
     BreakpointsSortedList getBreakpointsSorted() const {
         BreakpointsSortedList bp;
@@ -130,7 +134,6 @@ public:
         return bp;
     }
 
-    Debugger(qd::Application *p_app) : BaseAppPart(p_app) {}
 
 private:
     void createRenderWindow();

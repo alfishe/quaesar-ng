@@ -1,6 +1,6 @@
 #pragma once
-#include "qd/Base/base.h"
-#include "qd/UI/shortcutMgr.h"
+#include "qd/base/base.h"
+#include "qd/ui/shortcutMgr.h"
 
 
 FORWARD_DECLARATION_2(qd, Shortcut);

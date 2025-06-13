@@ -55,25 +55,14 @@
 #include <SDL.h>
 #include <amDebugger/debugger.h>
 #include <qd/Log/log.h>
-#include <qd/Thread/thread.h>
+#include <qd/thread/thread.h>
 #include <src/quaesar.h>
+#include <src/quaesar_debug.h>
 #include <src/sounddep/sound.h>
+#include <src/uae_app_part.h>
 #include <cstdarg>
 #include <filesystem>
 
-#ifdef TRACE
-#undef TRACE
-#endif
-#define TRACE() SDL_Log("WARN: Using of unimplemented function: '%s()'", __func__)
-
-void debug(const char* format, ...) {
-    eastl::fixed_string<char, 1024, false> formatBuffer;
-    formatBuffer.sprintf("[%s] %s", __func__, format);
-    va_list args;
-    va_start(args, format);
-    SDL_LogMessageV(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_DEBUG, formatBuffer.c_str(), args);
-    va_end(args);
-}
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
@@ -935,17 +924,16 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     }
 
     uint8_t* sptr = vb->bufmem;
-    int amiga_width = vb->outwidth;
-    int amiga_height = vb->outheight;
-
-    if (uint32_t* pixels = app->lockUaeScreenTexBuf(amiga_width, amiga_height)) {
-        for (int y = 0; y < amiga_height; y++) {
-            uint8_t* dest = (uint8_t*)&pixels[y * amiga_width];
-            memcpy(dest, sptr, amiga_width * 4);
+    int imgSizeX = vb->outwidth;
+    int imgSizeY = vb->outheight;
+    uint32_t* pTxBuf = app->m_pUaeAppPart->lockUaeScreenTexBuf(imgSizeX, imgSizeY);
+    if (pTxBuf) {
+        for (int y = 0; y < imgSizeY; y++) {
+            uint8_t* dest = (uint8_t*)&pTxBuf[y * imgSizeX];
+            memcpy(dest, sptr, imgSizeX * 4);
             sptr += vb->rowbytes;
         }
-
-        app->unlockUaeScreenTexBuf();
+        app->m_pUaeAppPart->unlockUaeScreenTexBuf();
     }
 }
 

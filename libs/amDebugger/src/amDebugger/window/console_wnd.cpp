@@ -1,8 +1,8 @@
 #include "console_wnd.h"
 #include <amDebugger/debugger.h>
 #include <qd/ImGui/imgui_eastl.h>
-#include <qd/Log/log.h>
-#include <qd/Thread/thread.h>
+#include <qd/log/log.h>
+#include <qd/thread/thread.h>
 
 
 namespace qd {

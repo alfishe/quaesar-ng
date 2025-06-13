@@ -1,6 +1,6 @@
 #include "ui_view.h"
 #include <amDebugger/ui/gui_manager.h>
-#include <qd/TypeSystem/typeInfo.h>
+#include <qd/typeSystem/typeInfo.h>
 
 
 namespace qd {
@@ -27,7 +27,7 @@ void ImGuiDemoWindow::draw() {
 
 void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, UiWindow *newInst)
 {
-    if (auto typeIdAttr = meta.getAttribute_<qd::CustomTypeId32Attr>())
+    if (auto typeIdAttr = meta.getAttribute_<qd::tsAttr::CustomClassId32>())
         newInst->mClassId = typeIdAttr->getId32();
     newInst->onCreate(cp);
 }

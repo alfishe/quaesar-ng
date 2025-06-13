@@ -1,16 +1,15 @@
 #include "gui_manager.h"
 #include "EASTL/span.h"
-#include "qd/UI/uiControls/lambda.h"
-#include "qd/UI/uiControls/mainMenu.h"
+#include "qd/ui/controls/lambda.h"
+#include "qd/ui/controls/mainMenu.h"
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/shortcut/shortcut_list.h>
 #include <imgui/imgui_internal.h>
-#include "qd/Log/log.h"
-#include "qd/TypeSystem/typeRegistry.h"
-#include "qd/UI/uiOperationManager.h"
-#include "qd/UI/shortcutMgr.h"
-#include "qd/UImApi/uiImApi.h"
-#include "qd/UImApi/uiControls/uiMenu.h"
+#include "qd/log/log.h"
+#include "qd/typeSystem/typeRegistry.h"
+#include "qd/ui/uiOperationManager.h"
+#include "qd/ui/shortcutMgr.h"
+#include "qd/qimGui/controls/qimMenu.h"
 #include "amDebugger/commonOperations.h"
 #include "imgui/imgui.h"
 #include "EASTL/optional.h"
@@ -63,7 +62,7 @@ void GuiManager::createAllUiWndows()
     for (int i = 0; i < windowTypes.size(); ++i)
     {
         const qd::TypeInfo* pCurWindowType = windowTypes[i];
-        auto* pCreateAttr = pCurWindowType->getAttribute_<qd::CreateClassCbAttr>();
+        auto* pCreateAttr = pCurWindowType->getAttribute_<qd::tsAttr::CreateClassCb>();
         if (!pCreateAttr)
         {
             SDL_Log("Creator not defined in class:'%s'", pCurWindowType->getFullName().c_str());

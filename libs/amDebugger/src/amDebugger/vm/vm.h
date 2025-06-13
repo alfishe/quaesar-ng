@@ -2,7 +2,7 @@
 #include <EASTL/span.h>
 #include <amDebugger/vm/custom_regs.h>
 #include <amDebugger/vm/vm_defs.h>
-#include <qd/Base/types.h>
+#include <qd/base/types.h>
 
 namespace qd {
 

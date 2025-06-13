@@ -1,5 +1,5 @@
 #include "amDebugger/dbgOperation.h"
-#include "qd/UI/uiOperationMessages.h"
+#include "qd/ui/uiOperationMessages.h"
 
 
 struct SDL_Window;

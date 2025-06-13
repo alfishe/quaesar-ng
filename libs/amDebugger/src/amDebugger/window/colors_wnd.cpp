@@ -2,7 +2,7 @@
 #include <EASTL/fixed_vector.h>
 #include <amDebugger/debugger.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/Base/color.h>
+#include <qd/base/color.h>
 #include <qd/ImGui/imgui_eastl.h>
 
 namespace qd {

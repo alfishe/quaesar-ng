@@ -1,5 +1,6 @@
 #include "uae_actions.h"
 #include "amDebugger/commonOperations.h"
+#include "uae_app_part.h"
 
 
 namespace qd::operation {
@@ -17,7 +18,7 @@ void DebugDmaOption::changeDebugDmaMode(int nMode) {
 
 
 SDL_Window* UaeWndAlwaysOnTop::getEmulatorMainWindow() {
-    return app->mUaeWindow;
+    return app->m_pUaeAppPart->getSdlWindow();
 }
 
 
