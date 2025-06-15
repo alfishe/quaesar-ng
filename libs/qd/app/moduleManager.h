@@ -1,6 +1,7 @@
 #pragma once
-#include "EASTL/fixed_map.h"
+// #include "EASTL/fixed_map.h"
 #include "EASTL/fixed_vector.h"
+#include "EASTL/vector_map.h"
 #include "qd/base/base.h"
 #include "qd/base/ref_ptr.h"
 #include "qd/stl/string.h"
@@ -35,6 +36,7 @@ static ModuleRegistrator_<CDummyModule> s;
 #endif // 0
 
 
+using ECgModuleID = const qd::TypeInfo*;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,35 +46,29 @@ class ModuleInfo
     friend class ModuleManager;
 
 public:
-    ECgModuleID m_ModuleID;
-    ref_ptr<IModuleInterface> m_pInstance;
+    const qd::TypeInfo* m_ModuleId;
+    IModuleInterface* m_pInstance;
     eastl::fixed_function<8, IModuleInterface*(qd::ModuleCreateParams*)> m_CreateFunc;
     typedef eastl::fixed_function<8, IModuleInterface*(qd::ModuleCreateParams*)> TCreateFunc;
     uint32_t m_nInstanceRef;
     qd::string m_ModuleName;
 
 public:
-    ModuleInfo(ECgModuleID ModuleID)
-        : m_ModuleID(ModuleID)
+    ModuleInfo(const qd::TypeInfo& pModuleInfo)
+        : m_ModuleId(&pModuleInfo)
         , m_pInstance(nullptr)
         , m_nInstanceRef(0)
     {}
 
-
-    qd::ECgModuleID getModuleId() const { return m_ModuleID; }
-
-    void setModuleId(qd::ECgModuleID ModuleID) { m_ModuleID = ModuleID; }
-
-    const ref_ptr<IModuleInterface>& getInstance() const { return m_pInstance; }
-
-    void setInstance(ref_ptr<IModuleInterface> Instance);
+    IModuleInterface* getInstance() const { return m_pInstance; }
+    void setInstance(IModuleInterface* Instance);
 
     uint32_t retainInstance();
     uint32_t releaseInstance();
     void merge(const ModuleInfo& r);
 
-    ref_ptr<IModuleInterface> makeInstance(bool bRegisterSingleton, qd::ModuleCreateParams* pCreateParam = nullptr);
-
+    IModuleInterface* makeInstance(bool bRegisterSingleton, qd::ModuleCreateParams* pCreateParam = nullptr);
+    const qd::TypeInfo& getModuleId() const { return *m_ModuleId; }
 
     IModuleInterface* getOrCreateInstance()
     {
@@ -119,19 +115,21 @@ struct ModuleRegistratorNoCreate_ {
 class ModuleManager
 {
     typedef ModuleManager TThis;
-    static constexpr uint32_t g_nMAX_MODULES = ECgModuleID::_FAST_ACCESS_ + 16;
+    // static constexpr uint32_t g_nMAX_MODULES = ECgModuleID::_FAST_ACCESS_ + 16;
 
-    eastl::fixed_map< uint32_t, eastl::unique_ptr<ModuleInfo>, g_nMAX_MODULES, false > m_pModuleInfoMap;
+    struct InfoItem {
+        const qd::TypeInfo* m_pType;
+        eastl::unique_ptr<ModuleInfo> m_pModuleInfo;
+    };
+    qd::vector<ModuleManager::InfoItem> m_pModuleInfoMap;
 
 public:
-    typedef eastl::fixed_map< uint32_t, eastl::unique_ptr<ModuleInfo>, g_nMAX_MODULES, false > TModuleInfoMap;
+    typedef qd::vector<ModuleManager::InfoItem> TModuleInfoMap;
 
-    eastl::fixed_vector< ModuleInfo*, ECgModuleID::_FAST_ACCESS_, false > m_pFastModules;
+    // eastl::fixed_vector< ModuleInfo*, ECgModuleID::_FAST_ACCESS_, false > m_pFastModules;
 
 private:
     static TThis* m_pSingleInstance;
-
-private:
     static bool m_bSingleDestroyed;
 
 public:
@@ -150,41 +148,38 @@ public:
 
     void cleanUp();
 
-
     virtual ~ModuleManager(void);
 
 
     const ModuleManager::TModuleInfoMap& getModuleInfoMap() const { return m_pModuleInfoMap; }
 
 
-    ModuleInfo* overrideModule(ECgModuleID ModuleId, const ModuleInfo::TCreateFunc& pCreateFunc);
+    ModuleInfo* overrideModule(const qd::TypeInfo& ModuleId, const ModuleInfo::TCreateFunc& pCreateFunc);
 
-
-    // Default create function - concreate module
+    // Default create function
     template<class TModuleClass>
     inline ModuleInfo* overrideModule_(const ModuleInfo::TCreateFunc& pCreateFunc = CCallbackNull());
-
 
     ModuleInfo* registerModule(const ModuleInfo& i);
 
 
-    ModuleInfo* findModuleInfo(ECgModuleID ModuleId) const;
+    ModuleInfo* findModuleInfo(const qd::TypeInfo& ModuleId) const;
 
-    ModuleInfo* getOrCreateModuleInfo(ECgModuleID ModuleId);
+    ModuleInfo* getOrCreateModuleInfo(const qd::TypeInfo& ModuleId);
 
-    void setModuleInstance(ECgModuleID ModuleId, ref_ptr<IModuleInterface> pInstance);
+    void setModuleInstance(const qd::TypeInfo& ModuleId, IModuleInterface* pInstance);
 
     template<class TModuleClass>
-    inline void setModuleInstance_(ref_ptr<TModuleClass> pInstance)
+    inline void setModuleInstance_(TModuleClass* pInstance)
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+        ECgModuleID ModuleId = &TModuleClass::getStaticTypeInfo();
         setModuleInstance(ModuleId, pInstance);
     }
 
 
-    qd::IModuleInterface* getOrCreateModule(ECgModuleID ModuleId);
+    qd::IModuleInterface* getOrCreateModule(const qd::TypeInfo& ModuleId);
 
-    qd::IModuleInterface* createModuleInstance(ECgModuleID ModuleId, bool bSingletonInstance,
+    qd::IModuleInterface* createModuleInstance(const qd::TypeInfo& ModuleId, bool bSingletonInstance,
         qd::ModuleCreateParams* pCreateParam = nullptr);
 
 
@@ -192,13 +187,13 @@ public:
     template<class TModuleClass>
     inline ref_ptr<TModuleClass> makeInstance_(qd::ModuleCreateParams* mc = nullptr)
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+        ECgModuleID ModuleId = &TModuleClass::getStaticTypeInfo();
         qd::ref_ptr<TModuleClass> pInstance = createModuleInstance(ModuleId, /*regInstance:*/ false, mc);
         return pInstance;
     }
 
 
-    IModuleInterface* findModuleInstance(ECgModuleID ModuleId)
+    IModuleInterface* findModuleInstance(const qd::TypeInfo& ModuleId)
     {
         ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
         if (!pModuleInfo)
@@ -210,18 +205,18 @@ public:
     template<class TModuleClass>
     TModuleClass* findInstacnce_()
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+        const qd::TypeInfo& ModuleId = TModuleClass::getStaticTypeInfo();
         ptr<TModuleClass> pInstance = findModuleInstance(ModuleId);
         return pInstance;
     }
 
     // RETAINS MODULE
-    IModuleInterface* loadModule(ECgModuleID ModuleId, qd::ModuleCreateParams* pCreateParam = nullptr);
+    IModuleInterface* loadModule(const qd::TypeInfo& ModuleId, qd::ModuleCreateParams* pCreateParam = nullptr);
 
     template<class TModuleClass>
     inline TModuleClass* loadModule_(qd::ModuleCreateParams* pCreateParam = nullptr)
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+        const qd::TypeInfo& ModuleId = TModuleClass::getStaticTypeInfo();
         ptr<TModuleClass> pInstance = loadModule(ModuleId, pCreateParam);
         return pInstance;
     }
@@ -231,89 +226,59 @@ public:
     // and A loads B during A's StartupModule, that B will actually get Unloaded after A during shutdown.
     // This allows A's ShutdownModule() call to still reference module B.
     // RELEASE MODULE
-    void unloadModule(ECgModuleID ModuleId, bool bIsShutdown = false);
+    void unloadModule(const qd::TypeInfo& ModuleId, bool bIsShutdown = false);
 
     template<class TModuleClass>
     inline void unloadModule_()
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+        const qd::TypeInfo& ModuleId = TModuleClass::getStaticTypeInfo();
         unloadModule(ModuleId);
     }
 
-    IModuleInterface* getModuleInstance(ECgModuleID ModuleId, bool bMakeInst = false);
+    IModuleInterface* getModuleInstance(const qd::TypeInfo& ModuleId, bool bMakeInst = false);
 
 
     template<class TModule>
-    inline TModule* getModuleInstance_()
+    inline TModule* getModuleInst_()
     {
-        ptr<TModule> pExistInst = getModuleInstance(TModule::getModuleTypeId(), false);
+        TModule* pExistInst = static_cast<TModule*>(getModuleInstance(TModule::getStaticTypeInfo(), false));
         return pExistInst;
     }
 
 
     template<class TModule>
-    TModule* getModuleInstanceOrCreate_()
+    TModule* getModuleInstOrCreate_()
     {
-        ptr<TModule> pExistInst = getModuleInstance(TModule::getModuleTypeId(), /*MakeInst*/ false);
+        TModule* pExistInst =
+            static_cast<TModule*>(getModuleInstance(TModule::getStaticTypeInfo(), /*MakeInst*/ false));
         if (pExistInst)
             return pExistInst;
-        pExistInst = createModuleInstance(TModule::getModuleTypeId(), /*keepInstance:*/ true);
+        pExistInst = static_cast<TModule*>(createModuleInstance(TModule::getStaticTypeInfo(), /*keepInstance:*/ true));
         return pExistInst;
     }
 
 
-    bool isModuleRegistered(ECgModuleID ModuleId) const
-    {
-        ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
-        if (pModuleInfo != nullptr)
-        {
-            return true;
-        }
-        return false;
-    }
+    bool isModuleRegistered(const qd::TypeInfo& moduleId) const;
 
     template<class TModuleClass>
     inline bool isModuleRegistered_() const
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+        const qd::TypeInfo& ModuleId = TModuleClass::getStaticTypeInfo();
         return isModuleRegistered(ModuleId);
     }
 
 
-    bool isModuleLoaded(ECgModuleID ModuleId) const
-    {
-        ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
-        if (pModuleInfo != nullptr)
-        {
-            if (pModuleInfo->getInstance())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool isModuleLoaded(const qd::TypeInfo& ModuleId) const;
 
     template<class TModuleClass>
     inline bool isModuleLoaded_() const
     {
-        ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
-        return isModuleLoaded(ModuleId);
+        const qd::TypeInfo& moduleId = TModuleClass::getStaticTypeInfo();
+        return isModuleLoaded(moduleId);
     }
 
-    uint32_t destroyModule(qd::ECgModuleID ModuleId);
-
-
-
-
-    void destroyModule(qd::ECgModuleID ModuleId, ref_ptr<IModuleInterface> pInstance)
-    {
-        destroyModule(ModuleId);
-        if (pInstance)
-        {
-            ModuleManager::_shutDownInstance(pInstance);
-            ModuleManager::_destroyInstance(pInstance);
-        }
-    }
+    uint32_t destroyModule(const qd::TypeInfo& moduleId);
+    void destroyModule(const qd::TypeInfo& moduleId, IModuleInterface* pInstance);
 
 
     static void _onStatrupInstance(IModuleInterface* pModule, qd::ModuleCreateParams* mc = nullptr)
@@ -335,7 +300,7 @@ public:
         }
     }
 
-    static void _destroyInstance(ref_ptr<IModuleInterface> pInstance)
+    static void _destroyInstance(IModuleInterface* pInstance)
     {
         if (pInstance && !pInstance->m_ModuleState.m_bModDestroyed)
         {
@@ -363,12 +328,11 @@ template<class TModule>
 inline TModule* getModuleInst_()
 {
     ModuleManager* pMgr = ModuleManager::get();
-    ptr<TModule> pExistInst = pMgr->getModuleInstance(TModule::getModuleTypeId(), false);
+    TModule* pExistInst = pMgr->getModuleInst_<TModule>(false);
     return pExistInst;
 }
 
 }; // namespace Modules
-
 
 
 template<class TModuleClass>
@@ -388,22 +352,20 @@ inline ModuleInfo* ModuleManager::overrideModule_(const ModuleInfo::TCreateFunc&
 }
 
 
-
 template<class TModuleClass>
 qd::IModuleInterface* ModuleRegistrator_<TModuleClass>::createModuleFunc(qd::ModuleCreateParams* pCP)
 {
     // non static function but with this == null, for emscripten happy
-    TModuleClass* pMod = new TModuleClass(pCP);
+    TModuleClass* pMod = new TModuleClass(/*pCP*/);
     return pMod;
 }
-
 
 
 template<class TModule>
 inline ModuleRegistrator_<TModule>::ModuleRegistrator_(const char* pClassName)
 {
-    ECgModuleID ModuleId = TModule::getModuleTypeId();
-    ModuleInfo* pMtd = ModuleManager::I()->overrideModule(ModuleId, BIND_FREE_CB(&TThis::createModuleFunc));
+    const qd::TypeInfo& moduleId = TModule::getStaticTypeInfo();
+    ModuleInfo* pMtd = ModuleManager::I()->overrideModule(moduleId, &TThis::createModuleFunc);
     pMtd->m_ModuleName = pClassName;
 }
 
@@ -411,9 +373,8 @@ inline ModuleRegistrator_<TModule>::ModuleRegistrator_(const char* pClassName)
 template<class TModule>
 inline ModuleRegistratorNoCreate_<TModule>::ModuleRegistratorNoCreate_(const char* pClassName)
 {
-    ECgModuleID ModuleId = TModule::getModuleTypeId();
-    ModuleInfo* pMtd =
-        ModuleManager::I()->overrideModule(ModuleId, BIND_FREE_CB(&TThis::CreateModuleFunc)); // NO CREATE
+    const qd::TypeInfo& moduleId = TModule::getStaticTypeInfo();
+    ModuleInfo* pMtd = ModuleManager::I()->overrideModule(moduleId, &TThis::createModuleFunc); // NO CREATE
     pMtd->m_ModuleName = pClassName;
 }
 

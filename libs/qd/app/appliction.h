@@ -9,6 +9,7 @@ FORWARD_DECLARATION_2(qd, ModuleManager);
 FORWARD_DECLARATION_2S(qd, CreateApplicationParams);
 FORWARD_DECLARATION_3S(qd, appMsg, BaseMsg);
 
+union SDL_Event;
 
 namespace qd {
 
@@ -41,6 +42,11 @@ public:
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg);
 
     void sendAppEventMsg(qd::appMsg::BaseMsg& in_msg);
+
+
+    void doMainLoop();
+
+    virtual void onSdlEventProc(SDL_Event& event);
 
     bool isAppActive() const { return m_bActive; }
     void setAppActive(bool Active) { m_bActive = Active; }

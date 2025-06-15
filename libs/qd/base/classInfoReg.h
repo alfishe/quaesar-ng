@@ -3,7 +3,7 @@
 #include <EASTL/vector_map.h>
 #include <qd/base/base.h>
 #include <qd/ImGui/imgui_eastl.h>
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 
 namespace qd {
 

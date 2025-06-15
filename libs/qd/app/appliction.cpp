@@ -1,6 +1,7 @@
 #include "qd/app/appliction.h"
-#include "qd/app/appPartsMgr.h"
 #include "qd/app/appMessages.h"
+#include "qd/app/appPartsMgr.h"
+#include "SDL_events.h"
 
 
 namespace qd {
@@ -66,6 +67,52 @@ void Application::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
     if (f == EFlow::STOP)
         return;
     m_pAppParts->sendAppEventMsg(in_msg);
+}
+
+
+void Application::doMainLoop()
+{
+    SDL_Event event;
+    while (true)
+    {
+        if (hasQuitRequest())
+            break;
+
+        while (SDL_PollEvent(&event) != 0)
+        {
+            onSdlEventProc(event);
+        }
+
+        getAppParts()->update(0, 0);
+        getAppParts()->render();
+    }
+}
+
+
+void Application::onSdlEventProc(SDL_Event& event)
+{
+    getAppParts()->onSdlEventProc(event);
+
+    switch (event.type)
+    {
+    case SDL_QUIT:
+    {
+        requestAppToQuit();
+        break;
+    }
+    case SDL_WINDOWEVENT:
+    {
+        Uint8 wndEvent = event.window.event;
+        if (wndEvent == SDL_WINDOWEVENT_CLOSE)
+        {
+            requestAppToQuit();
+            break;
+        }
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 

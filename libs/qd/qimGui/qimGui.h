@@ -3,6 +3,7 @@
 #include "qd/stl/vector_map.h"
 #include "qd/typeSystem/typeDeclare.h"
 #include <imgui/imgui.h>
+#include "qd/typeSystem/typeInfo.h"
 
 
 template<typename T>
@@ -114,7 +115,8 @@ public:
     T* cast_() const
     {
         const qd::TypeInfo& castToType = T::getStaticTypeInfo();
-        if (getTypeInfo() == castToType)
+        const qd::TypeInfo& lh = getTypeInfo();
+        if (lh.isDerivedFrom(castToType))
             return static_cast<T*>(const_cast<ElemantData*>(this));
         return false;
     }

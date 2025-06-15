@@ -35,9 +35,9 @@ public:
         return g_pInstance;
     }
     void initialize();
-    void doMainLoop();
     virtual void destroyImp() override;
 
+    virtual void onSdlEventProc(SDL_Event& event) override;
 
     qd::Debugger* getDbg() const {
         return m_pDebugger;

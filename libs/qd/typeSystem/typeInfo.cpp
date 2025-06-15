@@ -1,5 +1,5 @@
 #include "TypeInfo.h"
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 
 //-------------------------------------------------------------------------
 

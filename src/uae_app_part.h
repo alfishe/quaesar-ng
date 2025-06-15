@@ -4,6 +4,7 @@
 struct SDL_Window;
 struct SDL_Texture;
 struct SDL_Renderer;
+FORWARD_DECLARATION_2(qd, QImGuiContext);
 
 
 class UaeAppPart : public qd::AppPartBase {
@@ -14,30 +15,34 @@ class UaeAppPart : public qd::AppPartBase {
 private:
     int m_wndWidth = 754;
     int m_wndHeight = 576;
-    int renderedFrameNo = -1;
+    int m_renderedFrameNo = -1;
     uint32_t* m_pAmigaBuffer = nullptr;
-    SDL_Window* mUaeWindow = nullptr;
+    SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pUaeRenderer = nullptr;
-    SDL_atomic_t scrFrameNo = {};
+    SDL_atomic_t m_scrFrameNo = {};
     SDL_Texture* m_pUaeScrTexture = nullptr;
     qd::Mutex m_UaeScrTextureMutex;
+    qd::QImGuiContext* m_pImGui = nullptr;
 
 public:
+    virtual void onPartCreate(AppPartBase::OnCreate_t& prm) override;
+
     void createUaeWindow();
-    void renderUaeWindow();
+    virtual void update(float dt, float time) override;
+    virtual void render() override;
 
     uint32_t* lockUaeScreenTexBuf(int amiga_width, int amiga_height);
     void unlockUaeScreenTexBuf();
 
-    virtual void update(qd::Fixed32 Delta, qd::Fixed32 Time) override;
     virtual void destroyImp() override;
 
-
     SDL_Window* getSdlWindow() const {
-        return mUaeWindow;
+        return m_pWindow;
     }
 
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) override;
+
+    virtual void onSdlEventProc(SDL_Event& event) override;
 
 private:
     void recreateTexture(int newWidth, int newHeight);

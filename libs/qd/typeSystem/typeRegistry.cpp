@@ -4,9 +4,9 @@
 #include "EASTL/vector.h"
 #include "ReflectedType.h"
 #include "TypeInfo.h"
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 #include <qd/mem/fnvHash.h>
-#include "qd/Debug/exception.h"
+#include "qd/debug/exception.h"
 #include "typeInfoBuilder.h"
 
 

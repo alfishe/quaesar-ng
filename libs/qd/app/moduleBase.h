@@ -1,134 +1,100 @@
-#include <qd/base/base.h>
-#include <qd/enum/enumBase.h>
-#include <qd/base/ref_ptr.h>
+#pragma once
+#include "qd/base/base.h"
+#include "qd/base/ref_ptr.h"
+#include "qd/enum/enumBase.h"
+#include "qd/typeSystem/typeDeclare.h"
 
 
 
-namespace qd
-{
+namespace qd {
 class ModuleManager;
 class Application;
 
 
-struct ECgModuleID {
-    typedef uint32_t EType;
-    //G_ENUM_TO_STRING(qd::ECgModuleID);
-
-    // DON'T FORGET REGENRATE FILE 'qdEnumGenerated.cpp' with 'qdEnumGenerate.bat'
-    enum eType {
-        UNKNOWN = -1,
-        NONE = 0,
-        APP_PARTS,
-
-        _FAST_ACCESS_,
-
-        USER_MODULE /*=100*/,
-    };
-    ENUM_DECLARE_BASE(qd::, ECgModuleID, eType, 0);
-    //ENUM_DECLARE_TO_STRING_BASE();
-
-};  // enum ECgModuleID
+struct ModuleCreateParams {
+    uint32_t classId = 0;
+    ModuleManager* moduleMgr = nullptr;
+    Application* app = nullptr;
+    ModuleCreateParams(Application* p_app = nullptr)
+        : app(p_app)
+    {}
+    virtual ~ModuleCreateParams() = default;
+}; // struct ModuleCreateParams
 //////////////////////////////////////////////////////////////////////////
 
 
+namespace moduleMsg {
 
-	struct ModuleCreateParams {
-	    uint32_t classId = 0;
-	    ModuleManager* moduleMgr = nullptr;
-	    Application* app = nullptr;
-	    ModuleCreateParams(Application* p_app = nullptr) : app(p_app) {}
-        virtual ~ModuleCreateParams() = default;
-	};  // struct CModuleCreateParams
-	//////////////////////////////////////////////////////////////////////////
+struct BaseMsg {
+    uint32_t id;
+    BaseMsg(uint32_t _id = 0)
+        : id(_id)
+    {}
+};
 
+template<uint32_t TID>
+struct BaseMsg_ : public BaseMsg {
+    constexpr static uint32_t CID = TID;
+    BaseMsg_()
+        : BaseMsg(TID)
+    {}
+};
 
-
-
-// MODULE INNER MESSAGES
-    namespace Enm {
-    namespace EModuleMsg {
-    enum eType {
-        UNKNOWN = 0,
-        RENDER_IMGUI_DEBUG_INFO_TREE,
-        _COUNT_,
-    };  // enum eType
-
-    struct Msg_t {
-        ENUM_DECLARE_BASE(qd::Enm::EModuleMsg::, Msg_t, int, 0);
-    };
-
-    struct RENDER_IMGUI_DEBUG_INFO_TREE_t {};
-
-    };  //namespace EModuleMsg
-    }; // namespace EN
+struct RENDER_IMGUI_DEBUG_INFO_TREE : MSGID_(RenderImGui) {};
 
 
-
+}; // namespace moduleMsg
+//////////////////////////////////////////////////////////////////////////
 
 
 //////////////////////////////////////////////////////////////////////////
-    // BASE MODULE INTEFACE
-    class IModuleInterface : public RefCounted {
-        friend class ModuleManager;
+// BASE MODULE INTEFACE
+class IModuleInterface
+{
+    TS_REFLECT_CLASS_BASE(10, qd::IModuleInterface, void);
+    friend class ModuleManager;
 
-    public:
-        static qd::ECgModuleID getModuleTypeId() {
-            assert(0);
-            return qd::ECgModuleID::UNKNOWN;
-        };
+public:
+    IModuleInterface(qd::ModuleCreateParams* pCP = nullptr) {}
 
-    public:
-        IModuleInterface(qd::ModuleCreateParams* pCP = nullptr) {
-        }
+    // Called right after the module DLL has been loaded and the module object has been created
+    virtual void onModuleStartup(qd::ModuleCreateParams* mc) // override
+    {}
 
-        // Called right after the module DLL has been loaded and the module object has been created
-        virtual void onModuleStartup(qd::ModuleCreateParams* mc)  // override
-        {
-        }
+    // Called before the module has been unloaded
+    virtual void PreUnloadCallback() // override
+    {}
 
-        // Called before the module has been unloaded
-        virtual void PreUnloadCallback()  // override
-        {
-        }
+    // Called before the module is unloaded, right before the module object is destroyed.
+    virtual void onModuleShutdown() // override
+    {}
 
-        // Called before the module is unloaded, right before the module object is destroyed.
-        virtual void onModuleShutdown()  // override
-        {
-        }
+    virtual void destroyModule() { delete this; }
 
-        virtual void destroyModule()  // override
-        {
-            //delete this;
-        }
+    virtual void onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg);
 
-        virtual void onModuleMessageProc(qd::Enm::EModuleMsg::Msg_t MsgId, void* pMsgData = nullptr);
+    virtual ~IModuleInterface() = default;
 
 
-        virtual ~IModuleInterface() = default;
-
-
-    private:
-        struct t_StateFlags {
-            union {
-                struct {
-                    bool m_bModStartuped : 1;
-                    bool m_bModShutdowned : 1;
-                    bool m_bModDestroyed : 1;
-                };
-                uint8_t m_Flag;
+private:
+    struct t_StateFlags {
+        union {
+            struct {
+                bool m_bModStartuped  :1;
+                bool m_bModShutdowned :1;
+                bool m_bModDestroyed  :1;
             };
-            t_StateFlags() : m_Flag(0) {
-            }
-        };  // struct CLevelFlags
+            uint8_t m_Flag;
+        };
+        t_StateFlags()
+            : m_Flag(0)
+        {}
+    }; // struct CLevelFlags
 
-        t_StateFlags m_ModuleState;
+    t_StateFlags m_ModuleState;
 
-
-    public:
-        qd::ECgModuleID m_CGModuleTypeID;
-
-    };  // class IModuleInterface
-    //////////////////////////////////////////////////////////////////////////
+}; // class IModuleInterface
+//////////////////////////////////////////////////////////////////////////
 
 
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <EASTL/type_traits.h>
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 
 
 namespace qd

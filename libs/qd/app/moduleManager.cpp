@@ -1,71 +1,70 @@
+#include "moduleBase.h"
+#include "qd/mem/ptrMath.h"
 #include <qd/app/appliction.h>
 #include <qd/app/moduleManager.h>
 #include <qd/base/unique_ptr.h>
-#include <qd/Debug/assert.h>
-#include <qd/Debug/exception.h>
+#include <qd/debug/assert.h>
+#include <qd/debug/exception.h>
+#include "qd/typeSystem/typeInfo.h"
 
 
 namespace qd {
+
 bool ModuleManager::m_bSingleDestroyed = false;
 ModuleManager* ModuleManager::m_pSingleInstance = 0;
 
 
-ModuleInfo* ModuleManager::registerModule(const ModuleInfo& Mod) {
-    ECgModuleID nModuleId = Mod.getModuleId();
+ModuleInfo* ModuleManager::registerModule(const ModuleInfo& moduleInfo) {
+    const qd::TypeInfo& moduleId = moduleInfo.getModuleId();
 
-    if (nModuleId == ECgModuleID::UNKNOWN)
-        throw qd::Exception("Module ID is Unknown");
-
-    ModuleInfo* pModule = findModuleInfo(nModuleId);
+    ModuleInfo* pModule = findModuleInfo(moduleId);
     if (!pModule) {
-        unique_ptr<ModuleInfo> pNewModule = make_unique<ModuleInfo>(nModuleId);
+        unique_ptr<ModuleInfo> pNewModule = make_unique<ModuleInfo>(moduleId);
         pModule = pNewModule.get();
-        m_pModuleInfoMap[nModuleId] = std::move(pNewModule);
-
-        if ((size_t)nModuleId <= ECgModuleID::_FAST_ACCESS_) {
-            m_pFastModules[nModuleId] = pModule;
-        }
+        ModuleManager::InfoItem item;
+        item.m_pType = &moduleId;
+        item.m_pModuleInfo = std::move(pNewModule);
+        m_pModuleInfoMap.push_back(std::move(item));
     }
-    // COPY
-    pModule->merge(Mod);
+    pModule->merge(moduleInfo);
 
     return pModule;
 }
 
 
-ModuleInfo* ModuleManager::findModuleInfo(ECgModuleID ModuleId) const {
-    if ((uint32_t)ModuleId < ECgModuleID::_FAST_ACCESS_) {
-        ModuleInfo* pModuleInfo = m_pFastModules[ModuleId];
-        return pModuleInfo;
+ModuleInfo* ModuleManager::findModuleInfo(const qd::TypeInfo& moduleId) const {
+
+    for (auto& it : m_pModuleInfoMap)
+    {
+        if (moduleId.isDerivedFrom(*it.m_pType))
+            return it.m_pModuleInfo.get();
     }
-    TModuleInfoMap::const_iterator It = m_pModuleInfoMap.find(ModuleId);
-    if (It == m_pModuleInfoMap.end())
-        return nullptr;
-    return It->second.get();
+    return nullptr;
 }
 
 
-ModuleInfo* ModuleManager::getOrCreateModuleInfo(ECgModuleID ModuleId) {
-    ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
+ModuleInfo* ModuleManager::getOrCreateModuleInfo(const qd::TypeInfo& moduleId) {
+    ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo) {
-        pModuleInfo = registerModule(ModuleInfo(ModuleId));
+        pModuleInfo = registerModule(ModuleInfo(moduleId));
     }
     return pModuleInfo;
 }
 
 
-void ModuleManager::setModuleInstance(ECgModuleID ModuleId, ref_ptr<IModuleInterface> pInstance) {
+void ModuleManager::setModuleInstance(const qd::TypeInfo& ModuleId, IModuleInterface* pInstance)
+{
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(ModuleId);
     pModuleInfo->setInstance(pInstance);
     return;
 }
 
 
-qd::IModuleInterface* ModuleManager::createModuleInstance(ECgModuleID ModuleId, bool bSingletonInstance,
+qd::IModuleInterface* ModuleManager::createModuleInstance(const qd::TypeInfo& ModuleId, bool bSingletonInstance,
                                                            qd::ModuleCreateParams* pCreateParam) {
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(ModuleId);
     if (!pModuleInfo)
-        throw Exception("Module Manger can't Create module: %u - module not registered", (uint32_t)ModuleId);
+        throw Exception("Module Manger can't Create module: '%s' - module not registered", ModuleId.getFullName().c_str());
 
     qd::ModuleCreateParams tmpC;
     if (!pCreateParam)
@@ -80,11 +79,11 @@ qd::IModuleInterface* ModuleManager::createModuleInstance(ECgModuleID ModuleId, 
 }
 
 
-qd::IModuleInterface* ModuleManager::loadModule(ECgModuleID ModuleId,
+qd::IModuleInterface* ModuleManager::loadModule(const qd::TypeInfo& moduleId,
                                                  qd::ModuleCreateParams* pCreateParam /*= nullptr*/) {
-    ModuleInfo* pModuleInfo = getOrCreateModuleInfo(ModuleId);
+    ModuleInfo* pModuleInfo = getOrCreateModuleInfo(moduleId);
     if (!pModuleInfo)
-        throw Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)ModuleId);
+        throw Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0);
 
     pModuleInfo->retainInstance();
 
@@ -95,29 +94,50 @@ qd::IModuleInterface* ModuleManager::loadModule(ECgModuleID ModuleId,
 }
 
 
-void ModuleManager::unloadModule(ECgModuleID ModuleId, bool bIsShutdown) {
+void ModuleManager::unloadModule(const qd::TypeInfo& ModuleId, bool bIsShutdown) {
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
-        throw Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)ModuleId);
+        throw Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0);
     pModuleInfo->releaseInstance();
 }
 
 
-qd::IModuleInterface* ModuleManager::getModuleInstance(ECgModuleID ModuleId, bool bMakeInst /*= true */) {
-    ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
+qd::IModuleInterface* ModuleManager::getModuleInstance(const qd::TypeInfo& moduleId, bool bMakeInst /*= true */) {
+    ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo)
-        throw Exception(EException::NOT_FOUND, "Module:'%u' not registered", (uint32_t)ModuleId);
+        throw Exception(EException::NOT_FOUND, "Module:'%s' not registered", CC(moduleId.getFullName()));
     IModuleInterface* pExistInst = pModuleInfo->getInstance();
     if (pExistInst || !bMakeInst)
         return pExistInst;
-    return this->createModuleInstance(ModuleId, true, nullptr);
+    return this->createModuleInstance(moduleId, true, nullptr);
 }
 
 
-qd::IModuleInterface* ModuleManager::getOrCreateModule(ECgModuleID ModuleId) {
+bool ModuleManager::isModuleRegistered(const qd::TypeInfo& moduleId) const
+{
+    ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
+    if (pModuleInfo != nullptr)
+        return true;
+    return false;
+}
+
+
+bool ModuleManager::isModuleLoaded(const qd::TypeInfo& ModuleId) const
+{
+    ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
+    if (pModuleInfo != nullptr)
+    {
+        if (pModuleInfo->getInstance())
+            return true;
+    }
+    return false;
+}
+
+
+qd::IModuleInterface* ModuleManager::getOrCreateModule(const qd::TypeInfo& ModuleId) {
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
-        throw Exception("Module Manger can't Create module: %u - module not registered", (uint32_t)ModuleId);
+        throw Exception("Module Manger can't Create module: '%s' - module not registered", CC(ModuleId.getFullName()));
 
     IModuleInterface* pInstance = pModuleInfo->getOrCreateInstance();
     return pInstance;
@@ -136,7 +156,7 @@ qd::ModuleManager* ModuleManager::I() {
 }
 
 
-ModuleManager::ModuleManager(void) : m_pFastModules(ECgModuleID::_FAST_ACCESS_) {
+ModuleManager::ModuleManager(void) /*: m_pFastModules(ECgModuleID::_FAST_ACCESS_)*/ {
     c_def(0);
 }
 
@@ -147,8 +167,8 @@ void ModuleManager::cleanUp() {
     // and A loads B during A's StartupModule, that B will actually get Unloaded after A during shutdown.
     // This allows A's ShutdownModule() call to still reference module B.
 
-    for (TModuleInfoMap::iterator It = m_pModuleInfoMap.begin(); It != m_pModuleInfoMap.end(); ++It) {
-        ModuleInfo* pModuleInfo = It->second.get();
+    for (auto It = m_pModuleInfoMap.begin(); It != m_pModuleInfoMap.end(); ++It) {
+        ModuleInfo* pModuleInfo = It->m_pModuleInfo.get();
         if (!pModuleInfo)
             continue;
         if (!pModuleInfo->m_pInstance) {
@@ -176,7 +196,7 @@ ModuleManager::~ModuleManager(void) {
     // DESTROY MODULE INFO
     while (!m_pModuleInfoMap.empty()) {
         auto It = m_pModuleInfoMap.rbegin();
-        eastl::unique_ptr<ModuleInfo> pModuleInfo = eastl::move(It->second);
+        eastl::unique_ptr<ModuleInfo> pModuleInfo = eastl::move(It->m_pModuleInfo);
         m_pModuleInfoMap.erase(It);
         if (pModuleInfo) {
             //assert2( !pModuleInfo->m_pInstance, "Not deleted module \"%s\" found", CC(pModuleInfo->m_ModuleName) );
@@ -193,20 +213,31 @@ ModuleManager::~ModuleManager(void) {
 }
 
 
-uint32_t ModuleManager::destroyModule(qd::ECgModuleID ModuleId) {
-    ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
+uint32_t ModuleManager::destroyModule(const qd::TypeInfo& moduleId) {
+    ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo) {
-        //throw CException( "Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint)ModuleId );
+        //throw CException( "Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint)moduleId );
         return 0;
     }
     return pModuleInfo->releaseInstance();
 }
 
 
-ModuleInfo* ModuleManager::overrideModule(ECgModuleID ModuleId, const ModuleInfo::TCreateFunc& pCreateFunc) {
-    ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
+void ModuleManager::destroyModule(const qd::TypeInfo& moduleId, IModuleInterface* pInstance)
+{
+    destroyModule(moduleId);
+    if (pInstance)
+    {
+        ModuleManager::_shutDownInstance(pInstance);
+        ModuleManager::_destroyInstance(pInstance);
+    }
+}
+
+
+ModuleInfo* ModuleManager::overrideModule(const qd::TypeInfo& moduleId, const ModuleInfo::TCreateFunc& pCreateFunc) {
+    ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo) {
-        ModuleInfo m(ModuleId);
+        ModuleInfo m(moduleId);
         pModuleInfo = registerModule(m);
     }
     pModuleInfo->m_CreateFunc = pCreateFunc;  // CUSTOM CREATE FUNC
@@ -214,7 +245,7 @@ ModuleInfo* ModuleManager::overrideModule(ECgModuleID ModuleId, const ModuleInfo
 }
 
 
-void ModuleInfo::setInstance(ref_ptr<IModuleInterface> pInstance) {
+void ModuleInfo::setInstance(IModuleInterface* pInstance) {
     if (m_pInstance == pInstance)
         return;
     // 		if ( !pInstance ) {
@@ -249,7 +280,7 @@ uint32_t ModuleInfo::releaseInstance() {
     }
 
     if (--pModuleInfo->m_nInstanceRef == 0) {
-        ref_ptr<IModuleInterface> pInstance = pModuleInfo->getInstance();
+        IModuleInterface* pInstance = pModuleInfo->getInstance();
         if (pInstance) {
             ModuleManager::_shutDownInstance(pInstance);
             ModuleManager::_destroyInstance(pInstance);
@@ -262,14 +293,14 @@ uint32_t ModuleInfo::releaseInstance() {
 }
 
 
-ref_ptr<IModuleInterface> ModuleInfo::makeInstance(bool bRegisterInstance,
+IModuleInterface* ModuleInfo::makeInstance(bool bRegisterInstance,
                                                     ModuleCreateParams* pCreateParam /*= nullptr*/) {
     TThis* pModuleInfo = this;
     if (!pModuleInfo->m_CreateFunc)
         return nullptr;
 
-    ref_ptr<IModuleInterface> pNewInstance = pModuleInfo->m_CreateFunc(pCreateParam);  // MAKE INSTANCE
-    pNewInstance->m_CGModuleTypeID = pModuleInfo->getModuleId();
+    IModuleInterface* pNewInstance = pModuleInfo->m_CreateFunc(pCreateParam);  // MAKE INSTANCE
+    //pNewInstance->m_CGModuleTypeID = pModuleInfo->getModuleId();
     if (bRegisterInstance) {
         pModuleInfo->setInstance(pNewInstance);
     }
@@ -280,7 +311,7 @@ ref_ptr<IModuleInterface> ModuleInfo::makeInstance(bool bRegisterInstance,
 
 void ModuleInfo::merge(const ModuleInfo& r) {
     assert(!r.m_pInstance);
-    assert(m_ModuleID == r.m_ModuleID);
+    assert(m_ModuleId == r.m_ModuleId);
 
     if (m_ModuleName.empty())
         m_ModuleName = r.m_ModuleName;
@@ -289,19 +320,17 @@ void ModuleInfo::merge(const ModuleInfo& r) {
 }
 
 
-void IModuleInterface::onModuleMessageProc(qd::Enm::EModuleMsg::Msg_t MsgId, void* pMsgData /*= nullptr */) {
-    switch (MsgId) {
-        case Enm::EModuleMsg::RENDER_IMGUI_DEBUG_INFO_TREE:
-#if defined(CGMOD_IMGUI)
-        {
-            qd::Modules::ImGuiCG::ImGuiDrawForModule(this);
-        }
-#endif  // CGMOD_IMGUI
+void IModuleInterface::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
+{
+    switch (in_msg.id)
+    {
+        case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::CID:
+        //qd::Modules::ImGuiCG::ImGuiDrawForModule(this);
         break;
-        default:
-            break;
+    default:
+        break;
     }
 }
 
 
-};  // namespace qd
+}; // namespace qd

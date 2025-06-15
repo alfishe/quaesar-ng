@@ -1,6 +1,6 @@
 #pragma once
 #include "qd/base/base.h"
-#include "qd/Debug/assert.h"
+#include "qd/debug/assert.h"
 #include "qd/platform/compiler.h"
 #include <EASTL/atomic.h>
 #include <typeinfo>

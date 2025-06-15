@@ -10,23 +10,15 @@
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/thread/thread.h>
+#include "qd/thread/thread.h"
 #include <amDebugger/ui/gui_manager.h>
 #include <amDebugger/ui/ui_style.h>
 #include "qd/ui/uiOperationManager.h"
+#include "qd/imGui/imGuiManager.h"
+#include "qd/app/moduleManager.h"
 
 
 namespace qd {
-
-
-void Debugger::update() {
-    // Start the Dear ImGui frame
-    ImGui_ImplSDLRenderer2_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-
-    gui->drawImGuiMainFrame();
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,23 +129,22 @@ void Debugger::createRenderWindow() {
     }
     m_pWindow = window;
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
 
 void Debugger::initImGui() {
+
+    auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiManager>();
+    m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pRenderer);
+
+    // Setup Dear ImGui context
+    ImGuiIO& io = m_pImGui->getIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     // Setup Dear ImGui style
     qd::UiStyle::get()->applyImGuiDarkStyle();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplSDL2_InitForSDLRenderer(m_pWindow, m_pRenderer);
-    ImGui_ImplSDLRenderer2_Init(m_pRenderer);
 }
 
 
@@ -194,6 +185,9 @@ qd::Debugger* Debugger::get() {
  Debugger::Debugger()
 {
     Debugger::g_pInstance = this;
+
+    setPartActive(true);
+    setPartVisisble(true);
 }
 
 
@@ -231,17 +225,19 @@ void Debugger::destroy() {
 }
 
 
+void Debugger::update(float dt, float time)
+{
+    m_pImGui->newFrame();
+
+    gui->drawImGuiMainFrame();
+
+    m_pImGui->endFrame();
+}
+
+
 void Debugger::render() {
-    Debugger* debugger = this;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    ImGuiIO& io = ImGui::GetIO();
-    ImGui::Render();
-    SDL_RenderSetScale(debugger->m_pRenderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
-    SDL_SetRenderDrawColor(debugger->m_pRenderer, (Uint8)(clear_color.x * 255), (Uint8)(clear_color.y * 255),
-                           (Uint8)(clear_color.z * 255), (Uint8)(clear_color.w * 255));
-    SDL_RenderClear(debugger->m_pRenderer);
-    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), debugger->m_pRenderer);
-    SDL_RenderPresent(debugger->m_pRenderer);
+    m_pImGui->render(qd::Color(128,128,128));
+
 }
 
 
@@ -264,8 +260,8 @@ void Debugger::toggleWndVisible(DebuggerMode mode) {
 }
 
 
-void Debugger::sdlEventProc(SDL_Event* event) {
-    ImGui_ImplSDL2_ProcessEvent(event);
+void Debugger::onSdlEventProc(SDL_Event& event) {
+    m_pImGui->onSdlEventProc(event);
 }
 
 

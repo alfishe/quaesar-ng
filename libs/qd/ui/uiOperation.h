@@ -3,7 +3,7 @@
 #include "qd/base/classInfoReg.h"
 #include "qd/base/types.h"
 #include "qd/node/node.h"
-#include "qd/Debug/assert.h"
+#include "qd/debug/assert.h"
 #include "qd/stl/fixed_vector.h"
 #include "qd/stl/string.h"
 #include "qd/typeSystem/typeDeclare.h"

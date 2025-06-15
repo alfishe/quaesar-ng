@@ -2,7 +2,7 @@
 #include "EASTL/span.h"
 #include "EASTL/vector_map.h"
 #include "qd/node/node.h"
-#include "qd/Debug/assert.h"
+#include "qd/debug/assert.h"
 #include "qd/stl/vector.h"
 #include "qd/stl/vector_map.h"
 #include "qd/typeSystem/typeDeclare.h"

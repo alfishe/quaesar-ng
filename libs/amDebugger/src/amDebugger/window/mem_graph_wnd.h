@@ -1,6 +1,6 @@
 #pragma once
 #include <amDebugger/vm/memory.h>
-#include <qd/base/types.h>
+#include "qd/base/point2.h"
 #include <amDebugger/ui/ui_view.h>
 
 namespace qd {
@@ -11,8 +11,8 @@ class MemoryGraphWnd : public UiWindow {
 
 
     ImTextureID mTextureId = 0;
-    Int2 mTextureSize = {-1, -1};
-    Int2 mNewTextureSize = {640, 320};
+    qd::Size mTextureSize = {-1, -1};
+    qd::Size mNewTextureSize = {640, 320};
     float mLastTextureCreateTime = FLT_MIN;
     int mCurBank = MemBank::CHIP;
     int mBankOffset = 0x0;
@@ -28,7 +28,7 @@ public:
 
     virtual void drawContentImp() override;
 
-};  // class
+};  // class MemoryGraphWnd
 
 };  // namespace window
 };  // namespace qd

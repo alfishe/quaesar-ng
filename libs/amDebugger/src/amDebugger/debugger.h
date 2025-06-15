@@ -15,6 +15,7 @@ union SDL_Event;
 typedef size_t csh;
 
 FORWARD_DECLARATION_4S(qd, operation, msg, Base);
+FORWARD_DECLARATION_2(qd, QImGuiContext);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +72,7 @@ class Debugger : public qd::AppPartBase
 
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
+    qd::QImGuiContext* m_pImGui = nullptr;
 
 public:
     csh* m_pCapstone = nullptr;
@@ -94,11 +96,11 @@ public:
 
     void init();
     void destroy();
-    void update();
-    void render();
+    virtual void update(float dt, float time) override;
+    virtual void render() override;
     bool isVisible() const;
     void toggleWndVisible(DebuggerMode mode);
-    void sdlEventProc(SDL_Event* event);
+    virtual void onSdlEventProc(SDL_Event& event) override;
 
     qd::VM* getVm() const {
         return vm;

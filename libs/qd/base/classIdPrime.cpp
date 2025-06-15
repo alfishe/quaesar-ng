@@ -1,6 +1,6 @@
 #include <qd/base/classIdPrime.h>
 #include <qd/base/primesArray.h>
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 
 
 namespace qd

@@ -3,15 +3,15 @@
 #include "qd/stl/string.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include <qd/base/base.h>
-#include <qd/base/classIdCC.h>
+//#include <qd/base/classIdCC.h>
 #include <qd/base/ref_ptr.h>
 #include <qd/enum/enumBase.h>
-#include <qd/math/fixedPoint.h>
 #include <qd/node/node.h>
 #include <qd/typeSystem/reflectedType.h>
 
 
 FORWARD_DECLARATION_3S(qd, appMsg, BaseMsg);
+union SDL_Event;
 
 namespace qd {
 class Application;
@@ -57,7 +57,7 @@ public:
         const qd::TypeInfo* typeInfo = nullptr;
         qd::Application* app = nullptr;
     };
-    virtual void onCreate(AppPartBase::OnCreate_t& prm);
+    virtual void onPartCreate(AppPartBase::OnCreate_t& prm);
 
     bool isNeedRepaint() const { return m_bNeedRepaint; }
     void setNeedRepaint(bool NeedRepaint) { m_bNeedRepaint = NeedRepaint; }
@@ -66,20 +66,19 @@ public:
 
     inline bool hasMtd(EAppPartMtd Mtd) const { return m_Methods.has(Mtd); }
 
-    inline void modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods = EAppPartMtd::NONE)
+    inline AppPartBase& modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods = EAppPartMtd::NONE)
     {
         m_Methods -= ResetMethods;
         m_Methods += SetMethods;
+        return *this;
     }
 
     virtual bool isReadyToActivate() const { return true; }
 
     bool isPartActive() const { return hasMtd(EAppPartMtd::UPDATE); }
-
     bool setPartActive(bool bActive);
 
     bool isPartVisible() const { return hasMtd(EAppPartMtd::RENDER); }
-
     bool setPartVisisble(bool PartVisisble);
 
 
@@ -91,9 +90,10 @@ public:
     void setApp(Application* pApp) { m_pApp = pApp; }
 
 
-    virtual void update(qd::Fixed32 Delta, qd::Fixed32 Time) {}
-
+    virtual void update(float dt, float time) {}
     virtual void render() {}
+
+    virtual void onSdlEventProc(SDL_Event& event) {}
 
     virtual void postRender() {}
 

@@ -1,5 +1,5 @@
 #include "uiNode.h"
-#include "qd/Debug/exception.h"
+#include "qd/debug/exception.h"
 #include "qd/mem/ptrMath.h"
 #include "qd/ui/uiMessages.h"
 

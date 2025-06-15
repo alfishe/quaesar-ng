@@ -1,6 +1,6 @@
+#include "qd/app/appPartsMgr.h"
 #include "EASTL/sort.h"
 #include "qd/app/appMessages.h"
-#include "qd/app/appPartsMgr.h"
 #include "qd/debug/assert.h"
 #include "qd/debug/exception.h"
 #include "qd/stl/stlUtils.h"
@@ -8,9 +8,11 @@
 #include <ctime> // std::time
 
 
+// DECLARE MODULE
+QD_MODULE_REGISTRATION(qd::AppPartsManager);
+
+
 namespace qd {
-
-
 
 void AppPartsManager::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
 {
@@ -156,7 +158,7 @@ AppPartsManager::~AppPartsManager()
 }
 
 
-void AppPartsManager::update(Fixed32 Delta, Fixed32 Time)
+void AppPartsManager::update(float dt, float time)
 {
     m_TimeNowFrame = (TTime64)std::time(nullptr);
     for (int i = 0; i < getNumAppParts(); i++)
@@ -169,33 +171,30 @@ void AppPartsManager::update(Fixed32 Delta, Fixed32 Time)
             if (!pCurPart->isReadyToActivate())
                 continue;
 
-            pCurPart->update(Delta, Time);
+            pCurPart->update(dt, time);
         }
     }
 }
 
 
-void AppPartsManager::updateWhileLoading(Fixed32 Delta, Fixed32 Time)
+void AppPartsManager::onSdlEventProc(SDL_Event& event)
 {
-    m_TimeNowFrame = (TTime64)std::time(nullptr);
     for (int i = 0; i < getNumAppParts(); i++)
     {
         AppPartBase* pCurPart = getPartByInd(i);
-        if (pCurPart && pCurPart->hasMtd(EAppPartMtd::UPDATE_WHILE_LOADING))
-        {
-            pCurPart->updateActivateTime();
-            if (!pCurPart->isReadyToActivate())
-                continue;
 
-            pCurPart->update(Delta, Time);
+        if (pCurPart && pCurPart->hasMtd(EAppPartMtd::UPDATE))
+        {
+            pCurPart->onSdlEventProc(event);
         }
     }
+
 }
 
 
 void AppPartsManager::render()
 {
-    static eastl::vector<AppPartBase*> pActParts;
+    static qd::vector<AppPartBase*> pActParts;
     pActParts.clear();
 
     // MAIN RENDER
@@ -219,11 +218,11 @@ void AppPartsManager::render()
 }
 
 
-void AppPartsManager::onModuleMessageProc(qd::Enm::EModuleMsg::Msg_t MsgId, void* pMsgData /*= nullptr*/)
+void AppPartsManager::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
 {
-    switch (MsgId)
+    switch (in_msg.id)
     {
-    case Enm::EModuleMsg::RENDER_IMGUI_DEBUG_INFO_TREE:
+    case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::CID:
     {
         // auto p = static_cast<Enm::EModuleMsg::RENDER_IMGUI_DEBUG_INFO_TREE_t*>(pMsgData);
         // qd::ImAPI::CImGuiBase& im = p->im;
@@ -234,7 +233,7 @@ void AppPartsManager::onModuleMessageProc(qd::Enm::EModuleMsg::Msg_t MsgId, void
         break;
     }
 
-    TSuper::onModuleMessageProc(MsgId, pMsgData);
+    TSuper::onModuleMessageProc(in_msg);
 }
 
 

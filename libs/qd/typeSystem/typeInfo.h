@@ -1,7 +1,7 @@
 #pragma once
 #include "qd/stl/vector.h"
 //#include <qd/base/stringId.h>
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 #include <qd/typeSystem/stdTypeId.h>
 #include <qd/typeSystem/typeInfoBase.h>
 

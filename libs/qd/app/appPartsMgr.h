@@ -8,7 +8,7 @@
 
 FORWARD_DECLARATION_3(qd, ImAPI, CImGuiBase);
 FORWARD_DECLARATION_3S(qd, appMsg, BaseMsg);
-
+union SDL_Event;
 
 namespace qd {
 
@@ -18,9 +18,6 @@ class AppPartBase;
 class AppPartsManager : public IModuleInterface
 {
     typedef IModuleInterface TSuper;
-
-public:
-    static ECgModuleID getModuleTypeId() { return ECgModuleID::APP_PARTS; };
 
 private:
     qd::vector<ref_ptr<AppPartBase>> m_pParts;
@@ -61,8 +58,6 @@ public:
     AppPartBase* getPartByInd(int Index) { return m_pParts[Index]; }
 
 
-    AppPartBase* createPart(ref_ptr<AppPartBase> pPart, const string& staticPartIDStr, bool bOverride = false);
-
 
     // TPartClass base of AppPartBase*
     template<class TPartClass>
@@ -73,8 +68,8 @@ public:
         prm.name = name;
         prm.typeInfo = &qd::typeof_<TPartClass>();
         prm.app = getApp();
-        pPart->onCreate(prm);
         addPart(pPart);
+        pPart->onPartCreate(prm);
         return pPart;
     }
 
@@ -104,9 +99,9 @@ public:
 
     virtual ~AppPartsManager();
 
-    void update(Fixed32 Delta, Fixed32 Time);
-    void updateWhileLoading(Fixed32 Delta, Fixed32 Time);
+    void update(float dt, float time);
     void render();
+    void onSdlEventProc(SDL_Event& event);
 
     Application* getApp() const { return m_pApp; }
     void setApp(Application* pApplication) { m_pApp = pApplication; }
@@ -119,7 +114,7 @@ public:
     }
 
     TTime64 getTimeNowFrame() const { return m_TimeNowFrame; }
-    virtual void onModuleMessageProc(Enm::EModuleMsg::Msg_t MsgId, void* pMsgData = nullptr) override;
+    virtual void onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg) override;
     void _onImGuiDebugControl(ImAPI::CImGuiBase& im);
 
 }; // class AppPartsManager

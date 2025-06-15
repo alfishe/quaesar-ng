@@ -1,5 +1,5 @@
-#include <qd/Debug/exceptTryCatch.h>
-#include <qd/Debug/exception.h>
+#include <qd/debug/exceptTryCatch.h>
+#include <qd/debug/exception.h>
 
 
 namespace qd {

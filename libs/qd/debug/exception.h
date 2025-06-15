@@ -1,8 +1,8 @@
 #pragma once
 #include <qd/stl/string.h>
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 #include <qd/enum/enumBase.h>
-#include "qd/Debug/exceptTryCatch.h"
+#include "qd/debug/exceptTryCatch.h"
 
 
 namespace qd {

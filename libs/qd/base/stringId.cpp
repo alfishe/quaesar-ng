@@ -2,7 +2,7 @@
 #include <EASTL/fixed_string.h>
 #include <EASTL/hash_map.h>
 #include "qd/stl/string.h"
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 #include <qd/mem/fnvHash.h>
 #include <qd/thread/thread.h>
 

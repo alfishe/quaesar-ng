@@ -1,7 +1,7 @@
 #pragma once
 #include <EASTL/version.h>
 #include <qd/base/base.h>
-#include <qd/Debug/assert.h>
+#include <qd/debug/assert.h>
 
 
 namespace qd {

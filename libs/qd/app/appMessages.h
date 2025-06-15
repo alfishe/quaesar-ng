@@ -3,8 +3,6 @@
 #include "qd/mem/fnvHash.h"
 
 
-#define MSGID_(Name) BaseMsg_<SCID(Example)>
-
 
 namespace qd::appMsg {
 

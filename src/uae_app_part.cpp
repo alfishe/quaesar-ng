@@ -11,32 +11,49 @@
 
 #include "uae_app_part.h"
 #include "SDL.h"
+#include "imgui/backends/imgui_impl_sdl2.h"
+#include "imgui/backends/imgui_impl_sdlrenderer2.h"
 #include "qd/app/appMessages.h"
+#include "qd/imGui/imGuiManager.h"
+#include "qd/qimGui/controls/qimMenu.h"
+
+
+void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
+    TSuper::onPartCreate(prm);
+    setPartActive(true);
+    setPartVisisble(true);
+
+    createUaeWindow();
+
+    auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiManager>();
+    m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
+    m_pImGui->getIO().IniFilename = "";
+}
 
 
 void UaeAppPart::createUaeWindow() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
 
-    SDL_AtomicSet(&scrFrameNo, 0);
+    SDL_AtomicSet(&m_scrFrameNo, 0);
 
     m_wndWidth = 754;
     m_wndHeight = 576;
     m_pAmigaBuffer = new uint32_t[m_wndWidth * m_wndHeight];
 
     // Create a window
-    mUaeWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_wndWidth, m_wndHeight,
-                                  window_flags);
+    m_pWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_wndWidth, m_wndHeight,
+                                 window_flags);
 
-    if (!mUaeWindow) {
+    if (!m_pWindow) {
         SDL_Log("Could not create window: %s", SDL_GetError());
         return;
     }
 
-    m_pUaeRenderer = SDL_CreateRenderer(mUaeWindow, -1, SDL_RENDERER_ACCELERATED);
+    m_pUaeRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED);
 
     if (!m_pUaeRenderer) {
         SDL_Log("Could not create renderer: %s", SDL_GetError());
-        SDL_DestroyWindow(mUaeWindow);
+        SDL_DestroyWindow(m_pWindow);
         return;
     }
 
@@ -46,25 +63,24 @@ void UaeAppPart::createUaeWindow() {
     if (!m_pUaeScrTexture) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
         SDL_DestroyRenderer(m_pUaeRenderer);
-        SDL_DestroyWindow(mUaeWindow);
+        SDL_DestroyWindow(m_pWindow);
         return;
     }
 }
 
 
-void UaeAppPart::renderUaeWindow() {
+void UaeAppPart::render() {
     // render UAE texture screen
-    int curFrame = SDL_AtomicGet(&scrFrameNo);
-    if (curFrame == renderedFrameNo) {
+    int curFrame = SDL_AtomicGet(&m_scrFrameNo);
+    if (curFrame == m_renderedFrameNo) {
         return;
     }
-
-    renderedFrameNo = curFrame;
+    m_renderedFrameNo = curFrame;
 
     int new_width = 0;
     int new_height = 0;
     int window_width, window_height;
-    SDL_GetWindowSize(mUaeWindow, &window_width, &window_height);
+    SDL_GetWindowSize(m_pWindow, &window_width, &window_height);
 
     // Maintain aspect ratio
     float image_aspect = (float)m_wndWidth / (float)m_wndHeight;
@@ -94,6 +110,9 @@ void UaeAppPart::renderUaeWindow() {
         SDL_RenderCopy(m_pUaeRenderer, m_pUaeScrTexture, NULL, &rect);
         m_UaeScrTextureMutex.unlock();
     }
+
+    //     if (m_pImGui)
+    m_pImGui->render();
 
     SDL_RenderPresent(m_pUaeRenderer);
 }
@@ -140,11 +159,39 @@ uint32_t* UaeAppPart::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
 
 void UaeAppPart::unlockUaeScreenTexBuf() {
     m_UaeScrTextureMutex.unlock();
-    SDL_AtomicIncRef(&scrFrameNo);
+    SDL_AtomicIncRef(&m_scrFrameNo);
 }
 
 
-void UaeAppPart::update(qd::Fixed32 Delta, qd::Fixed32 Time) {
+void UaeAppPart::update(float Delta, float Time) {
+    //return;
+    //m_pImGui->newFrame();
+
+    m_pImGui->useCurrent();
+    // Start the Dear ImGui frame
+    ImGui_ImplSDLRenderer2_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+
+    if (ImGui::BeginMainMenuBar()) {
+        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File1")) {
+            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
+            }
+        }
+        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File2")) {
+            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
+            }
+        }
+        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File3")) {
+            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
+            }
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+
+    m_pImGui->endFrame();
 }
 
 
@@ -168,11 +215,16 @@ qd::EFlow UaeAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
 }
 
 
+void UaeAppPart::onSdlEventProc(SDL_Event& event) {
+    m_pImGui->onSdlEventProc(event);
+}
+
+
 void UaeAppPart::destroyUaeWindow() {
     SDL_DestroyTexture(m_pUaeScrTexture);
     m_pUaeScrTexture = nullptr;
     SDL_DestroyRenderer(m_pUaeRenderer);
     m_pUaeRenderer = nullptr;
-    SDL_DestroyWindow(mUaeWindow);
-    mUaeWindow = nullptr;
+    SDL_DestroyWindow(m_pWindow);
+    m_pWindow = nullptr;
 }

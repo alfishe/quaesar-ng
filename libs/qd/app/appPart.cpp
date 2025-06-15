@@ -6,7 +6,7 @@
 
 namespace qd {
 
-void AppPartBase::onCreate(AppPartBase::OnCreate_t& prm)
+void AppPartBase::onPartCreate(AppPartBase::OnCreate_t& prm)
 {
     m_pApp = prm.app;
 
@@ -71,6 +71,7 @@ qd::EFlow AppPartBase::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
     }
     return EFlow::NO_RESULT;
 }
+
 
 
 void AppPartBase::destroy()
