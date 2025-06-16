@@ -1,6 +1,6 @@
 #include "vm_uae_imp.h"
 // clang-format off
-#include <src/sysconfig.h>
+#include <uae_imp/sysconfig.h>
 #include <uae_src/include/sysdeps.h>
 #include <uae_src/include/options.h>
 #include <uae_src/include/keyboard.h>
@@ -20,7 +20,7 @@
 #include <amDebugger/vm/vm.h>
 #include <qd/Base/endian.h>
 #include <qd/UI/uiOperationManager.h>
-#include <quaesar.h>
+#include <quasar_app/quaesar.h>
 
 
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);

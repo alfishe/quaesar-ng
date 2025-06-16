@@ -1,10 +1,11 @@
 #pragma once
 #include <amDebugger/debugger.h>
 #include <amDebugger/ui/ui_view.h>
-#include <EASTL/vector.h>
-#include <qd/base/base.h>
-#include <qd/node/node.h>
-#include <qd/ui/uiNode.h>
+#include "qd/ui/desktop.h"
+#include "qd/stl/vector.h"
+#include "qd/base/base.h"
+#include "qd/node/node.h"
+#include "qd/ui/uiNode.h"
 
 FORWARD_DECLARATION_2(amD, UiView);
 FORWARD_DECLARATION_2(qd, ShortcutsMgr);
@@ -15,10 +16,9 @@ FORWARD_DECLARATION_3(qd, operation, Operation);
 namespace amD {
 
 //------------------------------------------------------------------------
-class DbgGuiDesktop : public qd::UiNode
+class DbgGuiDesktop : public qd::UiDesktop
 {
-    TS_REFLECT_CLASS(amD::DbgGuiDesktop, qd::UiNode);
-    eastl::vector<ref_ptr<UiView>> m_pWindows;
+    TS_REFLECT_CLASS(amD::DbgGuiDesktop, qd::UiDesktop);
 
 public:
     amD::Debugger* m_pDbg = nullptr;
@@ -44,8 +44,6 @@ public:
         UiView* curView = m_pWindows[idx];
         return static_cast<T*>(curView);
     }
-
-    void addView(UiView* view);
 
     qd::UiOperationMgr* getOperationMgr() const { return m_pOperationMgr; }
     qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }

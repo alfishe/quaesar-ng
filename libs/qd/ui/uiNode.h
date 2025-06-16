@@ -90,6 +90,10 @@ public:
     uint32_t getId() const { return m_id; }
     void setId(uint32_t newId);
 
+    virtual qd::string getText() const
+    {
+        return qd::string();
+    }
 
     virtual EFlow onNodeMessageProc(qd::NodeMessage* in_msg) override;
 

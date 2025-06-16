@@ -56,10 +56,10 @@
 #include <amDebugger/debugger.h>
 #include <qd/Log/log.h>
 #include <qd/thread/thread.h>
-#include <src/quaesar.h>
-#include <src/quaesar_debug.h>
-#include <src/sounddep/sound.h>
-#include <src/uae_app_part.h>
+#include <quasar_app/quaesar.h>
+#include <quasar_app/quaesar_debug.h>
+#include <quasar_app/uae_app_part.h>
+#include <uae_imp/sounddep/sound.h>
 #include <cstdarg>
 #include <filesystem>
 

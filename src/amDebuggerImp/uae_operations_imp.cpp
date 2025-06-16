@@ -1,9 +1,5 @@
-#include <src/quaesar.h>
-#include "amDebugger/commonOperations.h"
-#include "uae_actions.h"
-#include "uae_app_part.h"
 // clang-format off
-#include <src/sysconfig.h>
+#include <uae_imp/sysconfig.h>
 #include "sysdeps.h"
 #include "options.h"
 #include "keyboard.h"
@@ -17,6 +13,11 @@
 #include <uae_src/include/uae.h>
 #include <uae_src/include/debug.h>
 // clang-format on
+#include "amDebugger/commonOperations.h"
+#include "amDebugger/debugger.h"
+#include "amDebugger/msg_list.h"
+#include "quasar_app/quaesar.h"
+#include "quasar_app/uae_app_part.h"
 
 
 namespace amD::operation {

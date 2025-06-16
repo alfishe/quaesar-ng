@@ -6,15 +6,15 @@
 #include <qd/Thread/thread.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "cli11/CLI11.hpp"
+#include "parse_options.h"
 
 // clang-format off
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "uae/time.h"
-#include "external/cli11/CLI11.hpp"
-#include "parse_options.h"
 #include "options.h"
-#include "adf.h"
+#include "uae_imp/adf.h"
 #include "uae.h"
 // clang-format on
 

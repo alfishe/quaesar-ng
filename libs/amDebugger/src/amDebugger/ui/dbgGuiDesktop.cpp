@@ -189,28 +189,6 @@ void DbgGuiDesktop::_drawToolBar()
 void DbgGuiDesktop::destroy()
 {
     TSuper::destroy();
-
-    while (!m_pWindows.empty())
-    {
-        UiView* curWnd = m_pWindows.back();
-        m_pWindows.pop_back();
-        curWnd->destroy();
-        delete curWnd;
-    }
-}
-
-void DbgGuiDesktop::addView(UiView* view)
-{
-    addChild(view);
-
-    uint32_t idx = view->mClassId;
-    if (idx < (size_t)WndId::MostCommonCount)
-    {
-        assert(!m_pWindows[idx] && "already set");
-        m_pWindows[idx] = view;
-    }
-    else
-        m_pWindows.push_back(view);
 }
 
 
@@ -265,12 +243,12 @@ void DbgGuiDesktop::_drawMainMenuBar()
 
         if (auto pWindow = qim::beginChild_<qim::UiMenu>("Window"); pWindow->isOpen())
         {
-            for (UiView* pCurWnd : m_pWindows)
+            for (qd::UiNode* pCurWnd : m_pWindows)
             {
                 if (!pCurWnd)
                     continue;
                 bool bVis = pCurWnd->isVisible();
-                if (ImGui::MenuItem(pCurWnd->m_title.c_str(), 0, &bVis))
+                if (ImGui::MenuItem(pCurWnd->getText().c_str(), 0, &bVis))
                     pCurWnd->setVisible(bVis);
             }
         }

@@ -2,8 +2,6 @@
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "uae/time.h"
-#include "external/cli11/CLI11.hpp"
-#include "parse_options.h"
 #include "options.h"
 #include "adf.h"
 #include "uae.h"
@@ -11,6 +9,8 @@
 
 #include "uae_app_part.h"
 #include "SDL.h"
+#include "cli11/CLI11.hpp"
+#include "parse_options.h"
 #include "qd/app/appMessages.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/qimGui/controls/qimMenu.h"

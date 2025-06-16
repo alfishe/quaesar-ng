@@ -55,6 +55,8 @@ public:
         ui = cp->gui;
     }
 
+    virtual qd::string getText() const override { return m_title; }
+
     Debugger* getDbg() const;
 
 }; // class UiView

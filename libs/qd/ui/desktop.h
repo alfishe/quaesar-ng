@@ -3,41 +3,28 @@
 #include <qd/base/base.h>
 #include <qd/node/node.h>
 #include <qd/typeSystem/typeDeclare.h>
+#include "uiNode.h"
 
 
 FORWARD_DECLARATION_2(qd, Application);
-FORWARD_DECLARATION_2(qd, UiView);
-FORWARD_DECLARATION_3(qd, operation, Operation);
 
 
 namespace qd {
 
-	class UiDesktop : public qd::Node {
-        TS_REFLECT_CLASS(qd::UiDesktop, qd::Node);
+	class UiDesktop : public qd::UiNode {
+        TS_REFLECT_CLASS(qd::UiDesktop, qd::UiNode);
 
-	    eastl::vector<ref_ptr<UiView>> windows;
+    protected:
+        qd::vector<ref_ptr<qd::UiNode>> m_pWindows;
 	    qd::Application* mApp = nullptr;
 
 	public:
-	    virtual ~UiDesktop();
+        virtual ~UiDesktop();
 
-	    void drawImGuiMainFrame();
+        void destroy();
 
-	    void _drawMainToolBar();
-	    void _drawDebuggerWindows();
-	    void destroy();
+        void addView(qd::UiNode* view);
 
-	    template <class T>
-	    inline T* getWnd_() const {
-	        const uint32_t idx = T::CLASS_ID;
-	        UiView* curView = windows[idx];
-	        return static_cast<T*>(curView);
-	    }
-
-	    void addView(UiView* view);
-
-	private:
-	    void _drawMainMenuBar();
 
 	};  // class UiDesktop
 

@@ -12,7 +12,7 @@
 #include <SDL_filesystem.h>
 #include <SDL_log.h>
 #include <SDL_rwops.h>
-#include <src/quaesar_debug.h>
+#include <quasar_app/quaesar_debug.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <cstring>  // For strcpy, strcat, etc.
