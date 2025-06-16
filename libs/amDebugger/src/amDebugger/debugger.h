@@ -16,13 +16,13 @@ typedef size_t csh;
 
 FORWARD_DECLARATION_4S(qd, operation, msg, Base);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
+FORWARD_DECLARATION_2(qd, UiOperationMgr);
 
 
 //////////////////////////////////////////////////////////////////////////
-namespace qd {
-class GuiManager;
+namespace amD {
+class DbgGuiDesktop;
 class VM;
-class UiOperationMgr;
 
 
 constexpr static int BREAKPOINTS_MAX = 20;
@@ -46,7 +46,7 @@ public:
 
 
 class BreakpointsSortedList {
-    eastl::fixed_vector<Breakpoint, qd::BREAKPOINTS_MAX, false> mBreakpoints;
+    eastl::fixed_vector<Breakpoint, amD::BREAKPOINTS_MAX, false> mBreakpoints;
 
     struct OneAddrBp {
         AddrRef addr;
@@ -56,11 +56,11 @@ class BreakpointsSortedList {
             return addr < rh.addr;
         }
     };
-    eastl::fixed_set<OneAddrBp, qd::BREAKPOINTS_MAX, false> mOneAddrBps;
+    eastl::fixed_set<OneAddrBp, amD::BREAKPOINTS_MAX, false> mOneAddrBps;
 
 public:
     void init();
-    const qd::Breakpoint* getBpByAddr(AddrRef addr, EReg reg) const;
+    const amD::Breakpoint* getBpByAddr(AddrRef addr, EReg reg) const;
 };  // BreakpointsSortedList
 //////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class Debugger : public qd::AppPartBase
 {
-    TS_REFLECT_CLASS(qd::Debugger, qd::AppPartBase);
+    TS_REFLECT_CLASS(amD::Debugger, qd::AppPartBase);
 
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
@@ -76,9 +76,9 @@ class Debugger : public qd::AppPartBase
 
 public:
     csh* m_pCapstone = nullptr;
-    VM* vm = nullptr;
-    GuiManager* gui = nullptr;
-    UiOperationMgr* m_pOperations = nullptr;
+    amD::VM* vm = nullptr;
+    amD::DbgGuiDesktop* gui = nullptr;
+    qd::UiOperationMgr* m_pOperations = nullptr;
 
     SDL_Renderer* getRenderer() const {
         return m_pRenderer;
@@ -102,11 +102,11 @@ public:
     void toggleWndVisible(DebuggerMode mode);
     virtual void onSdlEventProc(SDL_Event& event) override;
 
-    qd::VM* getVm() const {
+    amD::VM* getVm() const {
         return vm;
     }
 
-    UiOperationMgr* getOperations() const {
+    qd::UiOperationMgr* getOperations() const {
         return m_pOperations;
     }
 
@@ -114,7 +114,7 @@ public:
     static bool isDebugActivatedFull();
     void setDebugMode(DebuggerMode debug_mode);
 
-    EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
+    qd::EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
 
     void execConsoleCmd(eastl::string&& cmd);
 
@@ -145,4 +145,4 @@ private:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-};  // namespace qd
+};  // namespace amD

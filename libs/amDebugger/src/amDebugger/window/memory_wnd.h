@@ -61,11 +61,11 @@
 #include <stdio.h>   // sprintf, scanf
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 class MemoryView : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::MemoryView, qd::window::MemoryView, qd::UiWindow);
+    QDB_WINDOW_REGISTER(WndId::MemoryView, amD::window::MemoryView, amD::UiWindow);
 
     void* m_memAddr = 0;
     size_t m_memSize = 0;
@@ -159,4 +159,4 @@ private:
 };
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

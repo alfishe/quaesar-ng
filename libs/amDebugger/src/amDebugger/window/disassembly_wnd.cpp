@@ -9,7 +9,7 @@
 #include <qd/ImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_style.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 
@@ -68,7 +68,7 @@ void DisassemblyView::drawContentImp() {
 
             // col:breakpoint
             strTmp = " ";
-            const qd::Breakpoint* curBp;
+            const amD::Breakpoint* curBp;
             curBp = bpList.getBpByAddr(curAddr, EReg::PC);
             if (curBp) {
                 strTmp = curBp->enabled ? "0" : "O";
@@ -116,4 +116,4 @@ void DisassemblyView::drawContentImp() {
 }
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

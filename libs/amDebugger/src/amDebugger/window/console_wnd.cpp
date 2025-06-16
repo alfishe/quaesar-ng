@@ -5,11 +5,11 @@
 #include <qd/thread/thread.h>
 
 
-namespace qd {
+namespace amD {
 namespace window {
 
-class ConsoleLogWriter : public ILogWriter {
-    eastl::vector<LogEntry> msgList;
+class ConsoleLogWriter : public qd::ILogWriter {
+    eastl::vector<qd::LogEntry> msgList;
     qd::Mutex mMutex;
 
 public:
@@ -20,7 +20,7 @@ public:
     EntriesList getEntriesList();
 
 protected:
-    virtual void addLogEntry(const LogEntry& entry) override;
+    virtual void addLogEntry(const qd::LogEntry& entry) override;
 
     virtual ~ConsoleLogWriter() = default;
 
@@ -40,11 +40,11 @@ public:
     EntriesList(EntriesList&& rh) : mOwner(rh.mOwner), mpMutex(eastl::move(rh.mpMutex)) {
         rh.mpMutex = nullptr;
     }
-    const LogEntry* begin() const {
+    const qd::LogEntry* begin() const {
         return &*(mOwner->msgList.begin());
     }
 
-    const LogEntry* end() const {
+    const qd::LogEntry* end() const {
         return &*(mOwner->msgList.end());
     }
 
@@ -64,7 +64,8 @@ void ConsoleWnd::drawContentImp() {
     if (ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None,
                           ImGuiWindowFlags_HorizontalScrollbar)) {
         ConsoleLogWriter::EntriesList list = mpConsoleWriter->getEntriesList();
-        for (const LogEntry& curEnt : list) {
+        for (const qd::LogEntry& curEnt : list)
+        {
             ImGui::TextUnformatted(curEnt.message.c_str());
         }
     }
@@ -89,24 +90,24 @@ void ConsoleWnd::onCreate(UiViewCreateCtx* cp) {
 
 
 void ConsoleWnd::destroy() {
-    logConsole().destroyWriter(mpConsoleWriter);
+    qd::logConsole().destroyWriter(mpConsoleWriter);
     mpConsoleWriter = nullptr;
 
     TSuper::destroy();
 }
 
 
-void ConsoleLogWriter::addLogEntry(const LogEntry& entry) {
+void ConsoleLogWriter::addLogEntry(const qd::LogEntry& entry) {
     mMutex.lock();
     msgList.push_back(entry);
     mMutex.unlock();
 }
 
 
-qd::window::ConsoleLogWriter::EntriesList ConsoleLogWriter::getEntriesList() {
+amD::window::ConsoleLogWriter::EntriesList ConsoleLogWriter::getEntriesList() {
     return EntriesList(this);
 }
 
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

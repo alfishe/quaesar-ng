@@ -9,18 +9,17 @@
 
 
 
+namespace amD {
 
-namespace qd {
-
-class GuiManager;
+class DbgGuiDesktop;
 class Debugger;
 
 
 struct UiViewCreateCtx {
-    GuiManager* gui;
+    DbgGuiDesktop* gui;
     bool visible = true;
 
-    UiViewCreateCtx(GuiManager* _ui)
+    UiViewCreateCtx(DbgGuiDesktop* _ui)
         : gui(_ui)
     {}
 }; // struct CreateUiViewParams
@@ -38,12 +37,12 @@ public:                      \
 //
 class UiView : public qd::UiNode
 {
-    TS_BEGIN_REFLECT_CLASS_BASE(100, qd::UiView, qd::UiNode);
+    TS_BEGIN_REFLECT_CLASS_BASE(100, amD::UiView, qd::UiNode);
     TS_END();
 
 public:
     qd::string m_title;
-    GuiManager* ui = nullptr;
+    DbgGuiDesktop* ui = nullptr;
     uint32_t mClassId = 0;
 
 public:
@@ -62,9 +61,9 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class UiWindow : public UiView
+class UiWindow : public amD::UiView
 {
-    TS_BEGIN_REFLECT_CLASS_BASE(50, qd::UiWindow, qd::UiView);
+    TS_BEGIN_REFLECT_CLASS_BASE(50, amD::UiWindow, amD::UiView);
     TS_END();
 
 public:
@@ -100,7 +99,7 @@ static UiView* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
 
 namespace window {
 
-class ImGuiDemoWindow : public qd::UiWindow
+class ImGuiDemoWindow : public amD::UiWindow
 {
 
 public:
@@ -121,7 +120,4 @@ public:
 
 
 
-
-
-
-}; // namespace qd
+}; // namespace amD

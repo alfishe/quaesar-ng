@@ -3,11 +3,11 @@
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
-class DisassemblyView : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Disassembly, qd::window::DisassemblyView, qd::UiWindow);
+class DisassemblyView : public amD::UiWindow {
+    QDB_WINDOW_REGISTER(WndId::Disassembly, amD::window::DisassemblyView, amD::UiWindow);
 
     eastl::string addrInputStr;
     eastl::optional<AddrRef> mDisasmAddr;
@@ -23,4 +23,4 @@ public:
 };  // class DisassemblyView
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

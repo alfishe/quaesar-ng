@@ -2,12 +2,12 @@
 #include "SDL.h"
 #include "amDebugger/debugger.h"
 #include "qd/app/appPartsMgr.h"
-#include "qd/imGui/imGuiManager.h"
+#include "qd/imGui/imGuiContextManager.h"
 #include "uae_app_part.h"
 
 
 //////////////////////////////////////////////////////////////////////////
-namespace qd {
+namespace amD {
 
 qd::ThreadEvent* onUaeInitialized = nullptr;
 
@@ -15,16 +15,16 @@ qd::ThreadEvent* onUaeInitialized = nullptr;
 void QuasarApp::onCreate(qd::CreateApplicationParams& in) {
     TSuper::onCreate(in);
 
-    qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiManager>();
+    qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
-    m_pDebugger = getAppParts()->createPart_<qd::Debugger>("Debugger");
+    m_pDebugger = getAppParts()->createPart_<amD::Debugger>("Debugger");
     m_pUaeAppPart = getAppParts()->createPart_<UaeAppPart>("Emulator");
 }
 
 
 void QuasarApp::initialize() {
     m_pDebugger->init();
-    m_pDebugger->toggleWndVisible(qd::DebuggerMode_Live);
+    m_pDebugger->toggleWndVisible(amD::DebuggerMode_Live);
 }
 
 
@@ -35,8 +35,8 @@ extern void on_app_exit_drawing();
 
 
 void QuasarApp::destroyImp() {
-    qd::uae::on_app_exit_debug();
-    qd::uae::on_app_exit_drawing();
+    amD::uae::on_app_exit_debug();
+    amD::uae::on_app_exit_drawing();
 }
 
 
@@ -67,4 +67,4 @@ void QuasarApp::onSdlEventProc(SDL_Event& event) {
 }
 
 
-};  // namespace qd
+};  // namespace amD

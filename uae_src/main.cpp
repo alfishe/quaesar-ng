@@ -1311,10 +1311,10 @@ uae_u8 singlefile_data[1500000] = { "_DATA_STARTS_HERE" };
 
 
 //////////////////////////////////////////////////////////////////////////
-namespace qd {
+namespace amD {
 void quae_parse_cmdline(int argc, TCHAR** argv)
 {
     ::parse_cmdline(argc, argv);
 }
-};  // namespace qd
+};  // namespace amD
 //////////////////////////////////////////////////////////////////////////

@@ -11,14 +11,14 @@
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
 #include "qd/thread/thread.h"
-#include <amDebugger/ui/gui_manager.h>
+#include <amDebugger/ui/dbgGuiDesktop.h>
 #include <amDebugger/ui/ui_style.h>
 #include "qd/ui/uiOperationManager.h"
-#include "qd/imGui/imGuiManager.h"
+#include "qd/imGui/imGuiContextManager.h"
 #include "qd/app/moduleManager.h"
 
 
-namespace qd {
+namespace amD {
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,12 +82,12 @@ void Debugger::init() {
     mbInit = true;
     createRenderWindow();
     initImGui();
-    vm = VM::setVmInst(createByFactory<qd::VM>());
+    vm = amD::VM::setVmInst(createByFactory<amD::VM>());
     vm->init();
 
-    NodeCreator mk;
+    qd::NodeCreator mk;
     mk.parent = nullptr;
-    gui = mk.make_<GuiManager>(this);
+    gui = mk.make_<DbgGuiDesktop>(this);
 
     m_pOperations = gui->getOperationMgr();
     assert(m_pOperations);
@@ -134,7 +134,7 @@ void Debugger::createRenderWindow() {
 
 void Debugger::initImGui() {
 
-    auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiManager>();
+    auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
     m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pRenderer);
 
     // Setup Dear ImGui context
@@ -144,7 +144,7 @@ void Debugger::initImGui() {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     // Setup Dear ImGui style
-    qd::UiStyle::get()->applyImGuiDarkStyle();
+    amD::UiStyle::get()->applyImGuiDarkStyle();
 }
 
 
@@ -165,7 +165,7 @@ qd::EFlow Debugger::applyOperationMsg(qd::operation::msg::Base* p_msg) const {
 
 int Debugger::waitConsoleCmd(char* out, int maxlen) {
     eastl::string cmd;
-    if (!qd::imp::console_queue.waitConsoleCmd(cmd))
+    if (!amD::imp::console_queue.waitConsoleCmd(cmd))
         return -1;
 
     const int len = (int)cmd.size();
@@ -177,7 +177,7 @@ int Debugger::waitConsoleCmd(char* out, int maxlen) {
 }
 
 
-qd::Debugger* Debugger::get() {
+amD::Debugger* Debugger::get() {
     return g_pInstance;
 }
 
@@ -191,7 +191,8 @@ qd::Debugger* Debugger::get() {
 }
 
 
-void qd::Debugger::execConsoleCmd(eastl::string&& cmd) {
+void amD::Debugger::execConsoleCmd(eastl::string&& cmd)
+{
     imp::console_queue.addCmdToQueue(eastl::move(cmd));
 }
 
@@ -267,7 +268,8 @@ void Debugger::onSdlEventProc(SDL_Event& event) {
 
 
 
-const qd::Breakpoint* BreakpointsSortedList::getBpByAddr(AddrRef addr, EReg reg) const {
+const amD::Breakpoint* BreakpointsSortedList::getBpByAddr(AddrRef addr, EReg reg) const
+{
     OneAddrBp lh;
     lh.addr = addr;
     auto it = mOneAddrBps.find(lh);
@@ -277,4 +279,4 @@ const qd::Breakpoint* BreakpointsSortedList::getBpByAddr(AddrRef addr, EReg reg)
 }
 
 
-};  // namespace qd
+};  // namespace amD

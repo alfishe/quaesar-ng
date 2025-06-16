@@ -6,31 +6,30 @@
 #include <qd/node/node.h>
 #include <qd/ui/uiNode.h>
 
-FORWARD_DECLARATION_2(qd, UiView);
+FORWARD_DECLARATION_2(amD, UiView);
+FORWARD_DECLARATION_2(qd, ShortcutsMgr);
+FORWARD_DECLARATION_2(qd, UiOperationMgr);
 FORWARD_DECLARATION_3(qd, operation, Operation);
 
 
-namespace qd {
-class ShortcutsMgr;
-class UiOperationMgr;
-
+namespace amD {
 
 //------------------------------------------------------------------------
-class GuiManager : public qd::UiNode
+class DbgGuiDesktop : public qd::UiNode
 {
-    TS_REFLECT_CLASS(qd::GuiManager, qd::UiNode);
+    TS_REFLECT_CLASS(amD::DbgGuiDesktop, qd::UiNode);
     eastl::vector<ref_ptr<UiView>> m_pWindows;
 
 public:
-    Debugger* m_pDbg = nullptr;
-    UiOperationMgr* m_pOperationMgr = nullptr;
-    ShortcutsMgr* m_pShortcutMgr = nullptr;
+    amD::Debugger* m_pDbg = nullptr;
+    qd::UiOperationMgr* m_pOperationMgr = nullptr;
+    qd::ShortcutsMgr* m_pShortcutMgr = nullptr;
 
 public:
-    GuiManager(Debugger* dbg);
-    virtual void onNodeCreated(NodeCreator* mk) override;
+    DbgGuiDesktop(Debugger* dbg);
+    virtual void onNodeCreated(qd::NodeCreator* mk) override;
 
-    virtual ~GuiManager();
+    virtual ~DbgGuiDesktop();
 
     void drawImGuiMainFrame();
 
@@ -58,4 +57,4 @@ private:
 
 }; // class GUIManager
 
-}; // namespace qd
+}; // namespace amD

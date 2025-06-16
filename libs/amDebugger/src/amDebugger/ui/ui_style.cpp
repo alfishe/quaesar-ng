@@ -1,7 +1,7 @@
 #include "ui_style.h"
 #include <imgui/imgui.h>
 
-namespace qd {
+namespace amD {
 
 UiStyle* g_imColors = UiStyle::get();
 
@@ -123,4 +123,4 @@ void UiStyle::applyImGuiDarkStyle() {
 }
 
 
-};  // namespace qd
+};  // namespace amD

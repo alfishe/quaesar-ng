@@ -10,10 +10,10 @@
 #include <amDebugger/ui/ui_view.h>
 
 
-namespace qd {
+namespace amD {
 namespace window {
-class BlitterWnd : public qd::UiWindow {
-    QDB_WINDOW_REGISTER(WndId::BlitterWnd, qd::window::BlitterWnd, qd::UiWindow);
+class BlitterWnd : public amD::UiWindow {
+    QDB_WINDOW_REGISTER(WndId::BlitterWnd, amD::window::BlitterWnd, amD::UiWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx *cp) override {
@@ -31,7 +31,7 @@ public:
 struct DeclareDmaSrcUiArgs {
     uint16_t bltCon0;
     uint16_t bltCon1;
-    qd::VM::CustomRegs* custRegs;
+    amD::VM::CustomRegs* custRegs;
     char dmaLetter;
     BC0F::Type srcEnFlag;
     CustReg bltXPtH;
@@ -105,7 +105,7 @@ void BlitterWnd::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
 
-    qd::VM::CustomRegs* custRegs = vm->custom;
+    amD::VM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
 
@@ -203,4 +203,4 @@ void BlitterWnd::drawContentImp() {
 
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

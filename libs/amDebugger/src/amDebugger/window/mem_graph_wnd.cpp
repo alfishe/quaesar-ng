@@ -8,7 +8,7 @@
 //#include <quaesar.h>
 
 
-namespace qd {
+namespace amD {
 namespace window {
 
 
@@ -61,9 +61,9 @@ void MemoryGraphWnd::drawContentImp() {
                                    (uint32_t)pCurBank->startAddr + pCurBank->size);
     }
     if (ImGui::BeginCombo("Memory bank", selBankName.c_str(), ImGuiComboFlags_None)) {
-        eastl::span<const qd::MemBank> banks = vm->mem->banks;
+        eastl::span<const amD::MemBank> banks = vm->mem->banks;
         for (int nBank = 0; nBank < banks.size(); ++nBank) {
-            const qd::MemBank& curBank = banks[nBank];
+            const amD::MemBank& curBank = banks[nBank];
             selBankName.assign(curBank.name.begin(), curBank.name.end());
             selBankName.append_sprintf(" (%06Xh-%06Xh)", (uint32_t)curBank.startAddr,
                                        (uint32_t)curBank.startAddr + curBank.size);
@@ -114,7 +114,7 @@ void MemoryGraphWnd::drawContentImp() {
                         uint8_t sb = *memPtr;
                         uint8_t m = 0x80;
                         for (int b = 0; b < 8; b++) {
-                            Color c = (sb & m) != 0 ? Color::WHITE : Color::BLACK;
+                            qd::Color c = (sb & m) != 0 ? qd::Color::WHITE : qd::Color::BLACK;
                             *dest = c;
                             dest++;
                             m >>= 1;
@@ -124,7 +124,7 @@ void MemoryGraphWnd::drawContentImp() {
                     memPtr += mTextureMod;
                 } else {
                     for (int x = 0; x < rowBytes; x++)
-                        (*dest++) = Color::BLACK;
+                        (*dest++) = qd::Color::BLACK;
                 }
             }
             SDL_UnlockTexture(scrTexture);
@@ -198,4 +198,4 @@ void MemoryGraphWnd::drawContentImp() {
 }
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

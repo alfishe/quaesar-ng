@@ -1,9 +1,9 @@
 #include "ui_view.h"
-#include <amDebugger/ui/gui_manager.h>
+#include <amDebugger/ui/dbgGuiDesktop.h>
 #include <qd/typeSystem/typeInfo.h>
 
 
-namespace qd {
+namespace amD {
 
 Debugger* UiView::getDbg() const {
     return ui->getDbg();
@@ -33,4 +33,4 @@ void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, UiWindow 
 }
 
 
-};  // namespace qd
+};  // namespace amD

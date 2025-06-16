@@ -3,7 +3,7 @@
 
 
 FORWARD_DECLARATION_2(qd, ThreadEvent);
-FORWARD_DECLARATION_2(qd, Debugger);
+FORWARD_DECLARATION_2(amD, Debugger);
 
 struct SDL_Window;
 struct SDL_Texture;
@@ -11,7 +11,7 @@ struct SDL_Renderer;
 
 class UaeAppPart;
 
-namespace qd {
+namespace amD {
 extern qd::ThreadEvent* onUaeInitialized;
 
 
@@ -20,7 +20,7 @@ class QuasarApp : public qd::Application {
     typedef qd::Application TSuper;
 
 public:
-    qd::Debugger* m_pDebugger = nullptr;
+    amD::Debugger* m_pDebugger = nullptr;
     UaeAppPart* m_pUaeAppPart = nullptr;
 
 public:
@@ -39,7 +39,7 @@ public:
 
     virtual void onSdlEventProc(SDL_Event& event) override;
 
-    qd::Debugger* getDbg() const {
+    amD::Debugger* getDbg() const {
         return m_pDebugger;
     }
     UaeAppPart* getUaeApp() const {
@@ -54,4 +54,4 @@ namespace uae {
 extern void do_console_cmd_immediate(const char* cmd);
 };
 
-};  // namespace qd
+};  //namespace amD

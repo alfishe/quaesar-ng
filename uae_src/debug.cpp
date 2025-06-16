@@ -8785,7 +8785,7 @@ bool debug_sprintf(uaecptr addr, uae_u32 val, int size)
 }
 
 //////////////////////////////////////////////////////////////////////////
-namespace qd { namespace uae {
+namespace amD::uae {
 
 void do_console_cmd_immediate(const char* cmd) {
     TCHAR* buf = (TCHAR*)cmd;
@@ -8800,6 +8800,6 @@ void on_app_exit_debug()
     cop_record[1] = NULL;
 }
 
-}}; // namespace qd::uae
+}; // namespace qd::uae
 //////////////////////////////////////////////////////////////////////////
 

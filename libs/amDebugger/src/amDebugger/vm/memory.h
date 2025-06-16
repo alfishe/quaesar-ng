@@ -2,7 +2,7 @@
 #include <EASTL/string.h>
 #include <stdint.h>
 
-namespace qd {
+namespace amD {
 
 typedef uint32_t AddrRef;
 
@@ -92,4 +92,4 @@ struct ECpuFlg {
 };  // ECpuFlg
 
 
-};  // namespace qd
+};  // namespace amD

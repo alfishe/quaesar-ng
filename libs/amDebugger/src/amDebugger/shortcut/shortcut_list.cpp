@@ -2,10 +2,10 @@
 #include <qd/ui/shortcutMgr.h>
 
 
-namespace qd {
+namespace amD {
 namespace shortcut {
 
 
 
 };  // namespace shortcut
-};  // namespace qd
+};  // namespace amD

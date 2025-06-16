@@ -6,7 +6,7 @@
 #include <amDebugger/vm/memory.h>
 #include <stdint.h>
 
-namespace qd {
+namespace amD {
 
 struct CustomFlagsDesc;
 
@@ -130,4 +130,4 @@ struct DMAC {
 
 };  // struct DMAC
 
-};  // namespace qd
+};  // namespace amD

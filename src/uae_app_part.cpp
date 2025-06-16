@@ -11,10 +11,8 @@
 
 #include "uae_app_part.h"
 #include "SDL.h"
-#include "imgui/backends/imgui_impl_sdl2.h"
-#include "imgui/backends/imgui_impl_sdlrenderer2.h"
 #include "qd/app/appMessages.h"
-#include "qd/imGui/imGuiManager.h"
+#include "qd/imGui/imGuiContextManager.h"
 #include "qd/qimGui/controls/qimMenu.h"
 
 
@@ -25,7 +23,7 @@ void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
 
     createUaeWindow();
 
-    auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiManager>();
+    auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
     m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
     m_pImGui->getIO().IniFilename = "";
 }
@@ -111,8 +109,8 @@ void UaeAppPart::render() {
         m_UaeScrTextureMutex.unlock();
     }
 
-    //     if (m_pImGui)
-    m_pImGui->render();
+    if (m_bShowImgui)
+        m_pImGui->render();
 
     SDL_RenderPresent(m_pUaeRenderer);
 }
@@ -164,24 +162,17 @@ void UaeAppPart::unlockUaeScreenTexBuf() {
 
 
 void UaeAppPart::update(float Delta, float Time) {
-    //return;
-    //m_pImGui->newFrame();
-
-    m_pImGui->useCurrent();
-    // Start the Dear ImGui frame
-    ImGui_ImplSDLRenderer2_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-
+    m_pImGui->newFrame();
 
     if (ImGui::BeginMainMenuBar()) {
-        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File1")) {
+        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File")) {
             if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
             }
         }
-        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File2")) {
-            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
-            }
+        if (auto pEmulator = qim::beginChild_<qim::UiMenu>("Emulator")) {
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::ToggleTurboEmulation));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
         }
         if (auto pMenu = qim::beginChild_<qim::UiMenu>("File3")) {
             if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
@@ -216,7 +207,21 @@ qd::EFlow UaeAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
 
 
 void UaeAppPart::onSdlEventProc(SDL_Event& event) {
-    m_pImGui->onSdlEventProc(event);
+    uint32_t wndId = SDL_GetWindowID(m_pWindow);
+    switch (event.type) {
+        case SDL_KEYDOWN: {
+            if (event.key.windowID != wndId)
+                break;
+        }
+            if (event.key.keysym.sym == SDLK_F12) {
+                setShowImgui(!m_bShowImgui);
+            }
+        default:
+            break;
+    }
+
+    if (m_bShowImgui)
+        m_pImGui->onSdlEventProc(event);
 }
 
 

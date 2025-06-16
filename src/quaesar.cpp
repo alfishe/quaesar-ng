@@ -27,14 +27,14 @@
 #endif  // WIN32
 
 
-qd::QuasarApp* app = nullptr;
+amD::QuasarApp* app = nullptr;
 
 extern void real_main(int argc, TCHAR** argv);
 extern void keyboard_settrans();
 
-namespace qd {
+namespace amD {
 extern void quae_parse_cmdline(int argc, TCHAR** argv);
-};  // namespace qd
+};  //namespace amD
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ int uae_thread_main_func(void*) {
         argv.push_back("-s");
         argv.push_back(s.c_str());
     }
-    qd::quae_parse_cmdline((int)argv.size(), const_cast<char**>(&argv[0]));
+    amD::quae_parse_cmdline((int)argv.size(), const_cast<char**>(&argv[0]));
 
     ::real_main(0, nullptr);
     return 0;
@@ -75,7 +75,7 @@ int uae_thread_main_func(void*) {
 
 // Quaesar main
 int SDL_main(int argc, char* argv[]) {
-    app = new qd::QuasarApp();
+    app = new amD::QuasarApp();
     qd::CreateApplicationParams prm;
     app->onCreate(prm);
 
@@ -142,8 +142,8 @@ int SDL_main(int argc, char* argv[]) {
     uae_thread_handler = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
 
     // wait UAE initialization
-    qd::onUaeInitialized = new qd::ThreadEvent(true);
-    qd::onUaeInitialized->wait();
+    amD::onUaeInitialized = new qd::ThreadEvent(true);
+    amD::onUaeInitialized->wait();
 
     // quaesar main loop
     ::app->initialize();
@@ -155,7 +155,7 @@ int SDL_main(int argc, char* argv[]) {
 
     // wait UAE done
     SDL_WaitThread(uae_thread_handler, nullptr);
-    SAFE_DELETE(qd::onUaeInitialized);
+    SAFE_DELETE(amD::onUaeInitialized);
 
     ::app->destroy();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);

@@ -1,3 +1,3 @@
 #include "memory.h"
 
-namespace qd {};  // namespace qd
+namespace amD {};  // namespace amD

@@ -597,7 +597,7 @@ void console_flush() {
 }
 
 int console_get(char* out, int maxlen) {
-    qd::Debugger* dbg = app->getDbg();
+    amD::Debugger* dbg = app->getDbg();
     if (!dbg)
         return -1;
     for (;;) {
@@ -905,7 +905,7 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    qd::onUaeInitialized->set();
+    amD::onUaeInitialized->set();
     return 1;
 }
 

@@ -4,7 +4,7 @@
 #include <amDebugger/vm/vm_defs.h>
 #include <qd/base/types.h>
 
-namespace qd {
+namespace amD {
 
 enum DebuggerMode;
 
@@ -45,15 +45,15 @@ public:
 
     class Memory { /*: public vm::imp::UaeEmuVmImp::Memory*/
     public:
-        eastl::fixed_vector<qd::MemBank, 8, false> banks;
+        eastl::fixed_vector<amD::MemBank, 8, false> banks;
 
     public:
-        const qd::MemBank* getBankByInd(int ind) const {
+        const amD::MemBank* getBankByInd(int ind) const {
             if ((size_t)ind < banks.size())
                 return &banks[ind];
             return nullptr;
         }
-        eastl::span<const qd::MemBank> getBanks() const {
+        eastl::span<const amD::MemBank> getBanks() const {
             return banks;
         }
         virtual uint8_t* getRealAddr(AddrRef ptr) = 0;
@@ -64,7 +64,7 @@ public:
         virtual void setU32(AddrRef addr, uint32_t v) = 0;
 
     };  // struct Memory
-    qd::VM::Memory* mem = nullptr;
+    amD::VM::Memory* mem = nullptr;
 
 
     class Cpu {
@@ -75,7 +75,7 @@ public:
         virtual bool getFlg(CpuFlg_ f) const = 0;
         virtual int getIntMask() const = 0;
     };  // struct Cpu
-    qd::VM::Cpu* cpu = nullptr;
+    amD::VM::Cpu* cpu = nullptr;
 
     class CustomRegs {
     public:
@@ -86,7 +86,7 @@ public:
         virtual void setRegVal(CustReg reg, uint16_t new_val) = 0;
 
     };  // class CustomRegs
-    qd::VM::CustomRegs* custom = nullptr;
+    amD::VM::CustomRegs* custom = nullptr;
 
 
     class Copper {
@@ -94,7 +94,7 @@ public:
         virtual void fetch() = 0;
         virtual AddrRef getCopperAddr(CopperAddr_ copno) = 0;
     };  // class Copper
-    qd::VM::Copper* copper = nullptr;
+    amD::VM::Copper* copper = nullptr;
 
 
     struct Blitter {
@@ -102,14 +102,14 @@ public:
         virtual bool isBlitterActive() const = 0;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) = 0;
     };  // Blitter
-    qd::VM::Blitter* blitter = nullptr;
+    amD::VM::Blitter* blitter = nullptr;
 
 
     struct Emu {
     public:
         virtual void setDebugMode(DebuggerMode debug_mode) /*base*/ {}
     };
-    qd::VM::Emu* emu = nullptr;
+    amD::VM::Emu* emu = nullptr;
 
 
 };  // class VM
@@ -123,4 +123,4 @@ inline T *createByFactory() {
   return static_cast<T*>(impFactoryCreateInstance(typeid(T)));
 }
 
-};  // namespace qd
+};  // namespace amD

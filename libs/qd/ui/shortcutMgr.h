@@ -9,13 +9,13 @@
 #include <qd/typeSystem/typeDeclare.h>
 
 
-FORWARD_DECLARATION_3(qd, operation, Operation);
 
 namespace qd {
 
 class Shortcut;
 using ShortcutSetupFunc = void (*)(qd::Shortcut&);
 class UiOperation;
+
 
 class Key
 {
@@ -85,14 +85,14 @@ public:
         TSuper::onNodeCreated(mk);
     }
 
-    const Shortcut* getShortcut(uint32_t shortcut_id) const;
+    const qd::Shortcut* getShortcut(uint32_t shortcut_id) const;
     template<typename T>
     const Shortcut* getShortcut(T shortcut_id) const
     {
         return getShortcut((uint32_t)shortcut_id);
     }
 
-    UiOperation* findOperationByShortcut(const Shortcut* pShortcut) const;
+    qd::UiOperation* findOperationByShortcut(const Shortcut* pShortcut) const;
 
     bool isShortcutTriggered(const qd::Shortcut* shortcut) const;
     bool triggerShortcut(uint32_t id);

@@ -5,7 +5,7 @@
 #include <qd/ImGui/imgui_eastl.h>
 //#include <quaesar.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 void ScreenWnd::drawContentImp() {
@@ -45,7 +45,7 @@ void ScreenWnd::drawContentImp() {
                     uint8_t* sptr = (uint8_t*)scrBuf + (y * vbPitch);
                     uint32_t* dest = ((uint32_t*)pixels) + (y * amiga_width);
                     for (int x = 0; x < amiga_width; ++x) {
-                        Color c = *(uint32_t*)(sptr);
+                        qd::Color c = *(uint32_t*)(sptr);
                         c.a = 255;
                         *dest = c;
                         ++dest;
@@ -65,4 +65,4 @@ void ScreenWnd::drawContentImp() {
 }
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

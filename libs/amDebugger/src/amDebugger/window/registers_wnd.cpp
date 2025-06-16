@@ -4,7 +4,7 @@
 #include <qd/ImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_style.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 #define REG_A 0x00
@@ -123,4 +123,4 @@ void RegistersView::drawContentImp() {
 }
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

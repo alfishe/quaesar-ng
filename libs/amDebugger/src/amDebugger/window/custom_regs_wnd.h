@@ -2,12 +2,12 @@
 #include <imgui/imgui.h>
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 
 class CustomRegsWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::CustomRegsWnd, qd::window::CustomRegsWnd, qd::UiWindow);
+    QDB_WINDOW_REGISTER(WndId::CustomRegsWnd, amD::window::CustomRegsWnd, amD::UiWindow);
     ImGuiTextFilter mRegsFilter;
 
 public:
@@ -23,4 +23,4 @@ public:
 
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

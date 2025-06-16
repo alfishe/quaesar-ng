@@ -8,14 +8,15 @@
 #include <qd/ImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_style.h>
 #include <amDebugger/ui/ui_view.h>
-#include <amDebugger/ui/gui_manager.h>
+#include <amDebugger/ui/dbgGuiDesktop.h>
+#include <amDebugger/shortcut/shortcut_list.h>
 #include <qd/ui/shortcutMgr.h>
 
 
-namespace qd {
+namespace amD {
 namespace window {
-class CopperDbgWnd : public qd::UiWindow {
-    QDB_WINDOW_REGISTER(WndId::CopperDbgWnd, qd::window::CopperDbgWnd, qd::UiWindow);
+class CopperDbgWnd : public amD::UiWindow {
+    QDB_WINDOW_REGISTER(WndId::CopperDbgWnd, amD::window::CopperDbgWnd, amD::UiWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
@@ -153,7 +154,7 @@ void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
 
-    qd::VM::CustomRegs* custRegs = vm->custom;
+    amD::VM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;
@@ -170,12 +171,12 @@ void CopperDbgWnd::drawContentImp() {
     ImGui::SameLine();
 
     if (ImGui::Button("Trace")) {
-        this->ui->getShortcuts()->triggerShortcut((int)shortcut::EId::CopperToggleBreakpoint);
+        this->ui->getShortcuts()->triggerShortcut((int)amD::shortcut::EId::CopperToggleBreakpoint);
     }
 
-    AddrRef pcAddr = vm->copper->getCopperAddr(qd::CopperAddr_ip);
-    AddrRef lc1 = vm->copper->getCopperAddr(qd::CopperAddr_cop1lc);
-    AddrRef lc2 = vm->copper->getCopperAddr(qd::CopperAddr_cop2lc);
+    AddrRef pcAddr = vm->copper->getCopperAddr(amD::CopperAddr_ip);
+    AddrRef lc1 = vm->copper->getCopperAddr(amD::CopperAddr_cop1lc);
+    AddrRef lc2 = vm->copper->getCopperAddr(amD::CopperAddr_cop2lc);
     AddrRef startAddr = (pcAddr - lc1) < (pcAddr - lc2) ? lc1 : lc2;
     DecodedCopperList copDec;
     copDec.decodeLines(vm, startAddr, 1024);
@@ -233,4 +234,4 @@ void CopperDbgWnd::drawContentImp() {
 }
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

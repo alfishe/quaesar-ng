@@ -57,7 +57,7 @@
 #include <amDebugger/debugger.h>
 #include <amDebugger/vm/vm.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -783,4 +783,4 @@ void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t 
 #endif
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

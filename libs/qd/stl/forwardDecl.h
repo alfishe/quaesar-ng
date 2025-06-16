@@ -10,6 +10,9 @@ template<typename T>
 struct equal_to;
 
 template<typename T>
+struct less;
+
+template<typename T>
 struct hash;
 
 template<typename T, typename Allocator>

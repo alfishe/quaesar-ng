@@ -1,11 +1,11 @@
 #pragma once
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 class ScreenWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Screen, qd::window::ScreenWnd, qd::UiWindow);
+    QDB_WINDOW_REGISTER(WndId::Screen, amD::window::ScreenWnd, amD::UiWindow);
 
     ImTextureID mTextureId = 0;
 
@@ -20,4 +20,4 @@ public:
 };  // class
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

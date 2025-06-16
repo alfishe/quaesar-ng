@@ -1,4 +1,4 @@
-#include "gui_manager.h"
+#include "dbgGuiDesktop.h"
 #include "EASTL/span.h"
 #include "qd/ui/controls/lambda.h"
 #include "qd/ui/controls/mainMenu.h"
@@ -16,22 +16,22 @@
 
 
 
-namespace qd {
+namespace amD {
 
 using namespace operation;
 
-GuiManager::GuiManager(Debugger* in_dbg)
+DbgGuiDesktop::DbgGuiDesktop(Debugger* in_dbg)
     : m_pDbg(in_dbg)
 {}
 
 
-void GuiManager::onNodeCreated(NodeCreator* mk)
+void DbgGuiDesktop::onNodeCreated(qd::NodeCreator* mk)
 {
     TSuper::onNodeCreated(mk);
 
     m_pWindows.resize((size_t)WndId::MostCommonCount);
-    m_pOperationMgr = createComp_<UiOperationMgr>();
-    m_pShortcutMgr = createComp_<ShortcutsMgr>();
+    m_pOperationMgr = createComp_<qd::UiOperationMgr>();
+    m_pShortcutMgr = createComp_<qd::ShortcutsMgr>();
 
     m_pShortcutMgr->init(eastl::span(&shortcut::g_shortcuts_list[0], (size_t)shortcut::EId::MAX_COUNT));
 
@@ -56,9 +56,9 @@ void GuiManager::onNodeCreated(NodeCreator* mk)
 }
 
 
-void GuiManager::createAllUiWndows()
+void DbgGuiDesktop::createAllUiWndows()
 {
-    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<qd::UiWindow>(false);
+    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<amD::UiWindow>(false);
     for (int i = 0; i < windowTypes.size(); ++i)
     {
         const qd::TypeInfo* pCurWindowType = windowTypes[i];
@@ -69,20 +69,20 @@ void GuiManager::createAllUiWndows()
             continue;
         }
         UiViewCreateCtx cv(this);
-        qd::UiWindow* pCurWnd = pCreateAttr->makeInstance_<UiWindow>(cv);
+        amD::UiWindow* pCurWnd = pCreateAttr->makeInstance_<UiWindow>(cv);
         assert(pCurWnd);
         addView(pCurWnd);
     }
 }
 
 
-GuiManager::~GuiManager()
+DbgGuiDesktop::~DbgGuiDesktop()
 {
     assert(m_pWindows.empty());
 }
 
 
-void GuiManager::drawImGuiMainFrame()
+void DbgGuiDesktop::drawImGuiMainFrame()
 {
     getShortcuts()->update();
 
@@ -114,7 +114,7 @@ void GuiManager::drawImGuiMainFrame()
 }
 
 
-void GuiManager::_drawToolBar()
+void DbgGuiDesktop::_drawToolBar()
 {
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
@@ -127,8 +127,8 @@ void GuiManager::_drawToolBar()
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;
 
         Debugger* dbg = getDbg();
-        ShortcutsMgr* shMgr = getShortcuts();
-        const Shortcut* pCurShortcut;
+        qd::ShortcutsMgr* shMgr = getShortcuts();
+        const qd::Shortcut* pCurShortcut;
         eastl::string hint;
 
         bool isDbgMode = dbg->isDebugActivated();
@@ -186,7 +186,7 @@ void GuiManager::_drawToolBar()
 
 
 
-void GuiManager::destroy()
+void DbgGuiDesktop::destroy()
 {
     TSuper::destroy();
 
@@ -199,7 +199,7 @@ void GuiManager::destroy()
     }
 }
 
-void GuiManager::addView(UiView* view)
+void DbgGuiDesktop::addView(UiView* view)
 {
     addChild(view);
 
@@ -214,7 +214,7 @@ void GuiManager::addView(UiView* view)
 }
 
 
-void GuiManager::_drawMainMenuBar()
+void DbgGuiDesktop::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
@@ -225,29 +225,29 @@ void GuiManager::_drawMainMenuBar()
 
         if (auto pEmulator = qim::beginChild_<qim::UiMenu>("Emulator"))
         {
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::ToggleTurboEmulation));
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::UaeWndAlwaysOnTop));
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::UaeResetAmiga));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::ToggleTurboEmulation));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
         }
 
         if (auto pDebug = qim::beginChild_<qim::UiMenu>("Debug"); pDebug->isOpen())
         {
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceStart));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DebugTraceStart));
             ImGui::Separator();
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStep));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DisasmTraceStepOut));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DebugTraceContinue));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::DisasmToggleBreakpoint));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DisasmTraceStep));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DisasmTraceStepOut));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DebugTraceContinue));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DisasmToggleBreakpoint));
             ImGui::Separator();
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::CopperTraceStep));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(qd::operation::CopperToggleBreakpoint));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::CopperTraceStep));
+            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::CopperToggleBreakpoint));
             ImGui::Separator();
 
             if (pDebug->isOpen())
             {
                 static eastl::optional<operation::DebugDmaOption *> pDebugDmaOp = nullptr;
                 if (!pDebugDmaOp.has_value())
-                    pDebugDmaOp = getOperationMgr()->getOperation_<qd::operation::DebugDmaOption>();
+                    pDebugDmaOp = getOperationMgr()->getOperation_<amD::operation::DebugDmaOption>();
                 if (*pDebugDmaOp)
                 {
                     const char* options = "off\0"
@@ -280,4 +280,4 @@ void GuiManager::_drawMainMenuBar()
 }
 
 
-}; // namespace qd
+}; // namespace amD

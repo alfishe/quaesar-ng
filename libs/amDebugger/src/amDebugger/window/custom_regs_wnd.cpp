@@ -3,12 +3,13 @@
 #include <qd/ImGui/imgui_eastl.h>
 #include <amDebugger/ui/ui_style.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 
 struct FlagsTooltipContent {
-    void drawRegisterFlagsTooltip(qd::VM::CustomRegs* custRegs, CustReg reg_id) {
+    void drawRegisterFlagsTooltip(amD::VM::CustomRegs* custRegs, CustReg reg_id)
+    {
         const CustomFlagsDesc* fd = reg_id.getFlagDesc();
         if (!fd)
             return;
@@ -61,7 +62,7 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
 
 
 struct DrawCustomRegColumn {
-    qd::VM::CustomRegs* custRegs;
+    amD::VM::CustomRegs* custRegs;
     void drawColumn(CustReg reg_id) {
         stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
         ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
@@ -95,9 +96,9 @@ private:
 
 void CustomRegsWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    VM* vm = dbg->vm;
+    amD::VM* vm = dbg->vm;
 
-    qd::VM::CustomRegs* custRegs = vm->custom;
+    amD::VM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;
@@ -142,4 +143,4 @@ void CustomRegsWnd::drawContentImp() {
 }
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

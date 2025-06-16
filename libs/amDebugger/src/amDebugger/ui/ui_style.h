@@ -3,18 +3,18 @@
 #include <imgui/imgui.h>
 #include <qd/base/color.h>
 
-namespace qd {
+namespace amD {
 
 #define IT(name, color)
-#define UiColorsList(IT)                             \
-    IT(DisasmWnd_PcCursor, Color(0, 10, 160))        \
-    IT(DisasmWnd_UserCursor, Color(160, 160, 0))     \
-    IT(DisasmWnd_OpCodeBytes, Color(128, 128, 128))  \
-    IT(DisasmWnd_Addr, Color(192, 192, 192))         \
-    IT(RegistersWnd_RegName, Color(164, 164, 164))   \
-    IT(RegistersWnd_RegValue, Color(255, 255, 255))  \
-    IT(CustomRegsWnd_RegName, Color(165, 164, 164))  \
-    IT(CustomRegsWnd_RegValue, Color(255, 255, 255)) \
+#define UiColorsList(IT)                                 \
+    IT(DisasmWnd_PcCursor, qd::Color(0, 10, 160))        \
+    IT(DisasmWnd_UserCursor, qd::Color(160, 160, 0))     \
+    IT(DisasmWnd_OpCodeBytes, qd::Color(128, 128, 128))  \
+    IT(DisasmWnd_Addr, qd::Color(192, 192, 192))         \
+    IT(RegistersWnd_RegName, qd::Color(164, 164, 164))   \
+    IT(RegistersWnd_RegValue, qd::Color(255, 255, 255))  \
+    IT(CustomRegsWnd_RegName, qd::Color(165, 164, 164))  \
+    IT(CustomRegsWnd_RegValue, qd::Color(255, 255, 255)) \
     /* UI COLOR LIST */
 
 #undef IT
@@ -24,7 +24,9 @@ namespace qd {
 struct UiStyle {
 public:
 #define IT(name, color) name,
-    enum EColor : uint32_t { UiColorsList(IT) COUNT };  // enum
+    enum EColor : uint32_t {
+        UiColorsList(IT) COUNT
+    }; // enum
 #undef IT
 
     struct ColorRec {
@@ -38,16 +40,19 @@ public:
     void applyColors();
     void applyImGuiDarkStyle();
 
-    [[nodiscard]] inline const qd::Color& getColorU(UiStyle::EColor col) const {
+    [[nodiscard]] inline const qd::Color& getColorU(UiStyle::EColor col) const
+    {
         const ColorRec& colorRef = mColors[col];
         return colorRef.colorU32;
     };
-    [[nodiscard]] inline const ImVec4& getColorF(UiStyle::EColor col) const {
+    [[nodiscard]] inline const ImVec4& getColorF(UiStyle::EColor col) const
+    {
         const ColorRec& colorRef = mColors[col];
         return colorRef.colorF;
     };
 
-    void setColorU(UiStyle::EColor col, const Color& c) {
+    void setColorU(UiStyle::EColor col, const qd::Color& c)
+    {
         UiStyle::ColorRec& rec = mColors[col];
         rec.colorU32 = c;
         rec.colorF.x = (float)c.r / 255.f;
@@ -57,23 +62,26 @@ public:
     }
 
 public:
-    [[nodiscard]] static UiStyle* get() {
+    [[nodiscard]] static UiStyle* get()
+    {
         static UiStyle instance;
         return &instance;
     }
-};  // class UiColors
+}; // class UiColors
 //////////////////////////////////////////////////////////////////////////
 
 extern UiStyle* g_imColors;
 
 
 //////////////////////////////////////////////////////////////////////////
-[[nodiscard]] inline const Color& uiGetColorU(UiStyle::EColor col) {
+[[nodiscard]] inline const qd::Color& uiGetColorU(UiStyle::EColor col)
+{
     return g_imColors->getColorU(col);
 };
-[[nodiscard]] inline const ImVec4& uiGetColorF(UiStyle::EColor col) {
+[[nodiscard]] inline const ImVec4& uiGetColorF(UiStyle::EColor col)
+{
     return g_imColors->getColorF(col);
 };
 
 
-};  // namespace qd
+}; // namespace amD

@@ -1,16 +1,17 @@
 #pragma once
-#include "qd/base/classInfoReg.h"
 #include "qd/base/types.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/ui/uiOperation.h"
 #include "qd/ui/uiOperationMessages.h"
-#include <amDebugger/shortcut/shortcut_list.h>
-// #include <amDebugger/ui_defs.h>
 
 
-namespace qd {
+namespace amD {
 class Debugger;
-class GuiManager;
+class DbgGuiDesktop;
+
+namespace shortcut {
+enum class EId;
+};
 
 namespace operation {
 class Operation;
@@ -18,7 +19,7 @@ class Operation;
 
 //////////////////////////////////////////////////////////////////////////
 template<class TClass>
-static qd::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd::UiOperationCreator* cp)
+static amD::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd::UiOperationCreator* cp)
 {
     TClass* pNewInst = new TClass();
     pNewInst->onOperationCreate(cp);
@@ -28,7 +29,7 @@ static qd::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd
 
 
 #define QDB_REG_OPERATION(ClassName)                                         \
-    TS_BEGIN_REFLECT_CLASS(ClassName, qd::operation::Operation);             \
+    TS_BEGIN_REFLECT_CLASS(ClassName, amD::operation::Operation);             \
     TS_ATTRIBUTE(qd::tsAttr::CreateClassCb(&createOperationCb_<TRefClass>)); \
     TS_END();
 
@@ -36,35 +37,35 @@ static qd::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd
 
 
 struct AmDebuggerOperationCreator : public qd::UiOperationCreator {
-    GuiManager* gui = nullptr;
-    Debugger* dbg = nullptr;
+    amD::DbgGuiDesktop* gui = nullptr;
+    amD::Debugger* dbg = nullptr;
 }; // struct AmDebuggerOperationCreator
 //////////////////////////////////////////////////////////////////////////
 
 
 class Operation : public qd::UiOperation
 {
-    TS_REFLECT_CLASS(qd::operation::Operation, qd::UiOperation);
+    TS_REFLECT_CLASS(amD::operation::Operation, qd::UiOperation);
 
 public:
-    GuiManager* gui = nullptr;
-    Debugger* dbg = nullptr;
+    amD::DbgGuiDesktop* gui = nullptr;
+    amD::Debugger* dbg = nullptr;
 
 public:
-    virtual void onDebuggerOperationCreate(qd::operation::AmDebuggerOperationCreator* cp) {}
+    virtual void onDebuggerOperationCreate(amD::operation::AmDebuggerOperationCreator* cp) {}
 
     void doOperationBase();
     void addShortcut(shortcut::EId sid) { UiOperation::addShortcut((int)sid); }
-    Debugger* getDbg() const;
+    amD::Debugger* getDbg() const;
 
-    virtual EFlow applyOperationMsgProc(operation::msg::Base* p_msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* p_msg) override;
 
 private:
-    virtual void onNodeCreated(NodeCreator* cp) override;
+    virtual void onNodeCreated(qd::NodeCreator* cp) override;
 
 }; // class Operation
 //////////////////////////////////////////////////////////////////////////
 
 
 }; // namespace operation
-}; // namespace qd
+}; // namespace amD

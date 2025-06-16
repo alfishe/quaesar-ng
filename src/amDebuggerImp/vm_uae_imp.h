@@ -18,7 +18,7 @@
 #include <qd/Base/types.h>
 
 
-namespace qd {
+namespace amD {
 
 
 namespace vm {
@@ -43,15 +43,15 @@ public:
 
         virtual bool getFlg(CpuFlg_ f) const override {
             switch (f) {
-                case qd::CpuFlg_Z:
+                case amD::CpuFlg_Z:
                     return GET_ZFLG();
-                case qd::CpuFlg_C:
+                case amD::CpuFlg_C:
                     return GET_CFLG();
-                case qd::CpuFlg_V:
+                case amD::CpuFlg_V:
                     return GET_VFLG();
-                case qd::CpuFlg_N:
+                case amD::CpuFlg_N:
                     return GET_NFLG();
-                case qd::CpuFlg_X:
+                case amD::CpuFlg_X:
                     return GET_XFLG();
                 default:
                     return false;
@@ -136,4 +136,4 @@ public:
 
 };  // namespace imp
 };  // namespace vm
-};  // namespace qd
+};  //namespace amD

@@ -27,7 +27,7 @@ extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
 extern uaecptr bplpt[MAX_PLANES], bplptx[MAX_PLANES];
 
 
-namespace qd {
+namespace amD {
 namespace vm {
 namespace imp {
 
@@ -45,7 +45,7 @@ void UaeEmuVmImp::init() {
     if (mInit)
         return;
     mInit = true;
-    qd::VM* s = (qd::VM*)(this);
+    amD::VM* s = (amD::VM*)(this);
     uint32_t hiAddr = 0;
     while (hiAddr < MEMORY_BANKS) {
         addrbank* uaeBank = mem_banks[hiAddr];
@@ -115,7 +115,7 @@ void UaeEmuVmImp::CustomRegs::commit() {
 }
 
 
-qd::AddrRef UaeEmuVmImp::Copper::getCopperAddr(CopperAddr_ copno) {
+amD::AddrRef UaeEmuVmImp::Copper::getCopperAddr(CopperAddr_ copno) {
     return ::get_copper_address(copno);
 }
 
@@ -132,8 +132,8 @@ void UaeEmuVmImp::Emu::setDebugMode(DebuggerMode debug_mode) {
             ::activate_debugger_new();
         }
     } else if (debug_mode == DebuggerMode_Live) {
-        operation::msg::DoDebugTraceContinue m;
-        Debugger::get()->getOperations()->applyOperationMsg(&m);
+        amD::operation::msg::DoDebugTraceContinue m;
+        amD::Debugger::get()->getOperations()->applyOperationMsg(&m);
         ::debugger_active = 0;
     }
 }
@@ -155,12 +155,12 @@ bool Debugger::isDebugActivatedFull() {
 
 
 void Debugger::applyImmediateConsoleCmd(eastl::string&& cmd) {
-    qd::uae::do_console_cmd_immediate(cmd.c_str());
+    amD::uae::do_console_cmd_immediate(cmd.c_str());
 }
 
 
 static bool uae_bp_reg_convert(int uae_reg, EReg& out) {
-    if (uae_reg >= qd::breakpoint_reg_end)
+    if (uae_reg >= amD::breakpoint_reg_end)
         return false;
     out = (EReg::Type)uae_reg;
     return true;
@@ -168,18 +168,18 @@ static bool uae_bp_reg_convert(int uae_reg, EReg& out) {
 
 
 void BreakpointsSortedList::init() {
-    static_assert(qd::BREAKPOINTS_MAX == BREAKPOINT_TOTAL);
+    static_assert(amD::BREAKPOINTS_MAX == BREAKPOINT_TOTAL);
 
     mBreakpoints.clear();
     for (int i = 0; i < BREAKPOINT_TOTAL; i++) {
         const ::breakpoint_node& uaeCurBrpt = ::bpnodes[i];
         if (uaeCurBrpt.value1 == 0 || uaeCurBrpt.enabled <= 0)
             continue;
-        qd::Breakpoint& curBp = mBreakpoints.emplace_back();
+        amD::Breakpoint& curBp = mBreakpoints.emplace_back();
         curBp.addr1 = uaeCurBrpt.value1;
         curBp.addr2 = uaeCurBrpt.value2;
         curBp.enabled = uaeCurBrpt.enabled;
-        qd::uae_bp_reg_convert(uaeCurBrpt.type, curBp.reg);
+        amD::uae_bp_reg_convert(uaeCurBrpt.type, curBp.reg);
 
         if (uaeCurBrpt.oper == BREAKPOINT_CMP_EQUAL && uaeCurBrpt.enabled > 0) {
             OneAddrBp bp;
@@ -192,12 +192,12 @@ void BreakpointsSortedList::init() {
 
 
 void* impFactoryCreateInstance(const std::type_info& type) {
-    if (type == typeid(qd::VM)) {
-        return new qd::vm::imp::UaeEmuVmImp();
+    if (type == typeid(amD::VM)) {
+        return new amD::vm::imp::UaeEmuVmImp();
     }
     UNIMPLEMENTED();
     return nullptr;
 }
 
 
-};  // namespace qd
+};  //namespace amD

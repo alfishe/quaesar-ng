@@ -1,6 +1,6 @@
 #pragma once
 
-namespace qd {
+namespace amD {
 
 static constexpr int breakpoint_reg_end = 37;  // instead of #define BREAKPOINT_REG_END
 
@@ -45,4 +45,4 @@ enum CopperStates {
     COP_start_delay
 };
 
-};  // namespace qd
+};  // namespace amD

@@ -3,27 +3,28 @@
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
 #include <qd/base/types.h>
+#include "qd/ui/uiOperationMessages.h"
 
 
-namespace qd {
+namespace amD {
 namespace operation {
 namespace msg {
 
 
-struct MenuItemStateGet : Base {
-    TS_REFLECT_CLASS(MenuItemStateGet, operation::msg::Base);
+struct MenuItemStateGet : qd::operation::msg::Base {
+    TS_REFLECT_CLASS(MenuItemStateGet, qd::operation::msg::Base);
     int checked = -1;
 };
 
 
 
-struct DoDebugTraceContinue : Base {
-    TS_REFLECT_CLASS(DoDebugTraceContinue, operation::msg::Base);
+struct DoDebugTraceContinue : qd::operation::msg::Base {
+    TS_REFLECT_CLASS(DoDebugTraceContinue, qd::operation::msg::Base);
 };
 
 
-struct DisasmToggleBreakpoint : Base {
-    TS_REFLECT_CLASS(DisasmToggleBreakpoint, operation::msg::Base);
+struct DisasmToggleBreakpoint : qd::operation::msg::Base {
+    TS_REFLECT_CLASS(DisasmToggleBreakpoint, qd::operation::msg::Base);
     AddrRef address = {};
     EReg reg = EReg::PC;
     int setBreakpoint = -1;
@@ -31,17 +32,17 @@ struct DisasmToggleBreakpoint : Base {
 };
 
 
-struct CopperToggleBreakpoint : Base {
-    TS_REFLECT_CLASS(CopperToggleBreakpoint, operation::msg::Base);
+struct CopperToggleBreakpoint : qd::operation::msg::Base {
+    TS_REFLECT_CLASS(CopperToggleBreakpoint, qd::operation::msg::Base);
     AddrRef address = {};
 };
 
 
-struct CopperTraceStep : Base {
-    TS_REFLECT_CLASS(CopperTraceStep, operation::msg::Base);
+struct CopperTraceStep : qd::operation::msg::Base {
+    TS_REFLECT_CLASS(CopperTraceStep, qd::operation::msg::Base);
 };
 
 
 };  // namespace msg
 };  // namespace operation
-};  // namespace qd
+};  // namespace amD

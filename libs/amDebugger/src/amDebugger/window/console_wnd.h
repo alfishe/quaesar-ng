@@ -1,13 +1,13 @@
 #pragma once
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 class ConsoleLogWriter;
 
 class ConsoleWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Console, qd::window::ConsoleWnd, qd::UiWindow);
+    QDB_WINDOW_REGISTER(WndId::Console, amD::window::ConsoleWnd, amD::UiWindow);
 
     eastl::string inputStr;
     ConsoleLogWriter* mpConsoleWriter = nullptr;
@@ -23,4 +23,4 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

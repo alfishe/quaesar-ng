@@ -1,11 +1,11 @@
 #include "dbgOperation.h"
 #include <amDebugger/msg_list.h>
-#include <amDebugger/ui/gui_manager.h>
+#include <amDebugger/ui/dbgGuiDesktop.h>
 #include <amDebugger/ui_defs.h>
 #include <qd/ui/shortcutMgr.h>
 
 
-namespace qd {
+namespace amD {
 namespace operation {
 
 
@@ -15,16 +15,16 @@ Debugger* Operation::getDbg() const
 }
 
 
-qd::EFlow Operation::applyOperationMsgProc(operation::msg::Base* p_msg)
+qd::EFlow Operation::applyOperationMsgProc(qd::operation::msg::Base* p_msg)
 {
     return TSuper::_applyMsgProcDefImp(p_msg);
 }
 
 
-void Operation::onNodeCreated(NodeCreator* cp)
+void Operation::onNodeCreated(qd::NodeCreator* cp)
 {
     TSuper::onNodeCreated(cp);
-    gui = cp->parent->findParentNode_<GuiManager>();
+    gui = cp->parent->findParentNode_<DbgGuiDesktop>();
     assert(gui);
     m_name = "NO NAME";
 }
@@ -32,7 +32,7 @@ void Operation::onNodeCreated(NodeCreator* cp)
 
 void Operation::doOperationBase()
 {
-    operation::msg::DoOperation ms;
+    qd::operation::msg::DoOperation ms;
     applyOperationMsgProc(&ms);
 }
 
@@ -42,4 +42,4 @@ void Operation::doOperationBase()
 
 
 }; // namespace operation
-}; // namespace qd
+}; // namespace amD

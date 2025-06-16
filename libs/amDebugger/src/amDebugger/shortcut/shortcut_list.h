@@ -3,10 +3,7 @@
 #include "qd/ui/shortcutMgr.h"
 
 
-FORWARD_DECLARATION_2(qd, Shortcut);
-
-
-namespace qd {
+namespace amD {
 namespace shortcut {
 
 #define SHORTCUT(name, setup_func)
@@ -15,18 +12,19 @@ namespace shortcut {
 // Shortcuts list + Enum class shortcut::EId declaration
 // 'qd::shortcut::EId::DebugTraceStart'
 //
-#define SHORTCUT_LIST(SHORTCUT)                                                                                     \
-    SHORTCUT(DebugTraceStepInto, [](Shortcut& s) { s.addKey(ImGuiKey_F11).setRepeat(); })                           \
-    SHORTCUT(DebugTraceStepOut, [](Shortcut& s) { s.addKey(ImGuiKey_F10).setRepeat(); })                            \
-    SHORTCUT(DebugTraceStart, [](Shortcut& s) { s.addKey(ImGuiKey_F12); })                                          \
-    SHORTCUT(DebugTraceContinue, [](Shortcut& s) { s.addKey(ImGuiKey_F5); })                                        \
-    SHORTCUT(DebugWaitScanLines, [](Shortcut&) {})                                                                  \
-    SHORTCUT(DisasmToggleBreakpoint, [](Shortcut& s) { s.addKey(ImGuiKey_F9); })                                    \
-    SHORTCUT(CopperToggleBreakpoint, [](Shortcut& s) { s.addKey(ImGuiKey_F9).addKey(ImGuiMod_Shift).setRepeat(); }) \
-    SHORTCUT(CopperTraceStep, [](Shortcut& s) { s.addKey(ImGuiKey_F11).addKey(ImGuiMod_Shift).setRepeat(); })       \
-    SHORTCUT(ToggleTurboEmulation, [](Shortcut& s) { s.addKey(ImGuiKey_NumLock); })                                 \
-    SHORTCUT(ResetAmigaEmu, [](Shortcut&) {})                                                                       \
-    SHORTCUT(AlwaysOnTopEmu, [](Shortcut& s) { s.addKey(ImGuiKey_T).addKey(ImGuiMod_Ctrl); })                       \
+#define SHORTCUT_LIST(SHORTCUT)                                                                                   \
+    SHORTCUT(DebugTraceStepInto, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F11).setRepeat(); })                     \
+    SHORTCUT(DebugTraceStepOut, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F10).setRepeat(); })                      \
+    SHORTCUT(DebugTraceStart, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F12); })                                    \
+    SHORTCUT(DebugTraceContinue, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F5); })                                  \
+    SHORTCUT(DebugWaitScanLines, [](qd::Shortcut&) {})                                                            \
+    SHORTCUT(DisasmToggleBreakpoint, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F9); })                              \
+    SHORTCUT(CopperToggleBreakpoint,                                                                              \
+        [](qd::Shortcut& s) { s.addKey(ImGuiKey_F9).addKey(ImGuiMod_Shift).setRepeat(); })                        \
+    SHORTCUT(CopperTraceStep, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F11).addKey(ImGuiMod_Shift).setRepeat(); }) \
+    SHORTCUT(ToggleTurboEmulation, [](qd::Shortcut& s) { s.addKey(ImGuiKey_NumLock); })                           \
+    SHORTCUT(ResetAmigaEmu, [](qd::Shortcut&) {})                                                                 \
+    SHORTCUT(AlwaysOnTopEmu, [](qd::Shortcut& s) { s.addKey(ImGuiKey_T).addKey(ImGuiMod_Ctrl); })                 \
     /* END OF SHORTCUTS LIST */
 //////////////////////////////////////////////////////////////////////////
 
@@ -37,8 +35,8 @@ enum class EId {
 #define SHORTCUT(name, setup_func) name,
     SHORTCUT_LIST(SHORTCUT)
 #undef SHORTCUT
-        MAX_COUNT
-};  // enum
+    MAX_COUNT
+}; // enum
 
 
 inline static qd::ShortcutSetupFunc g_shortcuts_list[] = {
@@ -48,8 +46,8 @@ inline static qd::ShortcutSetupFunc g_shortcuts_list[] = {
 }; // ShortcutList
 
 
-//extern qd::Shortcut *makeInstance(qd::shortcut::EId id);
+// extern qd::Shortcut *makeInstance(qd::shortcut::EId id);
 
 
-};  // namespace shortcut
-};  // namespace qd
+}; // namespace shortcut
+}; // namespace amD

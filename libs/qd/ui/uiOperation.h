@@ -11,7 +11,7 @@
 
 
 namespace qd {
-class GuiManager;
+class DbgGuiDesktop;
 class UiOperation;
 
 

@@ -1182,7 +1182,7 @@ static void pfield_init_linetoscr (bool border)
 	bool expanded = false;
 
 	bplmaxplanecnt = dp_for_drawing->max_planes;
-	
+
 	if (border)
 		ddf_left = DISPLAY_LEFT_SHIFT;
 
@@ -1795,7 +1795,7 @@ static uae_u8 render_sprites(int pos, int dualpf, uae_u8 apixel, int aga)
 		spb[32 << currprefs.gfx_resolution].data &= ~spb->stfmdata;
 	}
 
-	// shdelay hack, above &spritepixels[pos] is correct. 
+	// shdelay hack, above &spritepixels[pos] is correct.
 	pos += sprite_shdelay;
 	/* The value in the shift lookup table is _half_ the shift count we
 	need.  This is because we can't shift 32 bits at once (undefined
@@ -1812,7 +1812,7 @@ static uae_u8 render_sprites(int pos, int dualpf, uae_u8 apixel, int aga)
 		pairs 01 and 23 cleared, and pairs 45 and 67 set, so OFFS will
 		have a value of 4.
 		2 * OFFS is the bit number in V of the sprite pair, and it also
-		happens to be the color offset for that pair. 
+		happens to be the color offset for that pair.
 		*/
 		int offs;
 		if (v1 == 0)
@@ -2841,7 +2841,7 @@ static void gen_pfield_tables(void)
 
 		if (plane2 > 0)
 			plane2 += 8;
-		// use OCS/ECS unused plane bits 6 and 7 for 
+		// use OCS/ECS unused plane bits 6 and 7 for
 		// dualplayfield BPLCON2 invalid value emulation.
 		int plane1x = (i & 0x40) ? 0 : plane1;
 		int plane2x = (i & 0x80) ? 0 : plane2;
@@ -3471,7 +3471,7 @@ static void pfield_expand_dp_bplcon(void)
 
 	if (pfield_mode_changed)
 		pfield_set_linetoscr();
-	
+
 	setbplmode();
 }
 
@@ -4181,7 +4181,7 @@ static void center_image (void)
 	if (max_drawn_amiga_line_tmp > vidinfo->drawbuffer.inheight)
 		max_drawn_amiga_line_tmp = vidinfo->drawbuffer.inheight;
 	max_drawn_amiga_line_tmp >>= linedbl;
-	
+
 	thisframe_y_adjust = minfirstline;
 	if (currprefs.gfx_ycenter && !fd->gfx_filter_autoscale) {
 
@@ -5019,7 +5019,7 @@ void check_prefs_picasso(void)
 
 		if (ad->picasso_requested_on == ad->picasso_on && !ad->picasso_requested_forced_on)
 			continue;
-		 
+
 		devices_unsafeperiod();
 
 		if (!ad->picasso_requested_on && monid > 0) {
@@ -5416,7 +5416,7 @@ void reset_drawing(void)
 	memset(ham_linebuf, 0, sizeof(ham_linebuf));
 
 	init_hardware_for_drawing_frame();
-		
+
 	notice_screen_contents_lost(monid);
 	init_drawing_frame ();
 	pfield_set_linetoscr();
@@ -5514,7 +5514,7 @@ int isvsync(void)
 
 
 //////////////////////////////////////////////////////////////////////////
-namespace qd { namespace uae {
+namespace amD::uae {
 void on_app_exit_drawing()
 {
     free(row_map);
@@ -5528,5 +5528,5 @@ void on_app_exit_drawing()
     free(native2amiga_line_map);
     native2amiga_line_map = NULL;
 }
-}}; // namespace qd::uae
+}; // namespace qd::uae
 //////////////////////////////////////////////////////////////////////////

@@ -1,11 +1,11 @@
 #pragma once
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 class ColorsWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Colors, qd::window::ColorsWnd, qd::UiWindow);
+    QDB_WINDOW_REGISTER(WndId::Colors, amD::window::ColorsWnd, amD::UiWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
@@ -19,4 +19,4 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

@@ -3,11 +3,11 @@
 #include "qd/base/point2.h"
 #include <amDebugger/ui/ui_view.h>
 
-namespace qd {
+namespace amD {
 namespace window {
 
 class MemoryGraphWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::MemoryGraph, qd::window::MemoryGraphWnd, qd::UiWindow);
+    QDB_WINDOW_REGISTER(WndId::MemoryGraph, amD::window::MemoryGraphWnd, amD::UiWindow);
 
 
     ImTextureID mTextureId = 0;
@@ -31,4 +31,4 @@ public:
 };  // class MemoryGraphWnd
 
 };  // namespace window
-};  // namespace qd
+};  // namespace amD

@@ -1,6 +1,6 @@
 #include "vm.h"
 
-namespace qd {
+namespace amD {
 VM* VM::staticVmInst = nullptr;
 
 
@@ -12,4 +12,4 @@ VM::~VM() {
 }
 
 
-};  // namespace qd
+};  // namespace amD

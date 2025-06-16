@@ -23,6 +23,7 @@ private:
     SDL_Texture* m_pUaeScrTexture = nullptr;
     qd::Mutex m_UaeScrTextureMutex;
     qd::QImGuiContext* m_pImGui = nullptr;
+    bool m_bShowImgui = false;
 
 public:
     virtual void onPartCreate(AppPartBase::OnCreate_t& prm) override;
@@ -43,6 +44,13 @@ public:
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) override;
 
     virtual void onSdlEventProc(SDL_Event& event) override;
+
+    bool getShowImgui() const {
+        return m_bShowImgui;
+    }
+    void setShowImgui(bool ShowImgui) {
+        m_bShowImgui = ShowImgui;
+    }
 
 private:
     void recreateTexture(int newWidth, int newHeight);
