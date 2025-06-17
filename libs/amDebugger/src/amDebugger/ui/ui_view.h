@@ -6,6 +6,7 @@
 #include "qd/node/node.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/ui/uiNode.h"
+#include "qd/ui/controls/window.h"
 
 
 
@@ -35,19 +36,17 @@ public:                      \
 //
 // Base class of all ui
 //
-class UiView : public qd::UiNode
+
+class AmDbgWindow : public qd::UiWindow
 {
-    TS_BEGIN_REFLECT_CLASS_BASE(100, amD::UiView, qd::UiNode);
+    TS_BEGIN_REFLECT_CLASS_BASE(50, amD::AmDbgWindow, qd::UiWindow);
     TS_END();
 
 public:
-    qd::string m_title;
     DbgGuiDesktop* ui = nullptr;
-    uint32_t mClassId = 0;
 
 public:
-    UiView() = default;
-    virtual ~UiView() {}
+    AmDbgWindow() = default;
 
     virtual void onCreate(UiViewCreateCtx* cp)
     {
@@ -55,27 +54,13 @@ public:
         ui = cp->gui;
     }
 
-    virtual qd::string getText() const override { return m_title; }
-
+    virtual void draw() override
+    {
+        TSuper::draw();
+    }
     Debugger* getDbg() const;
 
-}; // class UiView
-//////////////////////////////////////////////////////////////////////////
-
-
-class UiWindow : public amD::UiView
-{
-    TS_BEGIN_REFLECT_CLASS_BASE(50, amD::UiWindow, amD::UiView);
-    TS_END();
-
-public:
-    // QDB_CLASS_ID();
-    UiWindow() = default;
-
-    virtual void onCreate(UiViewCreateCtx* cp) override { UiView::onCreate(cp); }
-    virtual void draw() override;
-
-}; // class UiWindow
+}; // class AmDbgWindow
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -88,10 +73,10 @@ public:
 
 
 
-void _onUiWindowCreated(const qd::TypeInfo& meta, UiViewCreateCtx* cp, UiWindow* newInst);
+void _onUiWindowCreated(const qd::TypeInfo& meta, UiViewCreateCtx* cp, AmDbgWindow* newInst);
 
 template<class TClass>
-static UiView* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
+static amD::AmDbgWindow* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
 {
     TClass* pNewInst = new TClass();
     _onUiWindowCreated(meta, cp, pNewInst);
@@ -101,13 +86,13 @@ static UiView* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
 
 namespace window {
 
-class ImGuiDemoWindow : public amD::UiWindow
+class ImGuiDemoWindow : public amD::AmDbgWindow
 {
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override
     {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "ImGui Demo";
         setVisible(false);
     }

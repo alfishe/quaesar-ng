@@ -6,13 +6,13 @@ namespace amD {
 namespace window {
 
 
-class CustomRegsWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::CustomRegsWnd, amD::window::CustomRegsWnd, amD::UiWindow);
+class CustomRegsWnd : public AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::CustomRegsWnd, amD::window::CustomRegsWnd, amD::AmDbgWindow);
     ImGuiTextFilter mRegsFilter;
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Custom regs";
     }
 

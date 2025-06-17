@@ -77,7 +77,7 @@ namespace window {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MemoryView::onCreate(UiViewCreateCtx* cp) {
-    UiWindow::onCreate(cp);
+    AmDbgWindow::onCreate(cp);
     m_title = "Memory";
     setVisible(true);
     setMemAddr(VM::get()->mem->getRealAddr(0x0000), 512 * 1024, 0x0000);

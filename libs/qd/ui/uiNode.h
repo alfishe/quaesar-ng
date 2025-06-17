@@ -27,7 +27,8 @@ private:
 
     struct ChildItem {
         uint32_t id = 0;
-        ref_ptr<UiNode> ptr;
+        ref_ptr<qd::UiNode> ptr;
+        const qd::TypeInfo* typeInfo = nullptr;
         uint32_t getId() const { return id; }
         UiNode* get() const { return this->ptr; }
     };
@@ -37,7 +38,7 @@ protected:
     bool m_bVisible = true;
 
 public:
-    virtual void onNodeCreated(NodeCreator* mk) override;
+    virtual void onNodeCreated(qd::NodeCreator* mk) override;
 
     void setup() {}
 
@@ -45,9 +46,10 @@ public:
     void setParent(qd::Node* pParent);
 
     UiNode* findChildById(uint32_t id) const;
+    UiNode* findChildByType(const qd::TypeInfo& ti) const;
     int findChildIndex(UiNode* pChild) const;
 
-    UiNode* addChild(ref_ptr<UiNode> pChild);
+    UiNode* addChild(ref_ptr<qd::UiNode> pChild);
 
     template<class T, typename... TArgs>
     inline T* addChild_(TArgs&&... args)
@@ -66,7 +68,13 @@ public:
     template<class T>
     inline T* findChildById_(uint32_t ID) const
     {
-        return ptr<T>(findChildById(ID));
+        return static_cast<T*>(findChildById(ID));
+    }
+
+    template<class T>
+    inline T* findChildByIdName_(const char* p_name) const
+    {
+        return static_cast<T*>(findChildById(qd::fnv1aHash(p_name)));
     }
 
     template<class T>
@@ -89,6 +97,11 @@ public:
 
     uint32_t getId() const { return m_id; }
     void setId(uint32_t newId);
+    void setIdByName(const char* p_name)
+    {
+        setId(qd::fnv1aHash(p_name));
+    }
+
 
     virtual qd::string getText() const
     {

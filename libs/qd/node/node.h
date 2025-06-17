@@ -57,7 +57,7 @@ public:
     Node() = default;
     virtual ~Node();
 
-    virtual void onNodeCreated(NodeCreator* mk);
+    virtual void onNodeCreated(qd::NodeCreator* mk);
     virtual EFlow onNodeMessageProc(qd::NodeMessage* in_msg);
 
     int getNumChild() const;
@@ -199,7 +199,7 @@ struct NodeCreator {
     template<class TClass, typename... TArgs>
     TClass* make_(TArgs&&... args)
     {
-        TClass* pNode = new TClass(std::forward<TArgs>(args)...);
+        TClass* pNode = new TClass(args...);
         pNode->onNodeCreated((NodeCreator*)this);
         return pNode;
     } // make_

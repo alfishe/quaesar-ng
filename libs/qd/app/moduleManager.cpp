@@ -2,7 +2,7 @@
 #include "qd/mem/ptrMath.h"
 #include <qd/app/appliction.h>
 #include <qd/app/moduleManager.h>
-#include <qd/base/unique_ptr.h>
+#include <qd/stl/unique_ptr.h>
 #include <qd/debug/assert.h>
 #include <qd/debug/exception.h>
 #include "qd/typeSystem/typeInfo.h"
@@ -19,7 +19,7 @@ ModuleInfo* ModuleManager::registerModule(const ModuleInfo& moduleInfo) {
 
     ModuleInfo* pModule = findModuleInfo(moduleId);
     if (!pModule) {
-        unique_ptr<ModuleInfo> pNewModule = make_unique<ModuleInfo>(moduleId);
+        qd::unique_ptr<ModuleInfo> pNewModule = qd::make_unique<ModuleInfo>(moduleId);
         pModule = pNewModule.get();
         ModuleManager::InfoItem item;
         item.m_pType = &moduleId;

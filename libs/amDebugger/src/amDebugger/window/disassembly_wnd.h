@@ -6,15 +6,15 @@
 namespace amD {
 namespace window {
 
-class DisassemblyView : public amD::UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Disassembly, amD::window::DisassemblyView, amD::UiWindow);
+class DisassemblyView : public amD::AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::Disassembly, amD::window::DisassemblyView, amD::AmDbgWindow);
 
     eastl::string addrInputStr;
     eastl::optional<AddrRef> mDisasmAddr;
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Disassembly";
     }
 

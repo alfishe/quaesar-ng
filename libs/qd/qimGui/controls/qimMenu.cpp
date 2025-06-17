@@ -61,7 +61,7 @@ void UiMenuOperation::onEnd(qim::Context* ctx)
 }
 
 
-qim::ElemantData* UiMenuBeh::createElementData(const qd::TypeInfo& type)
+qim::ElementData* UiMenuBeh::createElementData(const qd::TypeInfo& type)
 {
     if (type == qd::typeof_<qim::UiMenuItem>())
         return new UiMenuItem();

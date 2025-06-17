@@ -5,16 +5,11 @@
 
 namespace amD {
 
-Debugger* UiView::getDbg() const {
+Debugger* AmDbgWindow::getDbg() const
+{
     return ui->getDbg();
 }
 
-void UiWindow::draw() {
-    bool vis = ImGui::Begin(m_title.c_str(), &m_bVisible, ImGuiWindowFlags_NoScrollbar);
-    if (vis)
-        drawContentImp();
-    ImGui::End();
-}
 
 namespace window {
 
@@ -25,10 +20,10 @@ void ImGuiDemoWindow::draw() {
 };  // namespace window
 
 
-void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, UiWindow *newInst)
+void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, amD::AmDbgWindow * newInst)
 {
-    if (auto typeIdAttr = meta.getAttribute_<qd::tsAttr::CustomClassId32>())
-        newInst->mClassId = typeIdAttr->getId32();
+//     if (auto typeIdAttr = meta.getAttribute_<qd::tsAttr::CustomClassId32>())
+//         newInst->mClassId = typeIdAttr->getId32();
     newInst->onCreate(cp);
 }
 

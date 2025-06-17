@@ -6,8 +6,8 @@ namespace window {
 
 class ConsoleLogWriter;
 
-class ConsoleWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Console, amD::window::ConsoleWnd, amD::UiWindow);
+class ConsoleWnd : public AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::Console, amD::window::ConsoleWnd, amD::AmDbgWindow);
 
     eastl::string inputStr;
     ConsoleLogWriter* mpConsoleWriter = nullptr;

@@ -1,28 +1,29 @@
-#include <EASTL/fixed_string.h>
-#include <EASTL/fixed_vector.h>
 #include <amDebugger/debugger.h>
 #include <amDebugger/msg_list.h>
+#include <amDebugger/ui/ui_view.h>
 #include <amDebugger/vm/custom_regs.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
+#include <EASTL/fixed_string.h>
+#include <EASTL/fixed_vector.h>
 #include <qd/base/color.h>
 #include <qd/ImGui/imgui_eastl.h>
-#include <amDebugger/ui/ui_view.h>
 
 
 namespace amD {
 namespace window {
-class BlitterWnd : public amD::UiWindow {
-    QDB_WINDOW_REGISTER(WndId::BlitterWnd, amD::window::BlitterWnd, amD::UiWindow);
+class BlitterWnd : public amD::AmDbgWindow
+{
+    QDB_WINDOW_REGISTER(WndId::BlitterWnd, amD::window::BlitterWnd, amD::AmDbgWindow);
 
 public:
-    virtual void onCreate(UiViewCreateCtx *cp) override {
-        UiWindow::onCreate(cp);
+    virtual void onCreate(UiViewCreateCtx* cp) override
+    {
+        AmDbgWindow::onCreate(cp);
         m_title = "Blitter";
     }
 
     virtual void drawContentImp() override;
-
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +43,8 @@ struct DeclareDmaSrcUiArgs {
     void declareDmaSrcUi();
 };
 
-void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
+void DeclareDmaSrcUiArgs::declareDmaSrcUi()
+{
     eastl::fixed_string<char, 64, false> strTmp;
     ImGui::PushID((int)dmaLetter);
     strTmp = "##DMA_EN_";
@@ -53,7 +55,8 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
     strTmp = dmaLetter;
     strTmp += " DMA";
     ImGuiTreeNodeFlags_ fl = ImGuiTreeNodeFlags_AllowOverlap;
-    if (ImGui::CollapsingHeader(strTmp.c_str(), fl | ImGuiTreeNodeFlags_NoTreePushOnOpen)) {
+    if (ImGui::CollapsingHeader(strTmp.c_str(), fl | ImGuiTreeNodeFlags_NoTreePushOnOpen))
+    {
         const int ident = 8;
         ImGui::Indent(ident);
         uint32_t bltPtr = custRegs->getRegVal(bltXPtH) << 16 | custRegs->getRegVal(bltXPtL);
@@ -64,7 +67,7 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
         // ImGui::SetNextItemWidth(-1.f);
         strTmp.insert(0, "##", 2);
         ImGui::InputScalar(strTmp.c_str(), ImGuiDataType_U32, &bltPtr, nullptr, nullptr, "%06X",
-                           ImGuiInputTextFlags_CharsHexadecimal);
+            ImGuiInputTextFlags_CharsHexadecimal);
 
         int modVal = custRegs->getRegVal(bltXMod);
         ImGui::TextUnformatted(bltXMod.toString().begin(), bltXMod.toString().end());
@@ -75,7 +78,8 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
         ImGui::InputInt(strTmp.c_str(), &modVal, 0);
 
         // SHIFT
-        if (dmaLetter == 'A' || dmaLetter == 'B') {
+        if (dmaLetter == 'A' || dmaLetter == 'B')
+        {
             strTmp = dmaLetter;
             strTmp += " shift";
             ImGui::TextUnformatted(strTmp.c_str());
@@ -93,7 +97,7 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
         strTmp = "##";
         strTmp.append(bltXDat.toString().begin(), bltXDat.toString().end());
         ImGui::InputScalar(strTmp.c_str(), ImGuiDataType_U32, &datVal, nullptr, nullptr, "%04X",
-                           ImGuiInputTextFlags_CharsHexadecimal);
+            ImGuiInputTextFlags_CharsHexadecimal);
 
         ImGui::Unindent(ident);
     }
@@ -101,7 +105,8 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi() {
 }
 
 
-void BlitterWnd::drawContentImp() {
+void BlitterWnd::drawContentImp()
+{
     Debugger* dbg = getDbg();
     VM* vm = dbg->vm;
 
@@ -143,13 +148,13 @@ void BlitterWnd::drawContentImp() {
 
     // left column
     uint32_t cldFlg = ImGuiChildFlags_None | ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX;
-    if (ImGui::BeginChild("##LEFT_COL", wndL, cldFlg,
-                          ImGuiWindowFlags_None /*| ImGuiWindowFlags_HorizontalScrollbar*/)) {
+    if (ImGui::BeginChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None))
+    {
         ImGui::TextUnformatted("BLTCON0");
         ImGui::SameLine();
         ImGui::SetNextItemWidth(-1.f);
         ImGui::InputScalar("##BLTCON0", ImGuiDataType_U16, &bltCon0, nullptr, nullptr, "%04X",
-                           ImGuiInputTextFlags_CharsHexadecimal);
+            ImGuiInputTextFlags_CharsHexadecimal);
 
         ar.dmaLetter = 'A';
         ar.srcEnFlag = BC0F::SRCA;
@@ -174,13 +179,13 @@ void BlitterWnd::drawContentImp() {
     // right column
     rgn = ImGui::GetContentRegionAvail();
     ImVec2 wndR = ImVec2(rgn.x * 0.0f, rgn.y);
-    if (ImGui::BeginChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders,
-                          ImGuiWindowFlags_None /*| ImGuiWindowFlags_HorizontalScrollbar*/)) {
+    if (ImGui::BeginChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders, ImGuiWindowFlags_None))
+    {
         ImGui::TextUnformatted("BLTCON1");
         ImGui::SameLine();
         ImGui::SetNextItemWidth(-1.f);
         ImGui::InputScalar("##BLTCON1", ImGuiDataType_U16, &bltCon1, nullptr, nullptr, "%04X",
-                           ImGuiInputTextFlags_CharsHexadecimal);
+            ImGuiInputTextFlags_CharsHexadecimal);
         //
         ar.dmaLetter = 'C';
         ar.srcEnFlag = BC0F::SRCC;
@@ -202,5 +207,5 @@ void BlitterWnd::drawContentImp() {
 }
 
 
-};  // namespace window
-};  // namespace amD
+}; // namespace window
+}; // namespace amD

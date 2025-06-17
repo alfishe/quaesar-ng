@@ -83,7 +83,7 @@ void ConsoleWnd::drawContentImp() {
 
 
 void ConsoleWnd::onCreate(UiViewCreateCtx* cp) {
-    UiWindow::onCreate(cp);
+    AmDbgWindow::onCreate(cp);
     m_title = "Console";
     mpConsoleWriter = qd::logConsole().createWriter_<ConsoleLogWriter>();
 }

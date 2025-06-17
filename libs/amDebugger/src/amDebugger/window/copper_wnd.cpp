@@ -15,12 +15,12 @@
 
 namespace amD {
 namespace window {
-class CopperDbgWnd : public amD::UiWindow {
-    QDB_WINDOW_REGISTER(WndId::CopperDbgWnd, amD::window::CopperDbgWnd, amD::UiWindow);
+class CopperDbgWnd : public amD::AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::CopperDbgWnd, amD::window::CopperDbgWnd, amD::AmDbgWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Copper debug";
     }
 

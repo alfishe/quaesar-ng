@@ -1,8 +1,8 @@
 #include "desktop.h"
-#include "uiNode.h"
+#include "qd/ui/uiNode.h"
 
 
- qd::UiDesktop::~UiDesktop()
+qd::UiDesktop::~UiDesktop()
 {
     assert(m_pWindows.empty());
 }
@@ -18,7 +18,7 @@ void qd::UiDesktop::destroy()
         m_pWindows.pop_back();
         curWnd->destroy();
         curWnd.reset();
-        //delete curWnd;
+        // delete curWnd;
     }
 }
 

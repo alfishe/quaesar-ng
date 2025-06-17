@@ -37,6 +37,20 @@ UiNode* UiNode::findChildById(uint32_t id) const
 }
 
 
+qd::UiNode* UiNode::findChildByType(const qd::TypeInfo& ti) const
+{
+    if (!isPtrValid(this))
+        return nullptr;
+    for (const ChildItem& item : m_pChilds)
+    {
+        if (ti.isDerivedFrom(*item.typeInfo))
+            return item.get();
+    }
+    return nullptr;
+
+}
+
+
 int UiNode::getNumChild() const
 {
     return (int)m_pChilds.size();
@@ -122,7 +136,7 @@ qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
     }
 
     // ADD CHILD
-    m_pChilds.push_back({id, pChild});
+    m_pChilds.push_back({id, pChild, &pChild->getTypeInfo()});
 
     // NOTIFY COMPS
     uiMsg::OnChildAdded t;

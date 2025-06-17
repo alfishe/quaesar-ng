@@ -26,8 +26,8 @@ public:
 
 
 
-struct UiMenu : public qim::ElemantData {
-    QIM_ELEMENT_CLASS(qim::UiMenu, qim::ElemantData, qim::UiMenuBeh);
+struct UiMenu : public qim::ElementData {
+    QIM_ELEMENT_CLASS(qim::UiMenu, qim::ElementData, qim::UiMenuBeh);
 
     void setup(const char* text)
     { //
@@ -50,8 +50,10 @@ private:
 
 
 
-struct UiMenuItem : public qim::ElemantData {
-    QIM_ELEMENT_CLASS(qim::UiMenuItem, qim::ElemantData, qim::UiMenuBeh);
+struct UiMenuItem : public qim::ElementData {
+    QIM_ELEMENT_CLASS(qim::UiMenuItem, qim::ElementData, qim::UiMenuBeh);
+
+    eastl::fixed_function<32, void()> m_onClickCb;
 
     void setup(const char* text)
     { //
@@ -85,7 +87,7 @@ class UiMenuBeh : public qim::ElementBeh
 
 
 public:
-    ElemantData* createElementData(const qd::TypeInfo& type) override;
+    ElementData* createElementData(const qd::TypeInfo& type) override;
 
 }; // class UiMenuBeh
 //////////////////////////////////////////////////////////////////////////
@@ -95,8 +97,8 @@ class UiMenuOperationBeh;
 
 
 
-struct UiMenuOperation : public qim::ElemantData {
-    QIM_ELEMENT_CLASS(qim::UiMenuOperation, qim::ElemantData, qim::UiMenuOperationBeh);
+struct UiMenuOperation : public qim::ElementData {
+    QIM_ELEMENT_CLASS(qim::UiMenuOperation, qim::ElementData, qim::UiMenuOperationBeh);
 
     void setup(const char* operation_class_name);
     virtual void onEnd(qim::Context* ctx) override;
@@ -116,7 +118,7 @@ class UiMenuOperationBeh : public qim::ElementBeh
     TS_END();
 
 public:
-    ElemantData* createElementData(const qd::TypeInfo& type) override
+    ElementData* createElementData(const qd::TypeInfo& type) override
     {
         return new UiMenuOperation();
     }

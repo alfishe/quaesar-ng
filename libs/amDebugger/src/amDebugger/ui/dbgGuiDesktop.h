@@ -1,7 +1,7 @@
 #pragma once
 #include <amDebugger/debugger.h>
 #include <amDebugger/ui/ui_view.h>
-#include "qd/ui/desktop.h"
+#include "qd/ui/controls/desktop.h"
 #include "qd/stl/vector.h"
 #include "qd/base/base.h"
 #include "qd/node/node.h"

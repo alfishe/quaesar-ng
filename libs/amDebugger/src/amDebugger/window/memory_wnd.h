@@ -64,8 +64,8 @@
 namespace amD {
 namespace window {
 
-class MemoryView : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::MemoryView, amD::window::MemoryView, amD::UiWindow);
+class MemoryView : public AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::MemoryView, amD::window::MemoryView, amD::AmDbgWindow);
 
     void* m_memAddr = 0;
     size_t m_memSize = 0;

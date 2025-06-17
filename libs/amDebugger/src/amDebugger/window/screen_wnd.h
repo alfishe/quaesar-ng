@@ -4,14 +4,14 @@
 namespace amD {
 namespace window {
 
-class ScreenWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Screen, amD::window::ScreenWnd, amD::UiWindow);
+class ScreenWnd : public AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::Screen, amD::window::ScreenWnd, amD::AmDbgWindow);
 
     ImTextureID mTextureId = 0;
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Screen";
     }
 

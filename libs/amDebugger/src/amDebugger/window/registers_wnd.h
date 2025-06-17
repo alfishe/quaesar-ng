@@ -3,12 +3,12 @@
 
 namespace amD {
 namespace window {
-class RegistersView : public amD::UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Registers, amD::window::RegistersView, amD::UiWindow);
+class RegistersView : public amD::AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::Registers, amD::window::RegistersView, amD::AmDbgWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Registers";
     }
 

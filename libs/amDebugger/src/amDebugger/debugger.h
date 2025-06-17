@@ -77,7 +77,7 @@ class Debugger : public qd::AppPartBase
 public:
     csh* m_pCapstone = nullptr;
     amD::VM* vm = nullptr;
-    amD::DbgGuiDesktop* gui = nullptr;
+    amD::DbgGuiDesktop* m_pGui = nullptr;
     qd::UiOperationMgr* m_pOperations = nullptr;
 
     SDL_Renderer* getRenderer() const {

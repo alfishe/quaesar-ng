@@ -1,9 +1,12 @@
 #include "qd/Thread/thread.h"
 #include "qd/app/appPart.h"
+#include "ui/uae_wnd_desktop.h"
+
 
 struct SDL_Window;
 struct SDL_Texture;
 struct SDL_Renderer;
+class UaeWndDesktop;
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 
 
@@ -13,6 +16,7 @@ class UaeAppPart : public qd::AppPartBase {
     TS_END();
 
 private:
+    UaeWndDesktop* m_pDesktop = nullptr;
     int m_wndWidth = 754;
     int m_wndHeight = 576;
     int m_renderedFrameNo = -1;

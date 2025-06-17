@@ -14,6 +14,8 @@
 #include "qd/app/appMessages.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/qimGui/controls/qimMenu.h"
+#include "quasar_app/ui/uae_wnd_desktop.h"
+#include "ui/uae_options_wnd.h"
 
 
 void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
@@ -26,6 +28,11 @@ void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
     m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
     m_pImGui->getIO().IniFilename = "";
+
+
+    qd::NodeCreator mk;
+    m_pDesktop = mk.make_<UaeWndDesktop>();
+    auto pDlg = m_pDesktop->addChild_<UaeOptionsDlg>();
 }
 
 
@@ -175,8 +182,11 @@ void UaeAppPart::update(float Delta, float Time) {
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
         }
         if (auto pMenu = qim::beginChild_<qim::UiMenu>("File3")) {
-            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
-            }
+            auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1");
+            pItem->m_onClickCb = [&]() {
+                UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
+                m_pDesktop->doModal(pOptionsDlg);
+            };
         }
         ImGui::EndMainMenuBar();
     }
@@ -188,6 +198,12 @@ void UaeAppPart::update(float Delta, float Time) {
 
 void UaeAppPart::destroyImp() {
     destroyUaeWindow();
+
+    if (m_pDesktop) {
+        m_pDesktop->destroy();
+        delete m_pDesktop;
+        m_pDesktop = nullptr;
+    }
 }
 
 

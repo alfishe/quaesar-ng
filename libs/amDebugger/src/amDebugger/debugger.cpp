@@ -86,10 +86,9 @@ void Debugger::init() {
     vm->init();
 
     qd::NodeCreator mk;
-    mk.parent = nullptr;
-    gui = mk.make_<DbgGuiDesktop>(this);
+    m_pGui = mk.make_<amD::DbgGuiDesktop>(this);
 
-    m_pOperations = gui->getOperationMgr();
+    m_pOperations = m_pGui->getOperationMgr();
     assert(m_pOperations);
 
     assert(m_pOperations->getNumChild());
@@ -198,8 +197,8 @@ void amD::Debugger::execConsoleCmd(eastl::string&& cmd)
 
 
 void Debugger::destroy() {
-    if (gui)
-        gui->destroy();
+    if (m_pGui)
+        m_pGui->destroy();
     imp::console_queue.destroy();
     if (m_pOperations)
         m_pOperations->destroy();
@@ -210,10 +209,10 @@ void Debugger::destroy() {
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 
-    delete gui;
+    delete m_pGui;
     delete m_pCapstone;
     m_pCapstone = nullptr;
-    gui = nullptr;
+    m_pGui = nullptr;
     vm = nullptr;
     VM::destrotVmInst();
 
@@ -230,7 +229,7 @@ void Debugger::update(float dt, float time)
 {
     m_pImGui->newFrame();
 
-    gui->drawImGuiMainFrame();
+    m_pGui->drawImGuiMainFrame();
 
     m_pImGui->endFrame();
 }

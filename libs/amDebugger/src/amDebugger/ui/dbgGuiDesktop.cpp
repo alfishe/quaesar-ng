@@ -22,7 +22,8 @@ using namespace operation;
 
 DbgGuiDesktop::DbgGuiDesktop(Debugger* in_dbg)
     : m_pDbg(in_dbg)
-{}
+{
+}
 
 
 void DbgGuiDesktop::onNodeCreated(qd::NodeCreator* mk)
@@ -58,7 +59,7 @@ void DbgGuiDesktop::onNodeCreated(qd::NodeCreator* mk)
 
 void DbgGuiDesktop::createAllUiWndows()
 {
-    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<amD::UiWindow>(false);
+    qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<amD::AmDbgWindow>(false);
     for (int i = 0; i < windowTypes.size(); ++i)
     {
         const qd::TypeInfo* pCurWindowType = windowTypes[i];
@@ -69,7 +70,7 @@ void DbgGuiDesktop::createAllUiWndows()
             continue;
         }
         UiViewCreateCtx cv(this);
-        amD::UiWindow* pCurWnd = pCreateAttr->makeInstance_<UiWindow>(cv);
+        amD::AmDbgWindow* pCurWnd = pCreateAttr->makeInstance_<AmDbgWindow>(cv);
         assert(pCurWnd);
         addView(pCurWnd);
     }

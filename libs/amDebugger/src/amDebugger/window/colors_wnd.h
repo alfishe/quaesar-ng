@@ -4,12 +4,12 @@
 namespace amD {
 namespace window {
 
-class ColorsWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::Colors, amD::window::ColorsWnd, amD::UiWindow);
+class ColorsWnd : public AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::Colors, amD::window::ColorsWnd, amD::AmDbgWindow);
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Palette";
     }
 

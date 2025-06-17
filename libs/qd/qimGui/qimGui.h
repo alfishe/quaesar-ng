@@ -90,14 +90,14 @@ void endFrame();
 
 
 //////////////////////////////////////////////////////////////////////////
-class ElemantData
+class ElementData
 {
-    TS_REFLECT_CLASS_BASE(100, ElemantData, void);
+    TS_REFLECT_CLASS_BASE(100, ElementData, void);
 
     const ElementBeh* m_pBehavior = nullptr; // Behavior class that this element data belongs to
 
 public:
-    virtual ~ElemantData() = default;
+    virtual ~ElementData() = default;
 
     void setup(const char* text) {}
 
@@ -117,7 +117,7 @@ public:
         const qd::TypeInfo& castToType = T::getStaticTypeInfo();
         const qd::TypeInfo& lh = getTypeInfo();
         if (lh.isDerivedFrom(castToType))
-            return static_cast<T*>(const_cast<ElemantData*>(this));
+            return static_cast<T*>(const_cast<ElementData*>(this));
         return false;
     }
 
@@ -125,7 +125,9 @@ public:
     qim_ptr<T> beginChild_(const char* name_id) const;
 
 
-}; // class ElemantData
+
+
+}; // class ElementData
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -153,7 +155,7 @@ public:
     virtual void onConstruct(qim::ElemBehCreator* cp)
     {
     }
-    virtual ElemantData* createElementData(const qd::TypeInfo& type) = 0;
+    virtual ElementData* createElementData(const qd::TypeInfo& type) = 0;
 
 }; // class ElementBeh
 
@@ -161,10 +163,10 @@ public:
 
 class Storage
 {
-    qd::vector_map<ImGuiID, ElemantData*> m_dataMap;
+    qd::vector_map<ImGuiID, ElementData*> m_dataMap;
 
 public:
-    ElemantData* findData(ImGuiID id)
+    ElementData* findData(ImGuiID id)
     {
         auto it = m_dataMap.find(id);
         if (it != m_dataMap.end())
@@ -174,7 +176,7 @@ public:
         return nullptr;
     }
 
-    void setData(ImGuiID slot_id, ElemantData* p_data_inst) //
+    void setData(ImGuiID slot_id, ElementData* p_data_inst) //
     {
         m_dataMap[slot_id] = p_data_inst;
     }
@@ -190,19 +192,19 @@ class Context
 
     qd::vector_map<const qd::TypeInfo*, ElementBeh*> m_pBehaviors;
 
-    qd::vector<ElemantData*> m_pElementsStack;
+    qd::vector<ElementData*> m_pElementsStack;
 
 public:
     void init();
     ~Context();
 
     ElementBeh* findBehavior(const qd::TypeInfo& pBehClassInfo) const;
-    bool getElementData(const char* name_id, qim::ElemantData** pOut, const qd::TypeInfo& behClass, const qd::TypeInfo& elemClass) const;
+    bool getElementData(const char* name_id, qim::ElementData** pOut, const qd::TypeInfo& behClass, const qd::TypeInfo& elemClass) const;
 
     template<class T, typename... TArgs>
     T* getOrCreateElem_(const char* name_id, TArgs&&... args) const
     {
-        ElemantData* pElement;
+        ElementData* pElement;
         if (getElementData(name_id, &pElement, T::s_behClass, T::getStaticTypeInfo()))
             return static_cast<T*>(pElement);
 
@@ -211,19 +213,19 @@ public:
         return pInst;
     }
 
-    void stackPushElement(ElemantData* pElem)
+    void stackPushElement(ElementData* pElem)
     {
         m_pElementsStack.push_back(pElem);
     }
 
-    ElemantData* getStackTreeTop()
+    ElementData* getStackTreeTop()
     {
         return m_pElementsStack.back();
     }
 
-    void stackPopElement(ElemantData* pElem)
+    void stackPopElement(ElementData* pElem)
     {
-        ElemantData* pBack = m_pElementsStack.back();
+        ElementData* pBack = m_pElementsStack.back();
         assert(pBack == pElem);
         m_pElementsStack.pop_back();
     }
@@ -235,7 +237,7 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 
-inline void _invokeBegin(Context* ctx, ElemantData* pElem)
+inline void _invokeBegin(Context* ctx, ElementData* pElem)
 {
     pElem->onBegin(g_pCtx);
     g_pCtx->stackPushElement(pElem);
@@ -252,7 +254,7 @@ qim_ptr<T> beginChild_(const char* name_id)
 }
 
 
-inline void endCtrl(ElemantData* pElem)
+inline void endCtrl(ElementData* pElem)
 {
     g_pCtx->stackPopElement(pElem);
     pElem->onEnd(g_pCtx);
@@ -277,7 +279,7 @@ qim_ptr<T>::~qim_ptr()
 
 
 template<class T>
-qim_ptr<T> qim::ElemantData::beginChild_(const char* name_id) const
+qim_ptr<T> qim::ElementData::beginChild_(const char* name_id) const
 {
     T* pElem = g_pCtx->getOrCreateElem_<T>(name_id);
     if (pElem)

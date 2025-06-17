@@ -100,7 +100,7 @@ Node::~Node()
 }
 
 
-void Node::onNodeCreated(NodeCreator* mk)
+void Node::onNodeCreated(qd::NodeCreator* mk)
 {
     if (!m_pParent && mk->parent)
         setParent(mk->parent);

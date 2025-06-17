@@ -6,8 +6,8 @@
 namespace amD {
 namespace window {
 
-class MemoryGraphWnd : public UiWindow {
-    QDB_WINDOW_REGISTER(WndId::MemoryGraph, amD::window::MemoryGraphWnd, amD::UiWindow);
+class MemoryGraphWnd : public AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::MemoryGraph, amD::window::MemoryGraphWnd, amD::AmDbgWindow);
 
 
     ImTextureID mTextureId = 0;
@@ -22,7 +22,7 @@ class MemoryGraphWnd : public UiWindow {
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
-        UiWindow::onCreate(cp);
+        AmDbgWindow::onCreate(cp);
         m_title = "Memory graph";
     }
 

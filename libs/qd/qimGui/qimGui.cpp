@@ -27,11 +27,11 @@ Context::~Context()
 }
 
 
-bool Context::getElementData(const char* name_id, qim::ElemantData** pOutElem, const qd::TypeInfo& behClass,
+bool Context::getElementData(const char* name_id, qim::ElementData** pOutElem, const qd::TypeInfo& behClass,
     const qd::TypeInfo& elemClass) const
 {
     ImGuiID id = ImGui::GetID(name_id);
-    if (ElemantData* pExist = m_pCurrStorage->findData(id))
+    if (ElementData* pExist = m_pCurrStorage->findData(id))
     {
         *pOutElem = pExist;
         return true;
@@ -42,7 +42,7 @@ bool Context::getElementData(const char* name_id, qim::ElemantData** pOutElem, c
     ASSERT_F(pBeh, "Behavior class not found for type '%s', name:'%s'", behClass.getFullName().c_str(), name_id);
     if (!pBeh)
         return true;
-    ElemantData* pBaseCtrl = pBeh->createElementData(elemClass);
+    ElementData* pBaseCtrl = pBeh->createElementData(elemClass);
     if (!pBaseCtrl)
         return true;
 
