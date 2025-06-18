@@ -106,7 +106,7 @@ void DbgGuiDesktop::drawImGuiMainFrame()
         ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
         // draw static nodes
-        drawContentImp();
+        this->drawContentImp();
     }
     ImGui::End();
 
@@ -148,7 +148,8 @@ void DbgGuiDesktop::_drawToolBar()
         uv0 = ImVec2(0.0f, 0.0f); // TODO ICONS
         uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
 
-        if (pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto))
+        pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugTraceStepInto);
+        if (pCurShortcut)
         {
             if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
             {

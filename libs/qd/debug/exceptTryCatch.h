@@ -38,7 +38,7 @@ namespace qd {
 // turning exception into lambda
 #define G_CATCH(TException) \
     if (c_def(0))           \
-    auto _tmp_cb##__LINE__ = [&](TException)
+    [[maybe_unused]] auto _tmp_cb##__LINE__ = [&](TException)
 
 #endif // EASTL_EXCEPTIONS_ENABLED
 //////////////////////////////////////////////////////////////////////////

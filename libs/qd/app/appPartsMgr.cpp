@@ -154,7 +154,7 @@ void AppPartsManager::destroy()
 
 AppPartsManager::~AppPartsManager()
 {
-    // assert(m_pParts.empty());
+    assert(m_pParts.empty());
 }
 
 

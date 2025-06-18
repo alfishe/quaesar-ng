@@ -21,9 +21,8 @@ public:
     virtual ~UiWindow() = default;
 
     virtual qd::string getText() const override { return m_title; }
-
+    virtual void setText(const char* pText) { m_title = pText; }
     virtual void draw() override;
-
 
 }; // class UiWindow
 

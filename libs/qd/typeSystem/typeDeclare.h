@@ -1,6 +1,16 @@
 #pragma once
+#include "EABase/config/eacompilertraits.h"
 #include "qd/typeSystem/stdTypeId.h"
 #include "qd/typeSystem/typeInfoBuilder.h"
+
+
+#if defined(EA_COMPILER_CLANG) || defined(EA_COMPILER_CLANG_CL)
+#define QD_DISABLE_CLANG_WARNING(w)   \
+    _Pragma("clang diagnostic push"); \
+    _Pragma(EACLANGWHELP1(w));
+#else
+#define QD_DISABLE_CLANG_WARNING(w)
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,7 +47,7 @@ private:                                                                        
 public:                                                                             \
     inline static const qd::TypeInfo* s_pTypeInfo = qd::_regTypeInfo_<ClassMeta>(); \
     constexpr static THash32 CID = qd::hash_type_info_name(#ObjectClass);           \
-                                                                                    \
+    QD_DISABLE_CLANG_WARNING("-Winconsistent-missing-override");                    \
     virtual THash32 getCid() const /*override*/                                     \
     {                                                                               \
         return ObjectClass::CID; /* constexpr ID from fnv1hhash of type name */     \
@@ -52,7 +62,7 @@ public:                                                                         
         validateStaticTypeInfoPtr(ObjectClass::s_pTypeInfo);                        \
         return *ObjectClass::s_pTypeInfo;                                           \
     }                                                                               \
-                                                                                    \
+    EA_RESTORE_CLANG_WARNING()                                                      \
 private:                                                                            \
     struct ClassMeta : public qd::TypeInfoBuilderObject_<ObjectClass> {             \
                                                                                     \

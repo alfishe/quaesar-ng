@@ -118,7 +118,7 @@ public:
         const qd::TypeInfo& lh = getTypeInfo();
         if (lh.isDerivedFrom(castToType))
             return static_cast<T*>(const_cast<ElementData*>(this));
-        return false;
+        return nullptr;
     }
 
     template<class T>

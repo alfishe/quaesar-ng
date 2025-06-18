@@ -17,6 +17,7 @@ namespace qd {
     protected:
         qd::vector<ref_ptr<qd::UiNode>> m_pWindows;
 	    qd::Application* mApp = nullptr;
+        qd::UiNode* m_pModalDlg = nullptr;
 
 	public:
         virtual ~UiDesktop();
@@ -26,13 +27,7 @@ namespace qd {
         void addView(qd::UiNode* view);
 
 
-        void setModalWmd(qd::UiNode* pWnd)
-        {
-            ASSERT_AND_DO(pWnd, return);
-
-            m_pWindows.push_back(ref_ptr<qd::UiNode>(pWnd));
-            pWnd->setVisible(true);
-        }
+        void showModal(qd::UiNode* pWnd);
 
 	};  // class UiDesktop
 

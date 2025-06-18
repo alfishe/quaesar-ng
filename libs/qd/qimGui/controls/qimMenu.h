@@ -1,7 +1,8 @@
 #pragma once
+#include "EASTL/fixed_function.h"
+#include "qd/qimGui/qimGui.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/typeSystem/typeDeclare.h"
-#include "qd/qimGui/qimGui.h"
 
 
 FORWARD_DECLARATION_2(qd, UiOperation);
@@ -14,9 +15,9 @@ class UiMenuBeh;
 #define QIM_ELEMENT_CLASS(ElemClass, BaseClass, BehClass)                   \
     TS_REFLECT_CLASS(ElemClass, BaseClass);                                 \
     friend class BehClass;                                                  \
-    using TBehClass = BehClass;                                                  \
+    using TBehClass = BehClass;                                             \
     inline static const qd::TypeInfo& s_behClass = qd::typeof_<BehClass>(); \
-    virtual const qd::TypeInfo* getBehaviorClass() const                    \
+    virtual const qd::TypeInfo* getBehaviorClass() const override           \
     {                                                                       \
         return &ElemClass::s_behClass;                                      \
     }                                                                       \
@@ -52,9 +53,11 @@ private:
 
 struct UiMenuItem : public qim::ElementData {
     QIM_ELEMENT_CLASS(qim::UiMenuItem, qim::ElementData, qim::UiMenuBeh);
+private:
+    eastl::fixed_function<16, void()> m_onClickCb;
+    qd::string m_text;
 
-    eastl::fixed_function<32, void()> m_onClickCb;
-
+public:
     void setup(const char* text)
     { //
         m_text = text;
@@ -64,16 +67,23 @@ struct UiMenuItem : public qim::ElementData {
     {
         auto pMenu = ctx->getStackTreeTop()->cast_<qim::UiMenu>();
         assert(pMenu);
-        if (pMenu && pMenu->isOpen())
-            ImGui::MenuItem(m_text.c_str());
+        if (!pMenu || !pMenu->isOpen())
+            return;
+        bool bClick = ImGui::MenuItem(m_text.c_str());
+        if (bClick && m_onClickCb)
+            m_onClickCb();
+        m_onClickCb = {};
     }
 
     void setText(const char* text) { m_text = text; }
     const char* getText() const { return m_text.c_str(); }
 
-private:
-    qd::string m_text;
-    
+    template<typename TFunc>
+    void onClick(TFunc cb)
+    {
+        m_onClickCb = cb;
+    }
+
 }; // struct UiMenuItem
 //////////////////////////////////////////////////////////////////////////
 
@@ -118,10 +128,7 @@ class UiMenuOperationBeh : public qim::ElementBeh
     TS_END();
 
 public:
-    ElementData* createElementData(const qd::TypeInfo& type) override
-    {
-        return new UiMenuOperation();
-    }
+    ElementData* createElementData(const qd::TypeInfo& type) override { return new UiMenuOperation(); }
 
 }; // class UiMenuOperationBeh
 

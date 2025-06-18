@@ -74,8 +74,6 @@ void ImGuiContextManager::destroyModule()
 }
 
 
-void ImGuiContextManager::onModuleStartup(qd::ModuleCreateParams* mc) {}
-
 
 
 void QImGuiContext::onSdlEventProc(SDL_Event& event)

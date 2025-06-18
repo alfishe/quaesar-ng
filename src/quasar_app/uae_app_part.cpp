@@ -32,7 +32,7 @@ void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
 
     qd::NodeCreator mk;
     m_pDesktop = mk.make_<UaeWndDesktop>();
-    auto pDlg = m_pDesktop->addChild_<UaeOptionsDlg>();
+    auto pDlg = m_pDesktop->addChild_<UaeOptionsDlg>("options");
 }
 
 
@@ -175,22 +175,20 @@ void UaeAppPart::update(float Delta, float Time) {
         if (auto pMenu = qim::beginChild_<qim::UiMenu>("File")) {
             if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
             }
+            auto pSettings = pMenu->beginChild_<qim::UiMenuItem>("Settings");
+            pSettings->onClick([&]() {
+                UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
+                m_pDesktop->showModal(pOptionsDlg);
+            });
         }
         if (auto pEmulator = qim::beginChild_<qim::UiMenu>("Emulator")) {
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::ToggleTurboEmulation));
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
             pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
         }
-        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File3")) {
-            auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1");
-            pItem->m_onClickCb = [&]() {
-                UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
-                m_pDesktop->doModal(pOptionsDlg);
-            };
-        }
         ImGui::EndMainMenuBar();
     }
-
+    m_pDesktop->draw();
 
     m_pImGui->endFrame();
 }

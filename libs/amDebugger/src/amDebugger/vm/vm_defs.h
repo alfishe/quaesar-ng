@@ -45,4 +45,14 @@ enum CopperStates {
     COP_start_delay
 };
 
+
+enum DebuggerMode {
+    DebuggerMode_Live,
+    DebuggerMode_Break,
+};
+
+
+
 };  // namespace amD
+
+

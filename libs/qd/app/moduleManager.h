@@ -19,25 +19,6 @@
 
 namespace qd {
 
-#if (0)
-
-class CDummyModule : public IModuleInterface
-{
-public:
-    static qd::ECgModuleID getModuleTypeId() { return qd::ECgModuleID::DUMMY; }
-
-private:
-public:
-    CDummyModule(qd::CModuleCreateParams* p) {}
-
-}; // class
-static ModuleRegistrator_<CDummyModule> s;
-
-#endif // 0
-
-
-using ECgModuleID = const qd::TypeInfo*;
-
 
 //////////////////////////////////////////////////////////////////////////
 class ModuleInfo
@@ -48,8 +29,8 @@ class ModuleInfo
 public:
     const qd::TypeInfo* m_ModuleId;
     IModuleInterface* m_pInstance;
-    eastl::fixed_function<8, IModuleInterface*(qd::ModuleCreateParams*)> m_CreateFunc;
-    typedef eastl::fixed_function<8, IModuleInterface*(qd::ModuleCreateParams*)> TCreateFunc;
+    eastl::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> m_CreateFunc;
+    typedef eastl::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> TCreateFunc;
     uint32_t m_nInstanceRef;
     qd::string m_ModuleName;
 
@@ -67,19 +48,12 @@ public:
     uint32_t releaseInstance();
     void merge(const ModuleInfo& r);
 
-    IModuleInterface* makeInstance(bool bRegisterSingleton, qd::ModuleCreateParams* pCreateParam = nullptr);
+    IModuleInterface* makeInstance(bool bRegisterSingleton, const qd::ModuleCreateParams& createParam);
     const qd::TypeInfo& getModuleId() const { return *m_ModuleId; }
-
-    IModuleInterface* getOrCreateInstance()
-    {
-        if (m_pInstance)
-            return m_pInstance;
-        return makeInstance(true);
-    }
 
     // MAKES MODULE INSTANCE
     template<class TModuleClass>
-    TModuleClass* makeInstance_(bool bRegisterSingleton, qd::ModuleCreateParams* mc = nullptr);
+    TModuleClass* makeInstance_(bool bRegisterSingleton, const qd::ModuleCreateParams& mc);
 
 
 }; // class ModuleInfo
@@ -92,7 +66,7 @@ struct ModuleRegistrator_ {
     typedef ModuleRegistrator_<TModule> TThis;
     inline ModuleRegistrator_(const char* pClassName); // CONSTRUCTOR TO REGISTER THIS STRUCT IN #ModuleManager
 
-    static qd::IModuleInterface* createModuleFunc(qd::ModuleCreateParams* pCP);
+    static qd::IModuleInterface* createModuleFunc(const qd::ModuleCreateParams& mc);
 
 }; // struct ModuleRegistrator_
 //////////////////////////////////////////////////////////////////////////
@@ -103,7 +77,7 @@ struct ModuleRegistratorNoCreate_ {
     typedef ModuleRegistratorNoCreate_<TModule> TThis;
     inline ModuleRegistratorNoCreate_(const char* pClassName); // CONSTRUCTOR TO REGISTER THIS STRUCT IN #ModuleManager
 
-    static qd::IModuleInterface* createModuleFunc(qd::ModuleCreateParams* pCP) { return nullptr; }
+    static qd::IModuleInterface* createModuleFunc(const qd::ModuleCreateParams&) { return nullptr; }
 
 }; // struct ModuleRegistrator_
 //////////////////////////////////////////////////////////////////////////
@@ -131,6 +105,8 @@ public:
 private:
     static TThis* m_pSingleInstance;
     static bool m_bSingleDestroyed;
+public:
+    qd::ModuleCreateParams m_defaultCreateParam;
 
 public:
     static ModuleManager* I();
@@ -154,11 +130,11 @@ public:
     const ModuleManager::TModuleInfoMap& getModuleInfoMap() const { return m_pModuleInfoMap; }
 
 
-    ModuleInfo* overrideModule(const qd::TypeInfo& ModuleId, const ModuleInfo::TCreateFunc& pCreateFunc);
+    ModuleInfo* overrideModule(const qd::TypeInfo& ModuleId, const ModuleInfo::TCreateFunc& createFunc);
 
     // Default create function
     template<class TModuleClass>
-    inline ModuleInfo* overrideModule_(const ModuleInfo::TCreateFunc& pCreateFunc = CCallbackNull());
+    inline ModuleInfo* overrideModule_(const ModuleInfo::TCreateFunc& pCreateFunc = {});
 
     ModuleInfo* registerModule(const ModuleInfo& i);
 
@@ -281,7 +257,7 @@ public:
     void destroyModule(const qd::TypeInfo& moduleId, IModuleInterface* pInstance);
 
 
-    static void _onStatrupInstance(IModuleInterface* pModule, qd::ModuleCreateParams* mc = nullptr)
+    static void _onStatrupInstance(IModuleInterface* pModule, const qd::ModuleCreateParams& mc)
     {
         if (!pModule->m_ModuleState.m_bModStartuped && !pModule->m_ModuleState.m_bModShutdowned)
         {
@@ -353,10 +329,9 @@ inline ModuleInfo* ModuleManager::overrideModule_(const ModuleInfo::TCreateFunc&
 
 
 template<class TModuleClass>
-qd::IModuleInterface* ModuleRegistrator_<TModuleClass>::createModuleFunc(qd::ModuleCreateParams* pCP)
+qd::IModuleInterface* ModuleRegistrator_<TModuleClass>::createModuleFunc(const qd::ModuleCreateParams& cp)
 {
-    // non static function but with this == null, for emscripten happy
-    TModuleClass* pMod = new TModuleClass(/*pCP*/);
+    TModuleClass* pMod = new TModuleClass(cp);
     return pMod;
 }
 
@@ -380,7 +355,7 @@ inline ModuleRegistratorNoCreate_<TModule>::ModuleRegistratorNoCreate_(const cha
 
 
 template<class TModuleClass>
-TModuleClass* ModuleInfo::makeInstance_(bool bRegisterSingleton, qd::ModuleCreateParams* mc /*= nullptr */)
+TModuleClass* ModuleInfo::makeInstance_(bool bRegisterSingleton, const qd::ModuleCreateParams& mc)
 {
     TThis* pModuleInfo = this;
     ref_ptr<TModuleClass> pNewInstance = new TModuleClass(mc); // MAKE INSTANCE

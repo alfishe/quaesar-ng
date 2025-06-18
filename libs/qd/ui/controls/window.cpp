@@ -6,10 +6,29 @@ namespace qd {
 
 void UiWindow::draw()
 {
-    bool vis = ImGui::Begin(m_title.c_str(), &m_bVisible, ImGuiWindowFlags_NoScrollbar);
+    uint32_t flg = ImGuiWindowFlags_NoScrollbar;
+    const bool bModal = isModal();
+    bool vis;
+
+    assert(!m_title.empty());
+
+    if (bModal)
+    {
+        ImGui::OpenPopup(m_title.c_str());
+        vis = ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+    }
+    else
+        vis = ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+
     if (vis)
+    {
         drawContentImp();
-    ImGui::End();
+
+        if (bModal)
+            ImGui::EndPopup();
+        else
+            ImGui::End();
+    }
 }
 
 }; // namespace qd

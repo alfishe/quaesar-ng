@@ -1,11 +1,11 @@
-#include "TypeRegistry.h"
+#include "qd/typeSystem/typeRegistry.h"
 #include "EASTL/fixed_vector.h"
 #include "EASTL/sort.h"
 #include "EASTL/vector.h"
-#include "ReflectedType.h"
-#include "TypeInfo.h"
-#include <qd/debug/assert.h>
-#include <qd/mem/fnvHash.h>
+#include "reflectedType.h"
+#include "typeInfo.h"
+#include "qd/debug/assert.h"
+#include "qd/mem/fnvHash.h"
 #include "qd/debug/exception.h"
 #include "typeInfoBuilder.h"
 

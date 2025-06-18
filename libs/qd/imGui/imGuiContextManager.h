@@ -90,7 +90,7 @@ public:
     bool m_bIsInitialized = false;
 
 public:
-    virtual void onModuleStartup(qd::ModuleCreateParams* mc) override;
+    ImGuiContextManager(const qd::ModuleCreateParams& mc) : TSuper(mc) {}
 
     bool isInitialized() const { return !m_pImContexts.empty(); }
 

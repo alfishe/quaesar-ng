@@ -9,7 +9,8 @@ namespace qd {
 Application::Application()
 {
     g_pInstance = this;
-    m_pAppParts = new AppPartsManager(&ModuleCreateParams(this));
+    m_pModuleManager = qd::ModuleManager::get();
+    m_pAppParts = m_pModuleManager->getModuleInstOrCreate_<qd::AppPartsManager>();
 }
 
 

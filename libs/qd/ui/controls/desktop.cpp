@@ -29,3 +29,14 @@ void qd::UiDesktop::addView(qd::UiNode* view)
 
     m_pWindows.push_back(view);
 }
+
+
+void qd::UiDesktop::showModal(qd::UiNode* pWnd)
+{
+    ASSERT_AND_DO(pWnd, return, "No wnd");
+
+    pWnd->setModal(true);
+    pWnd->setVisible(true);
+
+    m_pModalDlg = pWnd;
+}

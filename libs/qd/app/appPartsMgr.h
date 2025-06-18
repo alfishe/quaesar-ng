@@ -25,8 +25,9 @@ private:
     TTime64 m_TimeNowFrame = 0;
 
 public:
-    AppPartsManager(ModuleCreateParams* pCP = nullptr)
-        : m_pApp(pCP->app)
+    AppPartsManager(const qd::ModuleCreateParams& cp)
+        : TSuper(cp)
+        , m_pApp(cp.app)
     {}
 
     inline int getNumAppParts() const { return (int)m_pParts.size(); }
@@ -96,7 +97,6 @@ public:
 
     void destroyPart(ref_ptr<AppPartBase> pPart);
     void destroy();
-
     virtual ~AppPartsManager();
 
     void update(float dt, float time);

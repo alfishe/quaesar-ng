@@ -33,7 +33,7 @@ public:
 
     void drawImGuiMainFrame();
 
-    void destroy();
+    virtual void destroy() override;
 
     Debugger* getDbg() const { return m_pDbg; }
 

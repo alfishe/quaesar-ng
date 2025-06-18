@@ -10,7 +10,7 @@ namespace window {
 
 void ScreenWnd::drawContentImp() {
     VM* vm = getDbg()->getVm();
-    ImGuiIO& io = ImGui::GetIO();
+    //ImGuiIO& io = ImGui::GetIO();
 
     int amiga_width = vm->getScreenSizeX();
     int amiga_height = vm->getScreenSizeY();

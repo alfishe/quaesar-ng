@@ -10,6 +10,7 @@
 
 #if (SDL_ASSERT_LEVEL > 0)
 
+//------------------------------------------------------------------------
 #define QDSDL_enabled_assert_2(condition, pFormat, ...)                                     \
     do                                                                                      \
     {                                                                                       \
@@ -32,6 +33,7 @@
     } while (SDL_NULL_WHILE_LOOP_CONDITION)
 
 #endif /* enabled assertions support code */
+//////////////////////////////////////////////////////////////////////////
 
 
 #if SDL_ASSERT_LEVEL > 0 /* normal settings. */
@@ -48,13 +50,19 @@
 #define QD_HALT(pFormat, ...) QDSDL_enabled_assert_2(0, pFormat, ##__VA_ARGS__)
 
 
-#define ASSERT_AND_DO(expression, do_action, ...)                                    \
+//------------------------------------------------------------------------
+#define ASSERT_AND_DO(expression, do_action, ...)                                       \
     if (EASTL_UNLIKELY(!(expression)))                                                  \
     {                                                                                   \
         qd::string textFormat = qd::stringFormat(__VA_ARGS__);                          \
         struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
         const SDL_AssertState sdl_assert_state =                                        \
             SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \
+        if (sdl_assert_state == SDL_ASSERTION_BREAK)                                    \
+        {                                                                               \
+            SDL_TriggerBreakpoint();                                                    \
+        }                                                                               \
         do_action;                                                                      \
     }                                                                                   \
     else
+//////////////////////////////////////////////////////////////////////////

@@ -81,39 +81,39 @@ public:
 
 public:
     Var16(int Value)
-        : m_Int32(Value)
-        , m_type(DATA_INT32)
+        : m_type(DATA_INT32)
+        , m_Int32(Value)
     {}
 
     Var16(bool bValue)
-        : m_Bool(bValue)
-        , m_type(DATA_BOOL)
+        : m_type(DATA_BOOL)
+        , m_Bool(bValue)
     {}
 
 
     Var16(float Value)
-        : m_Float(Value)
-        , m_type(DATA_FLOAT)
+        : m_type(DATA_FLOAT)
+        , m_Float(Value)
     {}
 
     Var16(uint32_t Value)
-        : m_UInt32(Value)
-        , m_type(DATA_UINT32)
+        : m_type(DATA_UINT32)
+        , m_UInt32(Value)
     {}
 
     Var16(int64_t Value)
-        : m_Int64(Value)
-        , m_type(DATA_INT64)
+        : m_type(DATA_INT64)
+        , m_Int64(Value)
     {}
 
     Var16(uint64_t Value)
-        : m_UInt64(Value)
-        , m_type(DATA_UINT64)
+        : m_type(DATA_UINT64)
+        , m_UInt64(Value)
     {}
 
     Var16(void* Value)
-        : m_pPointer(Value)
-        , m_type(DATA_POINTER)
+        : m_type(DATA_POINTER)
+        , m_pPointer(Value)
     {}
 
 

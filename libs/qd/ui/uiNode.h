@@ -36,6 +36,7 @@ private:
 
 protected:
     bool m_bVisible = true;
+    bool m_bModal = false;
 
 public:
     virtual void onNodeCreated(qd::NodeCreator* mk) override;
@@ -52,12 +53,15 @@ public:
     UiNode* addChild(ref_ptr<qd::UiNode> pChild);
 
     template<class T, typename... TArgs>
-    inline T* addChild_(TArgs&&... args)
+    inline T* addChild_(const char* p_name = nullptr, TArgs&&... args)
     {
         ref_ptr<T> pChild = new T();
-        NodeCreator mk;
+        qd::NodeCreator mk;
         mk.parent = this;
+        mk.id = p_name ? qd::fnv1aHash(p_name) : 0;
         pChild->onNodeCreated(&mk);
+        if (p_name)
+            pChild->setText(p_name);
         pChild->setup(std::forward<TArgs>(args)...);
         UiNode* pNode = addChild(pChild);
         return static_cast<T*>(pNode);
@@ -114,13 +118,14 @@ public:
 
 public:
     virtual void updateBeforeDraw() {}
-
     virtual void drawContentImp();
-
     virtual void draw();
 
     bool isVisible(bool bCheckParents = false) const;
     bool setVisible(bool bVisible);
+
+    bool isModal() const { return m_bModal; }
+    void setModal(bool Modal) { m_bModal = Modal; }
 
     void destroyRecursive();
 
@@ -140,7 +145,7 @@ class UiNodesChildList : public qd::INodesChildList
 
 public:
     UiNode* getOwner() const { return static_cast<UiNode*>(m_pParent); }
-    virtual void onNodeCreated(qd::NodeCreator* mk) { TSuper::onNodeCreated(mk); }
+    virtual void onNodeCreated(qd::NodeCreator* mk) override { TSuper::onNodeCreated(mk); }
     virtual int getNumChild() override;
     virtual UiNode* getChild(int idx) override;
     virtual bool addChild(Node* child) override;

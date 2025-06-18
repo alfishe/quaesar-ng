@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <EASTL/type_traits.h>
 #include <qd/debug/assert.h>
+#include "limits"
 
 
 namespace qd
@@ -85,8 +86,8 @@ namespace qd
 		inline friend myself operator - (const myself& x, const myself& y) { myself t(x); t.mV -= y.mV; return t;}
 
 		// multiply only on integer values
-		inline constexpr myself operator * (int a) const { return myself::CreateFromRaw(mV * a); }
-		inline constexpr myself operator / (int a) const { return myself::CreateFromRaw(mV / a); }
+		inline constexpr myself operator * (int a) const { return myself::createFromRaw(mV * a); }
+		inline constexpr myself operator / (int a) const { return myself::createFromRaw(mV / a); }
 
 		// comparison operators
 		inline friend bool operator == (const myself& x, const myself& y) { return x.mV == y.mV; }

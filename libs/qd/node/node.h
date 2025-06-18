@@ -181,7 +181,7 @@ public:
     virtual ~NodesChildList();
 
 public:
-    virtual void onNodeCreated(qd::NodeCreator* mk) { TSuper::onNodeCreated(mk); }
+    virtual void onNodeCreated(qd::NodeCreator* mk) override { TSuper::onNodeCreated(mk); }
     virtual int getNumChild() override;
     virtual Node* getChild(int idx) override;
     virtual bool addChild(Node* child) override;
@@ -195,6 +195,7 @@ public:
 
 struct NodeCreator {
     Node* parent = nullptr;
+    uint32_t id = 0;
 
     template<class TClass, typename... TArgs>
     TClass* make_(TArgs&&... args)

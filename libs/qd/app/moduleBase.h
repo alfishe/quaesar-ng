@@ -55,10 +55,10 @@ class IModuleInterface
     friend class ModuleManager;
 
 public:
-    IModuleInterface(qd::ModuleCreateParams* pCP = nullptr) {}
+    IModuleInterface(const qd::ModuleCreateParams& /*mc*/) {}
 
     // Called right after the module DLL has been loaded and the module object has been created
-    virtual void onModuleStartup(qd::ModuleCreateParams* mc) // override
+    virtual void onModuleStartup(const qd::ModuleCreateParams& mc)
     {}
 
     // Called before the module has been unloaded

@@ -1,8 +1,8 @@
 #pragma once
+#include <qd/base/types.h>
 #include <EASTL/span.h>
 #include <amDebugger/vm/custom_regs.h>
 #include <amDebugger/vm/vm_defs.h>
-#include <qd/base/types.h>
 
 namespace amD {
 

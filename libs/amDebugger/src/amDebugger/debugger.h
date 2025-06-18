@@ -29,12 +29,6 @@ constexpr static int BREAKPOINTS_MAX = 20;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-enum DebuggerMode {
-    DebuggerMode_Live,
-    DebuggerMode_Break,
-};
-//////////////////////////////////////////////////////////////////////////
-
 class Breakpoint {
 public:
     AddrRef addr1 = {};
@@ -95,7 +89,7 @@ public:
     static Debugger* get();
 
     void init();
-    void destroy();
+    virtual void destroy() override;
     virtual void update(float dt, float time) override;
     virtual void render() override;
     bool isVisible() const;

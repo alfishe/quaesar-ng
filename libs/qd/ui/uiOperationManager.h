@@ -42,11 +42,11 @@ public:
     static UiOperationMgr* get() { return g_pInstance; }
 
     UiOperationMgr();
-    virtual void onNodeCreated(NodeCreator* mk);
+    virtual void onNodeCreated(NodeCreator* mk) override;
     ~UiOperationMgr() { assert(!mInit); }
 
     void createOperations(qd::UiOperationCreator* ca);
-    void destroy();
+    virtual void destroy() override;
 
     EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
 

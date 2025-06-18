@@ -14,6 +14,9 @@ void UiNode::onNodeCreated(NodeCreator* mk)
 
     if (m_pParent)
         assert(m_pParent->getTypeInfo().isDerivedFrom_<qd::UiNode>());
+
+    if (mk->id)
+        setId(mk->id);
 }
 
 
@@ -177,12 +180,7 @@ void UiNode::setId(uint32_t newId)
     {
         assert(!parent->findChildById(newId) || parent->findChildById(newId) == this);
     }
-    uint32_t oldID = m_id;
     m_id = newId;
-
-    //         CMessage msg(EMsg::ON_CTRL_ID_CHANGED);
-    //         msg.allocMsg_<ECompMtdX::ON_ID_CHANGED_t>(this, oldID, newId);
-    //         m_pControls->sendMessage(this, msg);
 }
 
 
