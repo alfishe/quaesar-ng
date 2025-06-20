@@ -57,3 +57,12 @@ qd::Log& logConsole() {
 
 
 };  // namespace qd
+
+
+void qdlog(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    SDL_LogMessageV(0, SDL_LOG_PRIORITY_INFO, fmt, args);
+    va_end(args);
+}

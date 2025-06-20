@@ -44,7 +44,7 @@ void DbgGuiDesktop::onNodeCreated(qd::NodeCreator* mk)
     operationCreate.dbg = m_pDbg;
     m_pOperationMgr->createOperations(&operationCreate);
 
-    qim::getContext()->init();
+    qim::createContext();
 
 #if 0
     qd::UiMainMenu* pMenu = this->addChild_<qd::UiMainMenu>();
@@ -198,29 +198,29 @@ void DbgGuiDesktop::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File"))
+        QCTRL(qim::UiMenu, pMenu, "File")
         {
-            //if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {}
         }
 
-        if (auto pEmulator = qim::beginChild_<qim::UiMenu>("Emulator"))
+        QCTRL(qim::UiMenu, pEmulator, "Emulator")
         {
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::ToggleTurboEmulation));
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga));
         }
 
-        if (auto pDebug = qim::beginChild_<qim::UiMenu>("Debug"); pDebug->isOpen())
+        QCTRL(qim::UiMenu, pDebug, "Debug")
+        if (pDebug->isOpen())
         {
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DebugTraceStart));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceStart));
             ImGui::Separator();
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DisasmTraceStep));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DisasmTraceStepOut));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DebugTraceContinue));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::DisasmToggleBreakpoint));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStep));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStepOut));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceContinue));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmToggleBreakpoint));
             ImGui::Separator();
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::CopperTraceStep));
-            pDebug->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::CopperToggleBreakpoint));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperTraceStep));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperToggleBreakpoint));
             ImGui::Separator();
 
             if (pDebug->isOpen())
@@ -243,7 +243,8 @@ void DbgGuiDesktop::_drawMainMenuBar()
             }
         }
 
-        if (auto pWindow = qim::beginChild_<qim::UiMenu>("Window"); pWindow->isOpen())
+        QCTRL(qim::UiMenu, pWindow, "Window")
+        if (pWindow->isOpen())
         {
             for (qd::UiNode* pCurWnd : m_pWindows)
             {

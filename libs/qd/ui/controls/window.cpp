@@ -1,33 +1,29 @@
 #include "window.h"
 #include "imgui/imgui.h"
+#include "qd/qimGui/controls/qimWindow.h"
+#include "qd/qimGui/qimProperty.h"
 
 
 namespace qd {
 
 void UiWindow::draw()
 {
-    uint32_t flg = ImGuiWindowFlags_NoScrollbar;
-    const bool bModal = isModal();
-    bool vis;
-
     assert(!m_title.empty());
 
-    if (bModal)
+    QCTRL(qim::Window, pWnd, m_title.c_str())
     {
-        ImGui::OpenPopup(m_title.c_str());
-        vis = ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
-    }
-    else
-        vis = ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+         if (m_size.isValid())
+             pWnd->propAdd_<qim::Window::Size>().set(m_size);
 
-    if (vis)
-    {
-        drawContentImp();
+        pWnd->setModal(isModal());
 
-        if (bModal)
-            ImGui::EndPopup();
-        else
-            ImGui::End();
+        if (pWnd->sectChildBegin())
+        {
+            // DRAW CHILD
+            drawContentImp();
+            pWnd->sectChildEnd();
+        }
+        setVisible(pWnd->isVisible());
     }
 }
 

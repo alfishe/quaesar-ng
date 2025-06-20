@@ -171,24 +171,27 @@ void UaeAppPart::unlockUaeScreenTexBuf() {
 void UaeAppPart::update(float Delta, float Time) {
     m_pImGui->newFrame();
 
+    //auto pRoot = qim::makeDesktop();
+
     if (ImGui::BeginMainMenuBar()) {
-        if (auto pMenu = qim::beginChild_<qim::UiMenu>("File")) {
-            if (auto pItem = pMenu->beginChild_<qim::UiMenuItem>("Item 1")) {
+        QCTRL(qim::UiMenu, pMenu, "File") {
+            if (auto pItem = pMenu->childAdd_<qim::UiMenuItem>("Item 1")) {
             }
-            auto pSettings = pMenu->beginChild_<qim::UiMenuItem>("Settings");
-            pSettings->onClick([&]() {
+            QCTRL(qim::UiMenuItem, pSettings, "Settings")
+            if (pSettings->isClicked()) {
                 UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
                 m_pDesktop->showModal(pOptionsDlg);
-            });
+            }
         }
-        if (auto pEmulator = qim::beginChild_<qim::UiMenu>("Emulator")) {
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::ToggleTurboEmulation));
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            pEmulator->beginChild_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
+        QCTRL(qim::UiMenu, pEmulator, "Emulator") {
+            pEmulator->childAdd_<qim::UiMenuOperation>(STRINGIFY(amD::operation::ToggleTurboEmulation));
+            pEmulator->childAdd_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+            pEmulator->childAdd_<qim::UiMenuOperation>(STRINGIFY(amD::operation::UaeResetAmiga));
         }
         ImGui::EndMainMenuBar();
     }
-    m_pDesktop->draw();
+    if (m_bShowImgui)
+        m_pDesktop->draw();
 
     m_pImGui->endFrame();
 }

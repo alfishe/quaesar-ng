@@ -17,7 +17,7 @@ struct UiNodeMessage : public qd::NodeMessage {
 //////////////////////////////////////////////////////////////////////////
 class UiNode : public qd::Node
 {
-    TS_BEGIN_REFLECT_CLASS_BASE(1000, qd::UiNode, qd::Node);
+    TS_BEGIN_REFLECT_CLASS_BASE(50, qd::UiNode, qd::Node);
     TS_END();
 
     static constexpr uint32_t UNDEF_ID = 0;
@@ -36,7 +36,6 @@ private:
 
 protected:
     bool m_bVisible = true;
-    bool m_bModal = false;
 
 public:
     virtual void onNodeCreated(qd::NodeCreator* mk) override;
@@ -84,7 +83,7 @@ public:
     template<class T>
     inline T* getChildById_(uint32_t ID) const
     {
-        return ptr<T>(getChildById(ID));
+        return static_cast<T*>(getChildById(ID));
     }
 
     int getNumChild() const;
@@ -123,9 +122,6 @@ public:
 
     bool isVisible(bool bCheckParents = false) const;
     bool setVisible(bool bVisible);
-
-    bool isModal() const { return m_bModal; }
-    void setModal(bool Modal) { m_bModal = Modal; }
 
     void destroyRecursive();
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "qd/base/point2.h"
 #include "qd/base/base.h"
 #include "qd/node/node.h"
 #include "qd/stl/vector.h"
@@ -15,15 +16,26 @@ class UiWindow : public qd::UiNode
     TS_END();
 
     qd::string m_title;
+    qd::Size m_size = {-1, -1};
+    bool m_bModal = false;
 
 public:
     UiWindow() = default;
     virtual ~UiWindow() = default;
 
+    bool isModal() const { return m_bModal; }
+    void setModal(bool Modal) { m_bModal = Modal; }
+
     virtual qd::string getText() const override { return m_title; }
     virtual void setText(const char* pText) { m_title = pText; }
     virtual void draw() override;
 
+    qd::Size getSize() const {
+        return m_size;
+    }
+    void setSize(const qd::Size& Size) {
+        m_size = Size;
+    }
 }; // class UiWindow
 
 

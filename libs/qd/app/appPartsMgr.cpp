@@ -83,7 +83,7 @@ void AppPartsManager::addPart(ref_ptr<AppPartBase> pPart)
     if (strPartName.empty())
         pPart->setPartName(pPart->getTypeInfo().getTypeName());
 
-    if (!addPartTry(pPart))
+    if (!addPartTry(std::move(pPart)))
     {
         G_THROW_OR_DO(Exception("AddPartError: Duplicate Part Found: \"%s\"", strPartName.c_str()), return);
     }
@@ -181,7 +181,7 @@ void AppPartsManager::onSdlEventProc(SDL_Event& event)
 {
     for (int i = 0; i < getNumAppParts(); i++)
     {
-        AppPartBase* pCurPart = getPartByInd(i);
+        AppPartBase* pCurPart = m_pParts[i];
 
         if (pCurPart && pCurPart->hasMtd(EAppPartMtd::UPDATE))
         {

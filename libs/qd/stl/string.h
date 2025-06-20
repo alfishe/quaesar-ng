@@ -2,9 +2,14 @@
 #include "qd/stl/forwardDecl.h"
 #include <EASTL/string.h>
 #include <EASTL/string_view.h>
+#include <EASTL/fixed_string.h>
 
 
 namespace qd {
+
+template<size_t S>
+using TInlineString = eastl::fixed_string<char, S, true, eastl::allocator>;
+using InlineString = eastl::fixed_string<char, 255, true, eastl::allocator>;
 
 using string = eastl::basic_string<char, eastl::allocator>;
 using string_view = eastl::basic_string_view<char>;
@@ -19,6 +24,40 @@ inline string stringFormat(const char* pFormat, ...)
     result.sprintf_va_list(pFormat, argList);
     va_end(argList);
     return result;
+}
+
+template<class TString>
+bool starts_with(const TString& str, const char* start)
+{
+    size_t len = strlen(start);
+    if (str.length() < len)
+        return false;
+    return memcmp(str.data(), start, len) == 0;
+}
+
+template<class TString>
+bool starts_with(const TString& str, const TString& start)
+{
+    if (str.length() < start.length())
+        return false;
+    return memcmp(str.data(), start.data(), start.length()) == 0;
+}
+
+template<class TString>
+bool ends_with(const TString& str, const char* end)
+{
+    size_t len = strlen(end);
+    if (str.length() < len)
+        return false;
+    return memcmp(str.data() + str.length() - len, end, len) == 0;
+}
+
+template<class TString>
+bool ends_with(const TString& str, const TString& end)
+{
+    if (str.length() < end.length())
+        return false;
+    return memcmp(str.data() + str.length() - end.length(), end.data(), end.length()) == 0;
 }
 
 }; // namespace qd

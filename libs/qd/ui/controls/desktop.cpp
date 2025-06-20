@@ -1,5 +1,6 @@
 #include "desktop.h"
 #include "qd/ui/uiNode.h"
+#include "qd/ui/controls/window.h"
 
 
 qd::UiDesktop::~UiDesktop()
@@ -31,7 +32,7 @@ void qd::UiDesktop::addView(qd::UiNode* view)
 }
 
 
-void qd::UiDesktop::showModal(qd::UiNode* pWnd)
+void qd::UiDesktop::showModal(qd::UiWindow* pWnd)
 {
     ASSERT_AND_DO(pWnd, return, "No wnd");
 

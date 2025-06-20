@@ -52,11 +52,6 @@ using string_view = eastl::basic_string_view<char>;
 using wstring_view = eastl::basic_string_view<wchar_t>;
 
 
-template<size_t S>
-using TInlineString = eastl::fixed_string<char, S, true, eastl::allocator>;
-using InlineString = eastl::fixed_string<char, 255, true, eastl::allocator>;
-
-
 template<typename T, typename Allocator = EASTLAllocatorType>
 using vector = eastl::vector<T, Allocator>;
 
@@ -65,12 +60,10 @@ using vector = eastl::vector<T, Allocator>;
 // using vector_map = eastl::vector_map<Key, T, Compare, Allocator, qd::vector<eastl::pair<Key, T>, Allocator> >;
 
 using eastl::vector_map;
+using eastl::array;
 
 template<typename T, size_t S>
 using TInlineVector = eastl::fixed_vector<T, S, true, eastl::allocator>;
-template<typename T, size_t S>
-using array = eastl::array<T, S>;
-
 
 using Blob = vector<uint8_t>;
 

@@ -2,103 +2,68 @@
 #include "qd/typeSystem/typeRegistry.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/log/log.h"
+#include "qimContext.h"
 
 
 namespace qim {
 
-qim::Context* qim::getContext()
+static Context* g_pCtx = nullptr;
+
+
+
+qim::Context* qim::getCurrentContext()
 {
-    static Context ctx;
-    return &ctx;
+    return g_pCtx;
 }
 
-
-Context::~Context()
-{
-    SAFE_DELETE(m_pCurrStorage);
-    SAFE_DELETE(m_pPrevStorage);
-
-    while (!m_pBehaviors.empty())
-    {
-        ElementBeh* pBeh = m_pBehaviors.back().second;
-        delete pBeh;
-        m_pBehaviors.pop_back();
-    }
-}
-
-
-bool Context::getElementData(const char* name_id, qim::ElementData** pOutElem, const qd::TypeInfo& behClass,
-    const qd::TypeInfo& elemClass) const
-{
-    ImGuiID id = ImGui::GetID(name_id);
-    if (ElementData* pExist = m_pCurrStorage->findData(id))
-    {
-        *pOutElem = pExist;
-        return true;
-    }
-
-    *pOutElem = nullptr;
-    ElementBeh* pBeh = findBehavior(behClass);
-    ASSERT_F(pBeh, "Behavior class not found for type '%s', name:'%s'", behClass.getFullName().c_str(), name_id);
-    if (!pBeh)
-        return true;
-    ElementData* pBaseCtrl = pBeh->createElementData(elemClass);
-    if (!pBaseCtrl)
-        return true;
-
-    m_pCurrStorage->setData(id, pBaseCtrl);
-    pBaseCtrl->onAttach(pBeh);
-    *pOutElem = pBaseCtrl;
-    return false;
-}
-
-
-qim::ElementBeh* Context::findBehavior(const qd::TypeInfo& pBehClassInfo) const
-{
-    auto it = m_pBehaviors.find(&pBehClassInfo);
-    if (it != m_pBehaviors.end())
-        return it->second;
-    return nullptr;
-}
-
-
-void Context::addBehavior(const qd::TypeInfo& pBehClassInfo, ElementBeh* pInst)
-{
-    m_pBehaviors[&pBehClassInfo] = pInst;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-
-
-
-
-void Context::init()
-{
-    auto behClassList = qd::TypeRegistry::get()->findAllDerivedFromTypes(qd::typeof_<qim::ElementBeh>());
-
-    for (const qd::TypeInfo* pCurBehClass : behClassList)
-    {
-        auto* pCreator = pCurBehClass->getAttribute_<qd::tsAttr::CreateClassCb>();
-        if (!pCreator)
-        {
-            SDL_Log("Creator not defined in class:'%s'", pCurBehClass->getFullName().c_str());
-            continue;
-        }
-        qim::ElemBehCreator cv;
-        qim::ElementBeh* pNewInstance = pCreator->makeInstance_<qim::ElementBeh>(&cv);
-        assert(pNewInstance);
-
-        addBehavior(*pCurBehClass, pNewInstance);
-    }
-
-    //addBehavior(qd::typeof_<qim::UiMenuBeh>(), new qim::UiMenuBeh());
-}
 
 void beginFrame() {}
 void endFrame() {}
 
 
+
+void _invokeBegin(Context* ctx, CtrlElement* pElem)
+{
+    pElem->onBegin(g_pCtx);
+    g_pCtx->stackPushChild(pElem);
+}
+
+
+void endCtrl(CtrlElement* pElem)
+{
+    g_pCtx->stackPopChild(pElem);
+    pElem->onEnd(g_pCtx);
+    pElem->m_bIsNew = false;
+}
+
+
+qim::Context* createContext()
+{
+    Context* pPrevCtx = getCurrentContext();
+    Context* pNewCtx = new qim::Context();
+    setCurrentContext(pNewCtx);
+    pNewCtx->init();
+    if (pPrevCtx)
+        setCurrentContext(pPrevCtx); // Restore previous context if any, else keep new one.
+    return pNewCtx;
+}
+
+
+void destroyContext(Context* ctx /*= nullptr*/)
+{
+    Context* prev_ctx = getCurrentContext();
+    if (ctx == NULL) //-V1051
+        ctx = prev_ctx;
+    setCurrentContext(ctx);
+    ctx->done();
+    setCurrentContext((prev_ctx != ctx) ? prev_ctx : NULL);
+    delete(ctx);
+}
+
+void setCurrentContext(Context* ctx)
+{
+    g_pCtx = ctx;
+}
 
 
 }; // namespace qim

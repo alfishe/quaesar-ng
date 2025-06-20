@@ -91,3 +91,6 @@ public:
 extern qd::Log& logConsole();
 
 };  // namespace qd
+
+
+void qdlog(const char* msg, ...);

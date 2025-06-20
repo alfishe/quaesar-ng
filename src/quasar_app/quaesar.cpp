@@ -37,25 +37,6 @@ extern void quae_parse_cmdline(int argc, TCHAR** argv);
 };  //namespace amD
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO: Move this somewhere else
-
-bool ends_with(const char* str, const char* suffix) {
-    if (!str || !suffix) {
-        return false;
-    }
-    size_t str_len = strlen(str);
-    size_t suffix_len = strlen(suffix);
-
-    if (suffix_len > str_len) {
-        return false;
-    }
-
-    // Compare the end of the string with the suffix
-    return strcmp(str + str_len - suffix_len, suffix) == 0;
-}
-
-
 static std::vector<std::string> uaeCliArgVals;
 
 int uae_thread_main_func(void*) {
@@ -94,21 +75,21 @@ int SDL_main(int argc, char* argv[]) {
     cliApp.parse(argc, argv);
 
     keyboard_settrans();
-    default_prefs(&currprefs, true, 0);
-    fixup_prefs(&currprefs, true);
+    default_prefs(&::currprefs, true, 0);
+    fixup_prefs(&::currprefs, true);
 
     if (!options.input.empty()) {
         // TODO: cleanup
-        if (ends_with(options.input.c_str(), ".exe") || !ends_with(options.input.c_str(), ".adf")) {
+        if (qd::ends_with(options.input, ".exe") || !qd::ends_with(options.input, ".adf")) {
             if (FILE* check_file = fopen(options.input.c_str(), "rb")) {
                 fclose(check_file);
                 Adf::create_for_exefile(options.input.c_str());
-                strcpy(currprefs.floppyslots[0].df, "dummy.adf");
+                strcpy(::currprefs.floppyslots[0].df, "dummy.adf");
             } else {
                 SDL_Log("can't open input file:'%s'", options.input.c_str());
             }
         } else {
-            strcpy(currprefs.floppyslots[0].df, options.input.c_str());
+            strcpy(::currprefs.floppyslots[0].df, options.input.c_str());
         }
     }
 

@@ -45,6 +45,8 @@ public:
         set(_r, _g, _b, _a);
     }
 
+    ~Color() = default;
+
     inline uint32_t getU32() const {
         return mColor;
     }

@@ -120,6 +120,8 @@ struct assert_cast<T, true> {
 
 
 
+namespace qd {
+
 // USED IN "ref_ptr<T>"
 class RefCounted
 {
@@ -322,6 +324,8 @@ private:
 }; // class RefCounted
 //////////////////////////////////////////////////////////////////////////
 
+
+}; // namespace qd
 
 
 
@@ -1119,35 +1123,3 @@ inline bool isPtrValid(const qd::details::ref_ptr_base<T>& pPtr)
     return pPtr.valid();
 }
 
-
-
-// DYNAMIC INHERITS qd::RefCounted for ref_ptr SUPPORT
-template<class T>
-class rptr
-    : public T
-    , public RefCounted
-{
-public:
-    rptr() {}
-
-    template<typename P1>
-    rptr(P1& p1)
-        : T(p1)
-    {}
-
-    template<typename P1, typename P2>
-    rptr(P1& p1, P2& p2)
-        : T(p1, p2)
-    {}
-
-    template<typename P1, typename P2, typename P3>
-    rptr(P1& p1, P2& p2, P3& p3)
-        : T(p1, p2, p3)
-    {}
-
-    virtual ~rptr() {}
-}; // class rptr
-//////////////////////////////////////////////////////////////////////////
-
-
-//}; // namespace qd

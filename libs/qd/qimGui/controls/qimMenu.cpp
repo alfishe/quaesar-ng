@@ -5,6 +5,8 @@
 #include "qd/ui/uiOperationManager.h"
 #include "imgui/imgui_internal.h"
 #include "SDL_log.h"
+#include "qd/qimGui/qimMessages.h"
+#include "qd/qimGui/qimContext.h"
 
 
 
@@ -30,7 +32,7 @@ void UiMenuOperation::setup(const char* operation_class_name)
 }
 
 
-void UiMenuOperation::onEnd(qim::Context* ctx)
+void UiMenuOperation::onEndImp(qim::Context* ctx)
 {
     auto pMenu = ctx->getStackTreeTop()->cast_<qim::UiMenu>();
     assert(pMenu);
@@ -61,7 +63,7 @@ void UiMenuOperation::onEnd(qim::Context* ctx)
 }
 
 
-qim::ElementData* UiMenuBeh::createElementData(const qd::TypeInfo& type)
+qim::Element* UiMenuBeh::createElementData(const qd::TypeInfo& type)
 {
     if (type == qd::typeof_<qim::UiMenuItem>())
         return new UiMenuItem();
@@ -69,17 +71,38 @@ qim::ElementData* UiMenuBeh::createElementData(const qd::TypeInfo& type)
 }
 
 
-void UiMenu::onBegin(qim::Context* ctx)
+void UiMenu::onBeginImp(qim::Context* ctx)
 {
+    ctx->stackPushChild(this);
     //
     m_isOpen = ImGui::BeginMenu(m_text.c_str());
 }
 
 
-void UiMenu::onEnd(qim::Context* ctx)
+void UiMenu::onEndImp(qim::Context* ctx)
 {
+    ctx->stackPopChild(this);
+
     if (m_isOpen)
         ImGui::EndMenu();
+}
+
+
+void UiMenuItem::onEndImp(qim::Context* ctx)
+{
+    auto pMenu = ctx->getStackTreeTop()->cast_<qim::UiMenu>();
+    assert(pMenu);
+    if (!pMenu || !pMenu->isOpen())
+        return;
+    m_click = ImGui::MenuItem(m_text.c_str());
+
+    if (m_click)
+    {
+        qim::msg::OnElemClicked t;
+        t.m_pElem = this;
+        notifyCompsOrParents(t);
+    }
+
 }
 
 
