@@ -18,8 +18,9 @@ struct UiMenu : public qim::CtrlElement {
     bool m_isOpen = false;
 
     void setup(const char* text)
-    { //
+    {
         m_text = text;
+        assert(!m_text.empty());
     }
 
     virtual void onBeginImp(qim::Context* ctx) override;
@@ -44,8 +45,9 @@ private:
 
 public:
     void setup(const char* text)
-    { //
+    {
         m_text = text;
+        assert(!m_text.empty());
     }
 
     virtual void onEndImp(qim::Context* ctx) override;

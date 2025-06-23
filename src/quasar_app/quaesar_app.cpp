@@ -12,8 +12,8 @@ namespace amD {
 qd::ThreadEvent* onUaeInitialized = nullptr;
 
 
-void QuasarApp::onCreate(qd::CreateApplicationParams& in) {
-    TSuper::onCreate(in);
+void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
+    TSuper::onConstruct(in);
 
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 

@@ -135,7 +135,7 @@ namespace qd
 		}
 
 		inline int toInt32() const {
-			return (int)ToInt();
+			return (int)ToIntPtr();
 		}
 
 		inline TRawType toUInt() const {

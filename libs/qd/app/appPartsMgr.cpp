@@ -200,7 +200,7 @@ void AppPartsManager::render()
     // MAIN RENDER
     for (int i = 0; i < getNumAppParts(); i++)
     {
-        AppPartBase* pCurPart = getPartByInd(i);
+        AppPartBase* pCurPart = m_pParts[i];
 
         if (pCurPart && pCurPart->hasMtd(EAppPartMtd::RENDER))
         {

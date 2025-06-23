@@ -16,7 +16,7 @@ using string_view = eastl::basic_string_view<char>;
 using wstring_view = eastl::basic_string_view<wchar_t>;
 
 
-inline string stringFormat(const char* pFormat, ...)
+inline qd::string string_format(const char* pFormat, ...)
 {
     va_list argList;
     va_start(argList, pFormat);

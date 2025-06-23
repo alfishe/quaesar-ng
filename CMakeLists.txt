@@ -27,10 +27,9 @@ add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
 add_subdirectory(external/EASTL)
 add_subdirectory(external/capstone)
+add_subdirectory(external/nativefiledialog)
 add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
-
-
 
 # Run simple cmake converter to put font files into the data segment
 # Glob up resource files
@@ -104,7 +103,16 @@ endif()
 
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
 target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
-target_link_libraries(quaesar PRIVATE ${SDL2_LIBRARIES} zlibstatic adf imgui EASTL qd amDebugger)
+target_link_libraries(quaesar PRIVATE
+    ${SDL2_LIBRARIES}
+    zlibstatic
+    adf
+    imgui
+    EASTL
+    qd
+    amDebugger
+    PRIVATE nfd
+)
 
 
 #if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")

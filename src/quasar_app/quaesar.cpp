@@ -1,6 +1,7 @@
 #include "quaesar.h"
 #include <SDL.h>
 #include <amDebugger/debugger.h>
+#include <nfd.h>
 #include <qd/App/appPartsMgr.h>
 #include <qd/App/appliction.h>
 #include <qd/Thread/thread.h>
@@ -10,7 +11,7 @@
 #include "parse_options.h"
 
 // clang-format off
-#include "sysconfig.h"
+#include "uae_imp/sysconfig.h"
 #include "sysdeps.h"
 #include "uae/time.h"
 #include "options.h"
@@ -58,8 +59,9 @@ int uae_thread_main_func(void*) {
 int SDL_main(int argc, char* argv[]) {
     app = new amD::QuasarApp();
     qd::CreateApplicationParams prm;
-    app->onCreate(prm);
+    app->onConstruct(prm);
 
+    NFD_Init();
     ::syncbase = 1000000;
 
     Options options;
@@ -139,6 +141,7 @@ int SDL_main(int argc, char* argv[]) {
     SAFE_DELETE(amD::onUaeInitialized);
 
     ::app->destroy();
+    NFD_Quit();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "uae_options_wnd.h"
+#include <nfd.h>
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 #include "qd/log/log.h"
@@ -6,17 +7,56 @@
 #include "qd/qimGui/qimGui.h"
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
+// clang-format off
+#include "sysconfig.h"
+#include "sysdeps.h"
+#include "uae/time.h"
+#include "options.h"
+#include "uae_imp/adf.h"
+#include "uae.h"
+// clang-format on
 
 
 void opt_floppy_draw(int nFloppy) {
-    ImGui::Text("Floppy %i: Draw callback", nFloppy);
+    qd::string strDF = qd::string_format("DF%i:", nFloppy);
 
-    static int vi = 0;
-    QCTRL(qim::InputInt, pCtrl, "test2", &vi) {
-        pCtrl->propAdd_<qim::Props::Size>();
-        pCtrl->propAdd_<qim::InputInt::Color>().set(qd::Color(qd::Color::YELLOW));
-        if (pCtrl->isTextChanged())
-            qdlog("Text changed");
+    floppyslot& cfgFloppy = ::changed_prefs.floppyslots[nFloppy];
+    bool bEnabled = cfgFloppy.dfxtype >= 0;
+    if (ImGui::Checkbox(strDF.c_str(), &bEnabled))
+        cfgFloppy.dfxtype = bEnabled ? 0 : -1;
+
+    if (bEnabled) {
+        ImGui::SameLine();
+        if (ImGui::Button("Select image file")) {
+            nfdu8char_t* outPath;
+            nfdu8filteritem_t filters[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
+            nfdopendialogu8args_t args = {0};
+            args.filterList = filters;
+            args.filterCount = 2;
+            nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
+            if (result == NFD_OKAY) {
+                strcpy(cfgFloppy.df, outPath);
+                NFD_FreePathU8(outPath);
+            }
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Write-protected", &cfgFloppy.forcedwriteprotect);
+
+        ImGui::SameLine();
+        if (ImGui::Button("Eject")) {
+            cfgFloppy.dfxtype = -1;
+            cfgFloppy.df[0] = 0;
+        }
+        ImGui::InputText("##Image file", cfgFloppy.df, sizeof(cfgFloppy.df), ImGuiInputTextFlags_EnterReturnsTrue);
+    }
+}
+
+
+void draw_option(UOption* pOption) {
+    if (pOption->m_drawCb) {
+        ImGui::PushID(pOption);
+        pOption->m_drawCb();
+        ImGui::PopID();
     }
 }
 
@@ -43,7 +83,8 @@ void UaeOptionsDlg::onNodeCreated(qd::NodeCreator* mk) {
 
 void UaeOptionsDlg::drawContentImp() {
     ImVec2 rgn = ImGui::GetContentRegionAvail();
-    ImVec2 wndL = ImVec2(rgn.x * 0.5f, rgn.y);
+    rgn.y -= 30;
+    ImVec2 wndL = ImVec2(rgn.x * 0.25f, rgn.y);
 
     // left column
     uint32_t cldFlg = ImGuiChildFlags_None | ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX;
@@ -97,32 +138,30 @@ void UaeOptionsDlg::drawContentImp() {
                 }
             ImGui::EndListBox();
         }
+
+        ImGui::EndChild();
     }
-    ImGui::EndChild();
 
     ImGui::SameLine();
 
     // right column
-    rgn = ImGui::GetContentRegionAvail();
-    ImVec2 wndR = ImVec2(rgn.x * 0.0f, rgn.y);
+    ImVec2 wndR = ImVec2(0, rgn.y);
     if (ImGui::BeginChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders, ImGuiWindowFlags_None)) {
-        if (m_pSelectedCat) {
-            switch (m_pSelectedCat->m_id) {
+        UCategory* pSelCat = m_pSelectedCat;
+        if (pSelCat) {
+            switch (pSelCat->m_id) {
                 case EOptionCat::QUICK_START: {
                     ImGui::TextUnformatted("Quick Start Options");
                 } break;
                 case EOptionCat::FLOPPY: {
                     ImGui::TextUnformatted("Floppy Drives Options");
-                    if (m_pSelectedCat->m_pOptions.empty()) {
+                    if (pSelCat->m_pOptions.empty()) {
                         ImGui::TextUnformatted("No floppy drives configured.");
                     } else {
-                        for (UOption* pOpt : m_pSelectedCat->m_pOptions) {
-                            if (pOpt) {
-                                ImGui::Text("Option: %s", pOpt->m_title.c_str());
-                                pOpt->m_drawCb();
-                                // Here you can add controls for each option
-                                // For example, using qim::InputInt or similar controls
-                            }
+                        for (UOption* pOpt : pSelCat->m_pOptions) {
+                            if (!pOpt)
+                                continue;
+                            draw_option(pOpt);
                         }
                     }
                 } break;
@@ -130,25 +169,15 @@ void UaeOptionsDlg::drawContentImp() {
                     break;
             }
         }
-
-#if 0
-        static int vi = 0;
-        QCTRL(qim::InputInt, pCtrl, "test1", &vi) {
-            pCtrl->propAdd_<qim::InputInt::StepInt>().step(2).stepFast(200);
-            if (pCtrl->isTextChanged())
-                qdlog("Text changed");
-        }
-
-        QCTRL(qim::InputInt, pCtrl, "test2", &vi) {
-            pCtrl->propAdd_<qim::InputInt::Color>().set(qd::Color(qd::Color::YELLOW));
-            if (pCtrl->isTextChanged())
-                qdlog("Text changed");
-        }
-        QCTRL(qim::InputInt, pCtrl, "test3", &vi);
-        QCTRL(qim::InputInt, pCtrl, "test4", &vi);
-#endif  //
+        ImGui::EndChild();
     }
-    ImGui::EndChild();
+
+    ImGui::SetCursorPosX(rgn.x - 200);
+    if (ImGui::Button("Ok", ImVec2(100, 0)))
+        setVisible(false);
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel", ImVec2(100, 0)))
+        setVisible(false);
 }
 
 

@@ -126,7 +126,7 @@ qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
     if (findChildIndex(pChild) != -1)
     {
         qd::string err =
-            qd::stringFormat("AddChild - Exception: Child already added to Parent Control! id=\"%i\" ", id);
+            qd::string_format("AddChild - Exception: Child already added to Parent Control! id=\"%i\" ", id);
         G_THROW_OR_DO(Exception(EException::INVALID_ARGUMENT, err), return nullptr);
     }
 
@@ -134,7 +134,7 @@ qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
     {
         // DUPLICATE id's FOUND
         qd::string err =
-            qd::stringFormat("AddChild - Exception: Child already added to Parent Control! id=\"%i\" ", id);
+            qd::string_format("AddChild - Exception: Child already added to Parent Control! id=\"%i\" ", id);
         G_THROW_OR_DO(Exception(EException::INVALID_ARGUMENT, err), return nullptr);
     }
 

@@ -51,6 +51,7 @@ protected:
 
 public:
     AppPartBase() { m_Methods += EAppPartMtd::UPDATE; }
+    virtual ~AppPartBase(void);
 
     struct OnCreate_t {
         qd::string name;
@@ -113,7 +114,6 @@ public:
         m_PartName = PartName;
     }
 
-    virtual ~AppPartBase(void) {}
 
     bool isPartInit() const { return m_bPartInit; }
     void setPartInit(bool Init) { m_bPartInit = Init; }

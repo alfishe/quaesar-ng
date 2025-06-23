@@ -16,7 +16,7 @@
     {                                                                                       \
         while (!(condition))                                                                \
         {                                                                                   \
-            qd::string textFormat = qd::stringFormat(pFormat, ##__VA_ARGS__);               \
+            qd::string textFormat = qd::string_format(pFormat, ##__VA_ARGS__);               \
             struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
             const SDL_AssertState sdl_assert_state =                                        \
                 SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \
@@ -54,7 +54,7 @@
 #define ASSERT_AND_DO(expression, do_action, ...)                                       \
     if (EASTL_UNLIKELY(!(expression)))                                                  \
     {                                                                                   \
-        qd::string textFormat = qd::stringFormat(__VA_ARGS__);                          \
+        qd::string textFormat = qd::string_format(__VA_ARGS__);                          \
         struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
         const SDL_AssertState sdl_assert_state =                                        \
             SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \

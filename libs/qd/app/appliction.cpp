@@ -14,12 +14,13 @@ Application::Application()
 }
 
 
-void Application::onCreate(qd::CreateApplicationParams& in) {}
+void Application::onConstruct(qd::CreateApplicationParams& in) {}
 
 
 Application::~Application()
 {
-    SAFE_DELETE(m_pAppParts);
+    //SAFE_DELETE(m_pAppParts);
+    m_pModuleManager->destroyModule(qd::typeof(*m_pAppParts));
 }
 
 

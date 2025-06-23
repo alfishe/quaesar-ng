@@ -6,6 +6,13 @@
 
 namespace qd {
 
+
+ AppPartBase::~AppPartBase(void)
+ {
+     c_def(this);
+ }
+
+
 void AppPartBase::onPartCreate(AppPartBase::OnCreate_t& prm)
 {
     m_pApp = prm.app;

@@ -26,7 +26,7 @@ public:
     inline static Application* g_pInstance = nullptr;
     static Application* get() { return g_pInstance; }
 
-    virtual void onCreate(qd::CreateApplicationParams& in);
+    virtual void onConstruct(qd::CreateApplicationParams& in);
 
     virtual ~Application();
 

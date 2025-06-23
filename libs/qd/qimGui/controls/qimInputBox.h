@@ -10,7 +10,9 @@ class UiInputBeh;
 
 struct InputScalar : public qim::CtrlElement {
     QIM_ELEMENT_CLASS(qim::InputScalar, qim::CtrlElement, qim::UiInputBeh);
-
+ protected:
+    bool m_bTextChanged = false;
+public:
 
     void setup(const char* text)
     { //
@@ -18,7 +20,7 @@ struct InputScalar : public qim::CtrlElement {
 
     virtual bool isTextChanged() const
     {
-        return false;
+        return m_bTextChanged;
     }
 
     //     virtual void onBegin(qim::Context* ctx) override;
@@ -26,6 +28,63 @@ struct InputScalar : public qim::CtrlElement {
 
 }; // struct
 //////////////////////////////////////////////////////////////////////////
+
+
+
+struct ValPtrStorage {
+    static constexpr size_t MaxSize = 32;
+    static constexpr size_t MaxAlign = alignof(std::max_align_t);
+    alignas(MaxAlign) char m_storage[MaxSize];
+    using Callback = bool (*)(void*, void*, void*);
+    Callback m_pCastCb = nullptr;
+
+    template<typename T>
+    void bind(T&& val)
+    {
+        static_assert(sizeof(T) <= MaxSize, "Message too large");
+        static_assert(alignof(T) <= MaxAlign, "Message alignment too big");
+
+        m_pCastCb = [](void* pInstPtr, void* pOutVal, void* pInputVal) -> bool {
+            auto* pCast = reinterpret_cast<T*>(pInstPtr);
+            return pCast->cast(pOutVal, pInputVal);
+        };
+        new (m_storage) T(std::forward<T>(val));
+    }
+
+    void call(void* pOutVal, void* pInputVal)
+    {
+        if (m_pCastCb)
+            m_pCastCb(m_storage, pOutVal, pInputVal);
+    }
+};
+
+
+template<class T>
+struct ToIntPtr
+{
+    T* m_pVal;
+
+    ToIntPtr(T* p_val)
+        : m_pVal(p_val)
+    {}
+
+    bool cast(void* pOutVal, void* pInputVal)
+    {
+        if (pOutVal)
+        {
+            *(int*)pOutVal = (int)(*m_pVal);
+            return true;
+        }
+        if (pInputVal)
+        {
+            int val = *(int*)pInputVal;
+            *m_pVal = (T)val;
+            return true;
+        }
+        return false;
+    }
+};
+
 
 
 struct InputInt : public qim::InputScalar {
@@ -36,20 +95,37 @@ struct InputInt : public qim::InputScalar {
     struct Imm {
         const char* m_label = nullptr;
         int* m_pVal = nullptr;
+        ValPtrStorage m_valStorage;
     } im;
 
     void setup(const char* text, int* p_val)
     {
-        im.m_label = text;
-        im.m_pVal = p_val;
+        setup(text, qim::ToIntPtr(p_val));
     }
+
+    template<typename T>
+    void setup(const char* text, qim::ToIntPtr<T>&& toInt)
+    {
+        im.m_label = text;
+        im.m_valStorage.bind(std::forward<qim::ToIntPtr<T>>(toInt));
+    }
+
 
     virtual void onBeginImp(qim::Context* ctx) override {}
 
     virtual void onEndImp(qim::Context* ctx) override
     {
         auto& stepPrm = propAdd_<StepInt>();
-        ImGui::InputInt(im.m_label, im.m_pVal, stepPrm.m_step, stepPrm.m_stepFast);
+
+        int val = 0;
+        im.m_valStorage.call(&val, nullptr); // get val
+
+        m_bTextChanged = ImGui::InputInt(im.m_label, &val, stepPrm.m_step, stepPrm.m_stepFast);
+
+        if (m_bTextChanged)
+            im.m_valStorage.call(nullptr, &val); // set val via callback
+
+        im = {};
     }
 
 }; // struct
@@ -65,7 +141,6 @@ class UiInputBeh : public qim::BehaviorElem
 
 
 public:
-    Element* createElementData(const qd::TypeInfo& type) override { return new qim::InputInt(); }
 
 }; // class UiInputBeh
 //////////////////////////////////////////////////////////////////////////

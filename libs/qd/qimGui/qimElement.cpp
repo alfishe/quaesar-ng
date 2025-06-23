@@ -82,5 +82,19 @@ bool CtrlElement::setVisible(bool bVisible)
 }
 
 
+qim::Element* BehaviorElem::createElementData(const qd::TypeInfo& type)
+{
+    auto* pCreator = type.getAttribute_<qd::tsAttr::CreateClassCb>();
+    if (!pCreator)
+    {
+        qdlog("Creator not defined in class:'%s'", type.getFullName().c_str());
+        return nullptr;
+    }
+    qim::OnElementConstruct cv;
+    qim::Element* pNewInstance = pCreator->makeInstance_<qim::Element>(&cv);
+    return pNewInstance;
+}
+
+
 }; // namespace qim
 

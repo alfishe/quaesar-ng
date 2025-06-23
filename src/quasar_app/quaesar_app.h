@@ -27,7 +27,7 @@ public:
     QuasarApp() {
         QuasarApp::g_pInstance = this;
     }
-    virtual void onCreate(qd::CreateApplicationParams& in) override;
+    virtual void onConstruct(qd::CreateApplicationParams& in) override;
 
     inline static QuasarApp* g_pInstance = nullptr;
     ;

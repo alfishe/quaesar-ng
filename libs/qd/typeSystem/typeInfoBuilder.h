@@ -29,6 +29,13 @@ inline const TypeInfo& typeof_()
     return *staticType;
 }
 
+template<typename T>
+inline const TypeInfo& typeof(T pInst)
+{
+    return pInst.getTypeInfo();
+}
+
+
 constexpr THash32 hash_type_info_name(const char* class_name)
 {
     return qd::fnv1aHash(class_name);

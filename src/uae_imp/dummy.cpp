@@ -282,7 +282,7 @@ int target_cfgfile_load(struct uae_prefs* p, const TCHAR* /*filename*/, int type
 }
 
 void target_addtorecent(const TCHAR* /*name*/, int /*t*/) {
-    UNIMPLEMENTED();
+    TRACE();
 }
 
 int my_truncate(const TCHAR* /*name*/, uae_u64 /*len*/) {

@@ -8,6 +8,7 @@
 #include "qd/typeSystem/attributesCommon.h"
 #include "EASTL/hash_map.h"
 #include "qd/typeSystem/typeInfo.h"
+#include "qd/log/log.h"
 
 
 FORWARD_DECLARATION_3S(qim, msg, Base);
@@ -17,6 +18,8 @@ namespace qim {
 class BehaviorElem;
 class CtrlElement;
 class Property;
+
+struct OnElementConstruct {};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,6 +53,8 @@ public:
 public:
     virtual ~Element() = default;
 
+    virtual void onConstruct(qim::OnElementConstruct* cp) {}
+
     void setup(const char* text) {}
 
     virtual const qd::TypeInfo* getBehaviorClass() const { return nullptr; }
@@ -70,8 +75,8 @@ public:
         return nullptr;
     }
 
-    template<class T>
-    qptr<T> childAdd_(const char* name_id) const;
+    template<class T, typename... TArgs >
+    qptr<T> childAdd_(const char* name_id, TArgs&&... args) const;
 
     virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) { return qd::EFlow::CONTINUE; }
 
@@ -142,6 +147,13 @@ public:
 
 
 
+template<class TClass>
+static qim::Element* createElemCb_(const qd::TypeInfo& /*meta*/, qim::OnElementConstruct* cp)
+{
+    TClass* pNewInst = new TClass();
+    pNewInst->onConstruct(cp);
+    return pNewInst;
+}
 
 
 struct ElemBehCreator {};
@@ -165,10 +177,11 @@ public:
 
 public:
     virtual void onConstruct(qim::ElemBehCreator* cp) {}
-    virtual Element* createElementData(const qd::TypeInfo& type) = 0;
+    virtual Element* createElementData(const qd::TypeInfo& type);
 
 }; // class BehaviorElem
 //////////////////////////////////////////////////////////////////////////
+
 
 
 
@@ -197,7 +210,10 @@ public:
         m_inChildSection = qd::Tribool::Undef;
         onBeginImp(ctx);
     }
-    void onEnd(qim::Context* ctx) {}
+    void onEnd(qim::Context* ctx)
+    {
+        onEndImp(ctx);
+    }
 
     void markPropsEnd()
     {
@@ -237,7 +253,7 @@ public:
     virtual bool isMouseReleased(int) { return false; }
 
 }; // class CtrlElement
-
+//////////////////////////////////////////////////////////////////////////
 
 
 
@@ -250,13 +266,10 @@ qptr<T>::~qptr()
 
 
 
-template<class T>
-qptr<T> qim::Element::childAdd_(const char* name_id) const
+template<class T, typename... TArgs>
+qptr<T> Element::childAdd_(const char* name_id, TArgs&&... args) const
 {
-    Context* pCtx = getCurrentContext();
-    T* pElem = pCtx->getOrCreateElem_<T>(name_id);
-    if (pElem)
-        _invokeBegin(pCtx, pElem);
+    T* pElem = qim::beginCtrl_<T>(name_id, std::forward<TArgs>(args)...);
     return qptr<T>(pElem);
 }
 
