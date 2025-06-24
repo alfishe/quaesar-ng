@@ -1,6 +1,9 @@
 #ifndef WINUAE_SYSCONFIG_H
 #define WINUAE_SYSCONFIG_H
 
+#ifndef _HAS_STD_BYTE
+#define _HAS_STD_BYTE 0
+#endif  // _HAS_STD_BYTE
 
 #ifdef _WIN32
 #define ftello64 _ftelli64

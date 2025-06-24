@@ -20,7 +20,6 @@ set(CAPSTONE_M68K_SUPPORT ON CACHE BOOL "" FORCE)
 include(scripts/cmake/format_sources.cmake)
 include(scripts/cmake/compile_options.cmake)
 include(external/sdl2/sdl2.cmake)
-include(./uae_src.cmake)
 
 add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
@@ -31,6 +30,15 @@ add_subdirectory(external/nativefiledialog)
 add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
 
+# Define a global variable
+set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
+add_subdirectory(libs/uae_lib)
+
+
+file(GLOB_RECURSE QUAESAR_SOURCES "src/*.cpp")
+file(GLOB_RECURSE QUAESAR_HEADERS "src/*.h")
+
+#-------------------------------------------------------------------------------
 # Run simple cmake converter to put font files into the data segment
 # Glob up resource files
 file(GLOB resources "${CMAKE_CURRENT_SOURCE_DIR}/resources/*.*")
@@ -60,20 +68,19 @@ add_custom_target(incbin_resources DEPENDS resources_inc.cpp resources_inc.h)
 # Needed to generated files
 #include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_dependencies(quaesar incbin_resources)
-
 # Recursively glob for all .cpp files in the src directory
-file(GLOB_RECURSE QUAE_SOURCES "src/*.cpp")
-file(GLOB_RECURSE QUAE_HEADERS "src/*.h")
-list(APPEND QUAE_SOURCES resources_inc.cpp)
-list(APPEND QUAE_HEADERS resources_inc.h)
+list(APPEND QUAESAR_SOURCES resources_inc.cpp)
+list(APPEND QUAESAR_HEADERS resources_inc.h)
+#-------------------------------------------------------------------------------
 
-target_sources(quaesar PRIVATE ${QUAE_SOURCES} ${QUAE_HEADERS})
-target_include_directories(quaesar PRIVATE ${SDL2_INCLUDE_DIRS})
+add_executable(quaesar ${QUAESAR_SOURCES})
+target_sources(quaesar PRIVATE ${QUAESAR_SOURCES} ${QUAESAR_HEADERS})
+add_dependencies(quaesar incbin_resources)
 
 # Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${QUAE_HEADERS} ${QUAE_SOURCES} ${SDL2_INCLUDE_DIRS})
+
 
  # Link libraries
 if (APPLE OR LINUX OR UNIX)
@@ -101,17 +108,28 @@ if (LINUX OR UNIX)
     target_link_libraries(quaesar PRIVATE dl)
 endif()
 
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/ADFlib/src")
-target_include_directories(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external")
+#-------------------------------------------------------------------------------------------
+# Include dirs
+#-------------------------------------------------------------------------------------------
+target_include_directories(quaesar PRIVATE
+    ${SDL2_INCLUDE_DIRS}
+	external/ADFlib/src
+	external
+	libs
+	src
+	src/uae_imp
+)
+
 target_link_libraries(quaesar PRIVATE
-    ${SDL2_LIBRARIES}
-    zlibstatic
     adf
+    uae_lib
+    zlibstatic
+    ${SDL2_LIBRARIES}
     imgui
     EASTL
     qd
     amDebugger
-    PRIVATE nfd
+    nfd
 )
 
 

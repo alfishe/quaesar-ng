@@ -216,7 +216,7 @@ extern int input_get_default_keyboard (int num);
 
 enum inputevents {
 INPUTEVENT_ZERO,
-#include "../uae_src/inputevents.def"
+#include "../inputevents.def"
 INPUTEVENT_END
 };
 #undef DEFEVENT

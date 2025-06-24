@@ -1,8 +1,8 @@
 // clang-format off
+#include "sysconfig.h"
 #include <SDL.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sysconfig.h"
 #include "sysdeps.h"
 #include "uae/inline.h"
 #include "threaddep/thread.h"

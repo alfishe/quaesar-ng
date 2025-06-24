@@ -9,9 +9,9 @@
 #include "custom.h"
 #include "xwin.h"
 #include "drawing.h"
-#include <uae_src/include/savestate.h>
-#include <uae_src/include/uae.h>
-#include <uae_src/include/debug.h>
+#include <uae_lib/include/savestate.h>
+#include <uae_lib/include/uae.h>
+#include <uae_lib/include/debug.h>
 // clang-format on
 #include "amDebugger/commonOperations.h"
 #include "amDebugger/debugger.h"

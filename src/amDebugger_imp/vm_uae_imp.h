@@ -1,10 +1,10 @@
 #pragma once
 // clang-format off
 #include <uae_imp/sysconfig.h>
-#include <uae_src/include/sysdeps.h>
-#include <uae_src/include/options.h>
-#include <uae_src/include/memory.h>
-#include <uae_src/include/newcpu.h>
+#include <uae_lib/include/sysdeps.h>
+#include <uae_lib/include/options.h>
+#include <uae_lib/include/memory.h>
+#include <uae_lib/include/newcpu.h>
 // clang-format on
 #include <EASTL/array.h>
 #include <EASTL/fixed_vector.h>

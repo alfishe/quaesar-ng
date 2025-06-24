@@ -14,11 +14,14 @@ get_filename_component(IMGUI_PARENT ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
 
 # Add ImGui source files
 file(GLOB IMGUI_SOURCES ${IMGUI_DIR}/*.cpp)
-list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp)
-list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/backends/imgui_impl_sdlrenderer2.cpp)
+#list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp)
+#list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/backends/imgui_impl_sdlrenderer2.cpp)
+if (MSVC)
+list(APPEND IMGUI_SOURCES ${IMGUI_DIR}/misc/debuggers/imgui.natvis)
+endif()
 
 # Include directories for ImGui (SDL2 include paths should be handled in the main CMakeLists.txt)
-include_directories(${IMGUI_DIR}/backends)
+#include_directories(${IMGUI_DIR}/backends)
 
 # Create static library
 add_library(imgui STATIC ${IMGUI_SOURCES})

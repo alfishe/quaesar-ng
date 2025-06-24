@@ -45,7 +45,7 @@
 
 	 If written value is different than current: transmit DMA starts and sends command bytes to drive until value matches end position.
 	 Clears also transmit interrupt (bit 28)
-	
+
 	B0001E.B READ = Receive DMA circular buffer current position.
 	B0001F.B WRITE = Receive DMA circular buffer end position.
 
@@ -53,7 +53,7 @@
 	 Clears also Receive interrupt (bit 27)
 
 	B80020.W WRITE = DMA transfer block enable
-	
+
 	 Each bit marks position in DMA data address.
 	 Bit 0 = DMA base address + 0
 	 Bit 1 = DMA base address + 0x1000
@@ -115,7 +115,7 @@
 
 	 Size: 1 byte
 	 Returns status response
-	
+
 	4 = PLAY/READ
 
 	 Size: 12 bytes
@@ -421,7 +421,7 @@ static uae_u32 akiko_c2p_read(int offset)
 #define CDFLAG_PBX				0x08000000 // 27
 #define CDFLAG_ENABLE			0x04000000 // 26
 #define CDFLAG_RAW				0x02000000 // 25
-#define CDFLAG_MSB				0x01000000 // 24 
+#define CDFLAG_MSB				0x01000000 // 24
 #define CDFLAG_NTSC				0x00800000 // 23
 
 #define CDS_ERROR 0x80
@@ -812,7 +812,7 @@ static void sys_cddev_close (void)
 		sys_command_close (unitnum);
 	}
 	unitnum = -1;
-	
+
 }
 
 static bool cdrom_can_return_data(void)
@@ -851,7 +851,7 @@ static int cdrom_start_return_data (int len)
 /*
 	RX DMA channel writes bytes to memory if DMA enabled, cdcomrxinx != cdcomrxcmp
 	and there is data available from CDROM firmware code.
-	
+
 	Triggers CDINTERRUPT_RXDMADONE and stops transfer (even if there is
 	more data available) when cdcomrxinx matches cdcomrxcmp
 */
@@ -2039,7 +2039,7 @@ static void patchrom(void)
 		if (p && extendedkickmem_bank.allocated_size >= 524288) {
 			for (int i = 0; i < 524288 - 512; i++) {
 				if (!memcmp(p + i, patchdata2, sizeof(patchdata2)))
-					return;				
+					return;
 				if (!memcmp(p + i, patchdata, sizeof(patchdata))) {
 					protect_roms(false);
 					p[i + 6] = 0x4e;

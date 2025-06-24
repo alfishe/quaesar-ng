@@ -1,6 +1,10 @@
+// clang-format off
+#include "sysdeps.h"
 #include "uae/time.h"
 #include <stdlib.h>
-#include "sysdeps.h"
+#include "sysconfig.h"
+// clang-format on
+
 
 static int64_t uae_time_epoch;
 

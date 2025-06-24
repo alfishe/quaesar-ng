@@ -138,7 +138,7 @@
 #define AKS(A) AKS_ ## A,
 enum aks {
 	AKS_START = 0x1ff,
-#include "../uae_src/aks.def"
+#include "../aks.def"
 };
 #undef AKS
 

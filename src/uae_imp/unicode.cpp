@@ -261,7 +261,7 @@ WCHAR *au_fs (const char *s)
 {
 	size_t i, len;
 	WCHAR *d;
-	
+
 	len = strlen (s);
 	d = xmalloc (WCHAR, len + 1);
 	for (i = 0; i < len; i++)
@@ -342,7 +342,7 @@ void unicode_init (void)
 			aufstable[i] = dst2[0];
 		if (aufstable[i] == 0)
 			aufstable[i] = (unsigned char)i;
-	}		
+	}
 	write_log (_T("End\n"));
 }
 

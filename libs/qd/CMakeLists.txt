@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.15)
 
 get_filename_component(QDICE_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
 get_filename_component(QDICE_PARENT ${CMAKE_CURRENT_SOURCE_DIR}/.. ABSOLUTE)
@@ -12,7 +12,7 @@ function(add_source_group SUBDIR)
     list(APPEND QDICE_SRC ${SUB_FILES_SRC})
     # Pass updated lists to the global scope
     set(QDICE_SRC ${QDICE_SRC} PARENT_SCOPE)
-    # Create a source group
+    # Create a source group files tab in Visual Studio
     source_group("${SUBDIR}" FILES ${SUB_FILES_SRC})
 endfunction()
 

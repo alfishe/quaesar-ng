@@ -2,7 +2,6 @@
 # Function to add Edit and Continue support for MSVC
 function(add_option_edit_and_continue target_name)
     if (WIN32)
-        add_definitions(-D_HAS_STD_BYTE=0)
         if(MSVC) # Enable Edit and Continue for Debug builds
             target_compile_options(${target_name} PRIVATE "/ZI")
             #string(REGEX REPLACE "/Z[iI7]" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
