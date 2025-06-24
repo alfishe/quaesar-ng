@@ -95,9 +95,9 @@ void UiMenuItem::onEndImp(qim::Context* ctx)
     if (!pMenu || !pMenu->isOpen())
         return;
     assert(!m_text.empty());
-    m_click = ImGui::MenuItem(m_text.c_str());
+    bool bClick = ImGui::MenuItem(m_text.c_str());
 
-    if (m_click)
+    if (bClick)
     {
         qim::msg::OnElemClicked t;
         t.m_pElem = this;

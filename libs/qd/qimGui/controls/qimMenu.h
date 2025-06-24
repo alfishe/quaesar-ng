@@ -41,7 +41,6 @@ struct UiMenuItem : public qim::CtrlElement {
 private:
     //eastl::fixed_function<16, void()> m_onClickCb;
     qd::string m_text;
-    bool m_click = false;
 
 public:
     void setup(const char* text)
@@ -54,13 +53,6 @@ public:
 
     void setText(const char* text) { m_text = text; }
     const char* getText() const { return m_text.c_str(); }
-
-    virtual bool isClicked(int mb = 0) override
-    {
-        if (mb == 0)
-            return m_click;
-        return ImGui::IsItemClicked(mb);
-    }
 
 }; // struct UiMenuItem
 //////////////////////////////////////////////////////////////////////////

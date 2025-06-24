@@ -1,5 +1,6 @@
 #include "qimElement.h"
 #include "imgui/imgui.h"
+#include "qimMessages.h"
 
 
 namespace qim
@@ -8,6 +9,8 @@ namespace qim
 
 qd::EFlow Element::notifyComps(qim::msg::Base& in_msg)
 {
+    this->onMessageProc(in_msg); // notify owner element
+
     Element* pCurComp = m_pCompsRoot;
     while (pCurComp)
     {
@@ -58,10 +61,26 @@ bool CtrlElement::isHovered()
 }
 
 
-bool CtrlElement::isClicked(int mb)
+qd::EFlow CtrlElement::onMessageProcImp(qim::msg::Base& in_msg)
 {
-    return ImGui::IsMouseClicked(mb);
+    switch (in_msg.id)
+    {
+    case msg::OnElemClicked::ID:
+    {
+        m_eventHappens.onClick = true;
+        break;
+    }
+    default:
+        break;
+    }
+    return qd::EFlow::CONTINUE;
 }
+
+
+// bool CtrlElement::isClicked(int mb)
+// {
+//     return ImGui::IsMouseClicked(mb);
+// }
 
 bool CtrlElement::isVisible(bool bCheckParents /*= false*/) const
 {
@@ -79,6 +98,16 @@ bool CtrlElement::setVisible(bool bVisible)
         return bVisible;
     m_bVisible = bVisible;
     return bVisible;
+}
+
+
+void CtrlElement::onBegin(qim::Context* ctx)
+{
+    m_inPropsSection = qd::Tribool::True;
+    m_inChildSection = qd::Tribool::Undef;
+    m_eventHappens.flags = 0;
+    m_eventRequest.flags = 0;
+    onBeginImp(ctx);
 }
 
 

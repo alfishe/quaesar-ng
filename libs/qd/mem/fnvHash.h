@@ -2,9 +2,7 @@
 #include <stdint.h>
 
 
-
 #define SCID(name) qd::fnv1aHash(#name)
-#define MSGID_(name) BaseMsg_<SCID(name)>
 
 
 namespace qd {

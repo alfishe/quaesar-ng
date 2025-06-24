@@ -49,7 +49,6 @@ public:
     eastl::hash_map<uint32_t, ref_ptr<qim::Property>> m_pProperties;
     bool m_bIsNew = true;
 
-
 public:
     virtual ~Element() = default;
 
@@ -79,8 +78,7 @@ public:
     qptr<T> childAdd_(const char* name_id, TArgs&&... args) const;
 
     virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) { return qd::EFlow::CONTINUE; }
-
-    qd::EFlow onMessageProc(qim::msg::Base& in_msg) { return notifyComps(in_msg); }
+    qd::EFlow onMessageProc(qim::msg::Base& in_msg) { return onMessageProcImp(in_msg); }
 
     qd::EFlow notifyComps(qim::msg::Base& in_msg);
 
@@ -194,22 +192,27 @@ class CtrlElement : public Element
     qd::Tribool m_inPropsSection;
     qd::Tribool m_inChildSection;
     bool m_bVisible = true;
+    union EventRequistMask {
+        uint32_t flags = 0;
+        struct {
+            bool onClick :1; // Element was clicked
+            bool onHover :1;
+        };
+    };
+    EventRequistMask m_eventRequest;
+    EventRequistMask m_eventHappens;
 
 public:
 
     virtual void onBeginImp(qim::Context* ctx) {}
     virtual void onEndImp(qim::Context* ctx) {}
     virtual void onPropEndImp() {}
+    virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) override;
 
     bool isVisible(bool bCheckParents = false) const;
     bool setVisible(bool bVisible);
 
-    void onBegin(qim::Context* ctx)
-    {
-        m_inPropsSection = qd::Tribool::True;
-        m_inChildSection = qd::Tribool::Undef;
-        onBeginImp(ctx);
-    }
+    void onBegin(qim::Context* ctx);
     void onEnd(qim::Context* ctx)
     {
         onEndImp(ctx);
@@ -247,10 +250,24 @@ public:
         onSectChildEndImp();
     }
 
+    bool isClicked()
+    {
+        m_eventRequest.onClick = true;
+        return m_eventHappens.onClick;
+    }
+
     virtual bool isHovered();
-    virtual bool isClicked(int mb = 0);
     virtual bool isMouseDown(int) { return false; }
     virtual bool isMouseReleased(int) { return false; }
+
+    //virtual bool pollLoopEventImp() { return false; }
+
+    bool pollLoopEvent()
+    {
+        if ((m_eventHappens.flags & m_eventRequest.flags) == 0)
+            return false;
+        return true;
+    }
 
 }; // class CtrlElement
 //////////////////////////////////////////////////////////////////////////

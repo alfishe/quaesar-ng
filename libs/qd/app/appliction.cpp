@@ -11,6 +11,7 @@ Application::Application()
     g_pInstance = this;
     m_pModuleManager = qd::ModuleManager::get();
     m_pAppParts = m_pModuleManager->getModuleInstOrCreate_<qd::AppPartsManager>();
+    assert(m_pAppParts);
 }
 
 
@@ -85,15 +86,15 @@ void Application::doMainLoop()
             onSdlEventProc(event);
         }
 
-        getAppParts()->update(0, 0);
-        getAppParts()->render();
+        m_pAppParts->update(0, 0);
+        m_pAppParts->render();
     }
 }
 
 
 void Application::onSdlEventProc(SDL_Event& event)
 {
-    getAppParts()->onSdlEventProc(event);
+    m_pAppParts->onSdlEventProc(event);
 
     switch (event.type)
     {

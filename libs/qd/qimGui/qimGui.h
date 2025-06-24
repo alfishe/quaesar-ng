@@ -1,10 +1,11 @@
 #pragma once
 #include "qd/qimGui/qimBase.h"
-#include "qd/qimGui/qimPtr.h"
 #include "qd/qimGui/qimElement.h"
+#include "qd/qimGui/qimPtr.h"
 #include "qd/typeSystem/typeInfo.h"
 #include "qimContext.h"
 #include <imgui/imgui.h>
+#include "qd/mem/ptrMath.h"
 
 
 
@@ -37,9 +38,9 @@ qim::qptr<T> beginChild_(const char* name_id, TArgs&&... args)
     return qim::qptr<T>(pElem);
 }
 
-#define QCTRL(CtrlType, PtrVar, ...)                                                          \
-    for (CtrlType* PtrVar = qim::beginCtrl_<CtrlType>(__VA_ARGS__), *once_ = nullptr; !once_; \
-         qim::endCtrl(PtrVar), ++once_)
+#define QCTRL(TCtrlType, pPtrVar, ...)                                                  \
+    for (TCtrlType* pPtrVar = qim::beginCtrl_<TCtrlType>(__VA_ARGS__), *once_ = nullptr; \
+         qim::hasEventLoop(pPtrVar, once_); qd::ptrAddSelf(once_, 1))
 
 template<class T, typename... TArgs>
 T* beginCtrl_(const char* name_id, TArgs&&... args)
@@ -60,6 +61,7 @@ void endCtrl(CtrlElement* pElem);
 
 void _invokeBegin(Context* ctx, CtrlElement* pElem);
 
+bool hasEventLoop(CtrlElement* pElem, const CtrlElement* loop_mark);
 
 
 }; // namespace qim

@@ -363,7 +363,7 @@ void IModuleInterface::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
 {
     switch (in_msg.id)
     {
-    case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::CID:
+    case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::ID:
         // qd::Modules::ImGuiCG::ImGuiDrawForModule(this);
         break;
     default:

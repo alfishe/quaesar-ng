@@ -3,7 +3,6 @@
 #include "qd/mem/fnvHash.h"
 
 
-
 namespace qd::appMsg {
 
 struct BaseMsg {
@@ -21,36 +20,38 @@ struct BaseMsg_ : public BaseMsg {
     {}
 };
 
+#define APP_MSG_ID_(name) BaseMsg_<SCID(name)>
 
-struct OnAppRequestToQuit : MSGID_(OnAppRequestToQuit) {
+
+struct OnAppRequestToQuit : APP_MSG_ID_(OnAppRequestToQuit) {
     bool allowToQuit = true;
 };
 
 
-struct ON_ACTIVE_CHANGE : MSGID_(ON_ACTIVE_CHANGE) {
+struct ON_ACTIVE_CHANGE : APP_MSG_ID_(ON_ACTIVE_CHANGE) {
     bool m_bActive = false;
 };
 
 
-struct ON_VISIBLE_CHANGE : MSGID_(ON_VISIBLE_CHANGE) {
+struct ON_VISIBLE_CHANGE : APP_MSG_ID_(ON_VISIBLE_CHANGE) {
     bool m_bVisible = false;
 };
 
 
-struct ON_Z_ORDER_CHANGE : MSGID_(ON_Z_ORDER_CHANGE) {
+struct ON_Z_ORDER_CHANGE : APP_MSG_ID_(ON_Z_ORDER_CHANGE) {
     float m_ZOrder = 0;
 };
 
 
-struct IS_NEED_REPAINT : MSGID_(IS_NEED_REPAINT) {
+struct IS_NEED_REPAINT : APP_MSG_ID_(IS_NEED_REPAINT) {
     bool m_bNeedRepaint = false;
 };
 
 
-struct ON_PRE_DESTROY : MSGID_(ON_PRE_DESTROY) {};
+struct ON_PRE_DESTROY : APP_MSG_ID_(ON_PRE_DESTROY) {};
 
 
-struct RENDER_IMGUI_DEBUG_INFO_TREE : MSGID_(RENDER_IMGUI_DEBUG_INFO_TREE) {
+struct RENDER_IMGUI_DEBUG_INFO_TREE : APP_MSG_ID_(RENDER_IMGUI_DEBUG_INFO_TREE) {
     // ImAPI::CImGuiBase* pIm = nullptr;
 };
 

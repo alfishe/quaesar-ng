@@ -6,24 +6,27 @@
 
 namespace qd {
 
-void UiWindow::draw()
+void UiWindow::drawImp()
 {
     assert(!m_title.empty());
 
-    QCTRL(qim::Window, pWnd, m_title.c_str())
+    // start draw QImGui window
+    QCTRL(qim::Window, pImWindow, m_title.c_str())
     {
-         if (m_size.isValid())
-             pWnd->propAdd_<qim::Window::Size>().set(m_size);
+        if (m_size.isValid())
+            pImWindow->propAdd_<qim::Window::Size>().set(m_size);
 
-        pWnd->setModal(isModal());
+        pImWindow->setVisible(true);
+        pImWindow->setModal(isModal());
 
-        if (pWnd->sectChildBegin())
+        if (pImWindow->sectChildBegin())
         {
             // DRAW CHILD
             drawContentImp();
-            pWnd->sectChildEnd();
+            pImWindow->sectChildEnd();
         }
-        setVisible(pWnd->isVisible());
+        if (!pImWindow->isVisible())
+            setVisible(false);
     }
 }
 

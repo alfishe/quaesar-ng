@@ -5,11 +5,15 @@
 
 namespace qd::uiMsg {
 
-struct OnChildAdded : qd::UiNodeMessage {
-    TS_REFLECT_CLASS(qd::uiMsg::OnChildAdded, qd::UiNodeMessage);
+struct OnChildAdded : UI_MSG_BASE(OnChildAdded) {
     qd::UiNode* m_pCtrl;
 };
 
+
+struct OnVisibleChanged : UI_MSG_BASE(OnVisibleChanged) {
+    qd::UiNode* m_pCtrl;
+    bool m_bVisible = false; // New visibility state
+};
 
 
 }; // namespace qd::uiMsg

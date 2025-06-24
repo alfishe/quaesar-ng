@@ -1,3 +1,12 @@
+// clang-format off
+#include "sysconfig.h"
+#include "sysdeps.h"
+#include "uae/time.h"
+#include "options.h"
+#include "uae_imp/adf.h"
+#include "uae.h"
+// clang-format on
+
 #include "quaesar.h"
 #include <SDL.h>
 #include <amDebugger/debugger.h>
@@ -10,14 +19,6 @@
 #include "cli11/CLI11.hpp"
 #include "parse_options.h"
 
-// clang-format off
-#include "uae_imp/sysconfig.h"
-#include "sysdeps.h"
-#include "uae/time.h"
-#include "options.h"
-#include "uae_imp/adf.h"
-#include "uae.h"
-// clang-format on
 
 #ifdef WIN32
 #define SDL_MAIN_NEEDED

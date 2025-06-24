@@ -4,9 +4,9 @@
 namespace qd
 {
 
-	void UiDialog::draw()
+	void UiDialog::drawImp()
 	{
-	    TSuper::draw();
+	    TSuper::drawImp();
 	}
 
 

@@ -34,13 +34,16 @@ struct BaseMsg {
 
 template<uint32_t TID>
 struct BaseMsg_ : public BaseMsg {
-    constexpr static uint32_t CID = TID;
+    constexpr static uint32_t ID = TID;
     BaseMsg_()
         : BaseMsg(TID)
     {}
 };
 
-struct RENDER_IMGUI_DEBUG_INFO_TREE : MSGID_(RenderImGui) {};
+#define MODULE_MSG_ID_(name) BaseMsg_<SCID(name)>
+
+
+struct RENDER_IMGUI_DEBUG_INFO_TREE : MODULE_MSG_ID_(RenderImGui) {};
 
 
 }; // namespace moduleMsg

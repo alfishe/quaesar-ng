@@ -1,32 +1,34 @@
 #include "qimElement.h"
 
 
+namespace qim {
 
-namespace qim
-{
-	
-	namespace msg {
-	struct Base {
-	    int m_id;
-	    Base(int id = 0)
-	        : m_id(id)
-	    {}
-	};
-	
-	template<int TID>
-	struct Base_ : public Base {
-	    Base_()
-	        : Base(TID)
-	    {}
-	};
-	
-	struct OnElemClicked : public Base_<0x1001> {
-	    CtrlElement* m_pElem;
-	    int m_mouseButton;
-	};
-	
-	}; // namespace msg
-	
-	
-	
+namespace msg {
+struct Base {
+    int id;
+    Base(int id = 0)
+        : id(id)
+    {}
+};
+
+template<int TID>
+struct Base_ : public Base {
+    constexpr static int ID = TID;
+    Base_()
+        : Base(TID)
+    {}
+};
+
+#define QIM_MSG_BASE(name) qim::msg::Base_<SCID(name)>
+
+
+struct OnElemClicked : QIM_MSG_BASE(OnElemClicked) {
+    CtrlElement* m_pElem = nullptr;
+    int m_mouseButton = 0;
+};
+
+}; // namespace msg
+
+
+
 }; // namespace qim

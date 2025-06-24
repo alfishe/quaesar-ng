@@ -28,7 +28,7 @@ public:
 
     virtual qd::string getText() const override { return m_title; }
     virtual void setText(const char* pText) { m_title = pText; }
-    virtual void draw() override;
+    virtual void drawImp() override;
 
     qd::Size getSize() const {
         return m_size;

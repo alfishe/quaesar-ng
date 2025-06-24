@@ -222,7 +222,7 @@ void AppPartsManager::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
 {
     switch (in_msg.id)
     {
-    case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::CID:
+    case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::ID:
     {
         // auto p = static_cast<Enm::EModuleMsg::RENDER_IMGUI_DEBUG_INFO_TREE_t*>(pMsgData);
         // qd::ImAPI::CImGuiBase& im = p->im;

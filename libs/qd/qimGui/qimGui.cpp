@@ -29,6 +29,23 @@ void _invokeBegin(Context* ctx, CtrlElement* pElem)
 }
 
 
+bool hasEventLoop(CtrlElement* pElem, const CtrlElement* loop_mark)
+{
+    size_t invokesCount = qd::ptr2DW(loop_mark);
+    if (!invokesCount)
+        return true;
+    else if (--invokesCount == 0)
+    {
+        qim::endCtrl(pElem);
+        if (pElem->pollLoopEvent())
+            return true;
+        return false;
+    }
+    else
+        return false;
+}
+
+
 void endCtrl(CtrlElement* pElem)
 {
     g_pCtx->stackPopChild(pElem);

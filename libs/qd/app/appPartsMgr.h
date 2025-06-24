@@ -17,7 +17,7 @@ class AppPartBase;
 
 class AppPartsManager : public IModuleInterface
 {
-    typedef IModuleInterface TSuper;
+    TS_REFLECT_CLASS(qd::AppPartsManager, qd::IModuleInterface);
 
 private:
     qd::vector<ref_ptr<AppPartBase>> m_pParts;

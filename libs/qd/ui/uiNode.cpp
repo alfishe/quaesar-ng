@@ -144,7 +144,7 @@ qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
     // NOTIFY COMPS
     uiMsg::OnChildAdded t;
     t.m_pCtrl = pChild;
-    onNodeMessageProc(&t);
+    onUiNodeMessageProc(&t);
     // getComps()->invokeCompMtd(ECompMtd::ON_CHILD_ADDED, &p);
 
     return pChild;
@@ -184,7 +184,7 @@ void UiNode::setId(uint32_t newId)
 }
 
 
-qd::EFlow UiNode::onNodeMessageProc(qd::NodeMessage* in_msg)
+qd::EFlow UiNode::onUiNodeMessageProc(qd::UiMessage* in_msg)
 {
     if (auto p = in_msg->cast_<uiMsg::OnChildAdded>())
     {
@@ -212,9 +212,17 @@ void UiNode::drawContentImp()
 }
 
 
-void UiNode::draw()
+void UiNode::drawImp()
 {
     drawContentImp();
+}
+
+
+void UiNode::draw()
+{
+    if (!isVisible())
+        return;
+    drawImp();
 }
 
 
@@ -233,6 +241,12 @@ bool UiNode::setVisible(bool bVisible)
     if (m_bVisible == bVisible)
         return bVisible;
     m_bVisible = bVisible;
+
+    uiMsg::OnVisibleChanged t;
+    t.m_pCtrl = this;
+    t.m_bVisible = bVisible;
+    onUiNodeMessageProc(&t);
+
     return bVisible;
 }
 

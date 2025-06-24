@@ -1,3 +1,11 @@
+// clang-format off
+#include "sysconfig.h"
+#include "sysdeps.h"
+#include "uae/time.h"
+#include "options.h"
+#include "uae_imp/adf.h"
+#include "uae.h"
+// clang-format on
 #include "uae_options_wnd.h"
 #include <nfd.h>
 #include "imgui/imgui.h"
@@ -7,14 +15,6 @@
 #include "qd/qimGui/qimGui.h"
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
-// clang-format off
-#include "sysconfig.h"
-#include "sysdeps.h"
-#include "uae/time.h"
-#include "options.h"
-#include "uae_imp/adf.h"
-#include "uae.h"
-// clang-format on
 
 
 void opt_floppy_draw(int nFloppy) {

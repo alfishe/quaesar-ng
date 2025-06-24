@@ -13,7 +13,7 @@ Debugger* AmDbgWindow::getDbg() const
 
 namespace window {
 
-void ImGuiDemoWindow::draw() {
+void ImGuiDemoWindow::drawImp() {
     ImGui::ShowDemoWindow(&m_bVisible);
 }
 

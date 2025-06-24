@@ -54,9 +54,9 @@ public:
         ui = cp->gui;
     }
 
-    virtual void draw() override
+    virtual void drawImp() override
     {
-        TSuper::draw();
+        TSuper::drawImp();
     }
     Debugger* getDbg() const;
 
@@ -97,7 +97,7 @@ public:
         setVisible(false);
     }
 
-    virtual void draw() override;
+    virtual void drawImp() override;
 
 }; // class
 //////////////////////////////////////////////////////////////////////////

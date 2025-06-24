@@ -6,15 +6,38 @@
 
 namespace qd {
 
-struct UiNodeMessage : public qd::NodeMessage {
-    TS_REFLECT_CLASS_BASE(1000, qd::UiNodeMessage, qd::NodeMessage);
+struct UiMessage {
+    uint32_t id;
+    UiMessage(uint32_t _id = 0)
+        : id(_id)
+    {}
 
-    UiNodeMessage() = default;
+    template<class T>
+    T* cast_() const
+    {
+        if (!c_def(this))
+            return nullptr;
+        if (id == T::ID)
+            return static_cast<T*>(const_cast<UiMessage*>(this));
+    }
 
-}; // struct UiNodeMessage
+}; // struct UiMessage
 
+template<uint32_t TId>
+struct UiMessage_ : public UiMessage {
+    static constexpr uint32_t ID = TId;
+    UiMessage_()
+        : UiMessage(TId)
+    {}
 
+#define UI_MSG_BASE(name) qd::UiMessage_<SCID(name)>
+
+}; // struct UiMessage_
 //////////////////////////////////////////////////////////////////////////
+
+
+
+//------------------------------------------------------------------------
 class UiNode : public qd::Node
 {
     TS_BEGIN_REFLECT_CLASS_BASE(50, qd::UiNode, qd::Node);
@@ -100,25 +123,20 @@ public:
 
     uint32_t getId() const { return m_id; }
     void setId(uint32_t newId);
-    void setIdByName(const char* p_name)
-    {
-        setId(qd::fnv1aHash(p_name));
-    }
+    void setIdByName(const char* p_name) { setId(qd::fnv1aHash(p_name)); }
 
 
-    virtual qd::string getText() const
-    {
-        return qd::string();
-    }
+    virtual qd::string getText() const { return qd::string(); }
 
-    virtual EFlow onNodeMessageProc(qd::NodeMessage* in_msg) override;
+    virtual EFlow onUiNodeMessageProc(qd::UiMessage* in_msg);
 
     UiNode* getChild(int idx) const { return m_pChilds[idx].get(); }
 
 public:
     virtual void updateBeforeDraw() {}
     virtual void drawContentImp();
-    virtual void draw();
+    virtual void drawImp();
+    void draw();
 
     bool isVisible(bool bCheckParents = false) const;
     bool setVisible(bool bVisible);

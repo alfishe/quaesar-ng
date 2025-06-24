@@ -1,4 +1,5 @@
 // clang-format off
+#include "sysconfig.h"
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -6,7 +7,6 @@
 
 // Order of these includes is important :(
 #include <sys/timeb.h>
-#include "sysconfig.h"
 #include "sysdeps.h"
 #include "options.h"
 #include "memory.h"

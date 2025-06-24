@@ -18,7 +18,7 @@ public:
     UiDialog() = default;
     virtual ~UiDialog() = default;
 
-    virtual void draw() override;
+    virtual void drawImp() override;
 
 }; // class UiDialog
 

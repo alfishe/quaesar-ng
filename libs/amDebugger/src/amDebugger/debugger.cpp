@@ -227,11 +227,12 @@ void Debugger::destroy() {
 
 void Debugger::update(float dt, float time)
 {
-    m_pImGui->newFrame();
-
-    m_pGui->drawImGuiMainFrame();
-
-    m_pImGui->endFrame();
+    if (isVisible())
+    {
+        m_pImGui->newFrame();
+        m_pGui->drawImGuiMainFrame();
+        m_pImGui->endFrame();
+    }
 }
 
 
