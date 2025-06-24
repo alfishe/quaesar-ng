@@ -1,8 +1,7 @@
 #include "qimWindow.h"
 
 
-namespace qim
-{
+namespace qim {
 
 
 bool Window::onSectChildBeginImp()
@@ -17,19 +16,19 @@ bool Window::onSectChildBeginImp()
 
     uint32_t flg = ImGuiWindowFlags_NoScrollbar;
     const bool bModal = isModal();
-    bool bIsVisible = false;
+    im = {};
 
     if (bModal)
     {
         ImGui::OpenPopup(m_title.c_str());
-        bIsVisible = ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+        im.retVis = ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
     }
     else
     {
-        bIsVisible = ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+        im.retVis = ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
     }
 
-    if (!bIsVisible)
+    if (!im.retVis)
         return false;
     return true;
 }
@@ -39,9 +38,12 @@ void Window::onSectChildEndImp()
 {
     // Close wnd
     if (isModal())
-        ImGui::EndPopup();
+    {
+        if (im.retVis)
+            ImGui::EndPopup();
+    }
     else
-        ImGui::End();
+        ImGui::End(); // Begin + End - should calls forever
 }
 
 

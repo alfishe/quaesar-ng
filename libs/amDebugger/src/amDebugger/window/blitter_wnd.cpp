@@ -171,8 +171,8 @@ void BlitterWnd::drawContentImp()
         ar.bltXPtH = CustReg::BLTBPTH;
         ar.bltXPtL = CustReg::BLTBPTL;
         ar.declareDmaSrcUi();
+        ImGui::EndChild();
     }
-    ImGui::EndChild();
 
     ImGui::SameLine();
 
@@ -202,8 +202,8 @@ void BlitterWnd::drawContentImp()
         ar.bltXPtH = CustReg::BLTDPTH;
         ar.bltXPtL = CustReg::BLTDPTL;
         ar.declareDmaSrcUi();
+        ImGui::EndChild();
     }
-    ImGui::EndChild();
 }
 
 

@@ -10,10 +10,14 @@ class WindowBeh;
 struct Window : public qim::CtrlElement {
     QIM_ELEMENT_CLASS(qim::Window, qim::CtrlElement, qim::WindowBeh);
     using Size = qim::Props::Size;
-
-
     bool m_isModal = false;
     qd::string m_title;
+
+    struct Im
+    {
+        bool retVis = false;
+    } im;
+
 public:
 
     void setup(const char* text)

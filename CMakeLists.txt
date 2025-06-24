@@ -76,6 +76,17 @@ list(APPEND QUAESAR_HEADERS resources_inc.h)
 add_executable(quaesar ${QUAESAR_SOURCES})
 target_sources(quaesar PRIVATE ${QUAESAR_SOURCES} ${QUAESAR_HEADERS})
 add_dependencies(quaesar incbin_resources)
+set_target_properties(quaesar PROPERTIES
+    OUTPUT_NAME_DEBUG "quaesar-dbg"
+    OUTPUT_NAME_RELEASE "quaesar"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
+)
+if (WIN32)
+    set_target_properties(quaesar PROPERTIES
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    )
+endif()
 
 # Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

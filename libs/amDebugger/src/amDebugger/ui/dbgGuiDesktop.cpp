@@ -45,14 +45,6 @@ void DbgGuiDesktop::onNodeCreated(qd::NodeCreator* mk)
 
     qim::createContext();
 
-#if 0
-    qd::UiMainMenu* pMenu = this->addChild_<qd::UiMainMenu>();
-
-    auto* pFile = pMenu->addChild_<qd::UiMenu>("File");
-
-#endif //
-
-
 }
 
 
@@ -180,8 +172,8 @@ void DbgGuiDesktop::_drawToolBar()
         {
             shMgr->triggerShortcut(pCurShortcut);
         }
+        ImGui::EndChild();
     }
-    ImGui::EndChild();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
 }
 

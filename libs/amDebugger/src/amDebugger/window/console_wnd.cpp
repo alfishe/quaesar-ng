@@ -68,8 +68,8 @@ void ConsoleWnd::drawContentImp() {
         {
             ImGui::TextUnformatted(curEnt.message.c_str());
         }
+        ImGui::EndChild();
     }
-    ImGui::EndChild();
 
     // constole input
     ImGui::TextUnformatted("> ");

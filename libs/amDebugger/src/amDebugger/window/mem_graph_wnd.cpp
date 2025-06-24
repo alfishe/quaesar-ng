@@ -142,21 +142,25 @@ void MemoryGraphWnd::drawContentImp() {
     ImGui::SameLine();
 
     ImVec2 scrollingChildSize = ImVec2(ImGui::GetContentRegionAvail().x - 00.f, mTextureSize.y + 32.f);
-    ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar);
-    ImGui::Image(mTextureId, ImVec2((float)mTextureSize.x, (float)mTextureSize.y), ImVec2(0.f, 0.f), ImVec2(1.f, 1.f),
-                 ImVec4(1.f, 1.f, 1.f, 1.f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
-    if (ImGui::IsItemHovered()) {
-        if (ImGui::IsMouseClicked(0)) {
-            mStartDragBankOffset = mBankOffset;
+    if (ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+    {
+        ImGui::Image(mTextureId, ImVec2((float)mTextureSize.x, (float)mTextureSize.y), ImVec2(0.f, 0.f),
+            ImVec2(1.f, 1.f), ImVec4(1.f, 1.f, 1.f, 1.f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
+        if (ImGui::IsItemHovered())
+        {
+            if (ImGui::IsMouseClicked(0))
+            {
+                mStartDragBankOffset = mBankOffset;
+            }
+            if (ImGui::IsMouseDragging(0))
+            {
+                ImVec2 dragDelta = ImGui::GetMouseDragDelta();
+                mBankOffset = mStartDragBankOffset - int(dragDelta.y / 8.f) * (mTextureSize.x + mTextureMod) -
+                              int(dragDelta.x / 8.f);
+            }
         }
-        if (ImGui::IsMouseDragging(0)) {
-            ImVec2 dragDelta = ImGui::GetMouseDragDelta();
-            mBankOffset =
-                mStartDragBankOffset - int(dragDelta.y / 8.f) * (mTextureSize.x + mTextureMod) - int(dragDelta.x / 8.f);
-        }
+        ImGui::EndChild();
     }
-
-    ImGui::EndChild();
 
 
     // texture width

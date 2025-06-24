@@ -23,8 +23,9 @@ void UiWindow::drawImp()
         {
             // DRAW CHILD
             drawContentImp();
-            pImWindow->sectChildEnd();
         }
+        pImWindow->sectChildEnd();
+
         if (!pImWindow->isVisible())
             setVisible(false);
     }
