@@ -1,6 +1,7 @@
 #include "qimElement.h"
 #include "imgui/imgui.h"
 #include "qimMessages.h"
+#include "qimContext.h"
 
 
 namespace qim
@@ -23,23 +24,26 @@ qd::EFlow Element::notifyComps(qim::msg::Base& in_msg)
 }
 
 
-qim::Property* Element::propFindByCid(uint32_t cid, bool include_parents) const
+qim::Property* ElementData::propFindByCid(const Context* ctx, uint32_t cid, bool include_parents) const
 {
     if (Property* pProp = propFindLocalByCid(cid))
         return pProp;
 
-    if (m_pTemplate)
-        if (Property* pProp = m_pTemplate->propFindLocalByCid(cid))
-            return pProp;
+//     if (m_pOwner->m_pTemplate)
+//         if (Property* pProp = m_pOwner->m_pTemplate->propFindLocalByCid(cid))
+//             return pProp;
 
-    if (!include_parents || !m_pParentElem)
+    if (!include_parents || !m_pOwner->m_pParentElem)
         return nullptr;
 
-    return m_pParentElem->propFindByCid(cid, true);
+    if (ElementData* pParentData = ctx->findElementData(m_pOwner->m_pParentElem))
+        return pParentData->propFindByCid(ctx, cid, true);
+
+    return nullptr;
 }
 
 
-qim::Property* Element::propFindLocalByCid(uint32_t cid) const
+qim::Property* ElementData::propFindLocalByCid(uint32_t cid) const
 {
     auto it = m_pProperties.find(cid);
     if (it == m_pProperties.end())
@@ -48,9 +52,10 @@ qim::Property* Element::propFindLocalByCid(uint32_t cid) const
 }
 
 
-void Element::propAdd(ref_ptr<Property> pProp)
+void ElementData::propAdd(Property* pProp)
 {
     uint32_t cid = pProp->getCID();
+    pProp->_nStrongRefs ++;
     m_pProperties[cid] = pProp;
 }
 

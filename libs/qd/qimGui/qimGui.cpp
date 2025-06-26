@@ -5,10 +5,10 @@
 #include "qimContext.h"
 
 
+qim::Context* qim::g_pCtx = nullptr;
+
+
 namespace qim {
-
-static Context* g_pCtx = nullptr;
-
 
 
 qim::Context* qim::getCurrentContext()
@@ -22,11 +22,6 @@ void endFrame() {}
 
 
 
-void _invokeBegin(Context* ctx, CtrlElement* pElem)
-{
-    pElem->onBegin(g_pCtx);
-    g_pCtx->stackPushChild(pElem);
-}
 
 
 bool hasEventLoop(CtrlElement* pElem, const CtrlElement* loop_mark)

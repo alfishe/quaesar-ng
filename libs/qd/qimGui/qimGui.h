@@ -12,6 +12,10 @@
 namespace qim {
 class Context;
 class Element;
+extern Context* g_pCtx;
+
+namespace internal {
+};
 
 
 Context* createContext();
@@ -33,36 +37,97 @@ qim::qptr<T> beginChild_(const char* name_id, TArgs&&... args)
     if (pElem)
     {
         pElem->setup(name_id, std::forward<TArgs>(args)...);
-        _invokeBegin(pCtx, pElem);
+        pCtx->beginCtrl(pCtx, pElem);
     }
     return qim::qptr<T>(pElem);
 }
 
-#define QCTRL(TCtrlType, pPtrVar, ...)                                                  \
-    for (TCtrlType* pPtrVar = qim::beginCtrl_<TCtrlType>(__VA_ARGS__), *once_ = nullptr; \
-         qim::hasEventLoop(pPtrVar, once_); qd::ptrAddSelf(once_, 1))
+
+#define QCTRL(TCtrlType, pPtrVar, pNameId, ...)                                                                       \
+    for (TCtrlType* pPtrVar = nullptr, *pForCounter = nullptr; qim::beginCtrl_(&pPtrVar, &pForCounter, pNameId, __VA_ARGS__); \
+         qim::endCtrl_(&pPtrVar, &pForCounter))
+
+#define Q_IF(TCtrlType, pPtrVar, ...)                                                                   \
+    for (TCtrlType* pPtrVar = nullptr, *pForCounter = nullptr; qim::beginSect_(&pPtrVar, &pForCounter); \
+         qim::endSect_(&pPtrVar, &pForCounter))
+
 
 template<class T, typename... TArgs>
-T* beginCtrl_(const char* name_id, TArgs&&... args)
+bool beginCtrl_(T** pOutSect, T** pForCounter, const char* name_id, TArgs&&... args)
 {
-    qim::Context* pCtx = getCurrentContext();
-    assert(pCtx);
-    T* pElem = pCtx->getOrCreateElem_<T>(name_id);
-    if (pElem)
+    size_t& nFor = reinterpret_cast<size_t&>(*pForCounter);
+    qim::Context* ctx = getCurrentContext();
+    if (!nFor)
     {
-        pElem->setup(name_id, std::forward<TArgs>(args)...);
-        _invokeBegin(pCtx, pElem);
+        assert(*pOutSect == nullptr);
+        T* pElem = ctx->getOrCreateElem_<T>(name_id);
+        if (pElem)
+        {
+            pElem->setup(name_id, std::forward<TArgs>(args)...);
+            ctx->beginCtrl(pElem);
+        }
+        *pOutSect = pElem;
+        return true;
     }
-    return pElem;
+    assert(*pOutSect);
+    T* pElem = *pOutSect;
+    if (ctx->nextCtrlLoop(pElem))
+        return true;
+
+    ctx->endCtrl(pElem);
+    return false;
 }
 
 void endCtrl(CtrlElement* pElem);
 
+template<class T>
+void endCtrl_(T** pOutSect, T** pForCounter)
+{
+    size_t& nFor = reinterpret_cast<size_t&>(*pForCounter);
+    ++ nFor;
 
-void _invokeBegin(Context* ctx, CtrlElement* pElem);
+//     qim::Context* ctx = getCurrentContext();
+//     size_t& nFor = reinterpret_cast<size_t&>(*pForCounter);
+//     Section** pCurSect = reinterpret_cast<Section**>(pOutSect);
+//     return g_pCtx->endCtrl(*pCurSect, nFor);
+}
+
+
 
 bool hasEventLoop(CtrlElement* pElem, const CtrlElement* loop_mark);
 
+
+
+template<class T>
+bool beginSect_(T** pOutSect, T** pForCounter)
+{
+    Context* pCtx = g_pCtx;
+    ElementData* pData = pCtx->getStackTreeTopElemData();
+    ASSERT_AND_DO(pData, return false, "No Parent element");
+    EVisitStage curStage = pCtx->getCurVisitStage();
+    const EVisitStage& vf = T::getVisitFlagsStatic();
+    if (curStage.has(EVisitStage::VCollect))
+        pData->m_supportStages |= vf;
+    if (!curStage.hasAny(vf))
+        return false;
+
+//     size_t& nFor = reinterpret_cast<size_t&>(*pForCounter);
+//     if (!(*pOutSect) && !pCtx->checkSectStage(vf, nFor))
+//         return false;
+
+    *pOutSect = pCtx->getOrCreateSect_<T>();
+    return true;
+}
+
+
+template<class T>
+void endSect_(T** pOutSect, T** pForCounter)
+{
+    size_t& nFor = reinterpret_cast<size_t&>(*pForCounter);
+    ++ nFor;
+    //Section** pCurSect = reinterpret_cast<Section**>(pOutSect);
+    //return g_pCtx->endSect(*pCurSect, nFor);
+}
 
 }; // namespace qim
 //////////////////////////////////////////////////////////////////////////

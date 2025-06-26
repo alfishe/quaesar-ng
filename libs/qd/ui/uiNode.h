@@ -17,8 +17,9 @@ struct UiMessage {
     {
         if (!c_def(this))
             return nullptr;
-        if (id == T::ID)
-            return static_cast<T*>(const_cast<UiMessage*>(this));
+        if (id != T::ID)
+            return nullptr;
+        return static_cast<T*>(const_cast<UiMessage*>(this));
     }
 
 }; // struct UiMessage

@@ -113,20 +113,7 @@ struct InputInt : public qim::InputScalar {
 
     virtual void onBeginImp(qim::Context* ctx) override {}
 
-    virtual void onEndImp(qim::Context* ctx) override
-    {
-        auto& stepPrm = propAdd_<StepInt>();
-
-        int val = 0;
-        im.m_valStorage.call(&val, nullptr); // get val
-
-        m_bTextChanged = ImGui::InputInt(im.m_label, &val, stepPrm.m_step, stepPrm.m_stepFast);
-
-        if (m_bTextChanged)
-            im.m_valStorage.call(nullptr, &val); // set val via callback
-
-        im = {};
-    }
+    virtual void onEndImp(qim::Context* ctx) override;
 
 }; // struct
 //////////////////////////////////////////////////////////////////////////

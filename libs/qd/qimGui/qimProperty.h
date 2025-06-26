@@ -1,33 +1,16 @@
 #pragma once
-#include "qimBase.h"
 #include "qd/base/ref_ptr.h"
 #include "qd/mem/fnvHash.h"
+#include "qd/qimGui/qimBase.h"
 
 
 namespace qim {
 
 
-class Property : public qd::RefCounted
-{
-public:
-    virtual uint32_t getCID() const = 0;
-};
-
-
-#define QIM_PROPERTY(PropName)                                \
-    using TThis = PropName;                                   \
-    static constexpr uint32_t CID = qd::fnv1aHash(#PropName); \
-    virtual uint32_t getCID() const override                  \
-    {                                                         \
-        return CID;                                           \
-    }
-
-
-
 namespace Props {
 
 struct Color : public qim::Property {
-    QIM_PROPERTY(Color);
+    QIM_PROPERTY(qim::Props::Color, qim::Property, qim::EVisitStage::VProperty);
     qd::Color color = qd::Color::WHITE;
     TThis& set(const qd::Color& in)
     {
@@ -37,27 +20,24 @@ struct Color : public qim::Property {
 };
 
 struct Text : public qim::Property {
-    QIM_PROPERTY(Text);
+    QIM_PROPERTY(qim::Props::Text, qim::Property, qim::EVisitStage::VProperty);
     qd::string text;
 };
 
 struct Size : public qim::Property {
-    QIM_PROPERTY(Size);
+    QIM_PROPERTY(qim::Props::Size, qim::Property, qim::EVisitStage::VProperty);
     qd::Size m_size = {};
     TThis& set(const qd::Size& in)
     {
         m_size = in;
         return *this;
     }
-    bool isSizeValid() const
-    {
-        return m_size.isValid();
-    }
+    bool isSizeValid() const { return m_size.isValid(); }
 };
 
 
 struct StepInt : public qim::Property {
-    QIM_PROPERTY(StepInt);
+    QIM_PROPERTY(qim::Props::StepInt, qim::Property, qim::EVisitStage::VProperty);
     int m_step = 1;
     int m_stepFast = 100;
     TThis& step(int in_val)
@@ -72,9 +52,24 @@ struct StepInt : public qim::Property {
     }
 };
 
+
 }; // namespace Props
 //////////////////////////////////////////////////////////////////////////
 
+
+namespace Sect {
+
+
+struct ChildList : public qim::Section {
+    QIM_PROPERTY(qim::Sect::ChildList, qim::Property, qim::EVisitStage::VChild);
+};
+
+struct IsClicked : public qim::Section {
+    QIM_PROPERTY(qim::Sect::IsClicked, qim::Property, qim::EVisitStage::VEventHandler);
+};
+
+
+}; // namespace Sect
 
 
 }; // namespace qim

@@ -9,7 +9,7 @@
 
 namespace qim
 {
-	
+
 
 Context::~Context()
 {
@@ -25,8 +25,8 @@ Context::~Context()
 }
 
 
-bool Context::getElementData(const char* name_id, qim::Element** pOutElem, const qd::TypeInfo& behClass,
-    const qd::TypeInfo& elemClass) const
+bool Context::getOrCreateElement(const char* name_id, qim::Element** pOutElem, const qd::TypeInfo& behClass,
+    const qd::TypeInfo& elemClass)
 {
     ImGuiID id = ImGui::GetID(name_id);
     if (Element* pExist = m_pCurrStorage->findData(id))
@@ -40,14 +40,98 @@ bool Context::getElementData(const char* name_id, qim::Element** pOutElem, const
     ASSERT_F(pBeh, "Behavior class not found for type '%s', name:'%s'", behClass.getFullName().c_str(), name_id);
     if (!pBeh)
         return true;
-    Element* pBaseCtrl = pBeh->createElementData(elemClass);
-    if (!pBaseCtrl)
+    Element* pNewElem = pBeh->createElementData(elemClass);
+    if (!pNewElem)
         return true;
 
-    m_pCurrStorage->setData(id, pBaseCtrl);
-    pBaseCtrl->onAttach(pBeh);
-    *pOutElem = pBaseCtrl;
+    ElementData* pNewData = new ElementData(pNewElem);
+    m_pElemDataMap[pNewElem] = pNewData;
+
+    m_pCurrStorage->setData(id, pNewElem);
+    pNewElem->onAttach(pBeh);
+    *pOutElem = pNewElem;
     return false;
+}
+
+
+bool Context::checkSectStage(EVisitStage suppStages, size_t& nFor)
+{
+    for (EVisitStage st : {EVisitStage::VProperty, EVisitStage::VChild})
+    {
+        if (suppStages.has(st) /*&& curStage.has(st)*/)
+            return true;
+    }
+    return false;
+}
+
+
+void Context::endSect(Section* pOutSect)
+{
+}
+
+
+Context::StackItem& Context::stackPushElement(Element* pElem)
+{
+    assert(pElem);
+    StackItem& it = m_pChildStack.push_back();
+    it.m_pElement = pElem;
+    it.m_pElemData = findElementData(pElem);
+    it.m_visitStage = EVisitStage::VCollect | EVisitStage::VProperty;
+    return it;
+}
+
+
+qim::ElementData* Context::getStackTreeTopElemData() const
+{
+    ElementData* pData = m_pChildStack.back().m_pElemData;
+    return pData;
+}
+
+
+qim::ElementData* Context::findElementData(const Element* pElem) const
+{
+    if (!pElem)
+        return nullptr;
+    auto it = m_pElemDataMap.find(pElem);
+    if (it == m_pElemDataMap.end())
+        return nullptr;
+    return it->second;
+}
+
+
+bool Context::nextCtrlLoop(CtrlElement* pElem)
+{
+    assert(getStackTreeTopElem() == pElem);
+    StackItem& stack = m_pChildStack.back();
+    EVisitStage st = stack.m_visitStage;
+    ElementData* pData = stack.m_pElemData;
+    if (st == EVisitStage::UNDEF || st.hasAny(EVisitStage::VProperty))
+    {
+        if (pData->m_supportStages.has(EVisitStage::VChild))
+        {
+            setCurVisitStage(EVisitStage::VChild);
+            return true;
+        }
+        st = EVisitStage::VEventHandler;
+    }
+    if (st.hasAny(EVisitStage::VChild | EVisitStage::VEventHandler))
+    {
+        if (pElem->pollLoopEvent())
+        {
+            setCurVisitStage(EVisitStage::VEventHandler);
+            return true;
+        }
+    }
+    setCurVisitStage(EVisitStage::VDone);
+    return false;
+}
+
+
+void Context::stackPopChild(Element* pElem)
+{
+    Element* pBack = m_pChildStack.back().m_pElement;
+    assert(pBack == pElem);
+    m_pChildStack.pop_back();
 }
 
 
@@ -88,7 +172,7 @@ void Context::init()
     // addBehavior(qd::typeof_<qim::UiMenuBeh>(), new qim::UiMenuBeh());
 }
 
-	
+
 void Context::done()
 {
     m_pCurrStorage->clear();

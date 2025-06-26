@@ -6,7 +6,7 @@
 #include "qd/qimGui/qimPtr.h"
 #include "qd/qimGui/qimProperty.h"
 #include "qd/typeSystem/attributesCommon.h"
-#include "EASTL/hash_map.h"
+#include "qd/stl/hash_map.h"
 #include "qd/typeSystem/typeInfo.h"
 #include "qd/log/log.h"
 
@@ -20,6 +20,49 @@ class CtrlElement;
 class Property;
 
 struct OnElementConstruct {};
+
+
+struct ElementData
+{
+    Element* m_pOwner;
+
+    EVisitStage m_supportStages = 0;
+    EVisitStage m_executedStages = 0;
+
+    qd::hash_map<uint32_t, qim::Property*> m_pProperties;
+
+
+    ElementData(Element* pOwner)
+        : m_pOwner(pOwner)
+    {}
+
+
+    Property* propFindByCid(const Context* ctx, uint32_t cid, bool include_parents) const;
+
+    Property* propFindLocalByCid(uint32_t cid) const;
+    void propAdd(qim::Property* pProp);
+
+    template<class T>
+    T& propAdd_()
+    {
+        if (Property* pProp = propFindLocalByCid(T::CID))
+            return *(static_cast<T*>(pProp));
+
+        T* pNewProp(new T());
+        propAdd(pNewProp);
+        return *pNewProp;
+    }
+    template<class T>
+    T* propFind_(const Context* ctx, bool include_parents = true)
+    {
+        if (Property* pProp = propFindByCid(ctx, T::CID, include_parents))
+            return static_cast<T*>(pProp);
+        return nullptr;
+    }
+
+}; // struct ElementData
+
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -46,7 +89,6 @@ public:
     CtrlElement* m_pChildRoot = nullptr;
 
     CtrlElement* m_pTemplate = nullptr;
-    eastl::hash_map<uint32_t, ref_ptr<qim::Property>> m_pProperties;
     bool m_bIsNew = true;
 
 public:
@@ -74,8 +116,8 @@ public:
         return nullptr;
     }
 
-    template<class T, typename... TArgs >
-    qptr<T> childAdd_(const char* name_id, TArgs&&... args) const;
+//     template<class T, typename... TArgs >
+//     qptr<T> childAdd_(const char* name_id, TArgs&&... args) const;
 
     virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) { return qd::EFlow::CONTINUE; }
     qd::EFlow onMessageProc(qim::msg::Base& in_msg) { return onMessageProcImp(in_msg); }
@@ -104,28 +146,13 @@ public:
         return notifyParents(in_msg);
     }
 
-
-    Property* propFindByCid(uint32_t cid, bool include_parents) const;
-    Property* propFindLocalByCid(uint32_t cid) const;
-    void propAdd(ref_ptr<Property> pProp);
-
-    template<class T>
-    T& propAdd_()
-    {
-        if (Property* pProp = propFindLocalByCid(T::CID))
-            return *(static_cast<T*>(pProp));
-        ref_ptr<T> pNewProp(new T());
-        propAdd(pNewProp);
-        return *pNewProp.get();
-    }
     template<class T>
     T* propFind_(bool include_parents = true)
     {
-        if (Property* pProp = propFindByCid(T::CID, include_parents))
-            return static_cast<T*>(pProp);
-        return nullptr;
+        Context* ctx = getCurrentContext();
+        ElementData* pData = ctx->findElementData(this);
+        return pData->propFind_<T>(ctx, include_parents);
     }
-
 
     void setParent(qim::Element* ParentElem) { m_pParentElem = ParentElem; }
     qim::Element* getParent() const { return m_pParentElem; }
@@ -283,12 +310,12 @@ qptr<T>::~qptr()
 
 
 
-template<class T, typename... TArgs>
-qptr<T> Element::childAdd_(const char* name_id, TArgs&&... args) const
-{
-    T* pElem = qim::beginCtrl_<T>(name_id, std::forward<TArgs>(args)...);
-    return qptr<T>(pElem);
-}
+// template<class T, typename... TArgs>
+// qptr<T> Element::childAdd_(const char* name_id, TArgs&&... args) const
+// {
+//     T* pElem = qim::beginCtrl_<T>(name_id, std::forward<TArgs>(args)...);
+//     return qptr<T>(pElem);
+// }
 
 
 }; // namespace qim

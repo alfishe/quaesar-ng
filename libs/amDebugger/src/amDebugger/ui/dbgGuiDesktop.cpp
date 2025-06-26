@@ -197,26 +197,34 @@ void DbgGuiDesktop::_drawMainMenuBar()
         {
             QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
             QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga));
+            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga))
+            {
+//                 QSECT(qim::isClicked, pClick)
+//                 if (pClick->mb == 0)
+//                 {
+//                 }
+//                 QSECT(qim::Props::Color, pColor)
+//                 pColor->set(qd::Color::YELLOW);
+            }
         }
 
         QCTRL(qim::UiMenu, pDebug, "Debug")
-        if (pDebug->isOpen())
         {
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceStart));
-            ImGui::Separator();
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStep));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStepOut));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceContinue));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmToggleBreakpoint));
-            ImGui::Separator();
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperTraceStep));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperToggleBreakpoint));
-            ImGui::Separator();
-
-            if (pDebug->isOpen())
+            Q_IF(qim::Sect::ChildList, _)
             {
-                static eastl::optional<operation::DebugDmaOption *> pDebugDmaOp = nullptr;
+                // if (pDebug->isOpen())
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceStart));
+                ImGui::Separator();
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStep));
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStepOut));
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceContinue));
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmToggleBreakpoint));
+                ImGui::Separator();
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperTraceStep));
+                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperToggleBreakpoint));
+                ImGui::Separator();
+
+                static eastl::optional<operation::DebugDmaOption*> pDebugDmaOp = nullptr;
                 if (!pDebugDmaOp.has_value())
                     pDebugDmaOp = getOperationMgr()->getOperation_<amD::operation::DebugDmaOption>();
                 if (*pDebugDmaOp)

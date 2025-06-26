@@ -14,20 +14,26 @@ void UiWindow::drawImp()
     QCTRL(qim::Window, pImWindow, m_title.c_str())
     {
         if (m_size.isValid())
-            pImWindow->propAdd_<qim::Window::Size>().set(m_size);
-
-        pImWindow->setVisible(true);
-        pImWindow->setModal(isModal());
-
-        if (pImWindow->sectChildBegin())
         {
-            // DRAW CHILD
-            drawContentImp();
+            Q_IF(qim::Window::Size, pSize)
+            pSize->set(m_size);
         }
-        pImWindow->sectChildEnd();
 
-        if (!pImWindow->isVisible())
-            setVisible(false);
+        Q_IF(qim::Sect::ChildList, _)
+        {
+            pImWindow->setVisible(true);
+            pImWindow->setModal(isModal());
+
+            if (pImWindow->sectChildBegin())
+            {
+                // DRAW CHILD
+                drawContentImp();
+            }
+            pImWindow->sectChildEnd();
+
+            if (!pImWindow->isVisible())
+                setVisible(false);
+        }
     }
 }
 
