@@ -18,34 +18,19 @@ qim::Context* qim::getCurrentContext()
 
 
 void beginFrame() {}
-void endFrame() {}
-
-
-
-
-
-bool hasEventLoop(CtrlElement* pElem, const CtrlElement* loop_mark)
+void endFrame()
 {
-    size_t invokesCount = qd::ptr2DW(loop_mark);
-    if (!invokesCount)
-        return true;
-    else if (--invokesCount == 0)
-    {
-        qim::endCtrl(pElem);
-        if (pElem->pollLoopEvent())
-            return true;
-        return false;
-    }
-    else
-        return false;
+    g_pCtx->endFrame();
 }
+
+
 
 
 void endCtrl(CtrlElement* pElem)
 {
-    g_pCtx->stackPopChild(pElem);
-    pElem->onEnd(g_pCtx);
-    pElem->m_bIsNew = false;
+//     g_pCtx->stackPopChild(pElem);
+//     pElem->onEnd(g_pCtx);
+//     pElem->m_bIsNew = false;
 }
 
 

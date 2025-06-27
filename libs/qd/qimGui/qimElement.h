@@ -1,5 +1,5 @@
 #pragma once
-#include "qd/base/point2.h"
+#include "qd/math/point2.h"
 #include "qd/base/ref_ptr.h"
 #include "qd/base/tribool.h"
 #include "qd/qimGui/qimBase.h"
@@ -9,6 +9,7 @@
 #include "qd/stl/hash_map.h"
 #include "qd/typeSystem/typeInfo.h"
 #include "qd/log/log.h"
+#include <unordered_map>
 
 
 FORWARD_DECLARATION_3S(qim, msg, Base);
@@ -18,47 +19,54 @@ namespace qim {
 class BehaviorElem;
 class CtrlElement;
 class Property;
+extern Context* g_pCtx;
+Context* getCurrentContext();
+
 
 struct OnElementConstruct {};
 
 
-struct ElementData
+class ElementData
 {
-    Element* m_pOwner;
+public:
+    Element* m_pElement = nullptr;
+    uint32_t m_elemId = 0;
 
-    EVisitStage m_supportStages = 0;
+    EVisitStage m_supportedVStages = 0;
     EVisitStage m_executedStages = 0;
 
-    qd::hash_map<uint32_t, qim::Property*> m_pProperties;
+    std::unordered_map<qd::ClassPrimeId, qim::Property*> m_pProperties;
+    qd::ClassPrimeId m_propPrimeHash;
+    qd::ClassPrimeId m_eventHappens;
+    qd::ClassPrimeId m_eventApplied;
 
+    ElementData() = default;
 
-    ElementData(Element* pOwner)
-        : m_pOwner(pOwner)
-    {}
+    Property* propFindByCid(const Context* ctx, const qim::PropertyClassMeta& cid, bool include_parents) const;
 
-
-    Property* propFindByCid(const Context* ctx, uint32_t cid, bool include_parents) const;
-
-    Property* propFindLocalByCid(uint32_t cid) const;
+    Property* propFindLocalByCid(const qim::PropertyClassMeta& cid) const;
     void propAdd(qim::Property* pProp);
 
     template<class T>
     T& propAdd_()
     {
-        if (Property* pProp = propFindLocalByCid(T::CID))
+        if (Property* pProp = propFindLocalByCid(T::s_classMeta))
             return *(static_cast<T*>(pProp));
-
-        T* pNewProp(new T());
+        T* pNewProp = new T();
+        pNewProp->setClassMeta(T::s_classMeta);
         propAdd(pNewProp);
         return *pNewProp;
     }
     template<class T>
     T* propFind_(const Context* ctx, bool include_parents = true)
     {
-        if (Property* pProp = propFindByCid(ctx, T::CID, include_parents))
+        if (Property* pProp = propFindByCid(ctx, T::s_classMeta, include_parents))
             return static_cast<T*>(pProp);
         return nullptr;
     }
+
+    bool hasQueuedEvents();
+
 
 }; // struct ElementData
 
@@ -149,7 +157,7 @@ public:
     template<class T>
     T* propFind_(bool include_parents = true)
     {
-        Context* ctx = getCurrentContext();
+        Context* ctx = qim::getCurrentContext();
         ElementData* pData = ctx->findElementData(this);
         return pData->propFind_<T>(ctx, include_parents);
     }
@@ -226,13 +234,13 @@ class CtrlElement : public Element
             bool onHover :1;
         };
     };
-    EventRequistMask m_eventRequest;
-    EventRequistMask m_eventHappens;
 
 public:
 
     virtual void onBeginImp(qim::Context* ctx) {}
+    virtual void onBeforeEndImp(qim::Context* ctx) {}
     virtual void onEndImp(qim::Context* ctx) {}
+
     virtual void onPropEndImp() {}
     virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) override;
 
@@ -240,6 +248,10 @@ public:
     bool setVisible(bool bVisible);
 
     void onBegin(qim::Context* ctx);
+    void onBeforeEnd(qim::Context* ctx)
+    {
+        onBeforeEndImp(ctx);
+    }
     void onEnd(qim::Context* ctx)
     {
         onEndImp(ctx);
@@ -277,24 +289,17 @@ public:
         onSectChildEndImp();
     }
 
-    bool isClicked()
-    {
-        m_eventRequest.onClick = true;
-        return m_eventHappens.onClick;
-    }
+//     bool isClicked()
+//     {
+//         m_eventRequest.onClick = true;
+//         return m_eventHappens.onClick;
+//     }
 
     virtual bool isHovered();
     virtual bool isMouseDown(int) { return false; }
     virtual bool isMouseReleased(int) { return false; }
 
     //virtual bool pollLoopEventImp() { return false; }
-
-    bool pollLoopEvent()
-    {
-        if ((m_eventHappens.flags & m_eventRequest.flags) == 0)
-            return false;
-        return true;
-    }
 
 }; // class CtrlElement
 //////////////////////////////////////////////////////////////////////////

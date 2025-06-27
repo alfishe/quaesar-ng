@@ -66,6 +66,21 @@ struct ChildList : public qim::Section {
 
 struct IsClicked : public qim::Section {
     QIM_PROPERTY(qim::Sect::IsClicked, qim::Property, qim::EVisitStage::VEventHandler);
+
+    qd::Tribool m_hasEvent;
+
+    virtual bool isSectEnterAllowedImp(qim::Context* ctx, ElementData* pData) override
+    {
+        if (m_hasEvent.maybeFalse())
+            return false;
+        return true;
+    }
+
+    void onClick(int mb)
+    {
+        m_hasEvent = qd::Tribool::True;
+    }
+
 };
 
 

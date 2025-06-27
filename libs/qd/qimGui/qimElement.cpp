@@ -1,11 +1,10 @@
 #include "qimElement.h"
 #include "imgui/imgui.h"
-#include "qimMessages.h"
 #include "qimContext.h"
+#include "qimMessages.h"
 
 
-namespace qim
-{
+namespace qim {
 
 
 qd::EFlow Element::notifyComps(qim::msg::Base& in_msg)
@@ -24,28 +23,30 @@ qd::EFlow Element::notifyComps(qim::msg::Base& in_msg)
 }
 
 
-qim::Property* ElementData::propFindByCid(const Context* ctx, uint32_t cid, bool include_parents) const
+qim::Property* ElementData::propFindByCid(const Context* ctx, const qim::PropertyClassMeta& cid, bool include_parents) const
 {
     if (Property* pProp = propFindLocalByCid(cid))
         return pProp;
 
-//     if (m_pOwner->m_pTemplate)
-//         if (Property* pProp = m_pOwner->m_pTemplate->propFindLocalByCid(cid))
-//             return pProp;
+    //     if (m_pElement->m_pTemplate)
+    //         if (Property* pProp = m_pElement->m_pTemplate->propFindLocalByCid(cid))
+    //             return pProp;
 
-    if (!include_parents || !m_pOwner->m_pParentElem)
+    if (!include_parents || !m_pElement->m_pParentElem)
         return nullptr;
 
-    if (ElementData* pParentData = ctx->findElementData(m_pOwner->m_pParentElem))
+    if (ElementData* pParentData = ctx->findElementData(m_pElement->m_pParentElem))
         return pParentData->propFindByCid(ctx, cid, true);
 
     return nullptr;
 }
 
 
-qim::Property* ElementData::propFindLocalByCid(uint32_t cid) const
+qim::Property* ElementData::propFindLocalByCid(const qim::PropertyClassMeta& pid) const
 {
-    auto it = m_pProperties.find(cid);
+    if (!m_propPrimeHash.isDerivedFrom(pid.primeId))
+        return nullptr;
+    auto it = m_pProperties.find(pid.primeId);
     if (it == m_pProperties.end())
         return nullptr;
     return it->second;
@@ -54,9 +55,12 @@ qim::Property* ElementData::propFindLocalByCid(uint32_t cid) const
 
 void ElementData::propAdd(Property* pProp)
 {
-    uint32_t cid = pProp->getCID();
-    pProp->_nStrongRefs ++;
-    m_pProperties[cid] = pProp;
+    const qim::PropertyClassMeta& cid = pProp->getClassMeta();
+    assert(propFindLocalByCid(cid) == nullptr);
+
+    pProp->_nStrongRefs++;
+    m_pProperties[cid.primeId] = pProp;
+    m_propPrimeHash.addBaseClass(cid.primeId);
 }
 
 
@@ -66,26 +70,43 @@ bool CtrlElement::isHovered()
 }
 
 
+bool ElementData::hasQueuedEvents()
+{
+    if ((m_eventHappens == m_eventApplied))
+        return false;
+    return true;
+}
+
+
 qd::EFlow CtrlElement::onMessageProcImp(qim::msg::Base& in_msg)
 {
     switch (in_msg.id)
     {
     case msg::OnElemClicked::ID:
     {
-        m_eventHappens.onClick = true;
-        break;
+        auto p = in_msg.cast<msg::OnElemClicked>();
+        ElementData* pData = g_pCtx->findElementData(this);
+        pData->m_eventHappens.addBaseClass(qim::Sect::IsClicked::s_classMeta.primeId);
+
+        auto pClickSect = p->m_pElem->propFind_<qim::Sect::IsClicked>(false);
+        if (pClickSect)
+            pClickSect->onClick(p->m_mouseButton);
+        return qd::EFlow::DONE;
     }
+    break;
     default:
         break;
-    }
+    };
     return qd::EFlow::CONTINUE;
 }
 
 
 // bool CtrlElement::isClicked(int mb)
 // {
-//     return ImGui::IsMouseClicked(mb);
+//        break;
+// return ImGui::IsMouseClicked(mb);
 // }
+
 
 bool CtrlElement::isVisible(bool bCheckParents /*= false*/) const
 {
@@ -110,8 +131,6 @@ void CtrlElement::onBegin(qim::Context* ctx)
 {
     m_inPropsSection = qd::Tribool::True;
     m_inChildSection = qd::Tribool::Undef;
-    m_eventHappens.flags = 0;
-    m_eventRequest.flags = 0;
     onBeginImp(ctx);
 }
 
@@ -131,4 +150,3 @@ qim::Element* BehaviorElem::createElementData(const qd::TypeInfo& type)
 
 
 }; // namespace qim
-

@@ -1,5 +1,5 @@
 #pragma once
-#include "qd/base/point2.h"
+#include "qd/math/point2.h"
 #include "qd/base/base.h"
 #include "qd/node/node.h"
 #include "qd/stl/vector.h"

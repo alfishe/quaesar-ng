@@ -25,32 +25,29 @@ Context::~Context()
 }
 
 
-bool Context::getOrCreateElement(const char* name_id, qim::Element** pOutElem, const qd::TypeInfo& behClass,
+qim::Element* Context::getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
     const qd::TypeInfo& elemClass)
 {
     ImGuiID id = ImGui::GetID(name_id);
     if (Element* pExist = m_pCurrStorage->findData(id))
-    {
-        *pOutElem = pExist;
-        return true;
-    }
+        return pExist;
 
-    *pOutElem = nullptr;
     BehaviorElem* pBeh = findBehavior(behClass);
     ASSERT_F(pBeh, "Behavior class not found for type '%s', name:'%s'", behClass.getFullName().c_str(), name_id);
     if (!pBeh)
-        return true;
+        return nullptr;
     Element* pNewElem = pBeh->createElementData(elemClass);
     if (!pNewElem)
-        return true;
+        return nullptr;
 
-    ElementData* pNewData = new ElementData(pNewElem);
+    ElementData* pNewData = new ElementData();
+    pNewData->m_pElement = pNewElem;
+    pNewData->m_elemId = id;
     m_pElemDataMap[pNewElem] = pNewData;
 
     m_pCurrStorage->setData(id, pNewElem);
     pNewElem->onAttach(pBeh);
-    *pOutElem = pNewElem;
-    return false;
+    return pNewElem;
 }
 
 
@@ -76,7 +73,7 @@ Context::StackItem& Context::stackPushElement(Element* pElem)
     StackItem& it = m_pChildStack.push_back();
     it.m_pElement = pElem;
     it.m_pElemData = findElementData(pElem);
-    it.m_visitStage = EVisitStage::VCollect | EVisitStage::VProperty;
+    it.m_curVisitStage = EVisitStage::VCollect | EVisitStage::VProperty | EVisitStage::VEventHandler; // INITAL FLAGS
     return it;
 }
 
@@ -99,31 +96,48 @@ qim::ElementData* Context::findElementData(const Element* pElem) const
 }
 
 
-bool Context::nextCtrlLoop(CtrlElement* pElem)
+qd::EFlow Context::onCtrlVisitLoopEnd(CtrlElement* pElem, EVisitStage* pOutVisit) const
 {
     assert(getStackTreeTopElem() == pElem);
-    StackItem& stack = m_pChildStack.back();
-    EVisitStage st = stack.m_visitStage;
+
+    const StackItem& stack = m_pChildStack.back();
+    EVisitStage st = stack.m_curVisitStage;
     ElementData* pData = stack.m_pElemData;
-    if (st == EVisitStage::UNDEF || st.hasAny(EVisitStage::VProperty))
+    if (st == EVisitStage::UNDEF || st.hasAny(EVisitStage::VCollect))
     {
-        if (pData->m_supportStages.has(EVisitStage::VChild))
+        if (pData->m_supportedVStages.has(EVisitStage::VChild))
         {
-            setCurVisitStage(EVisitStage::VChild);
-            return true;
+            *pOutVisit = EVisitStage::VChild;
+            return qd::EFlow::REPEAT;
         }
         st = EVisitStage::VEventHandler;
     }
     if (st.hasAny(EVisitStage::VChild | EVisitStage::VEventHandler))
     {
-        if (pElem->pollLoopEvent())
+        if (pData->hasQueuedEvents())
         {
-            setCurVisitStage(EVisitStage::VEventHandler);
-            return true;
+            *pOutVisit = EVisitStage::VEventHandler;
+            return qd::EFlow::REPEAT;
         }
     }
-    setCurVisitStage(EVisitStage::VDone);
-    return false;
+    *pOutVisit = EVisitStage::VDone;
+    return qd::EFlow::DONE;
+}
+
+
+void Context::endFrame()
+{
+    if (!m_pChildStack.empty())
+    {
+        assert(0);
+    }
+
+    for (auto& iter : m_pElemDataMap)
+    {
+//         ElementData* pCurData = iter.second;
+//         delete pCurData;
+//         iter.second = nullptr;
+    }
 }
 
 

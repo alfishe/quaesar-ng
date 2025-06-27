@@ -88,9 +88,9 @@ void UiMenu::onEndImp(qim::Context* ctx)
 }
 
 
-void UiMenuItem::onEndImp(qim::Context* ctx)
+void UiMenuItem::onBeforeEndImp(qim::Context* ctx)
 {
-    auto pMenu = ctx->getStackTreeTopElem()->cast_<qim::UiMenu>();
+    auto pMenu = ctx->getStackTreeTopElem(-1)->cast_<qim::UiMenu>();
     assert(pMenu);
     if (!pMenu || !pMenu->isOpen())
         return;

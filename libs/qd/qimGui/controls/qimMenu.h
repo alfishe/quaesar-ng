@@ -49,7 +49,7 @@ public:
         assert(!m_text.empty());
     }
 
-    virtual void onEndImp(qim::Context* ctx) override;
+    virtual void onBeforeEndImp(qim::Context* ctx) override;
 
     void setText(const char* text) { m_text = text; }
     const char* getText() const { return m_text.c_str(); }

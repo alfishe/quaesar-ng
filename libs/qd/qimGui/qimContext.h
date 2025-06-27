@@ -21,7 +21,7 @@ class Context
     struct StackItem {
         Element* m_pElement = nullptr;
         ElementData* m_pElemData = nullptr;
-        EVisitStage m_visitStage = EVisitStage::UNDEF;
+        EVisitStage m_curVisitStage = EVisitStage::UNDEF;
     };
     qd::vector<StackItem> m_pChildStack;
 
@@ -36,18 +36,16 @@ public:
     ~Context();
 
     BehaviorElem* findBehavior(const qd::TypeInfo& pBehClassInfo) const;
-    bool getOrCreateElement(const char* name_id, qim::Element** pOut, const qd::TypeInfo& behClass,
+    qim::Element* getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
         const qd::TypeInfo& elemClass);
 
     template<class T, typename... TArgs>
     T* getOrCreateElem_(const char* name_id, TArgs&&... args)
     {
-        Element* pElement;
-        if (getOrCreateElement(name_id, &pElement, T::s_behClass, T::getStaticTypeInfo()))
-            return static_cast<T*>(pElement);
-
-        T* pInst = static_cast<T*>(pElement);
-        return pInst;
+        Element* pElement = getOrCreateElement(name_id, T::s_behClass, T::getStaticTypeInfo());
+        if (!pElement)
+            return nullptr;
+        return static_cast<T*>(pElement);
     }
 
     bool checkSectStage(EVisitStage suppStages, size_t& nFor);
@@ -57,12 +55,12 @@ public:
     EVisitStage getCurVisitStage() const
     {
         const Context::StackItem& item = m_pChildStack.back();
-        return item.m_visitStage;
+        return item.m_curVisitStage;
     }
     void setCurVisitStage(EVisitStage st)
     {
         Context::StackItem& item = m_pChildStack.back();
-        item.m_visitStage = st;
+        item.m_curVisitStage = st;
     }
 
     template<class T>
@@ -73,27 +71,22 @@ public:
 
 
     template<class T, typename... TArgs>
-    T* getOrCreateSect_(TArgs&&... args)
+    T* getOrCreateSect_(ElementData* pParentElem, TArgs&&... args)
     {
-        uint32_t cid = T::CID;
-
-        ElementData* pParentElem = getStackTreeTopElemData();
-        assert(pParentElem);
-
-        if constexpr (T::getType() == ESectType::Proprty)
-            return &pParentElem->propAdd_<T>();
-
-        if constexpr (T::getType() == ESectType::Section)
-            return makeSect_<T>();
-
-        return nullptr;
+       return &pParentElem->propAdd_<T>();
     }
 
 
     Context::StackItem& stackPushElement(Element* pElem);
     void stackPopChild(Element* pElem);
 
-    Element* getStackTreeTopElem() const { return m_pChildStack.back().m_pElement; }
+    Element* getStackTreeTopElem(int off = 0) const
+    {
+        if (!off)
+            return m_pChildStack.back().m_pElement;
+         auto it = m_pChildStack.rbegin() + -off;
+         return it->m_pElement;
+    }
 
     ElementData* getStackTreeTopElemData() const;
 
@@ -106,15 +99,30 @@ public:
         ctx->stackPushElement(pElem);
     }
 
-    void endCtrl(CtrlElement* pElem)
+    qd::EFlow endCtrl(CtrlElement* pElem)
     {
         Context* ctx = this;
+        pElem->onBeforeEnd(ctx);
+
+        qd::EFlow rr;
+        EVisitStage newVState;
+        rr = ctx->onCtrlVisitLoopEnd(pElem, &newVState);
+        if (rr == qd::EFlow::REPEAT)
+        {
+            setCurVisitStage(newVState);
+            return qd::EFlow::REPEAT;
+        }
+        setCurVisitStage(newVState);
+
         ctx->stackPopChild(pElem);
         pElem->onEnd(ctx);
         pElem->m_bIsNew = false;
+        return qd::EFlow::STOP;
     }
 
-    bool nextCtrlLoop(CtrlElement* pElem);
+    qd::EFlow onCtrlVisitLoopEnd(CtrlElement* pElem, EVisitStage* pOutVisit) const;
+
+    void endFrame();
 
 private:
     void addBehavior(const qd::TypeInfo& pBehClassInfo, BehaviorElem* pInst);

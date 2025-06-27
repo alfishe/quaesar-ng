@@ -1,4 +1,4 @@
-#include "mem_graph_wnd.h"
+#include "memory_graph_wnd.h"
 #include <EASTL/span.h>
 #include <SDL.h>
 #include <amDebugger/debugger.h>

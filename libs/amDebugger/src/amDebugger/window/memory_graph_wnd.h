@@ -1,6 +1,6 @@
 #pragma once
 #include <amDebugger/vm/memory.h>
-#include "qd/base/point2.h"
+#include "qd/math/point2.h"
 #include <amDebugger/ui/ui_view.h>
 
 namespace amD {

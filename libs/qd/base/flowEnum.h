@@ -3,6 +3,7 @@
 
 
 namespace qd {
+
 //////////////////////////////////////////////////////////////////////////
 struct EFlow {
     enum Type : uint8_t {
@@ -19,17 +20,18 @@ struct EFlow {
         REPEAT = 3,
         LOOP = 3,
     };
-    EFlow::Type mVal = (EFlow::Type)0;
+    EFlow::Type mVal = EFlow::UNDEF;
 
-    template <typename TInt>
-    EFlow(TInt val) : mVal(static_cast<Type>(val)) {
-    }
+    EFlow() = default;
 
-    constexpr operator EFlow::Type() const {
-        return mVal;
-    }
+    template<typename TInt>
+    EFlow(TInt val)
+        : mVal(static_cast<Type>(val))
+    {}
 
-};  // enum EFlow
+    constexpr operator EFlow::Type () const { return mVal; }
+
+}; // enum EFlow
 //////////////////////////////////////////////////////////////////////////
 
-};
+}; // namespace qd
