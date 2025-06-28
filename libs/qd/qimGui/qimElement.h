@@ -30,7 +30,7 @@ class ElementData
 {
 public:
     Element* m_pElement = nullptr;
-    uint32_t m_elemId = 0;
+    ImGuiID m_elemId = 0;
 
     EVisitStage m_supportedVStages = 0;
     EVisitStage m_executedStages = 0;
@@ -46,6 +46,10 @@ public:
 
     Property* propFindLocalByCid(const qim::PropertyClassMeta& cid) const;
     void propAdd(qim::Property* pProp);
+
+    ImGuiID getId() const {
+        return m_elemId;
+    }
 
     template<class T>
     T& propAdd_()
@@ -67,6 +71,12 @@ public:
 
     bool hasQueuedEvents();
 
+    template<class T>
+    T* getElem_() const
+    {
+        assert(!m_pElement || m_pElement->getTypeInfo().isDerivedFrom_<T>());
+        return static_cast<T*>(m_pElement);
+    }
 
 }; // struct ElementData
 
@@ -74,7 +84,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class Element : public qd::RefCounted
+class Element : public qim::QimBase
 {
     TS_REFLECT_CLASS_BASE(100, qim::Element, void);
 
@@ -237,9 +247,9 @@ class CtrlElement : public Element
 
 public:
 
-    virtual void onBeginImp(qim::Context* ctx) {}
+    virtual void onDrawBeginImp(qim::Context* ctx) {}
     virtual void onBeforeEndImp(qim::Context* ctx) {}
-    virtual void onEndImp(qim::Context* ctx) {}
+    virtual void onDrawEndImp(qim::Context* ctx) {}
 
     virtual void onPropEndImp() {}
     virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) override;
@@ -247,14 +257,14 @@ public:
     bool isVisible(bool bCheckParents = false) const;
     bool setVisible(bool bVisible);
 
-    void onBegin(qim::Context* ctx);
-    void onBeforeEnd(qim::Context* ctx)
+    void onDrawBegin(qim::Context* ctx);
+    void onBeforeDrawEnd(qim::Context* ctx)
     {
         onBeforeEndImp(ctx);
     }
-    void onEnd(qim::Context* ctx)
+    void onDrawEnd(qim::Context* ctx)
     {
-        onEndImp(ctx);
+        onDrawEndImp(ctx);
     }
 
     void markPropsEnd()

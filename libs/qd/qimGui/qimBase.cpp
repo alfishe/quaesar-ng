@@ -1,23 +1,10 @@
 #include "qimBase.h"
 #include "qimElement.h"
+#include "qimGui.h"
+
 
 namespace qim
 {
-
-	bool Property::isSectEnterAllowed(EVisitStage curStage, qim::Context* ctx, ElementData* pData)
-	{
-	    if (isSectEnterAllowedImp(ctx, pData))
-        {
-            if (curStage.has(EVisitStage::VEventHandler) && m_classMeta->visitsAllowed.has(EVisitStage::VEventHandler))
-            {
-                if (pData->m_eventApplied.isDerivedFrom(m_classMeta->primeId))
-                    return false; // already applied
-                pData->m_eventApplied.addBaseClass(m_classMeta->primeId);
-            }
-            return true;
-        }
-	    return false;
-	}
 
 
 const qim::PropertyClassMeta& Property::gen_class_meta()

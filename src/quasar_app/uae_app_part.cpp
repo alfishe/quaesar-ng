@@ -173,28 +173,30 @@ void UaeAppPart::update(float Delta, float Time) {
 
     //auto pRoot = qim::makeDesktop();
 
-    if (ImGui::BeginMainMenuBar()) {
-        QCTRL(qim::UiMenu, pMenu, "File") {
-            Q_IF(qim::Sect::ChildList, _) {
-                QCTRL(qim::UiMenuItem, _, "Item 1");
+    if (0)
+        if (ImGui::BeginMainMenuBar()) {
+            QCTRL(qim::UiMenu, pMenu, "File") {
+                Q_IF(qim::Sect::ChildList, _) {
+                    QCTRL(qim::UiMenuItem, _, "Item 1");
 
-                QCTRL(qim::UiMenuItem, pSettings, "Settings") {
-                    Q_IF(qim::Sect::IsClicked, _) {
-                        UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
-                        m_pDesktop->showModal(pOptionsDlg);
+                    QCTRL(qim::UiMenuItem, pSettings, "Settings") {
+                        Q_IF(qim::Sect::IsClicked, _) {
+                            UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
+                            m_pDesktop->showModal(pOptionsDlg);
+                        }
                     }
                 }
             }
-        }
-        QCTRL(qim::UiMenu, pEmulator, "Emulator") {
-            Q_IF(qim::Sect::ChildList, _) {
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga));
+            QCTRL(qim::UiMenu, pEmulator, "Emulator") {
+                Q_IF(qim::Sect::ChildList, _) {
+                    QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
+                    QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+                    QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga));
+                }
             }
+            ImGui::EndMainMenuBar();
         }
-        ImGui::EndMainMenuBar();
-    }
+
     if (m_bShowImgui)
         m_pDesktop->draw();
 

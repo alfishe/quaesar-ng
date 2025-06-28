@@ -189,7 +189,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        QCTRL(qim::UiMenu, pMenu, "File")
+        //QCTRL(qim::UiMenu, pMenu, "File")
         {
         }
 
@@ -208,6 +208,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
             }
         }
 
+#if 0
         QCTRL(qim::UiMenu, pDebug, "Debug")
         {
             Q_IF(qim::Sect::ChildList, _)
@@ -254,6 +255,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
                     pCurWnd->setVisible(bVis);
             }
         }
+#endif // 
 
         ImGui::EndMainMenuBar();
     }

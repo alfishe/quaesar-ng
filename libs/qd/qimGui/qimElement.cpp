@@ -127,11 +127,11 @@ bool CtrlElement::setVisible(bool bVisible)
 }
 
 
-void CtrlElement::onBegin(qim::Context* ctx)
+void CtrlElement::onDrawBegin(qim::Context* ctx)
 {
     m_inPropsSection = qd::Tribool::True;
     m_inChildSection = qd::Tribool::Undef;
-    onBeginImp(ctx);
+    onDrawBeginImp(ctx);
 }
 
 

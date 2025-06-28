@@ -23,8 +23,8 @@ struct UiMenu : public qim::CtrlElement {
         assert(!m_text.empty());
     }
 
-    virtual void onBeginImp(qim::Context* ctx) override;
-    virtual void onEndImp(qim::Context* ctx) override;
+    virtual void onDrawBeginImp(qim::Context* ctx) override;
+    virtual void onDrawEndImp(qim::Context* ctx) override;
 
     bool isOpen() const { return m_isOpen; }
     void setText(const char* text) { m_text = text; }
@@ -81,7 +81,7 @@ struct UiMenuOperation : public qim::CtrlElement {
     QIM_ELEMENT_CLASS(qim::UiMenuOperation, qim::CtrlElement, qim::UiMenuOperationBeh);
 
     void setup(const char* operation_class_name);
-    virtual void onEndImp(qim::Context* ctx) override;
+    virtual void onDrawEndImp(qim::Context* ctx) override;
 
 private:
     qd::UiOperation* m_pOperation = nullptr;

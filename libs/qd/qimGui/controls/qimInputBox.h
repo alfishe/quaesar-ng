@@ -111,9 +111,9 @@ struct InputInt : public qim::InputScalar {
     }
 
 
-    virtual void onBeginImp(qim::Context* ctx) override {}
+    virtual void onDrawBeginImp(qim::Context* ctx) override {}
 
-    virtual void onEndImp(qim::Context* ctx) override;
+    virtual void onDrawEndImp(qim::Context* ctx) override;
 
 }; // struct
 //////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,10 @@
 #include "qd/enum/enumBase.h"
 #include "qd/stl/string.h"
 #include "qd/typeSystem/typeDeclare.h"
+#include "qd/base/ref_ptr.h"
+
+
+typedef unsigned int ImGuiID;
 
 
 namespace qim {
@@ -17,6 +21,8 @@ class ElementData;
 class CtrlElement;
 class CompElement;
 using ElemId = uint32_t;
+using qd::EFlow;
+//using ref_ptr;
 
 
 #define QIM_ELEMENT_CLASS(ElemClass, BaseClass, BehClass)                    \
@@ -70,7 +76,14 @@ PropertyClassMeta& get_prop_class_meta_()
     return inst;
 }
 
-class Property
+class QimBase
+{
+public:
+    virtual ~QimBase() = default;
+};
+
+
+class Property : public QimBase
 {
 public:
     const PropertyClassMeta* m_classMeta = nullptr;
@@ -85,8 +98,6 @@ public:
     virtual ~Property() = default;
 
     virtual bool isSectEnterAllowedImp(qim::Context* ctx, ElementData* pData) { return true; }
-
-    bool isSectEnterAllowed(EVisitStage curStage, qim::Context* ctx, ElementData* pData);
 
 public:
     using PrimeIdClassMgr = qd::ClassPrimeIdMgr_<qim::Property>;

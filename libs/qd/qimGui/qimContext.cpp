@@ -5,6 +5,8 @@
 #include "imgui/imgui.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "SDL_log.h"
+#include "qimGui.h"
+#include <imgui/imgui_internal.h>
 
 
 namespace qim
@@ -25,17 +27,18 @@ Context::~Context()
 }
 
 
-qim::Element* Context::getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
+qim::ElementData* Context::getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
     const qd::TypeInfo& elemClass)
 {
     ImGuiID id = ImGui::GetID(name_id);
-    if (Element* pExist = m_pCurrStorage->findData(id))
+    if (ElementData* pExist = m_pCurrStorage->findDataById(id))
         return pExist;
 
     BehaviorElem* pBeh = findBehavior(behClass);
     ASSERT_F(pBeh, "Behavior class not found for type '%s', name:'%s'", behClass.getFullName().c_str(), name_id);
     if (!pBeh)
         return nullptr;
+
     Element* pNewElem = pBeh->createElementData(elemClass);
     if (!pNewElem)
         return nullptr;
@@ -45,9 +48,9 @@ qim::Element* Context::getOrCreateElement(const char* name_id, const qd::TypeInf
     pNewData->m_elemId = id;
     m_pElemDataMap[pNewElem] = pNewData;
 
-    m_pCurrStorage->setData(id, pNewElem);
+    m_pCurrStorage->setData(id, pNewData);
     pNewElem->onAttach(pBeh);
-    return pNewElem;
+    return pNewData;
 }
 
 
@@ -67,14 +70,23 @@ void Context::endSect(Section* pOutSect)
 }
 
 
-Context::StackItem& Context::stackPushElement(Element* pElem)
+Context::StackItem& Context::pushStackElement(Element* pElem)
 {
     assert(pElem);
+    assert(this);
     StackItem& it = m_pChildStack.push_back();
     it.m_pElement = pElem;
     it.m_pElemData = findElementData(pElem);
     it.m_curVisitStage = EVisitStage::VCollect | EVisitStage::VProperty | EVisitStage::VEventHandler; // INITAL FLAGS
     return it;
+}
+
+
+void Context::popStackElement(Element* pElem)
+{
+    Element* pBack = m_pChildStack.back().m_pElement;
+    assert(pBack == pElem);
+    m_pChildStack.pop_back();
 }
 
 
@@ -127,12 +139,13 @@ qd::EFlow Context::onCtrlVisitLoopEnd(CtrlElement* pElem, EVisitStage* pOutVisit
 
 void Context::endFrame()
 {
-    if (!m_pChildStack.empty())
+    while (!m_pChildStack.empty())
     {
         assert(0);
+        m_pChildStack.pop_back();
     }
 
-    for (auto& iter : m_pElemDataMap)
+    //for (auto& iter : m_pElemDataMap)
     {
 //         ElementData* pCurData = iter.second;
 //         delete pCurData;
@@ -141,12 +154,22 @@ void Context::endFrame()
 }
 
 
-void Context::stackPopChild(Element* pElem)
+void Context::pushLoop(ref_ptr<BaseLoop> pLoop)
 {
-    Element* pBack = m_pChildStack.back().m_pElement;
-    assert(pBack == pElem);
-    m_pChildStack.pop_back();
+    m_pLoopStack.push_back(pLoop);
+    m_pCurLoop = pLoop;
 }
+
+
+void Context::popLoop(BaseLoop* pLoop)
+{
+    if (!pLoop || m_pLoopStack.back() == pLoop)
+        m_pLoopStack.pop_back();
+    else
+        assert(0);
+    //return std::move(pLoop);
+}
+
 
 
 qim::BehaviorElem* Context::findBehavior(const qd::TypeInfo& pBehClassInfo) const
@@ -203,6 +226,89 @@ Context::Context()
 {
     m_pCurrStorage = new Storage();
     m_pPrevStorage = new Storage();
+}
+
+
+qim::ItNodeState& BaseIter::onNextNodeByStr(const char* str, const char* str_end /*= nullptr*/)
+{
+    ImGuiID seed = m_parentId; // m_nodeMap.back().m_nodeId;
+    ImGuiID id = ::ImHashStr(str, str_end ? (str_end - str) : 0, seed);
+
+    ItNodeState& st = m_nodeMap[id];
+    st.m_nodeId = id;
+    st.m_parentId = m_parentId;
+    m_curId = id;
+    return st;
+}
+
+
+void BaseIter::pushCurNode(const char* str, const char* str_end /*= nullptr*/)
+{
+    ImGuiID seed = m_parentId; // m_nodeMap.back().m_nodeId;
+    ImGuiID id = ::ImHashStr(str, str_end ? (str_end - str) : 0, seed);
+
+    ItNodeState& st = m_nodeMap[id];
+    st.m_nodeId = id;
+    st.m_parentId = m_parentId;
+
+    m_curId = id;
+}
+
+
+qim::ELoopState BaseLoop::getNextLoopIterState(ItNodeState& iterSt) const
+{
+    assert(m_pIter);
+
+    const BaseIter::Cfg& cfg = m_pIter->cfg;
+
+    ItNodeState& it = iterSt;
+    if (cfg.visitRootHead && !it.visitRootHead)
+    {
+        it.visitRootHead = true;
+        return ELoopState::WANT_NODE_HEAD;
+    }
+
+    if (cfg.enterInBodyOnce && !it.enterInBodyOnce)
+    {
+        it.enterInBodyOnce = true;
+        return ELoopState::WANT_ITER_BODY_ONCE;
+    }
+
+    if (cfg.visitChild)
+    {
+        if (!it.iterChildBegin)
+        {
+            it.iterChildBegin = true;
+            return ELoopState::WANT_MEET_CHILD;
+        }
+        if (!it.iterChildEnd /*&& it.nodeEnd*/)
+        {
+            it.iterChildEnd = true;
+            //it.nodeEnd = false;
+            return ELoopState::WANT_MEET_CHILD_END;
+        }
+    }
+    if (cfg.visitSiblings)
+    {
+        if (!it.siblingsBegin)
+        {
+            it.siblingsBegin = true;
+            return ELoopState::WANT_MEET_SIBLING;
+        }
+        if (!it.siblingsEnd /*&& it.nodeEnd*/)
+        {
+            it.siblingsEnd = true;
+            //it.nodeEnd = false;
+            return ELoopState::WANT_MEET_SIBLING_END;
+        }
+    }
+
+    if (!it.endLoop)
+    {
+        return ELoopState::S_CUR_NODE_END;
+    }
+
+    return m_meetIter;
 }
 
 

@@ -32,7 +32,7 @@ void UiMenuOperation::setup(const char* operation_class_name)
 }
 
 
-void UiMenuOperation::onEndImp(qim::Context* ctx)
+void UiMenuOperation::onDrawEndImp(qim::Context* ctx)
 {
     auto pMenu = ctx->getStackTreeTopElem()->cast_<qim::UiMenu>();
     assert(pMenu);
@@ -71,17 +71,17 @@ qim::Element* UiMenuBeh::createElementData(const qd::TypeInfo& type)
 }
 
 
-void UiMenu::onBeginImp(qim::Context* ctx)
+void UiMenu::onDrawBeginImp(qim::Context* ctx)
 {
-    ctx->stackPushElement(this);
+    ctx->pushStackElement(this);
     //
     m_isOpen = ImGui::BeginMenu(m_text.c_str());
 }
 
 
-void UiMenu::onEndImp(qim::Context* ctx)
+void UiMenu::onDrawEndImp(qim::Context* ctx)
 {
-    ctx->stackPopChild(this);
+    ctx->popStackElement(this);
 
     if (m_isOpen)
         ImGui::EndMenu();

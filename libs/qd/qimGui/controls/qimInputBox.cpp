@@ -1,7 +1,7 @@
 #include "qimInputBox.h"
 
 
-void qim::InputInt::onEndImp(qim::Context* ctx)
+void qim::InputInt::onDrawEndImp(qim::Context* ctx)
 {
     StepInt defaultStep;
     auto* stepPrm = propFind_<StepInt>();
