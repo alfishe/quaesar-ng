@@ -96,7 +96,7 @@ public:
         m_pElemData = pElemData;
         m_pIter = new BaseIter(pElemData->getId());
         m_pIter->cfg.visitRootHead = true;
-        m_pIter->cfg.visitChild = false;
+        m_pIter->cfg.visitChild = true;
         BaseLoop::setup(pCtx);
     }
 
@@ -128,18 +128,17 @@ class DrawCtrlElemList : public qim::BaseLoop
     int m_nSubLoops = 0;
 public:
 
-    void setup(qim::Context* pCtx)
+    void setup(qim::Context* pCtx, ElementData* pElemData)
     {
         BaseLoop::setup(pCtx);
-        m_meetIter = ELoopState::WANT_ITER_BODY_ONCE;
+        //m_meetIter = ELoopState::WANT_ITER_BODY_ONCE;
+        m_pIter = new BaseIter(pElemData->getId());
+        m_pIter->cfg.visitRootHead = true;
+        m_pIter->cfg.visitChild = true;
     }
 
     virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElemData) override
     {
-        m_pIter = new BaseIter(pElemData->getId());
-        m_pIter->cfg.visitRootHead = false;
-        m_pIter->cfg.visitChild = true;
-
         m_pCtx->pushNewLoop_<loop::DrawCtrlElem>(this, pElemData);
         return true;
     }
@@ -230,7 +229,7 @@ public:
             if (m_pScanner->m_hasChild)
             {
                 // draw child if has
-                pLoop = m_pCtx->pushNewLoop_<DrawCtrlElemList>(m_pSubLoops.get());
+                pLoop = m_pCtx->pushNewLoop_<DrawCtrlElemList>(m_pSubLoops.get(), m_pElemData);
             }
             if (m_pScanner->m_hasProps)
             {

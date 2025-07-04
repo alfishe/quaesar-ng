@@ -195,7 +195,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
 
         QCTRL(qim::UiMenu, pEmulator, "Emulator")
         {
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
+            //QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
             QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
             QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga))
             {
@@ -255,7 +255,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
                     pCurWnd->setVisible(bVis);
             }
         }
-#endif // 
+#endif //
 
         ImGui::EndMainMenuBar();
     }

@@ -46,10 +46,11 @@ bool doCtrlElemForLoop(const DeferredCall& curNode, Element** pOutElement, size_
     {
         BaseLoop* pLoop = pCtx->getCurLoop();
         pIter = pLoop->m_pIter;
+        pIter->onNextNodeByStr(curNode.m_strNameId);
         pStateIt = &pIter->getCurVisitIterState();
         if (nFor == 0)
             pStateIt->nodeBegin = true;
-        if (nFor != 0)
+        if (nFor > 0)
             pStateIt->nodeEnd = true;
 
         ELoopState st = pLoop->getNextLoopIterState(*pStateIt);
@@ -58,10 +59,7 @@ bool doCtrlElemForLoop(const DeferredCall& curNode, Element** pOutElement, size_
         {
         case ELoopState::WANT_NODE_HEAD:
         {
-            pStateIt->visitRootHead = true;
             pLoop->onMeetNodeNext();
-
-            pIter->onNextNodeByStr(curNode.m_strNameId);
 
             ElementData* pElemData = curNode.getOrCreateElement(pCtx);
             assert(*pOutElement == nullptr || *pOutElement == pElemData->m_pElement);
@@ -84,7 +82,7 @@ bool doCtrlElemForLoop(const DeferredCall& curNode, Element** pOutElement, size_
 
         case ELoopState::WANT_ITER_BODY_ONCE:
         case ELoopState::WANT_MEET_CHILD:
-            pLoop->m_pIter->pushCurNode();
+            pLoop->m_pIter->pushCurNode(curNode.m_strNameId);
             return true; // go deeper to look for child
 
         case ELoopState::WANT_MEET_CHILD_END:

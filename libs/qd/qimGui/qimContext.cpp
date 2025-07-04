@@ -231,6 +231,13 @@ Context::Context()
 
 qim::ItNodeState& BaseIter::onNextNodeByStr(const char* str, const char* str_end /*= nullptr*/)
 {
+    if (m_stack.empty())
+    {
+        ItNodeState& st = pushCurNode(str, str_end);
+        st.isRoot = true;
+        return st;
+    }
+
     ImGuiID seed = m_parentId; // m_nodeMap.back().m_nodeId;
     ImGuiID id = ::ImHashStr(str, str_end ? (str_end - str) : 0, seed);
 
@@ -238,20 +245,18 @@ qim::ItNodeState& BaseIter::onNextNodeByStr(const char* str, const char* str_end
     st.m_nodeId = id;
     st.m_parentId = m_parentId;
     m_curId = id;
+    m_pCurState = &st;
     return st;
 }
 
 
-void BaseIter::pushCurNode(const char* str, const char* str_end /*= nullptr*/)
+qim::ItNodeState& BaseIter::pushCurNode(const char* str, const char* str_end /*= nullptr*/)
 {
-    ImGuiID seed = m_parentId; // m_nodeMap.back().m_nodeId;
-    ImGuiID id = ::ImHashStr(str, str_end ? (str_end - str) : 0, seed);
+    StackItem& it = m_stack.push_back();
+    it.m_curNodeId = m_curId;
+    it.m_parentId = m_parentId;
 
-    ItNodeState& st = m_nodeMap[id];
-    st.m_nodeId = id;
-    st.m_parentId = m_parentId;
-
-    m_curId = id;
+    return onNextNodeByStr(str, str_end);
 }
 
 
@@ -259,55 +264,60 @@ qim::ELoopState BaseLoop::getNextLoopIterState(ItNodeState& iterSt) const
 {
     assert(m_pIter);
 
-    const BaseIter::Cfg& cfg = m_pIter->cfg;
+    BaseIter* pIter = m_pIter;
+    const BaseIter::Cfg& cfg = pIter->cfg;
 
-    ItNodeState& it = iterSt;
-    if (cfg.visitRootHead && !it.visitRootHead)
+    ItNodeState& st = iterSt;
+    if (!st.visitedHead)
     {
-        it.visitRootHead = true;
-        return ELoopState::WANT_NODE_HEAD;
+        if (cfg.visitRootHead || !st.isRoot)
+        {
+            st.visitedHead = true;
+            return ELoopState::WANT_NODE_HEAD;
+        }
     }
 
-    if (cfg.enterInBodyOnce && !it.enterInBodyOnce)
+    if (cfg.enterInBodyOnce && !pIter->m_rootState.enterInBodyOnce)
     {
-        it.enterInBodyOnce = true;
+        pIter->m_rootState.enterInBodyOnce = true;
         return ELoopState::WANT_ITER_BODY_ONCE;
     }
 
     if (cfg.visitChild)
     {
-        if (!it.iterChildBegin)
+        if (!st.iterChildBegin)
         {
-            it.iterChildBegin = true;
+            st.iterChildBegin = true;
             return ELoopState::WANT_MEET_CHILD;
         }
-        if (!it.iterChildEnd /*&& it.nodeEnd*/)
+        if (!st.iterChildEnd /*&& st.nodeEnd*/)
         {
-            it.iterChildEnd = true;
-            //it.nodeEnd = false;
+            st.iterChildEnd = true;
+            //st.nodeEnd = false;
             return ELoopState::WANT_MEET_CHILD_END;
         }
     }
     if (cfg.visitSiblings)
     {
-        if (!it.siblingsBegin)
+        if (!st.siblingsBegin && !st.nodeEnd)
         {
-            it.siblingsBegin = true;
+            st.siblingsBegin = true;
             return ELoopState::WANT_MEET_SIBLING;
         }
-        if (!it.siblingsEnd /*&& it.nodeEnd*/)
+        if (!st.siblingsEnd /*&& st.nodeEnd*/)
         {
-            it.siblingsEnd = true;
-            //it.nodeEnd = false;
+            st.siblingsEnd = true;
+            //st.nodeEnd = false;
             return ELoopState::WANT_MEET_SIBLING_END;
         }
     }
 
-    if (!it.endLoop)
+    if (st.nodeEnd)
     {
-        return ELoopState::S_CUR_NODE_END;
+        return ELoopState::S_END;
     }
 
+    assert(0);
     return m_meetIter;
 }
 

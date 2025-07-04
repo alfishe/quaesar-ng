@@ -90,7 +90,7 @@ bool EventHandlerLoop::isSectEnterAllowed(Property* pProp, ElementData* pElemDat
 
 bool DrawCtrlElem::meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElem)
 {
-    m_pCtx->pushNewLoop_<loop::DrawCtrlElem>(this, pElem);
+    //m_pCtx->pushNewLoop_<loop::DrawCtrlElem>(this, pElem);
     return true;
 }
 

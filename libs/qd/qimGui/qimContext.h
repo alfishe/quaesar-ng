@@ -179,7 +179,8 @@ struct ItNodeState {
     ImGuiID m_nodeId = 0;
     ImGuiID m_parentId = 0;
 
-    bool visitRootHead = false;
+    bool isRoot = false;
+    bool visitedHead = false;
     bool iterChildBegin = false;
     bool iterChildEnd = false;
     bool siblingsBegin = false;
@@ -195,6 +196,7 @@ struct ItNodeState {
 class BaseIter : public qd::RefCounted
 {
 public:
+    ItNodeState m_rootState;
     qd::hash_map<ImGuiID, ItNodeState> m_nodeMap;
     ItNodeState* m_pCurState = nullptr;
 
@@ -219,11 +221,12 @@ public:
 public:
     BaseIter(ImGuiID seed)
     {
-        StackItem& it = m_stack.push_back();
-        it.m_curNodeId = seed;
-        m_curId = seed;
-        ItNodeState& st = m_nodeMap[seed];
-        st.m_nodeId = seed;
+//         StackItem& it = m_stack.push_back();
+//         it.m_curNodeId = seed;
+//         m_curId = seed;
+//         ItNodeState& st = m_nodeMap[seed];
+//         st.m_nodeId = seed;
+//         m_pCurState = &st;
     }
 
     ItNodeState& onNextNodeByStr(const char* str, const char* str_end = nullptr);
@@ -234,7 +237,7 @@ public:
         return *m_pCurState;
     }
 
-    void pushCurNode(const char* str, const char* str_end = nullptr);
+    qim::ItNodeState& pushCurNode(const char* str, const char* str_end = nullptr);
 
     void popNode()
     {
