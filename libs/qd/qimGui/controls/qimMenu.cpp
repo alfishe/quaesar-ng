@@ -1,8 +1,8 @@
 #include "qimMenu.h"
 #include "qd/typeSystem/typeRegistry.h"
-#include "qd/ui/shortcutComp.h"
-#include "qd/ui/shortcutMgr.h"
-#include "qd/ui/uiOperationManager.h"
+#include "qd/qui/shortcutHnd.h"
+#include "qd/qui/shortcutMgr.h"
+#include "qd/qui/uiOperationMgr.h"
 #include "imgui/imgui_internal.h"
 #include "SDL_log.h"
 #include "qd/qimGui/qimMessages.h"
@@ -41,7 +41,7 @@ void UiMenuOperation::onDrawEndImp(qim::Context* ctx)
         if (!m_pOperation)
             return;
 
-        auto pShortcuts = m_pOperation->getComp_<qd::ShortcutComp>();
+        qd::ShortcutHnd* pShortcuts = m_pOperation->getShortcuts();
         qd::string shortcutName;
         if (pShortcuts && pShortcuts->getNumShortcuts() > 0)
         {
@@ -50,10 +50,6 @@ void UiMenuOperation::onDrawEndImp(qim::Context* ctx)
         }
 
         bool bChecked = false;
-        // action::msg::MenuItemStateGet menuState;
-        // menuState.menuType = event;
-        // m_pOperation->applyActionMsgProc(&menuState);
-
         bool bEnabled = m_pOperation->isActive();
         if (ImGui::MenuItem(m_pOperation->m_name.c_str(), shortcutName.c_str(), &bChecked, bEnabled))
         {
@@ -63,7 +59,7 @@ void UiMenuOperation::onDrawEndImp(qim::Context* ctx)
 }
 
 
-qim::Element* UiMenuBeh::createElementData(const qd::TypeInfo& type)
+qim::Behavior* UiMenuBeh::createElementData(const qd::TypeInfo& type)
 {
     if (type == qd::typeof_<qim::UiMenuItem>())
         return new UiMenuItem();
@@ -90,6 +86,7 @@ void UiMenu::onDrawEndImp(qim::Context* ctx)
 
 void UiMenuItem::onBeforeEndImp(qim::Context* ctx)
 {
+#if 0
     auto pMenu = ctx->getStackTreeTopElem(-1)->cast_<qim::UiMenu>();
     assert(pMenu);
     if (!pMenu || !pMenu->isOpen())
@@ -101,9 +98,9 @@ void UiMenuItem::onBeforeEndImp(qim::Context* ctx)
     {
         qim::msg::OnElemClicked t;
         t.m_pElem = this;
-        notifyCompsOrParents(t);
+        notifyCompsOrParents(nullptr, t);
     }
-
+#endif // 0
 }
 
 

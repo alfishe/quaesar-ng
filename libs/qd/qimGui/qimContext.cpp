@@ -27,11 +27,11 @@ Context::~Context()
 }
 
 
-qim::ElementData* Context::getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
+qim::ElemData* Context::getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
     const qd::TypeInfo& elemClass)
 {
     ImGuiID id = ImGui::GetID(name_id);
-    if (ElementData* pExist = m_pCurrStorage->findDataById(id))
+    if (ElemData* pExist = m_pCurrStorage->findDataById(id))
         return pExist;
 
     BehaviorElem* pBeh = findBehavior(behClass);
@@ -39,11 +39,11 @@ qim::ElementData* Context::getOrCreateElement(const char* name_id, const qd::Typ
     if (!pBeh)
         return nullptr;
 
-    Element* pNewElem = pBeh->createElementData(elemClass);
+    Behavior* pNewElem = pBeh->createElementData(elemClass);
     if (!pNewElem)
         return nullptr;
 
-    ElementData* pNewData = new ElementData();
+    ElemData* pNewData = new ElemData();
     pNewData->m_pElement = pNewElem;
     pNewData->m_elemId = id;
     m_pElemDataMap[pNewElem] = pNewData;
@@ -70,7 +70,7 @@ void Context::endSect(Section* pOutSect)
 }
 
 
-Context::StackItem& Context::pushStackElement(Element* pElem)
+Context::StackItem& Context::pushStackElement(Behavior* pElem)
 {
     assert(pElem);
     assert(this);
@@ -82,22 +82,22 @@ Context::StackItem& Context::pushStackElement(Element* pElem)
 }
 
 
-void Context::popStackElement(Element* pElem)
+void Context::popStackElement(Behavior* pElem)
 {
-    Element* pBack = m_pChildStack.back().m_pElement;
+    Behavior* pBack = m_pChildStack.back().m_pElement;
     assert(pBack == pElem);
     m_pChildStack.pop_back();
 }
 
 
-qim::ElementData* Context::getStackTreeTopElemData() const
+qim::ElemData* Context::getStackTreeTopElemData() const
 {
-    ElementData* pData = m_pChildStack.back().m_pElemData;
+    ElemData* pData = m_pChildStack.back().m_pElemData;
     return pData;
 }
 
 
-qim::ElementData* Context::findElementData(const Element* pElem) const
+qim::ElemData* Context::findElementData(const Behavior* pElem) const
 {
     if (!pElem)
         return nullptr;
@@ -114,7 +114,7 @@ qd::EFlow Context::onCtrlVisitLoopEnd(CtrlElement* pElem, EVisitStage* pOutVisit
 
     const StackItem& stack = m_pChildStack.back();
     EVisitStage st = stack.m_curVisitStage;
-    ElementData* pData = stack.m_pElemData;
+    ElemData* pData = stack.m_pElemData;
     if (st == EVisitStage::UNDEF || st.hasAny(EVisitStage::VCollect))
     {
         if (pData->m_supportedVStages.has(EVisitStage::VChild))
@@ -147,7 +147,7 @@ void Context::endFrame()
 
     //for (auto& iter : m_pElemDataMap)
     {
-//         ElementData* pCurData = iter.second;
+//         ElemData* pCurData = iter.second;
 //         delete pCurData;
 //         iter.second = nullptr;
     }

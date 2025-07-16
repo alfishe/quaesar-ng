@@ -1,5 +1,5 @@
 #include "shortcut_list.h"
-#include <qd/ui/shortcutMgr.h>
+#include <qd/qui/shortcutMgr.h>
 
 
 namespace amD {

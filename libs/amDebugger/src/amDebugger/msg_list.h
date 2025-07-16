@@ -3,7 +3,7 @@
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vm.h>
 #include <qd/base/types.h>
-#include "qd/ui/uiOperationMessages.h"
+#include "qd/qui/uiOperationMessages.h"
 
 
 namespace amD {

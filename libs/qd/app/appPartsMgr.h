@@ -22,7 +22,7 @@ class AppPartsManager : public IModuleInterface
 private:
     qd::vector<ref_ptr<AppPartBase>> m_pParts;
     Application* m_pApp = nullptr;
-    TTime64 m_TimeNowFrame = 0;
+    TTime64 m_timeNowFrame = 0;
 
 public:
     AppPartsManager(const qd::ModuleCreateParams& cp)
@@ -113,7 +113,7 @@ public:
         return false;
     }
 
-    TTime64 getTimeNowFrame() const { return m_TimeNowFrame; }
+    TTime64 getTimeNowFrame() const { return m_timeNowFrame; }
     virtual void onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg) override;
     void _onImGuiDebugControl(ImAPI::CImGuiBase& im);
 

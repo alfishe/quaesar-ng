@@ -7,10 +7,10 @@ namespace qim {
 
 class Storage
 {
-    qd::vector_map<ElemId, ElementData*> m_dataMap;
+    qd::vector_map<ElemId, ElemData*> m_dataMap;
 
 public:
-    ElementData* findDataById(ElemId id)
+    ElemData* findDataById(ElemId id)
     {
         auto it = m_dataMap.find(id);
         if (it != m_dataMap.end())
@@ -18,7 +18,7 @@ public:
         return nullptr;
     }
 
-    void setData(ElemId slot_id, ElementData* p_data_inst) //
+    void setData(ElemId slot_id, ElemData* p_data_inst) //
     {
         m_dataMap[slot_id] = p_data_inst;
     }

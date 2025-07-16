@@ -1,50 +1,112 @@
 #include "dbgGuiDesktop.h"
+#include "amDebugger/commonOperations.h"
+#include "EASTL/optional.h"
 #include "EASTL/span.h"
-#include "qd/ui/controls/lambda.h"
+#include "qd/imGui/imGuiHelperClass.h"
+#include "qd/log/log.h"
+#include "qd/qimGui/controls/qimMenu.h"
+#include "qd/qui/comps/uiOperationMgrComp.h"
+#include "qd/qui/comps/uiShortcutMgrComp.h"
+#include "qd/qui/controls/lambda.h"
+#include "qd/qui/controls/menuItemOperation.h"
+#include "qd/qui/shortcutMgr.h"
+#include "qd/qui/uiOperationMgr.h"
+#include "qd/typeSystem/typeRegistry.h"
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/shortcut/shortcut_list.h>
+#include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include "qd/log/log.h"
-#include "qd/typeSystem/typeRegistry.h"
-#include "qd/ui/uiOperationManager.h"
-#include "qd/ui/shortcutMgr.h"
-#include "qd/qimGui/controls/qimMenu.h"
-#include "amDebugger/commonOperations.h"
-#include "imgui/imgui.h"
-#include "EASTL/optional.h"
 
 
 
 namespace amD {
 
 using namespace operation;
+inline static const char* dma_options = "off\0"
+                                        "mode 2\0"
+                                        "mode 3\0"
+                                        "mode 4\0"
+                                        "\0";
+
 
 DbgGuiDesktop::DbgGuiDesktop(Debugger* in_dbg)
     : m_pDbg(in_dbg)
+{}
+
+
+void DbgGuiDesktop::_drawMainMenuBar()
 {
+    if (ImGui::BeginMainMenuBar())
+    {
+        if (auto pm = qIm::BeginMenu("File"))
+        {
+        }
+
+        if (auto pm = qIm::BeginMenu("Emulator"))
+        {
+            qIm::menuItemOperation(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+            qIm::menuItemOperation(STRINGIFY(amD::operation::UaeResetAmiga));
+        }
+
+        if (auto pm = qIm::BeginMenu("Debug"))
+        {
+            qIm::menuItemOperation(STRINGIFY(amD::operation::DebugTraceStart));
+            ImGui::Separator();
+            qIm::menuItemOperation(STRINGIFY(amD::operation::DisasmTraceStep));
+            qIm::menuItemOperation(STRINGIFY(amD::operation::DisasmTraceStepOut));
+            qIm::menuItemOperation(STRINGIFY(amD::operation::DebugTraceContinue));
+            qIm::menuItemOperation(STRINGIFY(amD::operation::DisasmToggleBreakpoint));
+            ImGui::Separator();
+            qIm::menuItemOperation(STRINGIFY(amD::operation::CopperTraceStep));
+            qIm::menuItemOperation(STRINGIFY(amD::operation::CopperToggleBreakpoint));
+            ImGui::Separator();
+
+            amD::operation::DebugDmaOption* pDebugDmaOp;
+            pDebugDmaOp = getOperationMgr()->getOperation_<amD::operation::DebugDmaOption>();
+            if (pDebugDmaOp)
+            {
+                int dmaMode = pDebugDmaOp->getCurDebugDmaMode();
+                int n = dmaMode > 0 ? dmaMode - 1 : 0;
+                if (ImGui::Combo(pDebugDmaOp->getName().c_str(), &n, dma_options))
+                    pDebugDmaOp->changeDebugDmaMode(n);
+            }
+        }
+
+        if (auto pEm = qIm::BeginMenu("Window"))
+        {
+            for (qd::UiNode* pCurWnd : m_pWindows)
+            {
+                if (!pCurWnd)
+                    continue;
+                bool bVis = pCurWnd->isVisible();
+                if (ImGui::MenuItem(pCurWnd->getText().c_str(), 0, &bVis))
+                    pCurWnd->setVisible(bVis);
+            }
+        }
+
+        ImGui::EndMainMenuBar();
+    }
 }
 
 
-void DbgGuiDesktop::onNodeCreated(qd::NodeCreator* mk)
+void DbgGuiDesktop::onNodeCreated(qd::UiNodeCreator* mk)
 {
     TSuper::onNodeCreated(mk);
 
     m_pWindows.resize((size_t)WndId::MostCommonCount);
-    m_pOperationMgr = createComp_<qd::UiOperationMgr>();
-    m_pShortcutMgr = createComp_<qd::ShortcutsMgr>();
-
+    m_pOperationMgr = qd::UiOperationMgr::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
+    m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
     m_pShortcutMgr->init(eastl::span(&shortcut::g_shortcuts_list[0], (size_t)shortcut::EId::MAX_COUNT));
 
     // create all m_pWindows
     createAllUiWndows();
 
-    operation::AmDebuggerOperationCreator operationCreate;
+    amD::operation::AmDebuggerOperationCreator operationCreate;
     operationCreate.gui = this;
     operationCreate.dbg = m_pDbg;
     m_pOperationMgr->createOperations(&operationCreate);
 
     qim::createContext();
-
 }
 
 
@@ -76,7 +138,7 @@ DbgGuiDesktop::~DbgGuiDesktop()
 
 void DbgGuiDesktop::drawImGuiMainFrame()
 {
-    getShortcuts()->update();
+    getShortcuts()->update(m_pOperationMgr);
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -87,7 +149,7 @@ void DbgGuiDesktop::drawImGuiMainFrame()
                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-    qim::beginFrame();
+    // qim::beginFrame();
 
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
@@ -101,8 +163,7 @@ void DbgGuiDesktop::drawImGuiMainFrame()
     }
     ImGui::End();
 
-    qim::endFrame();
-
+    // qim::endFrame();
 }
 
 
@@ -111,7 +172,7 @@ void DbgGuiDesktop::_drawToolBar()
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
-    if (ImGui::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
+    if (auto bg = qIm::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
     {
         ImGuiIO& io = ImGui::GetIO();
         ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -172,7 +233,6 @@ void DbgGuiDesktop::_drawToolBar()
         {
             shMgr->triggerShortcut(pCurShortcut);
         }
-        ImGui::EndChild();
     }
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
 }
@@ -184,82 +244,6 @@ void DbgGuiDesktop::destroy()
     TSuper::destroy();
 }
 
-
-void DbgGuiDesktop::_drawMainMenuBar()
-{
-    if (ImGui::BeginMainMenuBar())
-    {
-        //QCTRL(qim::UiMenu, pMenu, "File")
-        {
-        }
-
-        QCTRL(qim::UiMenu, pEmulator, "Emulator")
-        {
-            //QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::ToggleTurboEmulation));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::UaeResetAmiga))
-            {
-//                 QSECT(qim::isClicked, pClick)
-//                 if (pClick->mb == 0)
-//                 {
-//                 }
-//                 QSECT(qim::Props::Color, pColor)
-//                 pColor->set(qd::Color::YELLOW);
-            }
-        }
-
-#if 0
-        QCTRL(qim::UiMenu, pDebug, "Debug")
-        {
-            Q_IF(qim::Sect::ChildList, _)
-            {
-                // if (pDebug->isOpen())
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceStart));
-                ImGui::Separator();
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStep));
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmTraceStepOut));
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DebugTraceContinue));
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::DisasmToggleBreakpoint));
-                ImGui::Separator();
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperTraceStep));
-                QCTRL(qim::UiMenuOperation, _, STRINGIFY(amD::operation::CopperToggleBreakpoint));
-                ImGui::Separator();
-
-                static eastl::optional<operation::DebugDmaOption*> pDebugDmaOp = nullptr;
-                if (!pDebugDmaOp.has_value())
-                    pDebugDmaOp = getOperationMgr()->getOperation_<amD::operation::DebugDmaOption>();
-                if (*pDebugDmaOp)
-                {
-                    const char* options = "off\0"
-                                          "mode 2\0"
-                                          "mode 3\0"
-                                          "mode 4\0"
-                                          "\0";
-                    int dmaMode = (*pDebugDmaOp)->getCurDebugDmaMode();
-                    int n = dmaMode > 0 ? dmaMode - 1 : 0;
-                    if (ImGui::Combo(CC((*pDebugDmaOp)->getName()), &n, options))
-                        (*pDebugDmaOp)->changeDebugDmaMode(n);
-                }
-            }
-        }
-
-        QCTRL(qim::UiMenu, pWindow, "Window")
-        if (pWindow->isOpen())
-        {
-            for (qd::UiNode* pCurWnd : m_pWindows)
-            {
-                if (!pCurWnd)
-                    continue;
-                bool bVis = pCurWnd->isVisible();
-                if (ImGui::MenuItem(pCurWnd->getText().c_str(), 0, &bVis))
-                    pCurWnd->setVisible(bVis);
-            }
-        }
-#endif //
-
-        ImGui::EndMainMenuBar();
-    }
-}
 
 
 }; // namespace amD

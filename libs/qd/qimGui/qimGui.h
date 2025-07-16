@@ -11,9 +11,9 @@
 
 namespace qim {
 class Context;
-class Element;
+class Behavior;
 extern Context* g_pCtx;
-Context* getCurrentContext();
+qim::Context* getCurrentContext();
 
 
 Context* createContext();
@@ -28,14 +28,14 @@ void endFrame();
 ELoopState loop_done_imp(BaseLoop* pLoop);
 
 
-bool doCtrlElemForLoop(const DeferredCall& createElem, Element** pOutElement, size_t nFor);
+bool doCtrlElemForLoop(const DeferredCall& createElem, Behavior** pOutElement, size_t nFor);
 
 
 template<class T, typename... TArgs>
 bool doCtrlLoop_(T** pOutElement, T** pLocalForCounter, const char* strNameId, TArgs&&... args)
 {
     DeferredCall_<T> createElem(strNameId, std::forward<TArgs>(args)...);
-    Element*& pOut = reinterpret_cast<Element*&>(*pOutElement);
+    Behavior*& pOut = reinterpret_cast<Behavior*&>(*pOutElement);
     size_t nFor = reinterpret_cast<size_t>(*pLocalForCounter);
     return qim::doCtrlElemForLoop(createElem, &pOut, nFor); // DO FOR LOOP
 }
@@ -51,7 +51,7 @@ inline void endCtrl_(T** pOutElement, T** pLocalForCounter)
     ++nFor;
 //     Context* pCtx = qim::getCurrentContext();
 //     EVisitStage curStage = pCtx->getCurVisitStage();
-//     ElementData* pElemData = pCtx->getStackTreeTopElemData();
+//     ElemData* pElemData = pCtx->getStackTreeTopElemData();
 //     pElemData->m_executedStages |= curStage;
 }
 
@@ -84,7 +84,7 @@ bool doSectLoop_(TPropSect** pOutSect, TPropSect** pForCounter)
         pCtx->pushLoop(pLoop);
         if (pLoop->isWantSetupElement())
         {
-            ElementData* pElemData = pCtx->getStackTreeTopElemData();
+            ElemData* pElemData = pCtx->getStackTreeTopElemData();
             TPropSect* pProp = pCtx->getOrCreateSect_<TPropSect>(pElemData);
             if (!pLoop->isSectEnterAllowed(pProp, pElemData))
                 return false;

@@ -32,7 +32,7 @@ struct Base_ : public Base {
 
 
 struct OnElemClicked : QIM_MSG_BASE(OnElemClicked) {
-    CtrlElement* m_pElem = nullptr;
+    qim::ElemData* m_pElem = nullptr;
     int m_mouseButton = 0;
 };
 

@@ -115,9 +115,9 @@ namespace qd
 		}
 
 		inline float toFloat() const {
-			const float Factor = (1.0f / (float)myself::getFactor());
-			float Res = (float)(float(mV) * (Factor));
-			return Res;
+			constexpr const float factor = (1.0f / (float)myself::getFactor());
+			float res = float(mV) * factor;
+			return res;
 		}
 
 		inline CFixed32 toFix32() const;

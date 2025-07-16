@@ -1,10 +1,9 @@
 #pragma once
-#include "qd/stl/forwardDecl.h"
 #include <EASTL/fixed_vector.h>
 
 namespace qd
 {
-
+using eastl::fixed_vector;
 
 }; // namespace qd
 

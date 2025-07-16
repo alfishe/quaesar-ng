@@ -35,7 +35,8 @@ protected:
         int64_t m_Int64;
         uint64_t m_UInt64; // 8 byte
         void* m_pPointer; // 8 byte
-        uint64_t _bodyData;
+
+        uint64_t _bodyData = 0;
     };
 
 

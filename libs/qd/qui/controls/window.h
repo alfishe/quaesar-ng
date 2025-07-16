@@ -1,10 +1,7 @@
 #pragma once
 #include "qd/math/point2.h"
-#include "qd/base/base.h"
-#include "qd/node/node.h"
 #include "qd/stl/vector.h"
-#include "qd/typeSystem/typeDeclare.h"
-#include "qd/ui/uiNode.h"
+#include "qd/qui/uiNode.h"
 
 
 

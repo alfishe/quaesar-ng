@@ -66,13 +66,13 @@ class Debugger : public qd::AppPartBase
 
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
-    qd::QImGuiContext* m_pImGui = nullptr;
+    qd::QImGuiContext* m_pQimGui = nullptr;
 
 public:
     csh* m_pCapstone = nullptr;
     amD::VM* vm = nullptr;
     amD::DbgGuiDesktop* m_pGui = nullptr;
-    qd::UiOperationMgr* m_pOperations = nullptr;
+    qd::UiOperationMgr* m_pOperationMgr = nullptr;
 
     SDL_Renderer* getRenderer() const {
         return m_pRenderer;
@@ -101,7 +101,7 @@ public:
     }
 
     qd::UiOperationMgr* getOperations() const {
-        return m_pOperations;
+        return m_pOperationMgr;
     }
 
     static bool isDebugActivated();

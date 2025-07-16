@@ -155,7 +155,7 @@ public:
             : m_Obj(*pPtr)
         {
             assert(pPtr);
-            pPtr->ref_ptr_retain();
+            m_Obj.ref_ptr_retain();
         }
 
         inline ~CRefLock() { m_Obj.ref_ptr_release(); }
@@ -626,7 +626,6 @@ template<class T>
 void referenced_static_delete(T* pThis)
 {
     // SELF DELETE
-    assert(pThis);
     assert(pThis->_ref_ptr_RefCount == 0);
 
     RefCounted* pRefThis(pThis); // RefThis Due to - Private destructors for some objects!
@@ -807,7 +806,7 @@ public:
         return *this;
     }
 
-    inline const TThis& operator= (ref_ptr<T>&& rv)
+    inline const TThis& operator= (ref_ptr<T>&& rv) noexcept
     {
         TSuper::destroy();
         this->_ptr = rv.template _get_<T>();

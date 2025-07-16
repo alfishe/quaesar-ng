@@ -43,7 +43,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class Node : public RefCounted
+class Node : public qd::RefCounted
 {
     TS_BEGIN_REFLECT_CLASS_BASE(200, qd::Node, void);
     TS_END();
@@ -51,94 +51,119 @@ class Node : public RefCounted
  public:
     Node* const m_pParent = nullptr;
     INodesChildList* m_pChildList = nullptr;
-    eastl::fixed_vector<NodeComp*, 6, true> m_pComps;
+    eastl::fixed_vector<qd::NodeComp*, 6, true> m_pComps;
 
 public:
     Node() = default;
     virtual ~Node();
+    virtual void destroy();
 
     virtual void onNodeCreated(qd::NodeCreator* mk);
     virtual EFlow onNodeMessageProc(qd::NodeMessage* in_msg);
 
     int getNumChild() const;
     Node* getChild(int idx) const;
-
-    decltype(auto) getCompsBegin() { return m_pComps.begin(); }
-    decltype(auto) getCompsEnd() { return m_pComps.end(); }
-
-    template<class TComp, typename... TArgs>
-    TComp* createComp_(TArgs&&... args)
-    {
-        if (TComp* pExist = getComp_<TComp>())
-            return pExist;
-        NodeCreator cp;
-        cp.parent = this;
-        TComp* newComp = cp.make_<TComp>(args...);
-        addComp(newComp);
-        return newComp;
-    }
-
-    void addComp(NodeComp* newComp);
-    NodeComp* findComp(const qd::TypeInfo& id) const;
     Node* findChildNode(const qd::TypeInfo& ti);
     Node* findParentNode(const qd::TypeInfo& needType) const;
-
-    template<class TComp>
-    inline TComp* getComp_() const
-    {
-        NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
-        return static_cast<TComp*>(pComp);
-    }
-
     template<class T>
-    T* findParentComp_() const
-    {
-        Node* pCurNode = m_pParent;
-        while (pCurNode)
-        {
-            if (T* pFoundComp = pCurNode->getComp_<T>())
-                return pFoundComp;
-            pCurNode = pCurNode->m_pParent;
-        }
-        return nullptr;
-    }
-
-    // find components by interface with dynamic_cast
-    template<class TComp>
-    inline TComp* getCompI_() const
-    {
-        NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
-        return dynamic_cast<TComp*>(pComp);
-    }
-
-    template<class T>
-    T* findParentCompI_() const
-    {
-        Node* pCurNode = m_pParent;
-        while (pCurNode)
-        {
-            if (T* pFoundComp = pCurNode->getCompI_<T>())
-                return pFoundComp;
-            pCurNode = pCurNode->m_pParent;
-        }
-        return nullptr;
-    }
-
-
-    template<class T>
-    T* findParentNode_() const
-    {
-        const qd::TypeInfo& needType = qd::typeof_<T>();
-        return static_cast<T*>(findParentNode(needType));
-    }
+    T* findParentNode_() const;
 
     qd::Node* getParent() const { return m_pParent; }
     void setParent(qd::Node* Parent);
 
-    virtual void destroy();
+    // Components
+    decltype(auto) getCompsBegin() { return m_pComps.begin(); }
+    decltype(auto) getCompsEnd() { return m_pComps.end(); }
+
+    template<class TComp, typename... TArgs>
+    TComp* createComp_(TArgs&&... args);
+
+    void addComp(NodeComp* newComp);
+    NodeComp* findComp(const qd::TypeInfo& id) const;
+
+    template<class TComp>
+    TComp* getComp_() const;
+
+    template<class T>
+    T* findParentComp_() const;
+
+    // find components by interface with dynamic_cast
+    template<class TComp>
+    TComp* getCompI_() const;
+
+    template<class T>
+    T* findParentCompI_() const;
 
 
 }; // class Node
+//////////////////////////////////////////////////////////////////////////
+
+
+template<class TComp, typename ...TArgs>
+TComp* Node::createComp_(TArgs&&... args)
+{
+    if (TComp* pExist = getComp_<TComp>())
+        return pExist;
+    NodeCreator cp;
+    cp.parent = this;
+    TComp* newComp = cp.make_<TComp>(args...);
+    addComp(newComp);
+    return newComp;
+}
+
+
+template<class TComp>
+TComp* Node::getComp_() const
+{
+    NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
+    return static_cast<TComp*>(pComp);
+}
+
+
+template<class T>
+T* Node::findParentComp_() const
+{
+    Node* pCurNode = m_pParent;
+    while (pCurNode)
+    {
+        if (T* pFoundComp = pCurNode->getComp_<T>())
+            return pFoundComp;
+        pCurNode = pCurNode->m_pParent;
+    }
+    return nullptr;
+}
+
+
+template<class TComp>
+TComp* Node::getCompI_() const
+{
+    NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
+    return dynamic_cast<TComp*>(pComp);
+}
+
+
+template<class T>
+T* Node::findParentCompI_() const
+{
+    Node* pCurNode = m_pParent;
+    while (pCurNode)
+    {
+        if (T* pFoundComp = pCurNode->getCompI_<T>())
+            return pFoundComp;
+        pCurNode = pCurNode->m_pParent;
+    }
+    return nullptr;
+}
+
+
+template<class T>
+T* Node::findParentNode_() const
+{
+    const qd::TypeInfo& needType = qd::typeof_<T>();
+    return static_cast<T*>(findParentNode(needType));
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -149,7 +174,7 @@ class NodeComp : public Node
 
 public:
     NodeComp() {}
-};
+}; // class NodeComp
 
 
 
@@ -201,7 +226,7 @@ struct NodeCreator {
     TClass* make_(TArgs&&... args)
     {
         TClass* pNode = new TClass(args...);
-        pNode->onNodeCreated((NodeCreator*)this);
+        pNode->onNodeCreated(this);
         return pNode;
     } // make_
 

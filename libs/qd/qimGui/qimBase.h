@@ -16,8 +16,8 @@ namespace qim {
 
 class Context;
 class BehaviorElem;
-class Element;
-class ElementData;
+class Behavior;
+class ElemData;
 class CtrlElement;
 class CompElement;
 using ElemId = uint32_t;
@@ -76,11 +76,13 @@ PropertyClassMeta& get_prop_class_meta_()
     return inst;
 }
 
+
 class QimBase
 {
 public:
     virtual ~QimBase() = default;
-};
+}; // class QimBase
+//////////////////////////////////////////////////////////////////////////
 
 
 class Property : public QimBase
@@ -97,7 +99,7 @@ public:
 
     virtual ~Property() = default;
 
-    virtual bool isSectEnterAllowedImp(qim::Context* ctx, ElementData* pData) { return true; }
+    virtual bool isSectEnterAllowedImp(qim::Context* ctx, ElemData* pData) { return true; }
 
 public:
     using PrimeIdClassMgr = qd::ClassPrimeIdMgr_<qim::Property>;

@@ -1,4 +1,4 @@
-#include "qd/ui/controls/dialog.h"
+#include "qd/qui/controls/dialog.h"
 
 
 namespace qd

@@ -61,7 +61,7 @@ void draw_option(UOption* pOption) {
 }
 
 
-void UaeOptionsDlg::onNodeCreated(qd::NodeCreator* mk) {
+void UaeOptionsDlg::onNodeCreated(qd::UiNodeCreator* mk) {
     TSuper::onNodeCreated(mk);
 
     setSize({600, 400});

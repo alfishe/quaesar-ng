@@ -92,7 +92,7 @@ class ModuleManager
     // static constexpr uint32_t g_nMAX_MODULES = ECgModuleID::_FAST_ACCESS_ + 16;
 
     struct InfoItem {
-        const qd::TypeInfo* m_pType;
+        const qd::TypeInfo* m_pType = nullptr;
         eastl::unique_ptr<ModuleInfo> m_pModuleInfo;
     };
     qd::vector<ModuleManager::InfoItem> m_pModuleInfoMap;

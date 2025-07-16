@@ -18,6 +18,8 @@ bool Window::onSectChildBeginImp()
     const bool bModal = isModal();
     im = {};
 
+    bool m_bVisible = true; // TODO
+
     if (bModal)
     {
         ImGui::OpenPopup(m_title.c_str());

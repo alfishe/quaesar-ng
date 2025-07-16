@@ -45,7 +45,7 @@ class WindowBeh : public qim::BehaviorElem
 
 
 public:
-    Element* createElementData(const qd::TypeInfo& type) override { return new qim::Window(); }
+    Behavior* createElementData(const qd::TypeInfo& type) override { return new qim::Window(); }
 
 }; // class UiInputBeh
 //////////////////////////////////////////////////////////////////////////

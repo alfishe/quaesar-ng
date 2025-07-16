@@ -1,26 +1,23 @@
 #pragma once
-#include "qd/node/node.h"
 #include "qd/stl/vector.h"
 #include "qd/typeSystem/typeDeclare.h"
-#include "qd/ui/shortcut.h"
-#include "qd/ui/uiOperation.h"
 #include <EASTL/span.h>
+#include "qd/stl/fixed_vector.h"
 
 
 namespace qd {
 class Shortcut;
 
 
-class ShortcutComp : public qd::NodeComp
+class ShortcutHnd : public qd::RefCounted
 {
-    TS_REFLECT_CLASS(qd::ShortcutComp, qd::NodeComp);
+    TS_REFLECT_CLASS(qd::ShortcutHnd, qd::RefCounted);
 
 public:
-    static constexpr uint32_t CLASSID = (uint32_t)EOperationCompsClassId::Shortcuts;
-    qd::vector<const Shortcut*> m_pShortcuts;
+    qd::fixed_vector<const Shortcut*, 2, false> m_pShortcuts;
 
 public:
-    virtual ~ShortcutComp() {}
+    virtual ~ShortcutHnd() {}
 
     eastl::span<const Shortcut* const> getShortcuts() const
     {
@@ -45,6 +42,6 @@ public:
     }
 
     int getNumShortcuts() const { return (int)m_pShortcuts.size(); }
-}; // class ShortcutComp
+}; // class ShortcutHnd
 
 }; // namespace qd

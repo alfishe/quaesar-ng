@@ -26,10 +26,16 @@ Context* getCurrentContext();
 struct OnElementConstruct {};
 
 
-class ElementData
+struct ElemBrush {
+public:
+    ~ElemBrush() {}
+};
+
+//////////////////////////////////////////////////////////////////////////
+class ElemData
 {
 public:
-    Element* m_pElement = nullptr;
+    qim::Behavior* m_pElement = nullptr;
     ImGuiID m_elemId = 0;
 
     EVisitStage m_supportedVStages = 0;
@@ -40,9 +46,20 @@ public:
     qd::ClassPrimeId m_eventHappens;
     qd::ClassPrimeId m_eventApplied;
 
-    ElementData() = default;
+    ElemData* m_pParentElem = nullptr;
+    ElemData* m_pNextElem = nullptr;
+    ElemData* m_pPrevElem = nullptr;
+    ElemData* m_pCompsRoot = nullptr;
+    CtrlElement* m_pChildRoot = nullptr;
 
-    Property* propFindByCid(const Context* ctx, const qim::PropertyClassMeta& cid, bool include_parents) const;
+    qim::Context* ctx = nullptr;
+
+    bool m_bVisible = true;
+
+public:
+    ElemData() = default;
+
+    Property* propFindByCid(const qim::PropertyClassMeta& cid, bool include_parents) const;
 
     Property* propFindLocalByCid(const qim::PropertyClassMeta& cid) const;
     void propAdd(qim::Property* pProp);
@@ -62,9 +79,9 @@ public:
         return *pNewProp;
     }
     template<class T>
-    T* propFind_(const Context* ctx, bool include_parents = true)
+    T* propFind_(bool include_parents = true)
     {
-        if (Property* pProp = propFindByCid(ctx, T::s_classMeta, include_parents))
+        if (Property* pProp = propFindByCid(T::s_classMeta, include_parents))
             return static_cast<T*>(pProp);
         return nullptr;
     }
@@ -78,15 +95,43 @@ public:
         return static_cast<T*>(m_pElement);
     }
 
-}; // struct ElementData
+    qd::EFlow onMessageProc(qim::msg::Base& in_msg);
 
+    void setParent(qim::ElemData* ParentElem) { m_pParentElem = ParentElem; }
+    qim::ElemData* getParent() const { return m_pParentElem; }
+
+    template<class T>
+    T* getParent_() const
+    {
+        if (!m_pParentElem)
+            return nullptr;
+        if (!m_pParentElem->getTypeInfo().isDerivedFrom_<T>())
+            return nullptr;
+        return static_cast<T*>(m_pParentElem);
+    }
+
+    bool isVisible(bool bCheckParents = false) const;
+    bool setVisible(bool bVisible);
+
+    void drawElem(qim::ElemBrush& brush);
+
+}; // class ElemData
+//////////////////////////////////////////////////////////////////////////
+
+
+
+template<class T>
+class Elem_ : public ElemData
+{
+public:
+};
 
 
 
 //////////////////////////////////////////////////////////////////////////
-class Element : public qim::QimBase
+class Behavior : public qim::QimBase
 {
-    TS_REFLECT_CLASS_BASE(100, qim::Element, void);
+    TS_REFLECT_CLASS_BASE(100, qim::Behavior, void);
 
 public:
     ElemId m_localId = 0;
@@ -96,21 +141,11 @@ public:
 
     const BehaviorElem* m_pBehavior = nullptr; // Behavior class that this element data belongs to
 
-    Element* m_pParentElem = nullptr;
-
-    Element* m_pNextElem = nullptr;
-    Element* m_pPrevElem = nullptr;
-
-    int m_nComps = 0;
-    BehaviorElem* m_pCompsRoot = nullptr;
-    int m_nChilds = 0;
-    CtrlElement* m_pChildRoot = nullptr;
-
     CtrlElement* m_pTemplate = nullptr;
     bool m_bIsNew = true;
 
 public:
-    virtual ~Element() = default;
+    virtual ~Behavior() = default;
 
     virtual void onConstruct(qim::OnElementConstruct* cp) {}
 
@@ -130,22 +165,22 @@ public:
         const qd::TypeInfo& castToType = T::getStaticTypeInfo();
         const qd::TypeInfo& lh = getTypeInfo();
         if (lh.isDerivedFrom(castToType))
-            return static_cast<T*>(const_cast<Element*>(this));
+            return static_cast<T*>(const_cast<Behavior*>(this));
         return nullptr;
     }
 
 //     template<class T, typename... TArgs >
 //     qptr<T> childAdd_(const char* name_id, TArgs&&... args) const;
 
-    virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) { return qd::EFlow::CONTINUE; }
-    qd::EFlow onMessageProc(qim::msg::Base& in_msg) { return onMessageProcImp(in_msg); }
+    virtual qd::EFlow onMessageProcImp(qim::ElemData* pInst, qim::msg::Base& in_msg) { return qd::EFlow::CONTINUE; }
+    qd::EFlow onMessageProc(qim::ElemData* pInst, qim::msg::Base& in_msg) { return onMessageProcImp(pInst, in_msg); }
 
-    qd::EFlow notifyComps(qim::msg::Base& in_msg);
+    qd::EFlow notifyComps(qim::ElemData* pInst, qim::msg::Base& in_msg);
 
 
-    qd::EFlow notifyParents(qim::msg::Base& in_msg)
+    qd::EFlow notifyParents(qim::ElemData* pInst, qim::msg::Base& in_msg)
     {
-        Element* pCurParent = m_pParentElem;
+        ElemData* pCurParent = pInst->m_pParentElem;
         while (pCurParent)
         {
             qd::EFlow f = pCurParent->onMessageProc(in_msg);
@@ -156,42 +191,30 @@ public:
         return qd::EFlow::CONTINUE;
     }
 
-    qd::EFlow notifyCompsOrParents(qim::msg::Base& in_msg)
+    qd::EFlow notifyCompsOrParents(qim::ElemData* pInst, qim::msg::Base& in_msg)
     {
-        qd::EFlow f = notifyComps(in_msg);
+        qd::EFlow f = notifyComps(pInst, in_msg);
         if (f == qd::EFlow::STOP)
             return f;
-        return notifyParents(in_msg);
+        return notifyParents(pInst, in_msg);
     }
 
     template<class T>
     T* propFind_(bool include_parents = true)
     {
         Context* ctx = qim::getCurrentContext();
-        ElementData* pData = ctx->findElementData(this);
-        return pData->propFind_<T>(ctx, include_parents);
-    }
-
-    void setParent(qim::Element* ParentElem) { m_pParentElem = ParentElem; }
-    qim::Element* getParent() const { return m_pParentElem; }
-
-    template<class T>
-    T* getParent_() const {
-        if (!m_pParentElem)
-            return nullptr;
-        if (!m_pParentElem->getTypeInfo().isDerivedFrom_<T>())
-            return nullptr;
-        return static_cast<T*>(m_pParentElem);
+        ElemData* pData = ctx->findElementData(this);
+        return pData->propFind_<T>(include_parents);
     }
 
 
-}; // class Element
+}; // class Behavior
 //////////////////////////////////////////////////////////////////////////
 
 
 
 template<class TClass>
-static qim::Element* createElemCb_(const qd::TypeInfo& /*meta*/, qim::OnElementConstruct* cp)
+static qim::Behavior* createElemCb_(const qd::TypeInfo& /*meta*/, qim::OnElementConstruct* cp)
 {
     TClass* pNewInst = new TClass();
     pNewInst->onConstruct(cp);
@@ -211,16 +234,16 @@ static qim::BehaviorElem* createElemBehCb_(const qd::TypeInfo& /*meta*/, qim::El
 }
 
 
-class BehaviorElem : public Element
+class BehaviorElem : public Behavior
 {
-    TS_REFLECT_CLASS_BASE(100, BehaviorElem, qim::Element);
+    TS_REFLECT_CLASS_BASE(100, BehaviorElem, qim::Behavior);
 
 public:
     virtual ~BehaviorElem() = default;
 
 public:
     virtual void onConstruct(qim::ElemBehCreator* cp) {}
-    virtual Element* createElementData(const qd::TypeInfo& type);
+    virtual Behavior* createElementData(const qd::TypeInfo& type);
 
 }; // class BehaviorElem
 //////////////////////////////////////////////////////////////////////////
@@ -228,19 +251,18 @@ public:
 
 
 
-class CtrlElement : public Element
+class CtrlElement : public Behavior
 {
-    TS_REFLECT_CLASS_BASE(50, qim::CtrlElement, qim::Element);
+    TS_REFLECT_CLASS_BASE(50, qim::CtrlElement, qim::Behavior);
     using Color = Props::Color;
     using Text = Props::Text;
 
     qd::Tribool m_inPropsSection;
     qd::Tribool m_inChildSection;
-    bool m_bVisible = true;
     union EventRequistMask {
         uint32_t flags = 0;
         struct {
-            bool onClick :1; // Element was clicked
+            bool onClick :1; // Behavior was clicked
             bool onHover :1;
         };
     };
@@ -252,10 +274,7 @@ public:
     virtual void onDrawEndImp(qim::Context* ctx) {}
 
     virtual void onPropEndImp() {}
-    virtual qd::EFlow onMessageProcImp(qim::msg::Base& in_msg) override;
-
-    bool isVisible(bool bCheckParents = false) const;
-    bool setVisible(bool bVisible);
+    virtual qd::EFlow onMessageProcImp(qim::ElemData* pInst, qim::msg::Base& in_msg) override;
 
     void onDrawBegin(qim::Context* ctx);
     void onBeforeDrawEnd(qim::Context* ctx)
@@ -299,17 +318,13 @@ public:
         onSectChildEndImp();
     }
 
-//     bool isClicked()
-//     {
-//         m_eventRequest.onClick = true;
-//         return m_eventHappens.onClick;
-//     }
-
     virtual bool isHovered();
     virtual bool isMouseDown(int) { return false; }
     virtual bool isMouseReleased(int) { return false; }
 
-    //virtual bool pollLoopEventImp() { return false; }
+    virtual void drawElem(qim::ElemData* pInst, qim::ElemBrush& brush)
+    {
+    }
 
 }; // class CtrlElement
 //////////////////////////////////////////////////////////////////////////
@@ -326,7 +341,7 @@ qptr<T>::~qptr()
 
 
 // template<class T, typename... TArgs>
-// qptr<T> Element::childAdd_(const char* name_id, TArgs&&... args) const
+// qptr<T> Behavior::childAdd_(const char* name_id, TArgs&&... args) const
 // {
 //     T* pElem = qim::beginCtrl_<T>(name_id, std::forward<TArgs>(args)...);
 //     return qptr<T>(pElem);

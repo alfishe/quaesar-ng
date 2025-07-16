@@ -18,8 +18,8 @@
 #include <amDebugger/debugger.h>
 #include <amDebugger/msg_list.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/Base/endian.h>
-#include <qd/UI/uiOperationManager.h>
+#include <qd/base/endian.h>
+#include <qd/qui/uiOperationMgr.h>
 #include <quasar_app/quaesar.h>
 
 

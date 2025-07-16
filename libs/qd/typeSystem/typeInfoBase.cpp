@@ -8,10 +8,12 @@ namespace qd {
 
 void TypeInfoBase::addCustomAttribute(TypeInfoAttribute* pAttr)
 {
-    assert(pAttr);
-    assert(pAttr->getTypeId().isValid());
-    pAttr->m_pParent = this;
-    m_pAttributes.push_back(pAttr);
+    assert(pAttr && pAttr->getTypeId().isValid());
+    if (pAttr)
+    {
+        pAttr->m_pParent = this;
+        m_pAttributes.push_back(pAttr);
+    }
 }
 
 

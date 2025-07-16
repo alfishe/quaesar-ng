@@ -34,7 +34,7 @@ public:
 struct ValPtrStorage {
     static constexpr size_t MaxSize = 32;
     static constexpr size_t MaxAlign = alignof(std::max_align_t);
-    alignas(MaxAlign) char m_storage[MaxSize];
+    alignas(MaxAlign) char m_storage[MaxSize] = {0};
     using Callback = bool (*)(void*, void*, void*);
     Callback m_pCastCb = nullptr;
 

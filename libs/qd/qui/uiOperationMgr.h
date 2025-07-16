@@ -1,65 +1,51 @@
 #pragma once
-#include "EASTL/span.h"
-#include "EASTL/vector_map.h"
 #include "qd/node/node.h"
 #include "qd/debug/assert.h"
+#include "qd/stl/vector_map.h"
+#include "qd/stl/span.h"
 #include "qd/stl/vector.h"
 #include "qd/stl/vector_map.h"
-#include "qd/typeSystem/typeDeclare.h"
-#include "qd/ui/uiOperationMessages.h"
-#include "qd/ui/uiOperation.h"
+#include "qd/qui/uiOperation.h"
+#include "qd/qui/uiOperationMessages.h"
 
 
 namespace qd {
 class UiOperation;
 struct UiOperationCreator;
 
-struct IUiOperationsProvider {
-    TS_REFLECT_CLASS(qd::IUiOperationsProvider, void);
 
-    virtual UiOperation* findOperationByType(const qd::TypeInfo& type) const = 0;
-    virtual eastl::span<UiOperation* const> getOperationsList() const = 0;
-};
-//////////////////////////////////////////////////////////////////////////
-
-
-
-class UiOperationMgr
-    : public qd::NodeComp
-    , public qd::IUiOperationsProvider
+class UiOperationMgr : public qd::RefCounted
 {
-    TS_REFLECT_CLASS(qd::UiOperationMgr, qd::NodeComp, qd::IUiOperationsProvider);
-
     friend class OperationMgrOperationsListImp;
-    qd::vector<UiOperation*> m_pOperations;
+    qd::vector<ref_ptr<UiOperation>> m_pOperations;
+    using TOpList = qd::vector<ref_ptr<UiOperation>>;
     qd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
     qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
 
     bool mInit = false;
 
 public:
-    inline static UiOperationMgr* g_pInstance = nullptr;
-    static UiOperationMgr* get() { return g_pInstance; }
+//     inline static UiOperationMgr* g_pInstance = nullptr;
+//     static UiOperationMgr* get() { return g_pInstance; }
 
     UiOperationMgr();
-    virtual void onNodeCreated(NodeCreator* mk) override;
-    ~UiOperationMgr() { assert(!mInit); }
+    virtual ~UiOperationMgr() { assert(!mInit); }
+
+    static UiOperationMgr* get();
 
     void createOperations(qd::UiOperationCreator* ca);
-    virtual void destroy() override;
+    virtual void destroy();
+
+    int getNumOps() const { return (int)m_pOperations.size(); }
 
     EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
 
     void addOperation(UiOperation* pNewOperation);
 
     UiOperation* findOperation(uint32_t class_id) const;
+    UiOperation* findOperationByType(const qd::TypeInfo& type) const;
 
-    virtual UiOperation* findOperationByType(const qd::TypeInfo& type) const override;
-
-    virtual eastl::span<UiOperation* const> getOperationsList() const override
-    {
-        return eastl::span<UiOperation* const>(m_pOperations);
-    }
+    virtual eastl::span<UiOperation* const> getOperationsList() const;
 
     template<typename TClass>
     TClass* getOperation_() const
@@ -87,5 +73,8 @@ struct OperationSupportedMsgVisitor : public operation::msg::Base {
 public:
     virtual bool tryCast(const qd::TypeInfo& msg_type) override;
 };
+//////////////////////////////////////////////////////////////////////////
+
+
 
 }; // namespace qd

@@ -7,7 +7,7 @@
 
 namespace qim {
 class Storage;
-class Element;
+class Behavior;
 class BaseLoop;
 namespace loop {
 class CtrlElemVisitor;
@@ -22,14 +22,14 @@ class Context
     Storage* m_pPrevStorage = nullptr;
 
     struct StackItem {
-        Element* m_pElement = nullptr;
-        ElementData* m_pElemData = nullptr;
+        Behavior* m_pElement = nullptr;
+        ElemData* m_pElemData = nullptr;
         EVisitStage m_curVisitStage = EVisitStage::UNDEF;
     };
     qd::vector<StackItem> m_pChildStack;
 
     qd::vector_map<const qd::TypeInfo*, BehaviorElem*> m_pBehaviors;
-    qd::hash_map<const Element*, ElementData*> m_pElemDataMap;
+    qd::hash_map<const Behavior*, ElemData*> m_pElemDataMap;
 
     qd::vector<ref_ptr<BaseLoop>> m_pLoopStack;
     BaseLoop* m_pCurLoop = nullptr;
@@ -43,13 +43,13 @@ public:
     ~Context();
 
     BehaviorElem* findBehavior(const qd::TypeInfo& pBehClassInfo) const;
-    qim::ElementData* getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
+    qim::ElemData* getOrCreateElement(const char* name_id, const qd::TypeInfo& behClass,
         const qd::TypeInfo& elemClass);
 
     template<class T, typename... TArgs>
-    ElementData* getOrCreateElem_(const char* name_id, TArgs&&... args)
+    qim::ElemData* getOrCreateElem_(const char* name_id, TArgs&&... args)
     {
-        ElementData* pElement = getOrCreateElement(name_id, T::s_behClass, T::getStaticTypeInfo());
+        ElemData* pElement = getOrCreateElement(name_id, T::s_behClass, T::getStaticTypeInfo());
         return pElement;
         //         if (!pElement)
         //             return nullptr;
@@ -79,16 +79,16 @@ public:
 
 
     template<class T, typename... TArgs>
-    T* getOrCreateSect_(ElementData* pParentElem, TArgs&&... args)
+    T* getOrCreateSect_(ElemData* pParentElem, TArgs&&... args)
     {
         return &pParentElem->propAdd_<T>();
     }
 
 
-    Context::StackItem& pushStackElement(Element* pElem);
-    void popStackElement(Element* pElem);
+    Context::StackItem& pushStackElement(Behavior* pElem);
+    void popStackElement(Behavior* pElem);
 
-    Element* getStackTreeTopElem(int off = 0) const
+    Behavior* getStackTreeTopElem(int off = 0) const
     {
         if (!off)
             return m_pChildStack.back().m_pElement;
@@ -96,9 +96,9 @@ public:
         return it->m_pElement;
     }
 
-    ElementData* getStackTreeTopElemData() const;
+    ElemData* getStackTreeTopElemData() const;
 
-    ElementData* findElementData(const Element* pElem) const;
+    ElemData* findElementData(const Behavior* pElem) const;
 
     void beginCtrl(CtrlElement* pElem)
     {
@@ -267,7 +267,7 @@ public:
     {
     }
 
-    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElem) { return false; }
+    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElemData* pElem) { return false; }
 
     virtual void onMeetNodeEnd()
     {
@@ -288,8 +288,8 @@ public:
     virtual void do1(qim::Context* ctx) {}
     virtual EFlow Loop2(qim::Context* ctx) { return EFlow::DONE; }
 
-    virtual bool startLoopWithCtrlElem(ElementData* pElemData) { return true; }
-    virtual bool isSectEnterAllowed(Property* pProp, ElementData* pElemData) { return false; }
+    virtual bool startLoopWithCtrlElem(ElemData* pElemData) { return true; }
+    virtual bool isSectEnterAllowed(Property* pProp, ElemData* pElemData) { return false; }
     virtual void onSubLoopAttached(BaseLoop* pLoop) {}
     virtual ELoopState onSubLoopDetached(BaseLoop* pLoop) { return ELoopState::S_RETURN_TO_PARENT; }
 
@@ -318,7 +318,7 @@ namespace loop
         virtual EFlow Loop1(qim::Context* ctx) override { return EFlow::DONE; }
         virtual void do1(qim::Context* ctx) override {}
         virtual EFlow Loop2(qim::Context* ctx) override { return EFlow::DONE; }
-        virtual bool isSectEnterAllowed(Property* pProp, ElementData* pElemData) override;
+        virtual bool isSectEnterAllowed(Property* pProp, ElemData* pElemData) override;
 
     }; // class PropsBase
     //////////////////////////////////////////////////////////////////////////
@@ -337,8 +337,8 @@ public:
         , m_typeInfo(typeInfo)
     {}
 
-    virtual ElementData* getOrCreateElement(qim::Context* pCtx) const = 0;
-    virtual void setupElement(ElementData* pElemData) const = 0;
+    virtual ElemData* getOrCreateElement(qim::Context* pCtx) const = 0;
+    virtual void setupElement(ElemData* pElemData) const = 0;
 }; // struct DeferredCall
 
 
@@ -353,13 +353,13 @@ public:
         , m_args(std::forward<Args>(args)...)
     {}
 
-    virtual ElementData* getOrCreateElement(qim::Context* pCtx) const override
+    virtual ElemData* getOrCreateElement(qim::Context* pCtx) const override
     {
-        ElementData* pElemData = pCtx->getOrCreateElem_<T>(m_strNameId);
+        ElemData* pElemData = pCtx->getOrCreateElem_<T>(m_strNameId);
         return pElemData;
     }
 
-    virtual void setupElement(ElementData* pElemData) const override
+    virtual void setupElement(ElemData* pElemData) const override
     {
         T* pElem = pElemData->getElem_<T>();
         auto args = std::tuple_cat(std::make_tuple(pElem, m_strNameId), m_args);

@@ -1,6 +1,6 @@
 #pragma once
+#include "qd/qui/controls/desktop.h"
 #include "qd/typeSystem/typeDeclare.h"
-#include "qd/ui/controls/desktop.h"
 
 
 class UaeWndDesktop : public qd::UiDesktop {
@@ -9,8 +9,6 @@ class UaeWndDesktop : public qd::UiDesktop {
 public:
     UaeWndDesktop() {
     }
-
-    virtual void onNodeCreated(qd::NodeCreator* mk) override;
 
 
 };  // class UaeWndDesktop

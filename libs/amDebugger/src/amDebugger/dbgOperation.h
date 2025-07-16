@@ -1,8 +1,8 @@
 #pragma once
 #include "qd/base/types.h"
 #include "qd/typeSystem/attributesCommon.h"
-#include "qd/ui/uiOperation.h"
-#include "qd/ui/uiOperationMessages.h"
+#include "qd/qui/uiOperation.h"
+#include "qd/qui/uiOperationMessages.h"
 
 
 namespace amD {
@@ -48,8 +48,8 @@ class Operation : public qd::UiOperation
     TS_REFLECT_CLASS(amD::operation::Operation, qd::UiOperation);
 
 public:
-    amD::DbgGuiDesktop* gui = nullptr;
-    amD::Debugger* dbg = nullptr;
+    amD::DbgGuiDesktop* m_pDbgGui = nullptr;
+    amD::Debugger* m_pDbg = nullptr;
 
 public:
     virtual void onDebuggerOperationCreate(amD::operation::AmDebuggerOperationCreator* cp) {}
@@ -60,8 +60,7 @@ public:
 
     virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* p_msg) override;
 
-private:
-    virtual void onNodeCreated(qd::NodeCreator* cp) override;
+    virtual void onOperationCreate(qd::UiOperationCreator* cp) override;
 
 }; // class Operation
 //////////////////////////////////////////////////////////////////////////

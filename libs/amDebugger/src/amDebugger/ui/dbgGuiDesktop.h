@@ -1,11 +1,10 @@
 #pragma once
 #include <amDebugger/debugger.h>
 #include <amDebugger/ui/ui_view.h>
-#include "qd/ui/controls/desktop.h"
+#include "qd/qui/controls/desktop.h"
 #include "qd/stl/vector.h"
 #include "qd/base/base.h"
 #include "qd/node/node.h"
-#include "qd/ui/uiNode.h"
 
 FORWARD_DECLARATION_2(amD, UiView);
 FORWARD_DECLARATION_2(qd, ShortcutsMgr);
@@ -27,7 +26,7 @@ public:
 
 public:
     DbgGuiDesktop(Debugger* dbg);
-    virtual void onNodeCreated(qd::NodeCreator* mk) override;
+    virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
 
     virtual ~DbgGuiDesktop();
 

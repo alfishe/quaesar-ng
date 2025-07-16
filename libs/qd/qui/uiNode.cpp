@@ -1,17 +1,15 @@
 #include "uiNode.h"
 #include "qd/debug/exception.h"
 #include "qd/mem/ptrMath.h"
-#include "qd/ui/uiMessages.h"
+#include "qd/qui/uiMessages.h"
 
 
 namespace qd {
 
 
-void UiNode::onNodeCreated(NodeCreator* mk)
+void UiNode::onNodeCreated(UiNodeCreator* mk)
 {
-    createComp_<qd::UiNodesChildList>();
-    TSuper::onNodeCreated(mk);
-
+    m_pParent = mk->parent;
     if (m_pParent)
         assert(m_pParent->getTypeInfo().isDerivedFrom_<qd::UiNode>());
 
@@ -20,10 +18,10 @@ void UiNode::onNodeCreated(NodeCreator* mk)
 }
 
 
-void UiNode::setParent(qd::Node* pParent)
+void UiNode::setParent(qd::UiNode* pParent)
 {
     assert(!pParent || pParent->getTypeInfo().isDerivedFrom_<qd::UiNode>());
-    TSuper::setParent(pParent);
+    m_pParent = pParent;
 }
 
 
@@ -246,7 +244,6 @@ bool UiNode::setVisible(bool bVisible)
     t.m_pCtrl = this;
     t.m_bVisible = bVisible;
     onUiNodeMessageProc(&t);
-
     return bVisible;
 }
 
@@ -257,7 +254,7 @@ void UiNode::destroyRecursive()
 
     while (!m_pChilds.empty())
     {
-        ref_ptr<Node> pControl = m_pChilds.back().get();
+        ref_ptr<UiNode> pControl = m_pChilds.back().ptr;
         pControl->destroy();
         c_def(0);
     }
@@ -274,40 +271,23 @@ void UiNode::destroyRecursive()
 void UiNode::destroy()
 {
     destroyRecursive();
-
-    TSuper::destroy();
 }
 
 
-int UiNodesChildList::getNumChild()
+void UiNode::addComp(UiNodeComp* pNewComp)
 {
-    return static_cast<int>(getOwner()->getNumChild());
+    const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
+    m_pComps.push_back(pNewComp);
 }
 
 
-qd::UiNode* UiNodesChildList::getChild(int idx)
+UiNodeComp* UiNode::findComp(const qd::TypeInfo& comp) const
 {
-    return getOwner()->getChild(idx);
-}
-
-
-bool UiNodesChildList::addChild(Node* child)
-{
-    return getOwner()->addChild(static_cast<UiNode*>(child));
-}
-
-
-bool UiNodesChildList::removeChild(Node* child)
-{
-    getOwner()->removeChild(static_cast<UiNode*>(child));
-    return true;
-}
-
-
-bool UiNodesChildList::beginIter(NodeIterator& buf)
-{
-    // TODO
-    return false;
+    auto it = eastl::find_if(m_pComps.begin(), m_pComps.end(),
+        [comp](const UiNodeComp* pCurComp) { return pCurComp ? pCurComp->getTypeInfo().isDerivedFrom(comp) : false; });
+    if (it != m_pComps.end())
+        return *it;
+    return nullptr;
 }
 
 

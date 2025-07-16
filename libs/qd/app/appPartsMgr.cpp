@@ -160,7 +160,7 @@ AppPartsManager::~AppPartsManager()
 
 void AppPartsManager::update(float dt, float time)
 {
-    m_TimeNowFrame = (TTime64)std::time(nullptr);
+    m_timeNowFrame = (TTime64)std::time(nullptr);
     for (int i = 0; i < getNumAppParts(); i++)
     {
         AppPartBase* pCurPart = getPartByInd(i);

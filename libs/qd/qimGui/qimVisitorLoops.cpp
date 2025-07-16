@@ -50,7 +50,7 @@ qim::EFlow CtrlElemVisitor::Loop2(qim::Context* ctx)
 
 bool PropsBase::isWantSetupElement()
 {
-    ElementData* pElemData = m_pCtx->getStackTreeTopElemData();
+    ElemData* pElemData = m_pCtx->getStackTreeTopElemData();
     ASSERT_AND_DO(pElemData, return false, "No Parent element");
     EVisitStage curStage = m_pCtx->getCurVisitStage();
 
@@ -64,7 +64,7 @@ bool PropsBase::isWantSetupElement()
 
 
 
-bool PropsBase::isSectEnterAllowed(Property* pProp, ElementData* pElemData)
+bool PropsBase::isSectEnterAllowed(Property* pProp, ElemData* pElemData)
 {
     // if (pProp->isSectEnterAllowedImp(m_pCtx, pElemData))
     return true;
@@ -73,7 +73,7 @@ bool PropsBase::isSectEnterAllowed(Property* pProp, ElementData* pElemData)
 
 
 
-bool EventHandlerLoop::isSectEnterAllowed(Property* pProp, ElementData* pElemData)
+bool EventHandlerLoop::isSectEnterAllowed(Property* pProp, ElemData* pElemData)
 {
     if (m_classMeta->visitsAllowed.has(EVisitStage::VEventHandler))
     {
@@ -88,7 +88,7 @@ bool EventHandlerLoop::isSectEnterAllowed(Property* pProp, ElementData* pElemDat
 }
 
 
-bool DrawCtrlElem::meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElem)
+bool DrawCtrlElem::meetCtrlElemBegin(const qd::TypeInfo& type, ElemData* pElem)
 {
     //m_pCtx->pushNewLoop_<loop::DrawCtrlElem>(this, pElem);
     return true;

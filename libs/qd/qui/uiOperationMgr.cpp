@@ -1,4 +1,4 @@
-#include "uiOperationManager.h"
+#include "uiOperationMgr.h"
 #include "qd/log/log.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/typeSystem/typeRegistry.h"
@@ -9,42 +9,22 @@
 namespace qd {
 
 
-class OperationMgrOperationsListImp : public qd::INodesChildList
-{
-    TS_REFLECT_CLASS(qd::OperationMgrOperationsListImp, qd::INodesChildList);
-    UiOperationMgr* m_pOperationMgr;
-
-public:
-    OperationMgrOperationsListImp(UiOperationMgr* p_mgr)
-        : m_pOperationMgr(p_mgr)
-    {}
-    virtual ~OperationMgrOperationsListImp() = default;
-
-public:
-    virtual int getNumChild() override { return (int)m_pOperationMgr->m_pOperations.size(); }
-    virtual Node* getChild(int idx) override { return m_pOperationMgr->m_pOperations[idx]; }
-    virtual bool addChild(Node* child) override { return false; }
-    virtual bool removeChild(Node* child) override { return false; };
-    virtual bool beginIter(NodeIterator& buf) override { return false; };
-
-}; // class NodesChildList
-
 
 UiOperationMgr::UiOperationMgr()
 {
-    if (!g_pInstance)
-        g_pInstance = this;
+//     if (!g_pInstance)
+//         g_pInstance = this;
+}
+
+
+qd::UiOperationMgr* UiOperationMgr::get()
+{
+    static ref_ptr<UiOperationMgr> pInst(new UiOperationMgr());
+    return pInst.get();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-
-
-void UiOperationMgr::onNodeCreated(NodeCreator* mk)
-{
-    createComp_<OperationMgrOperationsListImp>(this);
-    TSuper::onNodeCreated(mk);
-}
 
 
 void UiOperationMgr::createOperations(qd::UiOperationCreator* ca)
@@ -61,9 +41,8 @@ void UiOperationMgr::createOperations(qd::UiOperationCreator* ca)
             SDL_Log("Creator not defined in class:'%s'", curOperationType->getFullName().c_str());
             continue;
         }
-        qd::UiOperationCreator cv;
-        cv.parent = this;
-        qd::UiOperation* pNewInstance = pCreator->makeInstance_<qd::UiOperation>(&cv);
+        ca->uiOpsMgr = this;
+        qd::UiOperation* pNewInstance = pCreator->makeInstance_<qd::UiOperation>(ca);
         assert(pNewInstance);
         addOperation(pNewInstance);
     }
@@ -140,12 +119,21 @@ qd::UiOperation* UiOperationMgr::findOperation(uint32_t class_id) const
 }
 
 
+
+
 qd::UiOperation* UiOperationMgr::findOperationByType(const qd::TypeInfo& type) const
 {
     auto it = m_operationByOperationTypeMap.find(&type);
     if (it == m_operationByOperationTypeMap.end())
         return nullptr;
     return it->second;
+}
+
+
+eastl::span<UiOperation* const> UiOperationMgr::getOperationsList() const
+{
+    return eastl::span<UiOperation* const>(reinterpret_cast<UiOperation* const*>(m_pOperations.data()),
+        m_pOperations.size());
 }
 
 

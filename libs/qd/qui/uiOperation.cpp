@@ -1,17 +1,19 @@
 #include "uiOperation.h"
-#include "qd/ui/shortcutMgr.h"
-#include "qd/ui/shortcutComp.h"
+#include "qd/qui/shortcutMgr.h"
+#include "qd/qui/shortcutHnd.h"
 
 
 namespace qd {
 
 void UiOperation::addShortcut(int sid) {
-    auto pActMgr = findParentComp_<qd::ShortcutsMgr>();
+    auto pActMgr = qd::ShortcutsMgr::get();
     ASSERT_AND_DO(pActMgr, return, "");
     const Shortcut* pShortcut = pActMgr->getShortcut(sid);
     assert(pShortcut);
-    auto pShortComp = createComp_<qd::ShortcutComp>();
-    pShortComp->addShortcut(pShortcut);
+
+    if (!m_pShortcuts)
+        m_pShortcuts = new qd::ShortcutHnd();
+    m_pShortcuts->addShortcut(pShortcut);
 }
 
 

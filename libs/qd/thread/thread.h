@@ -48,7 +48,7 @@ public:
     MutexLock(Mutex& mutex) : mMutex(&mutex) {
         mMutex->lock();
     }
-    MutexLock(MutexLock&& rh) : mMutex(rh.mMutex) {
+    MutexLock(MutexLock&& rh) noexcept : mMutex(rh.mMutex) {
         rh.mMutex = nullptr;
     }
     MutexLock() = delete;

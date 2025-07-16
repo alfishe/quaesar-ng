@@ -32,7 +32,7 @@ struct Size : public qim::Property {
         m_size = in;
         return *this;
     }
-    bool isSizeValid() const { return m_size.isValid(); }
+    bool isSizeValid() const { return m_size.isSizeValid(); }
 };
 
 
@@ -69,7 +69,7 @@ struct IsClicked : public qim::Section {
 
     qd::Tribool m_hasEvent;
 
-    virtual bool isSectEnterAllowedImp(qim::Context* ctx, ElementData* pData) override
+    virtual bool isSectEnterAllowedImp(qim::Context* ctx, ElemData* pData) override
     {
         if (m_hasEvent.maybeFalse())
             return false;

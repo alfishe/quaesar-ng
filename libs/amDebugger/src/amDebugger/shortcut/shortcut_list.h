@@ -1,6 +1,6 @@
 #pragma once
 #include "qd/base/base.h"
-#include "qd/ui/shortcutMgr.h"
+#include "qd/qui/shortcutMgr.h"
 
 
 namespace amD {

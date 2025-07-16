@@ -13,7 +13,7 @@
 #include "qd/thread/thread.h"
 #include <amDebugger/ui/dbgGuiDesktop.h>
 #include <amDebugger/ui/ui_style.h>
-#include "qd/ui/uiOperationManager.h"
+#include "qd/qui/uiOperationMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/app/moduleManager.h"
 
@@ -85,13 +85,13 @@ void Debugger::init() {
     vm = amD::VM::setVmInst(createByFactory<amD::VM>());
     vm->init();
 
-    qd::NodeCreator mk;
+    qd::UiNodeCreator mk;
     m_pGui = mk.make_<amD::DbgGuiDesktop>(this);
 
-    m_pOperations = m_pGui->getOperationMgr();
-    assert(m_pOperations);
+    m_pOperationMgr = m_pGui->getOperationMgr();
+    assert(m_pOperationMgr);
 
-    assert(m_pOperations->getNumChild());
+    assert(m_pOperationMgr->getNumOps());
 
     m_pCapstone = new csh();
 
@@ -134,10 +134,10 @@ void Debugger::createRenderWindow() {
 void Debugger::initImGui() {
 
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
-    m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pRenderer);
+    m_pQimGui = pImGuiMgr->createContextImGui(m_pWindow, m_pRenderer);
 
     // Setup Dear ImGui context
-    ImGuiIO& io = m_pImGui->getIO();
+    ImGuiIO& io = m_pQimGui->getIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -158,7 +158,7 @@ void Debugger::setDebugMode(DebuggerMode debug_mode) {
 }
 
 qd::EFlow Debugger::applyOperationMsg(qd::operation::msg::Base* p_msg) const {
-    return m_pOperations->applyOperationMsg(p_msg);
+    return m_pOperationMgr->applyOperationMsg(p_msg);
 }
 
 
@@ -200,9 +200,9 @@ void Debugger::destroy() {
     if (m_pGui)
         m_pGui->destroy();
     imp::console_queue.destroy();
-    if (m_pOperations)
-        m_pOperations->destroy();
-    m_pOperations = nullptr;
+    if (m_pOperationMgr)
+        m_pOperationMgr->destroy();
+    m_pOperationMgr = nullptr;
 
     // Cleanup
     ImGui_ImplSDLRenderer2_Shutdown();
@@ -229,15 +229,15 @@ void Debugger::update(float dt, float time)
 {
     if (isVisible())
     {
-        m_pImGui->newFrame();
+        m_pQimGui->newFrame();
         m_pGui->drawImGuiMainFrame();
-        m_pImGui->endFrame();
+        m_pQimGui->endFrame();
     }
 }
 
 
 void Debugger::render() {
-    m_pImGui->render(qd::Color(128,128,128));
+    m_pQimGui->render(qd::Color(128,128,128));
 
 }
 
@@ -262,7 +262,7 @@ void Debugger::toggleWndVisible(DebuggerMode mode) {
 
 
 void Debugger::onSdlEventProc(SDL_Event& event) {
-    m_pImGui->onSdlEventProc(event);
+    m_pQimGui->onSdlEventProc(event);
 }
 
 

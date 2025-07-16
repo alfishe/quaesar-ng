@@ -37,6 +37,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
+// Wrapper under ImGuiContext
 class QImGuiContext
 {
     typedef QImGuiContext TThis;
@@ -98,7 +99,7 @@ public:
 
     void destroyImContext(QImGuiContext* pGuiContext);
 
-    ~ImGuiContextManager()
+    virtual ~ImGuiContextManager()
     {
         assert(m_pImContexts.empty());
     }
@@ -106,7 +107,7 @@ public:
 public:
     virtual void destroyModule() override;
 
-}; // class CImGuiModule
+}; // class ImGuiContextManager
 //////////////////////////////////////////////////////////////////////////
 
 

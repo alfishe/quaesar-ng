@@ -34,7 +34,7 @@ void endFrame()
 
 
 
-bool doCtrlElemForLoop(const DeferredCall& curNode, Element** pOutElement, size_t _nFor)
+bool doCtrlElemForLoop(const DeferredCall& curNode, Behavior** pOutElement, size_t _nFor)
 {
     EFlow rr;
     qim::Context* pCtx = getCurrentContext();
@@ -61,7 +61,7 @@ bool doCtrlElemForLoop(const DeferredCall& curNode, Element** pOutElement, size_
         {
             pLoop->onMeetNodeNext();
 
-            ElementData* pElemData = curNode.getOrCreateElement(pCtx);
+            ElemData* pElemData = curNode.getOrCreateElement(pCtx);
             assert(*pOutElement == nullptr || *pOutElement == pElemData->m_pElement);
             *pOutElement = pElemData->m_pElement;
             if (pLoop->meetCtrlElemBegin(curNode.m_typeInfo, pElemData))

@@ -1,6 +1,4 @@
 #include "desktop.h"
-#include "qd/ui/uiNode.h"
-#include "qd/ui/controls/window.h"
 
 
 qd::UiDesktop::~UiDesktop()

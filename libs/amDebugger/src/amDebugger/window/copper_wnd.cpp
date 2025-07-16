@@ -10,7 +10,7 @@
 #include <amDebugger/ui/ui_view.h>
 #include <amDebugger/ui/dbgGuiDesktop.h>
 #include <amDebugger/shortcut/shortcut_list.h>
-#include <qd/ui/shortcutMgr.h>
+#include <qd/qui/shortcutMgr.h>
 
 
 namespace amD {

@@ -10,6 +10,36 @@ void UiWindow::drawImp()
 {
     assert(!m_title.empty());
 
+    uint32_t flg = ImGuiWindowFlags_NoScrollbar;
+    const bool bModal = isModal();
+    bool vis;
+
+    assert(!m_title.empty());
+
+    if (m_size.isSizeValid())
+    {
+        ImVec2 size((float)m_size.x, (float)m_size.y);
+        ImGui::SetNextWindowSize(size);
+    }
+    if (bModal)
+    {
+        ImGui::OpenPopup(m_title.c_str());
+        vis = ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+    }
+    else
+        vis = ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+
+    if (vis)
+    {
+        drawContentImp();
+    }
+
+    if (bModal)
+        ImGui::EndPopup();
+    else
+        ImGui::End();
+
+#if 0
     // start draw QImGui window
     QCTRL(qim::Window, pImWindow, m_title.c_str())
     {
@@ -35,6 +65,7 @@ void UiWindow::drawImp()
                 setVisible(false);
         }
     }
+#endif //
 }
 
 }; // namespace qd

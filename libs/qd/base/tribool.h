@@ -4,6 +4,7 @@
 namespace qd {
 
 
+EA_DISABLE_VC_WARNING(26813)
 class Tribool
 {
 public:
@@ -121,6 +122,7 @@ public:
     }
 
 }; // Tribool
+EA_RESTORE_VC_WARNING()
 
 
 }; // namespace qd

@@ -48,7 +48,7 @@ public:
     bool m_hasChild = false;
 
 public:
-    void setup(qim::Context* pCtx, ElementData* pElemData)
+    void setup(qim::Context* pCtx, ElemData* pElemData)
     {
         BaseLoop::setup(pCtx);
         m_pIter = new BaseIter(pElemData->getId());
@@ -63,7 +63,7 @@ public:
 
     virtual void onMeetNodeEnd() override { m_meetIter = ELoopState::S_END; }
 
-    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElem) override
+    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElemData* pElem) override
     {
         m_hasChild = true;
         m_meetIter = ELoopState::WANT_MEET_SIBLING;
@@ -82,7 +82,7 @@ public:
 
 class DrawCtrlElem : public qim::BaseLoop
 {
-    ElementData* m_pElemData;
+    ElemData* m_pElemData = nullptr;
 
 public:
 
@@ -91,7 +91,7 @@ public:
         c_def(0);
     }
 
-    void setup(qim::Context* pCtx, ElementData* pElemData)
+    void setup(qim::Context* pCtx, ElemData* pElemData)
     {
         m_pElemData = pElemData;
         m_pIter = new BaseIter(pElemData->getId());
@@ -102,11 +102,11 @@ public:
 
     virtual bool isWantSetupElement() override { return true; }
 
-    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElem) override;
+    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElemData* pElem) override;
 
-    virtual bool startLoopWithCtrlElem(ElementData* pElemData) override
+    virtual bool startLoopWithCtrlElem(ElemData* pElemData) override
     {
-        assert(m_pElemData);
+        //assert(m_pElemData);
         //m_pElemData = pElemData;
         auto pElem = static_cast<CtrlElement*>(m_pElemData->m_pElement);
         pElem->onDrawBegin(m_pCtx);
@@ -128,7 +128,7 @@ class DrawCtrlElemList : public qim::BaseLoop
     int m_nSubLoops = 0;
 public:
 
-    void setup(qim::Context* pCtx, ElementData* pElemData)
+    void setup(qim::Context* pCtx, ElemData* pElemData)
     {
         BaseLoop::setup(pCtx);
         //m_meetIter = ELoopState::WANT_ITER_BODY_ONCE;
@@ -137,7 +137,7 @@ public:
         m_pIter->cfg.visitChild = true;
     }
 
-    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElemData) override
+    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElemData* pElemData) override
     {
         m_pCtx->pushNewLoop_<loop::DrawCtrlElem>(this, pElemData);
         return true;
@@ -175,14 +175,14 @@ public:
 //------------------------------------------------------------------------
 class CtrlElemVisitor : public qim::BaseLoop
 {
-    qim::ElementData* m_pElemData;
-    qim::CtrlElement* m_pElement;
+    qim::ElemData* m_pElemData = nullptr;
+    qim::CtrlElement* m_pElement = nullptr;
     ref_ptr <loop::LoopsParentGroup> m_pSubLoops;
     ref_ptr<loop::ScanChild> m_pScanner;
     int m_nLoopStackTop = -1;
 
 public:
-    void setup(qim::Context* pCtx, qim::ElementData* pElemData)
+    void setup(qim::Context* pCtx, qim::ElemData* pElemData)
     {
         BaseLoop::setup(pCtx);
         m_pIter = new BaseIter(pElemData ? pElemData->getId() : 0);
@@ -195,7 +195,7 @@ public:
             m_pElement = pElemData->getElem_<CtrlElement>();
     }
 
-    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElementData* pElemData) override
+    virtual bool meetCtrlElemBegin(const qd::TypeInfo& type, ElemData* pElemData) override
     {
         m_pCtx->pushNewLoop_<loop::CtrlElemVisitor>(this, pElemData);
         return true;
@@ -206,7 +206,7 @@ public:
         m_pCtx->pushStackElement(m_pElement);
         return true;
     }
-    virtual bool startLoopWithCtrlElem(ElementData* pElemData) override
+    virtual bool startLoopWithCtrlElem(ElemData* pElemData) override
     {
         //m_pSubLoops = m_pCtx->pushNewLoop_<loop::LoopsParentGroup>(this);
         m_pScanner = m_pCtx->pushNewLoop_<loop::ScanChild>(this, m_pElemData);
@@ -256,14 +256,14 @@ public:
 class ChildList : public loop::CtrlElemVisitor
 {
 public:
-    virtual bool isSectEnterAllowed(Property* pProp, ElementData* pElemData) override { return false; }
+    virtual bool isSectEnterAllowed(Property* pProp, ElemData* pElemData) override { return false; }
 };
 
 
 class EventHandlerLoop : public loop::PropsBase
 {
 public:
-    virtual bool isSectEnterAllowed(Property* pProp, ElementData* pElemData) override;
+    virtual bool isSectEnterAllowed(Property* pProp, ElemData* pElemData) override;
 
 }; // class EventHandlerLoop
 

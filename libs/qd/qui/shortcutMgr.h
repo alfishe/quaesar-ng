@@ -15,7 +15,7 @@ namespace qd {
 class Shortcut;
 using ShortcutSetupFunc = void (*)(qd::Shortcut&);
 class UiOperation;
-
+class UiOperationMgr;
 
 class Key
 {
@@ -29,11 +29,8 @@ public:
     {}
 
     constexpr ImGuiKey getKeyCode() const { return mKey; }
-
     eastl::string toString() const { return ImGui::GetKeyName(mKey); }
-
     bool operator< (const Key& rh) const { return mKey < rh.mKey; }
-
     bool operator== (ImGuiKey key) const { return mKey == key; }
 
 }; // class Key
@@ -68,22 +65,19 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class ShortcutsMgr : public qd::NodeComp
+class ShortcutsMgr : public qd::RefCounted
 {
-    TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::Node);
+    TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::RefCounted);
     eastl::vector_map<int /*shortcut::ETypeId*/, Shortcut*> mShortcuts;
 
 public:
     ShortcutsMgr() {}
 
+    static ShortcutsMgr* get();
+
     void init(eastl::span<ShortcutSetupFunc> shortcuts_list);
     void done();
-    void update();
-
-    virtual void onNodeCreated(NodeCreator* mk) override
-    {
-        TSuper::onNodeCreated(mk);
-    }
+    void update(UiOperationMgr* pOpMgr);
 
     const qd::Shortcut* getShortcut(uint32_t shortcut_id) const;
     template<typename T>
@@ -105,7 +99,7 @@ public:
 
     virtual ~ShortcutsMgr();
 
-}; // class ShortcutsManager
+}; // class ShortcutsMgr
 //////////////////////////////////////////////////////////////////////////
 
 

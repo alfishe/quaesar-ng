@@ -3,10 +3,8 @@
 #include "qd/base/classInfoReg.h"
 #include "qd/base/color.h"
 #include "qd/ImGui/imgui_eastl.h"
-#include "qd/node/node.h"
 #include "qd/typeSystem/attributesCommon.h"
-#include "qd/ui/uiNode.h"
-#include "qd/ui/controls/window.h"
+#include "qd/qui/controls/window.h"
 
 
 

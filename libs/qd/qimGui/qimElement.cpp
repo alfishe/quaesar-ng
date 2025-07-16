@@ -7,11 +7,11 @@
 namespace qim {
 
 
-qd::EFlow Element::notifyComps(qim::msg::Base& in_msg)
+qd::EFlow Behavior::notifyComps(qim::ElemData* pInst, qim::msg::Base& in_msg)
 {
-    this->onMessageProc(in_msg); // notify owner element
+    this->onMessageProc(pInst, in_msg); // notify owner element
 
-    Element* pCurComp = m_pCompsRoot;
+    ElemData* pCurComp = pInst->m_pCompsRoot;
     while (pCurComp)
     {
         qd::EFlow flow = pCurComp->onMessageProc(in_msg);
@@ -23,7 +23,7 @@ qd::EFlow Element::notifyComps(qim::msg::Base& in_msg)
 }
 
 
-qim::Property* ElementData::propFindByCid(const Context* ctx, const qim::PropertyClassMeta& cid, bool include_parents) const
+qim::Property* ElemData::propFindByCid(const qim::PropertyClassMeta& cid, bool include_parents) const
 {
     if (Property* pProp = propFindLocalByCid(cid))
         return pProp;
@@ -32,17 +32,17 @@ qim::Property* ElementData::propFindByCid(const Context* ctx, const qim::Propert
     //         if (Property* pProp = m_pElement->m_pTemplate->propFindLocalByCid(cid))
     //             return pProp;
 
-    if (!include_parents || !m_pElement->m_pParentElem)
+    if (!include_parents || !this->m_pParentElem)
         return nullptr;
 
-    if (ElementData* pParentData = ctx->findElementData(m_pElement->m_pParentElem))
-        return pParentData->propFindByCid(ctx, cid, true);
+    if (ElemData* pParentData = this->m_pParentElem)
+        return pParentData->propFindByCid(cid, true);
 
     return nullptr;
 }
 
 
-qim::Property* ElementData::propFindLocalByCid(const qim::PropertyClassMeta& pid) const
+qim::Property* ElemData::propFindLocalByCid(const qim::PropertyClassMeta& pid) const
 {
     if (!m_propPrimeHash.isDerivedFrom(pid.primeId))
         return nullptr;
@@ -53,7 +53,7 @@ qim::Property* ElementData::propFindLocalByCid(const qim::PropertyClassMeta& pid
 }
 
 
-void ElementData::propAdd(Property* pProp)
+void ElemData::propAdd(qim::Property* pProp)
 {
     const qim::PropertyClassMeta& cid = pProp->getClassMeta();
     assert(propFindLocalByCid(cid) == nullptr);
@@ -70,7 +70,7 @@ bool CtrlElement::isHovered()
 }
 
 
-bool ElementData::hasQueuedEvents()
+bool ElemData::hasQueuedEvents()
 {
     if ((m_eventHappens == m_eventApplied))
         return false;
@@ -78,14 +78,20 @@ bool ElementData::hasQueuedEvents()
 }
 
 
-qd::EFlow CtrlElement::onMessageProcImp(qim::msg::Base& in_msg)
+qd::EFlow ElemData::onMessageProc(qim::msg::Base& in_msg)
+{
+    return m_pElement->onMessageProc(this, in_msg);
+}
+
+
+qd::EFlow CtrlElement::onMessageProcImp(qim::ElemData* pInst, qim::msg::Base& in_msg)
 {
     switch (in_msg.id)
     {
     case msg::OnElemClicked::ID:
     {
         auto p = in_msg.cast<msg::OnElemClicked>();
-        ElementData* pData = g_pCtx->findElementData(this);
+        ElemData* pData = g_pCtx->findElementData(this);
         pData->m_eventHappens.addBaseClass(qim::Sect::IsClicked::s_classMeta.primeId);
 
         auto pClickSect = p->m_pElem->propFind_<qim::Sect::IsClicked>(false);
@@ -108,22 +114,29 @@ qd::EFlow CtrlElement::onMessageProcImp(qim::msg::Base& in_msg)
 // }
 
 
-bool CtrlElement::isVisible(bool bCheckParents /*= false*/) const
+bool ElemData::isVisible(bool bCheckParents /*= false*/) const
 {
     if (!m_bVisible)
         return false;
-    if (!bCheckParents || !getParent_<CtrlElement>())
+    if (!bCheckParents || !getParent())
         return true;
-    return getParent_<CtrlElement>()->isVisible(true);
+    return getParent()->isVisible(true);
 }
 
 
-bool CtrlElement::setVisible(bool bVisible)
+bool ElemData::setVisible(bool bVisible)
 {
     if (m_bVisible == bVisible)
         return bVisible;
     m_bVisible = bVisible;
     return bVisible;
+}
+
+
+void ElemData::drawElem(qim::ElemBrush& brush)
+{
+    CtrlElement* pBeh = getElem_<CtrlElement>();
+    pBeh->drawElem(this, brush);
 }
 
 
@@ -135,7 +148,7 @@ void CtrlElement::onDrawBegin(qim::Context* ctx)
 }
 
 
-qim::Element* BehaviorElem::createElementData(const qd::TypeInfo& type)
+qim::Behavior* BehaviorElem::createElementData(const qd::TypeInfo& type)
 {
     auto* pCreator = type.getAttribute_<qd::tsAttr::CreateClassCb>();
     if (!pCreator)
@@ -144,7 +157,7 @@ qim::Element* BehaviorElem::createElementData(const qd::TypeInfo& type)
         return nullptr;
     }
     qim::OnElementConstruct cv;
-    qim::Element* pNewInstance = pCreator->makeInstance_<qim::Element>(&cv);
+    qim::Behavior* pNewInstance = pCreator->makeInstance_<qim::Behavior>(&cv);
     return pNewInstance;
 }
 

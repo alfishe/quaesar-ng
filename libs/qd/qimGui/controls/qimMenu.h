@@ -30,6 +30,16 @@ struct UiMenu : public qim::CtrlElement {
     void setText(const char* text) { m_text = text; }
     const char* getText() const { return m_text.c_str(); }
 
+    virtual void drawElem(qim::ElemData* pInst, qim::ElemBrush& brush) override
+    {
+        auto pTextProp = pInst->propFind_<qim::Props::Text>();
+        assert(pTextProp);
+        m_isOpen = ImGui::BeginMenu(pTextProp->text.c_str());
+
+        //if (pInst)
+
+        ImGui::EndMenu();
+    }
 
 }; // struct UiMenu
 //////////////////////////////////////////////////////////////////////////
@@ -67,7 +77,7 @@ class UiMenuBeh : public qim::BehaviorElem
 
 
 public:
-    Element* createElementData(const qd::TypeInfo& type) override;
+    Behavior* createElementData(const qd::TypeInfo& type) override;
 
 }; // class UiMenuBeh
 //////////////////////////////////////////////////////////////////////////
@@ -98,7 +108,7 @@ class UiMenuOperationBeh : public qim::BehaviorElem
     TS_END();
 
 public:
-    Element* createElementData(const qd::TypeInfo& type) override { return new UiMenuOperation(); }
+    Behavior* createElementData(const qd::TypeInfo& type) override { return new UiMenuOperation(); }
 
 }; // class UiMenuOperationBeh
 

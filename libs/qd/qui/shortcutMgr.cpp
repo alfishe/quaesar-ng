@@ -1,10 +1,11 @@
 #include "shortcutMgr.h"
-#include "qd/Ui/shortcutComp.h"
-#include "qd/Ui/uiOperationManager.h"
+#include "qd/qui/shortcutHnd.h"
+#include "qd/qui/uiOperationMgr.h"
 #include "qd/base/base.h"
 #include "qd/thread/thread.h"
-#include "qd/Ui/uiOperationMessages.h"
-#include "qd/Ui/uiOperation.h"
+#include "qd/qui/uiOperationMessages.h"
+#include "qd/qui/uiOperation.h"
+#include "qd/qui/comps/uiOperationMgrComp.h"
 
 
 namespace qd {
@@ -86,6 +87,13 @@ ShortcutsMgr::~ShortcutsMgr() {
 }
 
 
+qd::ShortcutsMgr* ShortcutsMgr::get()
+{
+    static ref_ptr<ShortcutsMgr> pInst(new ShortcutsMgr());
+    return pInst.get();
+}
+
+
 void ShortcutsMgr::init(eastl::span<ShortcutSetupFunc> shortcuts_list) {
     done();
     for (int id = 0; id < (int)shortcuts_list.size(); ++id) {
@@ -131,11 +139,11 @@ void ShortcutsMgr::done() {
 }
 
 
-void ShortcutsMgr::update() {
-    IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
+void ShortcutsMgr::update(UiOperationMgr* pOperationMgr) {
+    //IUiOperationsProvider* pOperationMgr = pOpMgr;
     assert(pOperationMgr);
     for (UiOperation* pCurOperation : pOperationMgr->getOperationsList()) {
-        ShortcutComp* pShortcuts = pCurOperation->getComp_<qd::ShortcutComp>();
+        ShortcutHnd* pShortcuts = pCurOperation->getShortcuts();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
@@ -156,10 +164,11 @@ const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
 
 
 UiOperation* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut) const {
-    IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
+    //IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
+    UiOperationMgr* pOperationMgr = UiOperationMgr::get();
     assert(pOperationMgr);
     for (UiOperation* pCurOperation : pOperationMgr->getOperationsList()) {
-        ShortcutComp* pShortcuts = pCurOperation->getComp_<ShortcutComp>();
+        ShortcutHnd* pShortcuts = pCurOperation->getShortcuts();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {

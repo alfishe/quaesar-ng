@@ -1,9 +1,9 @@
 #pragma once
 #include "qd/enum/enumBase.h"
+#include "qd/qui/controls/dialog.h"
 #include "qd/stl/array.h"
 #include "qd/stl/unique_ptr.h"
 #include "qd/stl/vector.h"
-#include "qd/ui/controls/dialog.h"
 
 struct UCategory;
 
@@ -72,7 +72,7 @@ class UaeOptionsDlg : public qd::UiDialog {
     UCategory* m_pSelectedCat = nullptr;
 
 public:
-    virtual void onNodeCreated(qd::NodeCreator* mk) override;
+    virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
     virtual void drawContentImp() override;
 
     UCategory* getCategoryById(EOptionCat nOpt) const {

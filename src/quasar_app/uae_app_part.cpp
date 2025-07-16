@@ -30,7 +30,7 @@ void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
     m_pImGui->getIO().IniFilename = "";
 
 
-    qd::NodeCreator mk;
+    qd::UiNodeCreator mk;
     m_pDesktop = mk.make_<UaeWndDesktop>();
     auto pDlg = m_pDesktop->addChild_<UaeOptionsDlg>("options");
 }

@@ -17,8 +17,8 @@ struct LogEntry {
         E_ERROR = 0x08,
     };
 
-    std::time_t timeStamp;
-    ELevel level;
+    std::time_t timeStamp = 0;
+    ELevel level = E_DEBUG;
     eastl::string message;
 };  // struct LogEntry
 //////////////////////////////////////////////////////////////////////////
