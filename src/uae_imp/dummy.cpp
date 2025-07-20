@@ -597,7 +597,7 @@ void console_flush() {
 }
 
 int console_get(char* out, int maxlen) {
-    amD::Debugger* dbg = app->getDbg();
+    amD::Debugger* dbg = g_pApp->getDbg();
     if (!dbg)
         return -1;
     for (;;) {
@@ -926,14 +926,14 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     uint8_t* sptr = vb->bufmem;
     int imgSizeX = vb->outwidth;
     int imgSizeY = vb->outheight;
-    uint32_t* pTxBuf = app->m_pUaeAppPart->lockUaeScreenTexBuf(imgSizeX, imgSizeY);
+    uint32_t* pTxBuf = g_pApp->m_pUaeAppPart->lockUaeScreenTexBuf(imgSizeX, imgSizeY);
     if (pTxBuf) {
         for (int y = 0; y < imgSizeY; y++) {
             uint8_t* dest = (uint8_t*)&pTxBuf[y * imgSizeX];
             memcpy(dest, sptr, imgSizeX * 4);
             sptr += vb->rowbytes;
         }
-        app->m_pUaeAppPart->unlockUaeScreenTexBuf();
+        g_pApp->m_pUaeAppPart->unlockUaeScreenTexBuf();
     }
 }
 

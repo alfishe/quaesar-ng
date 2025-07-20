@@ -35,6 +35,7 @@ add_source_group("qui/controls")
 add_source_group("qimGui")
 add_source_group("qimGui/controls")
 add_source_group("imGui")
+add_source_group("imGui/style")
 add_source_group("imGui/backends")
 
 

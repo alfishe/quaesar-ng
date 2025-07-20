@@ -56,6 +56,7 @@
 #include "memory_wnd.h"
 #include <amDebugger/debugger.h>
 #include <amDebugger/vm/vm.h>
+#include "qd/imGui/imGuiHelperClass.h"
 
 namespace amD {
 namespace window {
@@ -76,12 +77,43 @@ namespace window {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::onCreate(UiViewCreateCtx* cp) {
+static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
+{
+    MemoryView* pMemView = (MemoryView*)data;
+    const amD::MemBank* pBank = pMemView->m_pLastBank;
+    if (!pBank || !pBank->isAddrIn((AddrRef)addr))
+    {
+        VM* vm = VM::get();
+        pBank = vm->mem->findBankByAddr((AddrRef)addr);
+        pMemView->m_pLastBank = pBank;
+    }
+    if (!pBank || !pBank->isAddrIn((AddrRef)addr))
+        return 0xff; // out of bounds
+    uint8_t b = pBank->getU8(addr);
+    return b;
+}
+
+static void write_mem_imp(uint8_t* data, size_t addr, uint8_t v)
+{
+    MemoryView* pMemView = (MemoryView*)data;
+    const amD::MemBank* pBank = pMemView->m_pLastBank;
+    if (!pBank || !pBank->isAddrIn((AddrRef)addr))
+        return;
+    pBank->setU8(addr, v);
+}
+
+
+void MemoryView::onCreate(UiViewCreateCtx* cp)
+{
     AmDbgWindow::onCreate(cp);
     m_title = "Memory";
     setVisible(true);
-    setMemAddr(VM::get()->mem->getRealAddr(0x0000), 512 * 1024, 0x0000);
+    VM* vm = VM::get();
+    setMemAddr(this, 0xFFFFFFF0u / 2u, 0x0000);
+    read_fn = &read_mem_imp;
+    write_fn = &write_mem_imp;
 }
+
 
 MemoryView::MemoryView() {
     // Settings
@@ -197,7 +229,6 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
     // click would normally be caught as a window-move.
     const float height_separator = style.ItemSpacing.y;
     float footer_height = opt_footer_extra_height;
-
     if (opt_show_options) {
         footer_height += height_separator + ImGui::GetFrameHeightWithSpacing() * 1;
     }
@@ -209,7 +240,7 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
     bool data_next = false;
     size_t data_editing_addr_next = (size_t)-1;
 
-    if (ImGui::BeginChild("##scrolling", ImVec2(0, -footer_height), false,
+    if (auto bc = qIm::LockChild("##scrolling", ImVec2(0, -footer_height), false,
                       ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoNav))
     {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -219,7 +250,7 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
 
         // We are not really using the clipper API correctly here, because we rely on
         // visible_start_addr/visible_end_addr for our scrolling function.
-        const int line_total_count = (int)((mem_size + cols - 1) / cols);
+        const int line_total_count = (int)((mem_size + size_t(cols - 1)) / (size_t)cols);
         ImGuiListClipper clipper;
         clipper.Begin(line_total_count, s.line_height);
 
@@ -436,7 +467,6 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
                 }
             }
         ImGui::PopStyleVar(2);
-        ImGui::EndChild();
     }
 
     // Notify the main window of our ideal child content size (FIXME: we are missing an API to get the contents size
@@ -494,23 +524,27 @@ void MemoryView::draw_options_line(const Sizes& s, void* mem_data, size_t mem_si
     ImGui::Text(format_range, s.addr_digits_count, base_display_addr, s.addr_digits_count,
                 base_display_addr + mem_size - 1);
     ImGui::SameLine();
-    ImGui::SetNextItemWidth((s.addr_digits_count + 1) * s.glyph_width + style.FramePadding.x * 2.0f);
-    if (ImGui::InputText("##addr", addr_input_buffer, IM_ARRAYSIZE(addr_input_buffer),
-                         ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue)) {
+    ImGui::SetNextItemWidth((s.addr_digits_count + 10) * s.glyph_width + style.FramePadding.x * 2.0f);
+
+    qd::InlineString addrStr(m_exprAddr.getStrVal().begin(), m_exprAddr.getStrVal().end());
+    if (ImGui::InputText("##addr", &addrStr, ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
         size_t goto_addr;
-        if (sscanf(addr_input_buffer, "%" _PRISizeT "X", &goto_addr) == 1) {
+        m_exprAddr.setStrVal(addrStr);
+        qd::Var16 val;
+        if (m_exprAddr.evaluate(getDbg()->getVm(), val))
+        {
+            goto_addr = val.getUInt();
             goto_address = goto_addr - base_display_addr;
-            highlight_min = hightlight_max = (size_t)-1;
+            //highlight_min = hightlight_max = (size_t)-1;
         }
     }
 
     if (goto_address != (size_t)-1) {
         if (goto_address < mem_size) {
-            if (ImGui::BeginChild("##scrolling"))
+            if (auto bc = qIm::LockChild("##scrolling"))
             {
                 ImGui::SetScrollFromPosY(
                     ImGui::GetCursorStartPos().y + (goto_address / cols) * ImGui::GetTextLineHeight());
-                ImGui::EndChild();
             }
             data_editing_addr = data_preview_addr = goto_address;
             data_editing_take_fucus = true;

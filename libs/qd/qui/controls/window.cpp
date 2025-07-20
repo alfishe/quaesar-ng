@@ -12,32 +12,48 @@ void UiWindow::drawImp()
 
     uint32_t flg = ImGuiWindowFlags_NoScrollbar;
     const bool bModal = isModal();
-    bool vis;
 
-    assert(!m_title.empty());
+    Tribool vis;
+    if (m_bVisible)
+    {
+        assert(!m_title.empty());
+        if (m_size.isSizeValid())
+        {
+            ImVec2 size((float)m_size.x, (float)m_size.y);
+            ImGui::SetNextWindowSize(size);
+        }
 
-    if (m_size.isSizeValid())
-    {
-        ImVec2 size((float)m_size.x, (float)m_size.y);
-        ImGui::SetNextWindowSize(size);
-    }
-    if (bModal)
-    {
-        ImGui::OpenPopup(m_title.c_str());
-        vis = ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+        if (bModal)
+        {
+            ImGui::OpenPopup(m_title.c_str());
+            vis = (qd::Tribool)ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+        }
+        else
+            vis = (qd::Tribool)ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+
+        if (!m_bVisible)
+            c_def(0);
     }
     else
-        vis = ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+        c_def(0);
 
-    if (vis)
+    if (vis.isTrue())
     {
         drawContentImp();
     }
 
-    if (bModal)
-        ImGui::EndPopup();
+    if (vis.hasBool())
+    {
+        if (bModal)
+        {
+            if (vis.isTrue())
+                ImGui::EndPopup();
+        }
+        else
+            ImGui::End();
+    }
     else
-        ImGui::End();
+        BPT();
 
 #if 0
     // start draw QImGui window

@@ -35,7 +35,7 @@ void DebugDmaOption::changeDebugDmaMode(int nMode) {
 
 
 SDL_Window* UaeWndAlwaysOnTop::getEmulatorMainWindow() {
-    return app->m_pUaeAppPart->getSdlWindow();
+    return g_pApp->m_pUaeAppPart->getSdlWindow();
 }
 
 

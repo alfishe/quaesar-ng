@@ -10,11 +10,26 @@
 #include <nfd.h>
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
+#include "qd/imGui/imGuiHelperClass.h"
 #include "qd/log/log.h"
 #include "qd/qimGui/controls/qimInputBox.h"
 #include "qd/qimGui/qimGui.h"
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
+
+
+void show_image_file_open_dlg(::floppyslot& cfgFloppy) {
+    nfdu8char_t* outPath;
+    nfdu8filteritem_t filters[1] = {{"Amiga images", "adf,exe,dms,zip"}};
+    nfdopendialogu8args_t args = {0};
+    args.filterList = filters;
+    args.filterCount = EAArrayCount(filters);
+    nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
+    if (result == NFD_OKAY) {
+        strcpy(cfgFloppy.df, outPath);
+        NFD_FreePathU8(outPath);
+    }
+}
 
 
 void opt_floppy_draw(int nFloppy) {
@@ -28,16 +43,7 @@ void opt_floppy_draw(int nFloppy) {
     if (bEnabled) {
         ImGui::SameLine();
         if (ImGui::Button("Select image file")) {
-            nfdu8char_t* outPath;
-            nfdu8filteritem_t filters[2] = {{"Source code", "c,cpp,cc"}, {"Headers", "h,hpp"}};
-            nfdopendialogu8args_t args = {0};
-            args.filterList = filters;
-            args.filterCount = 2;
-            nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
-            if (result == NFD_OKAY) {
-                strcpy(cfgFloppy.df, outPath);
-                NFD_FreePathU8(outPath);
-            }
+            show_image_file_open_dlg(cfgFloppy);
         }
         ImGui::SameLine();
         ImGui::Checkbox("Write-protected", &cfgFloppy.forcedwriteprotect);
@@ -88,7 +94,7 @@ void UaeOptionsDlg::drawContentImp() {
 
     // left column
     uint32_t cldFlg = ImGuiChildFlags_None | ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX;
-    if (ImGui::BeginChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None)) {
+    if (auto bc = qIm::LockChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None)) {
         int items_count = (int)m_pCategories.size();
 
         const ImGuiContext& g = *ImGui::GetCurrentContext();
@@ -138,15 +144,14 @@ void UaeOptionsDlg::drawContentImp() {
                 }
             ImGui::EndListBox();
         }
-
-        ImGui::EndChild();
     }
 
     ImGui::SameLine();
 
     // right column
     ImVec2 wndR = ImVec2(0, rgn.y);
-    if (ImGui::BeginChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders, ImGuiWindowFlags_None)) {
+    if (auto bc = qIm::LockChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders,
+                                 ImGuiWindowFlags_None)) {
         UCategory* pSelCat = m_pSelectedCat;
         if (pSelCat) {
             switch (pSelCat->m_id) {
@@ -169,7 +174,6 @@ void UaeOptionsDlg::drawContentImp() {
                     break;
             }
         }
-        ImGui::EndChild();
     }
 
     ImGui::SetCursorPosX(rgn.x - 200);

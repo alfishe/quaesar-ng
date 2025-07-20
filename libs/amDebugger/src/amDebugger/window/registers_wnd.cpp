@@ -1,7 +1,7 @@
 #include "registers_wnd.h"
 #include <amDebugger/debugger.h>
 #include <amDebugger/vm/vm.h>
-#include <qd/ImGui/imgui_eastl.h>
+#include "qd/imGui/imgui_eastl.h"
 #include <amDebugger/ui/ui_style.h>
 
 namespace amD {

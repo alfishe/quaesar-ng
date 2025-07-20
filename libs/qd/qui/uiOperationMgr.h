@@ -50,9 +50,19 @@ public:
     template<typename TClass>
     TClass* getOperation_() const
     {
-        qd::UiOperation* pAct = findOperationByType(TClass::getStaticTypeInfo());
-        return static_cast<TClass*>(pAct);
+        qd::UiOperation* pOp = findOperationByType(TClass::getStaticTypeInfo());
+        return static_cast<TClass*>(pOp);
     }
+
+    template<typename TClass>
+    void doOperation_() const
+    {
+        qd::UiOperation* pOp = findOperationByType(TClass::getStaticTypeInfo());
+        assert(pOp);
+        if (pOp)
+            pOp->doOperation();
+    }
+
 
     void sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::msg::Base& p_msg) const;
 

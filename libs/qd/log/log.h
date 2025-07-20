@@ -90,7 +90,7 @@ public:
 
 extern qd::Log& logConsole();
 
+void logDebug(const char* msg, ...);
+
 };  // namespace qd
 
-
-void qdlog(const char* msg, ...);

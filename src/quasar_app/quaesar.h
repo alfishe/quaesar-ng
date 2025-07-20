@@ -2,4 +2,4 @@
 #include "quaesar_app.h"
 
 
-extern amD::QuasarApp* app;
+extern amD::QuasarApp* g_pApp;

@@ -3,6 +3,7 @@
 #include <amDebugger/debugger.h>
 #include <amDebugger/vm/vm.h>
 #include <qd/ImGui/imgui_eastl.h>
+#include "qd/imGui/imGuiHelperClass.h"
 //#include <quaesar.h>
 
 namespace amD {
@@ -58,11 +59,10 @@ void ScreenWnd::drawContentImp() {
     }
 
     ImVec2 scrollingChildSize = ImVec2(ImGui::GetWindowWidth() - 10, ImGui::GetWindowHeight() - 20);
-    if (ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+    if (auto bc = qIm::LockChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
     {
         ImGui::Image(mTextureId, ImVec2((float)amiga_width, (float)amiga_height), ImVec2(0.0f, 0.0f),
             ImVec2(1.0f, 1.0f), ImVec4(1.0f, 1.0f, 1.0f, 1.0f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
-        ImGui::EndChild();
     }
 }
 

@@ -6,6 +6,7 @@
 #include <amDebugger/vm/vm.h>
 #include <EASTL/fixed_string.h>
 #include <EASTL/fixed_vector.h>
+#include "qd/imGui/imGuiHelperClass.h"
 #include <qd/base/color.h>
 #include <qd/ImGui/imgui_eastl.h>
 
@@ -148,7 +149,7 @@ void BlitterWnd::drawContentImp()
 
     // left column
     uint32_t cldFlg = ImGuiChildFlags_None | ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX;
-    if (ImGui::BeginChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None))
+    if (auto bc = qIm::LockChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None))
     {
         ImGui::TextUnformatted("BLTCON0");
         ImGui::SameLine();
@@ -171,7 +172,6 @@ void BlitterWnd::drawContentImp()
         ar.bltXPtH = CustReg::BLTBPTH;
         ar.bltXPtL = CustReg::BLTBPTL;
         ar.declareDmaSrcUi();
-        ImGui::EndChild();
     }
 
     ImGui::SameLine();
@@ -179,7 +179,7 @@ void BlitterWnd::drawContentImp()
     // right column
     rgn = ImGui::GetContentRegionAvail();
     ImVec2 wndR = ImVec2(rgn.x * 0.0f, rgn.y);
-    if (ImGui::BeginChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders, ImGuiWindowFlags_None))
+    if (auto bc = qIm::LockChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders, ImGuiWindowFlags_None))
     {
         ImGui::TextUnformatted("BLTCON1");
         ImGui::SameLine();
@@ -202,7 +202,6 @@ void BlitterWnd::drawContentImp()
         ar.bltXPtH = CustReg::BLTDPTH;
         ar.bltXPtL = CustReg::BLTDPTL;
         ar.declareDmaSrcUi();
-        ImGui::EndChild();
     }
 }
 

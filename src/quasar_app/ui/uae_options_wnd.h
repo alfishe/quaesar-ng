@@ -96,3 +96,6 @@ public:
     virtual ~UaeOptionsDlg();
 
 };  // class UaeOptionsDlg
+
+
+void show_image_file_open_dlg(::floppyslot& cfgFloppy);

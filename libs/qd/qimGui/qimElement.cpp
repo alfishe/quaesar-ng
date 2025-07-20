@@ -153,7 +153,7 @@ qim::Behavior* BehaviorElem::createElementData(const qd::TypeInfo& type)
     auto* pCreator = type.getAttribute_<qd::tsAttr::CreateClassCb>();
     if (!pCreator)
     {
-        qdlog("Creator not defined in class:'%s'", type.getFullName().c_str());
+        qd::logDebug("Creator not defined in class:'%s'", type.getFullName().c_str());
         return nullptr;
     }
     qim::OnElementConstruct cv;

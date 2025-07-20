@@ -1,7 +1,7 @@
 #pragma once
-#include <EASTL/array.h>
+#include "qd/imGui/style/style.h"
 #include <imgui/imgui.h>
-#include <qd/base/color.h>
+
 
 namespace amD {
 
@@ -21,7 +21,7 @@ namespace amD {
 
 
 //////////////////////////////////////////////////////////////////////////
-struct UiStyle {
+struct UiStyle : public qd::ImColorsTab {
 public:
 #define IT(name, color) name,
     enum EColor : uint32_t {
@@ -29,58 +29,36 @@ public:
     }; // enum
 #undef IT
 
-    struct ColorRec {
-        qd::Color colorU32;
-        ImVec4 colorF;
-    };
-    eastl::array<ColorRec, COUNT> mColors = {};
-
-public:
-    UiStyle();
-    void applyColors();
-    void applyImGuiDarkStyle();
-
-    [[nodiscard]] inline const qd::Color& getColorU(UiStyle::EColor col) const
+    void UiStyle::applyColors()
     {
-        const ColorRec& colorRef = mColors[col];
-        return colorRef.colorU32;
-    };
-    [[nodiscard]] inline const ImVec4& getColorF(UiStyle::EColor col) const
-    {
-        const ColorRec& colorRef = mColors[col];
-        return colorRef.colorF;
-    };
-
-    void setColorU(UiStyle::EColor col, const qd::Color& c)
-    {
-        UiStyle::ColorRec& rec = mColors[col];
-        rec.colorU32 = c;
-        rec.colorF.x = (float)c.r / 255.f;
-        rec.colorF.y = (float)c.g / 255.f;
-        rec.colorF.z = (float)c.b / 255.f;
-        rec.colorF.w = (float)c.a / 255.f;
+#define IT(name, color) this->setColorU(name, color);
+        UiColorsList(IT);
+#undef IT
     }
 
 public:
-    [[nodiscard]] static UiStyle* get()
+    UiStyle::UiStyle() { applyColors(); }
+
+    static UiStyle& get()
     {
-        static UiStyle instance;
-        return &instance;
+        static UiStyle inst;
+        return inst;
     }
-}; // class UiColors
+
+}; // class UiStyle
 //////////////////////////////////////////////////////////////////////////
 
-extern UiStyle* g_imColors;
+static inline UiStyle& g_imColors = UiStyle::get();
 
 
 //////////////////////////////////////////////////////////////////////////
 [[nodiscard]] inline const qd::Color& uiGetColorU(UiStyle::EColor col)
 {
-    return g_imColors->getColorU(col);
+    return g_imColors.getColorU(col);
 };
 [[nodiscard]] inline const ImVec4& uiGetColorF(UiStyle::EColor col)
 {
-    return g_imColors->getColorF(col);
+    return g_imColors.getColorF(col);
 };
 
 

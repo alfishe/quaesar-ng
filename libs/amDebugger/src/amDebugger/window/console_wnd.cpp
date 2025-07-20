@@ -3,6 +3,7 @@
 #include <qd/ImGui/imgui_eastl.h>
 #include <qd/log/log.h>
 #include <qd/thread/thread.h>
+#include "qd/imGui/imGuiHelperClass.h"
 
 
 namespace amD {
@@ -61,14 +62,13 @@ public:
 void ConsoleWnd::drawContentImp() {
     ImVec2 rgn = ImGui::GetContentRegionAvail();
     ImVec2 scrollingChildSize = ImVec2(rgn.x, rgn.y - ImGui::GetTextLineHeightWithSpacing());
-    if (ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None,
+    if (auto bc = qIm::LockChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None,
                           ImGuiWindowFlags_HorizontalScrollbar)) {
         ConsoleLogWriter::EntriesList list = mpConsoleWriter->getEntriesList();
         for (const qd::LogEntry& curEnt : list)
         {
             ImGui::TextUnformatted(curEnt.message.c_str());
         }
-        ImGui::EndChild();
     }
 
     // constole input

@@ -1,8 +1,10 @@
 #pragma once
+#include <imgui/imgui.h>
 #include "qd/qui/shortcutHnd.h"
 #include "qd/qui/uiOperation.h"
 #include "qd/typeSystem/typeRegistry.h"
-#include <imgui/imgui.h>
+#include "qd/qui/shortcutMgr.h"
+
 
 namespace qIm {
 
@@ -63,7 +65,8 @@ public:
 }; // struct MenuItemOperation
 //////////////////////////////////////////////////////////////////////////
 
-void menuItemOperation(const char* pOperationClass, bool bDoOperation = true)
+
+inline void menuItemOperation(const char* pOperationClass, bool bDoOperation = true)
 {
     qIm::MenuItemOperation menu(pOperationClass, bDoOperation);
 }

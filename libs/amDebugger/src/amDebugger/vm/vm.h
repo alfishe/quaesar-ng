@@ -43,6 +43,7 @@ public:
         return amiga_height;
     }
 
+
     class Memory { /*: public vm::imp::UaeEmuVmImp::Memory*/
     public:
         eastl::fixed_vector<amD::MemBank, 8, false> banks;
@@ -63,6 +64,14 @@ public:
         virtual uint32_t getU32(AddrRef addr) = 0;
         virtual void setU32(AddrRef addr, uint32_t v) = 0;
 
+        const amD::MemBank *findBankByAddr(AddrRef addr) const {
+            for (const amD::MemBank& bank : banks) {
+                if (addr >= bank.m_startAddr && addr < (bank.m_startAddr + bank.m_size))
+                    return &bank;
+            }
+            return nullptr;
+        }
+
     };  // struct Memory
     amD::VM::Memory* mem = nullptr;
 
@@ -76,6 +85,7 @@ public:
         virtual int getIntMask() const = 0;
     };  // struct Cpu
     amD::VM::Cpu* cpu = nullptr;
+
 
     class CustomRegs {
     public:

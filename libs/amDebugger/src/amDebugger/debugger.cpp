@@ -3,16 +3,16 @@
 #include <EASTL/sort.h>
 #include <SDL.h>
 #include <capstone/capstone.h>
-#include <imgui/backends/imgui_impl_sdl2.h>
-#include <imgui/backends/imgui_impl_sdlrenderer2.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include <amDebugger/dbgOperation.h>
-#include <amDebugger/msg_list.h>
-#include <amDebugger/vm/vm.h>
+#include "qd/imGui/backends/imgui_impl_sdl2.h"
+#include "qd/imGui/backends/imgui_impl_sdlrenderer2.h"
+#include "amDebugger/dbgOperation.h"
+#include "amDebugger/msg_list.h"
+#include "amDebugger/vm/vm.h"
 #include "qd/thread/thread.h"
-#include <amDebugger/ui/dbgGuiDesktop.h>
-#include <amDebugger/ui/ui_style.h>
+#include "amDebugger/ui/dbgGuiDesktop.h"
+#include "amDebugger/ui/ui_style.h"
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/app/moduleManager.h"
@@ -143,7 +143,7 @@ void Debugger::initImGui() {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     // Setup Dear ImGui style
-    amD::UiStyle::get()->applyImGuiDarkStyle();
+    qd::imGuiApplyStyleDark();
 }
 
 

@@ -56,7 +56,7 @@ void UaeEmuVmImp::init() {
 
         bool combined = false;
         for (MemBank& existBank : s->mem->banks) {
-            if (existBank.realAddr == uaeBank->baseaddr) {
+            if (existBank.m_realAddr == uaeBank->baseaddr) {
                 combined = true;
                 hiAddr += uaeBank->allocated_size >> 16;
                 break;
@@ -66,14 +66,14 @@ void UaeEmuVmImp::init() {
             continue;
 
         MemBank& memBank = s->mem->banks.emplace_back();
-        memBank.id = (int)s->mem->banks.size() - 1;
-        memBank.name = uaeBank->name;
-        memBank.label = uaeBank->label;
-        memBank.startAddr = uaeBank->start;
-        memBank.realAddr = uaeBank->baseaddr;
-        memBank.mask = uaeBank->mask;
-        memBank.size = uaeBank->allocated_size;
-        hiAddr += memBank.size >> 16;
+        memBank.m_id = (int)s->mem->banks.size() - 1;
+        memBank.m_name = uaeBank->name;
+        memBank.m_label = uaeBank->label;
+        memBank.m_startAddr = uaeBank->start;
+        memBank.m_realAddr = uaeBank->baseaddr;
+        memBank.m_mask = uaeBank->mask;
+        memBank.m_size = uaeBank->allocated_size;
+        hiAddr += memBank.m_size >> 16u;
     }
 }
 

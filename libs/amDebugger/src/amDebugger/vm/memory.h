@@ -1,6 +1,7 @@
 #pragma once
-#include <EASTL/string.h>
 #include <stdint.h>
+#include <qd/stl/string.h>
+#include "qd/stl/span.h"
 
 namespace amD {
 
@@ -14,15 +15,30 @@ public:
     };
 
 public:
-    int id = -1;
-    AddrRef startAddr = 0;
-    uint32_t size = 0;
-    uint32_t mask = 0;
-    eastl::string name;
-    eastl::string label;
-    uint8_t* realAddr;
+    int m_id = -1;
+    AddrRef m_startAddr = 0;
+    uint32_t m_size = 0;
+    uint32_t m_mask = 0;
+    eastl::string m_name;
+    eastl::string m_label;
+    uint8_t* m_realAddr;
 
 public:
+
+    qd::span<uint8_t> getSpan() const {
+        return qd::span<uint8_t>(m_realAddr + m_startAddr, m_size);
+    }
+
+    bool isAddrIn(AddrRef addr) const {
+        return (addr >= m_startAddr && addr < (m_startAddr + m_size)); }
+
+    uint8_t getU8(AddrRef addr) const {
+        return m_realAddr[addr - m_startAddr];
+    }
+    void setU8(AddrRef addr, uint8_t v) const {
+        m_realAddr[addr - m_startAddr] = v;
+    }
+
 };  // class MemBank
 //////////////////////////////////////////////////////////////////////////
 

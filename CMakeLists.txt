@@ -29,6 +29,8 @@ add_subdirectory(external/capstone)
 add_subdirectory(external/nativefiledialog)
 add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
+add_subdirectory(libs/exprParser)
+
 
 # Define a global variable
 set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_imp" CACHE INTERNAL "Path to UAE custom implementation directory")

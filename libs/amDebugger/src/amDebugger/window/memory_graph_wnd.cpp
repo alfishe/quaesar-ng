@@ -5,6 +5,7 @@
 #include <amDebugger/vm/vm.h>
 #include <imgui/imgui_internal.h>
 #include <qd/ImGui/imgui_eastl.h>
+#include "qd/imGui/imGuiHelperClass.h"
 //#include <quaesar.h>
 
 
@@ -40,33 +41,34 @@ void MemoryGraphWnd::drawContentImp() {
         }
     }
 
-
     const MemBank* pCurBank = vm->mem->getBankByInd(mCurBank);
     if (!pCurBank) {
         mCurBank = MemBank::CHIP;
         return;
     }
 
-    uint32_t addrPtr = mBankOffset + pCurBank->startAddr;
-    uint32_t step = 1;
-    if (ImGui::InputScalar("Address", ImGuiDataType_U32, &addrPtr, &step, nullptr, "%08Xh",
-                           ImGuiInputTextFlags_CharsHexadecimal)) {
-        mBankOffset = addrPtr;
+    AddrRef addrPtr = mBankOffset + pCurBank->m_startAddr;
+    qd::InlineString addrStr(m_exprAddr.getStrVal().begin(), m_exprAddr.getStrVal().end());
+    if (ImGui::InputText("Address", &addrStr)) {
+        m_exprAddr.setStrVal(addrStr);
+        qd::Var16 val;
+        if (m_exprAddr.evaluate(vm, val))
+            mBankOffset = val.getUInt();
     }
 
     eastl::inline_string<255, false> selBankName = "null";
     if (pCurBank) {
-        selBankName.assign(pCurBank->name.begin(), pCurBank->name.end());
-        selBankName.append_sprintf(" (%06Xh - %06Xh)", (uint32_t)pCurBank->startAddr,
-                                   (uint32_t)pCurBank->startAddr + pCurBank->size);
+        selBankName.assign(pCurBank->m_name.begin(), pCurBank->m_name.end());
+        selBankName.append_sprintf(" (%06Xh - %06Xh)", (uint32_t)pCurBank->m_startAddr,
+                                   (uint32_t)pCurBank->m_startAddr + pCurBank->m_size);
     }
     if (ImGui::BeginCombo("Memory bank", selBankName.c_str(), ImGuiComboFlags_None)) {
         eastl::span<const amD::MemBank> banks = vm->mem->banks;
         for (int nBank = 0; nBank < banks.size(); ++nBank) {
             const amD::MemBank& curBank = banks[nBank];
-            selBankName.assign(curBank.name.begin(), curBank.name.end());
-            selBankName.append_sprintf(" (%06Xh-%06Xh)", (uint32_t)curBank.startAddr,
-                                       (uint32_t)curBank.startAddr + curBank.size);
+            selBankName.assign(curBank.m_name.begin(), curBank.m_name.end());
+            selBankName.append_sprintf(" (%06Xh-%06Xh)", (uint32_t)curBank.m_startAddr,
+                                       (uint32_t)curBank.m_startAddr + curBank.m_size);
             if (ImGui::Selectable(selBankName.c_str(), nBank == mCurBank)) {
                 mCurBank = nBank;
                 mTextureMod = 0;
@@ -84,7 +86,7 @@ void MemoryGraphWnd::drawContentImp() {
             if (ImGui::Selectable(selBankName.c_str())) {
                 mCurBank = MemBank::CHIP;
                 pCurBank = vm->mem->getBankByInd(mCurBank);
-                mBankOffset = bplPtr - pCurBank->startAddr;
+                mBankOffset = bplPtr - pCurBank->m_startAddr;
                 CustReg modReg = (nb & 1) == 0 ? CustReg::BPL1MOD : CustReg::BPL2MOD;
                 mTextureMod = (short)vm->custom->getRegVal(modReg);
                 // FIXME: How to calculate real bitplane width from ddfstart/ddfstop
@@ -103,13 +105,13 @@ void MemoryGraphWnd::drawContentImp() {
         void* pixels = nullptr;
         int pitch;
         if (SDL_LockTexture(scrTexture, nullptr, &pixels, &pitch) == 0) {
-            uint8_t* memPtr = (uint8_t*)vm->mem->getRealAddr(mBankOffset + pCurBank->startAddr);
+            uint8_t* memPtr = (uint8_t*)vm->mem->getRealAddr(mBankOffset + pCurBank->m_startAddr);
 
             // Change pixels
             uint32_t* dest = ((uint32_t*)pixels);
             const int rowBytes = mTextureSize.x / 8;
             for (int y = 0; y < mTextureSize.y; y++) {
-                if (memPtr + rowBytes < pCurBank->realAddr + pCurBank->size) {
+                if (memPtr + rowBytes < pCurBank->m_realAddr + pCurBank->m_size) {
                     for (int x = 0; x < rowBytes; x++) {
                         uint8_t sb = *memPtr;
                         uint8_t m = 0x80;
@@ -133,16 +135,16 @@ void MemoryGraphWnd::drawContentImp() {
     }
     // address slider
     {
-        int addrPtr = pCurBank->size - mBankOffset;
-        if (ImGui::VSliderInt("##AddrSlider", ImVec2(32.0f, (float)mNewTextureSize.y), &addrPtr, 0, pCurBank->size,
+        int addrPtr = pCurBank->m_size - mBankOffset;
+        if (ImGui::VSliderInt("##AddrSlider", ImVec2(32.0f, (float)mNewTextureSize.y), &addrPtr, 0, pCurBank->m_size,
                               "")) {
-            mBankOffset = pCurBank->size - addrPtr;
+            mBankOffset = pCurBank->m_size - addrPtr;
         }
     }
     ImGui::SameLine();
 
     ImVec2 scrollingChildSize = ImVec2(ImGui::GetContentRegionAvail().x - 00.f, mTextureSize.y + 32.f);
-    if (ImGui::BeginChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
+    if (auto p = qIm::LockChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
     {
         ImGui::Image(mTextureId, ImVec2((float)mTextureSize.x, (float)mTextureSize.y), ImVec2(0.f, 0.f),
             ImVec2(1.f, 1.f), ImVec4(1.f, 1.f, 1.f, 1.f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
@@ -159,7 +161,6 @@ void MemoryGraphWnd::drawContentImp() {
                               int(dragDelta.x / 8.f);
             }
         }
-        ImGui::EndChild();
     }
 
 

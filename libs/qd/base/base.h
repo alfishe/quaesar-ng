@@ -20,7 +20,7 @@ using THash32 = uint32_t;
 #define SAFE_DESTROY_AND_DELETE(p) { if (p) { (p)->destroy(); delete (p); (p) = nullptr; } }
 
 //------------------------------------------------------------------------
-// forward for class and struct
+// Forward declaration for class and struct
 #define FORWARD_DECLARATION_1(c) class c;
 #define FORWARD_DECLARATION_2(n1, c) namespace n1 { class c; }
 #define FORWARD_DECLARATION_3(n1, n2, c) namespace n1 { namespace n2 { class c; } }
@@ -39,3 +39,6 @@ T c_def(T v)
 {
     return v;
 }
+
+// place to set breakpoint for debugging
+#define BPT() [](){return 0;}();

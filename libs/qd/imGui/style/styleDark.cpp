@@ -1,24 +1,10 @@
-#include "ui_style.h"
+#include "style.h"
 #include <imgui/imgui.h>
 
-namespace amD {
-
-UiStyle* g_imColors = UiStyle::get();
+namespace qd {
 
 
-void UiStyle::applyColors() {
-#define IT(name, color) this->setColorU(name, color);
-    UiColorsList(IT);
-#undef IT
-}
-
-
-UiStyle::UiStyle() {
-    applyColors();
-}
-
-
-void UiStyle::applyImGuiDarkStyle() {
+void imGuiApplyStyleDark() {
     ImGui::StyleColorsDark();
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_FrameBg] = ImColor(10, 10, 10);

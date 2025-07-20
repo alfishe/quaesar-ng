@@ -29,7 +29,7 @@
 #endif  // WIN32
 
 
-amD::QuasarApp* app = nullptr;
+amD::QuasarApp* g_pApp = nullptr;
 
 extern void real_main(int argc, TCHAR** argv);
 extern void keyboard_settrans();
@@ -58,9 +58,9 @@ int uae_thread_main_func(void*) {
 
 // Quaesar main
 int SDL_main(int argc, char* argv[]) {
-    app = new amD::QuasarApp();
+    g_pApp = new amD::QuasarApp();
     qd::CreateApplicationParams prm;
-    app->onConstruct(prm);
+    g_pApp->onConstruct(prm);
 
     NFD_Init();
     ::syncbase = 1000000;
@@ -130,18 +130,18 @@ int SDL_main(int argc, char* argv[]) {
     amD::onUaeInitialized->wait();
 
     // quaesar main loop
-    ::app->initialize();
-    ::app->doMainLoop();
+    ::g_pApp->initialize();
+    ::g_pApp->doMainLoop();
 
     // quit
     SDL_Log("Waiting UAE thread over ...");
-    app->m_pDebugger->execConsoleCmd("q");
+    g_pApp->m_pDebugger->execConsoleCmd("q");
 
     // wait UAE done
     SDL_WaitThread(uae_thread_handler, nullptr);
     SAFE_DELETE(amD::onUaeInitialized);
 
-    ::app->destroy();
+    ::g_pApp->destroy();
     NFD_Quit();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
     return 0;

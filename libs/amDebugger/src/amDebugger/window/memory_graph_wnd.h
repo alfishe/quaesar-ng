@@ -2,13 +2,14 @@
 #include <amDebugger/vm/memory.h>
 #include "qd/math/point2.h"
 #include <amDebugger/ui/ui_view.h>
+#include "amDebugger/exprValue.h"
+
 
 namespace amD {
 namespace window {
 
 class MemoryGraphWnd : public AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::MemoryGraph, amD::window::MemoryGraphWnd, amD::AmDbgWindow);
-
 
     ImTextureID mTextureId = 0;
     qd::Size mTextureSize = {-1, -1};
@@ -18,6 +19,7 @@ class MemoryGraphWnd : public AmDbgWindow {
     int mBankOffset = 0x0;
     int mTextureMod = 0;
     int mStartDragBankOffset = 0;
+    ExprValStr m_exprAddr;
 
 
 public:

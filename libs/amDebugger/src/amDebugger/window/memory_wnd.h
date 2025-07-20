@@ -60,8 +60,13 @@
 #include <stdint.h>  // uint8_t, etc.
 #include <stdio.h>   // sprintf, scanf
 #include <amDebugger/ui/ui_view.h>
+#include "amDebugger/exprValue.h"
+#include "qd/stl/span.h"
 
 namespace amD {
+class MemBank;
+
+
 namespace window {
 
 class MemoryView : public AmDbgWindow {
@@ -70,6 +75,8 @@ class MemoryView : public AmDbgWindow {
     void* m_memAddr = 0;
     size_t m_memSize = 0;
     size_t m_baseDisplayAddr = 0x0000;
+    ExprValStr m_exprAddr;
+    const amD::MemBank *m_pLastBank = nullptr;
 
 public:
     enum DataFormat { DataFormat_Bin = 0, DataFormat_Dec = 1, DataFormat_Hex = 2, DataFormat_COUNT };

@@ -38,17 +38,17 @@ void DbgGuiDesktop::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (auto pm = qIm::BeginMenu("File"))
+        if (auto pm = qIm::LockMenu("File"))
         {
         }
 
-        if (auto pm = qIm::BeginMenu("Emulator"))
+        if (auto pm = qIm::LockMenu("Emulator"))
         {
             qIm::menuItemOperation(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
             qIm::menuItemOperation(STRINGIFY(amD::operation::UaeResetAmiga));
         }
 
-        if (auto pm = qIm::BeginMenu("Debug"))
+        if (auto pm = qIm::LockMenu("Debug"))
         {
             qIm::menuItemOperation(STRINGIFY(amD::operation::DebugTraceStart));
             ImGui::Separator();
@@ -72,7 +72,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
             }
         }
 
-        if (auto pEm = qIm::BeginMenu("Window"))
+        if (auto pEm = qIm::LockMenu("Window"))
         {
             for (qd::UiNode* pCurWnd : m_pWindows)
             {
@@ -172,7 +172,7 @@ void DbgGuiDesktop::_drawToolBar()
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
-    if (auto bg = qIm::BeginChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
+    if (auto bg = qIm::LockChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
     {
         ImGuiIO& io = ImGui::GetIO();
         ImGuiWindow* window = ImGui::GetCurrentWindow();
