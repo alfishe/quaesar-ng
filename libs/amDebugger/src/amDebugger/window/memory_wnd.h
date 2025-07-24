@@ -75,7 +75,7 @@ class MemoryView : public AmDbgWindow {
     void* m_memAddr = 0;
     size_t m_memSize = 0;
     size_t m_baseDisplayAddr = 0x0000;
-    ExprValStr m_exprAddr;
+    amD::ExprValStr m_exprAddr;
     const amD::MemBank *m_pLastBank = nullptr;
 
 public:

@@ -12,7 +12,6 @@
 struct SDL_Window;
 struct SDL_Renderer;
 union SDL_Event;
-typedef size_t csh;
 
 FORWARD_DECLARATION_4S(qd, operation, msg, Base);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
@@ -69,7 +68,6 @@ class Debugger : public qd::AppPartBase
     qd::QImGuiContext* m_pQimGui = nullptr;
 
 public:
-    csh* m_pCapstone = nullptr;
     amD::VM* vm = nullptr;
     amD::DbgGuiDesktop* m_pGui = nullptr;
     qd::UiOperationMgr* m_pOperationMgr = nullptr;

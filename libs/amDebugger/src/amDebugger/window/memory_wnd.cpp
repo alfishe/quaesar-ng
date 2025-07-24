@@ -89,7 +89,7 @@ static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
     }
     if (!pBank || !pBank->isAddrIn((AddrRef)addr))
         return 0xff; // out of bounds
-    uint8_t b = pBank->getU8(addr);
+    uint8_t b = pBank->getU8((AddrRef)addr);
     return b;
 }
 
@@ -99,7 +99,7 @@ static void write_mem_imp(uint8_t* data, size_t addr, uint8_t v)
     const amD::MemBank* pBank = pMemView->m_pLastBank;
     if (!pBank || !pBank->isAddrIn((AddrRef)addr))
         return;
-    pBank->setU8(addr, v);
+    pBank->setU8((AddrRef)addr, v);
 }
 
 
@@ -528,12 +528,11 @@ void MemoryView::draw_options_line(const Sizes& s, void* mem_data, size_t mem_si
 
     qd::InlineString addrStr(m_exprAddr.getStrVal().begin(), m_exprAddr.getStrVal().end());
     if (ImGui::InputText("##addr", &addrStr, ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
-        size_t goto_addr;
         m_exprAddr.setStrVal(addrStr);
         qd::Var16 val;
         if (m_exprAddr.evaluate(getDbg()->getVm(), val))
         {
-            goto_addr = val.getUInt();
+            size_t goto_addr = val.getUInt();
             goto_address = goto_addr - base_display_addr;
             //highlight_min = hightlight_max = (size_t)-1;
         }

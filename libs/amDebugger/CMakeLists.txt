@@ -20,12 +20,11 @@ endfunction()
 
 # Use the function to add subdirectories
 add_source_group("")
-add_source_group("operation")
-add_source_group("shortcut")
 add_source_group("ui")
 add_source_group("vm")
 add_source_group("window")
-add_source_group("emuDrivers")
+add_source_group("emuDriv")
+add_source_group("codeAnalyzer")
 
 
 add_library(${PROJECT_NAME} ${AM_SRC})

@@ -1,11 +1,11 @@
 #pragma once
 #include <stdint.h>
-#include <qd/stl/string.h>
+#include "qd/stl/string.h"
 #include "qd/stl/span.h"
+#include "amDebugger/base.h"
+
 
 namespace amD {
-
-typedef uint32_t AddrRef;
 
 class MemBank {
 public:

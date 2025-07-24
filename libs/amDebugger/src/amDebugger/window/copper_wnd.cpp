@@ -1,16 +1,16 @@
-#include <qd/stl/string.h>
-#include <qd/stl/fixed_vector.h>
-#include <amDebugger/debugger.h>
-#include <amDebugger/msg_list.h>
-#include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/vm.h>
-#include <qd/base/color.h>
-#include <qd/imGui/imgui_eastl.h>
+#include "qd/stl/string.h"
+#include "qd/stl/fixed_vector.h"
+#include "amDebugger/debugger.h"
+#include "amDebugger/msg_list.h"
+#include "amDebugger/vm/memory.h"
+#include "amDebugger/vm/vm.h"
+#include "qd/base/color.h"
+#include "qd/imGui/imgui_eastl.h"
 #include "amDebugger/ui/ui_style.h"
-#include <amDebugger/ui/ui_view.h>
-#include <amDebugger/ui/dbgGuiDesktop.h>
-#include <amDebugger/shortcut/shortcut_list.h>
-#include <qd/qui/shortcutMgr.h>
+#include "amDebugger/ui/ui_view.h"
+#include "amDebugger/ui/dbgGuiDesktop.h"
+#include "amDebugger/shortcut_list.h"
+#include "qd/qui/shortcutMgr.h"
 
 
 namespace amD {

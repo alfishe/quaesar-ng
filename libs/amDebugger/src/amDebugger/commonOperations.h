@@ -1,7 +1,6 @@
 #pragma once
 #include "amDebugger/dbgOperation.h"
-//#include "qd/ui/uiOperationMessages.h"
-#include "amDebugger/shortcut/shortcut_list.h"
+#include "amDebugger/shortcut_list.h"
 
 
 struct SDL_Window;

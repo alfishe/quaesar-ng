@@ -1,7 +1,11 @@
 #pragma once
 #include <EASTL/optional.h>
-#include <amDebugger/vm/memory.h>
-#include <amDebugger/ui/ui_view.h>
+#include <qd/stl/vector.h>
+#include "amDebugger/vm/memory.h"
+#include "amDebugger/ui/ui_view.h"
+#include "amDebugger/exprValue.h"
+
+FORWARD_DECLARATION_3(amD, cda, Item);
 
 namespace amD {
 namespace window {
@@ -9,8 +13,12 @@ namespace window {
 class DisassemblyView : public amD::AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::Disassembly, amD::window::DisassemblyView, amD::AmDbgWindow);
 
-    eastl::string addrInputStr;
-    eastl::optional<AddrRef> mDisasmAddr;
+    amD::ExprValStr m_addrInputStr;
+    eastl::optional<AddrRef> m_viewBaseAddr;
+    qd::vector<amD::cda::Item *> m_disasmLines;
+    bool m_snapViewPc = true;
+    AddrRef m_addrViewStart = 0;
+    AddrRef m_addrViewEnd = 0;
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {

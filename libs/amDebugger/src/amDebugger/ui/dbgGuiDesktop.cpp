@@ -13,7 +13,7 @@
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/typeSystem/typeRegistry.h"
 #include <amDebugger/dbgOperation.h>
-#include <amDebugger/shortcut/shortcut_list.h>
+#include <amDebugger/shortcut_list.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 

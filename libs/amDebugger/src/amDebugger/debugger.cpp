@@ -2,7 +2,6 @@
 #include <EASTL/queue.h>
 #include <EASTL/sort.h>
 #include <SDL.h>
-#include <capstone/capstone.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include "qd/imGui/backends/imgui_impl_sdl2.h"
@@ -92,16 +91,6 @@ void Debugger::init() {
     assert(m_pOperationMgr);
 
     assert(m_pOperationMgr->getNumOps());
-
-    m_pCapstone = new csh();
-
-    // TODO: Pick correct CPU depending on starting CPU
-    cs_err err = cs_open(CS_ARCH_M68K, (cs_mode)(CS_MODE_BIG_ENDIAN | CS_MODE_M68K_000), m_pCapstone);
-    if (err) {
-        printf("Failed on cs_open() with error returned: %u\n", err);
-        abort();
-    }
-    cs_option(*m_pCapstone, CS_OPT_DETAIL, CS_OPT_ON);
 }
 
 
@@ -210,8 +199,6 @@ void Debugger::destroy() {
     ImGui::DestroyContext();
 
     delete m_pGui;
-    delete m_pCapstone;
-    m_pCapstone = nullptr;
     m_pGui = nullptr;
     vm = nullptr;
     VM::destrotVmInst();
