@@ -14,7 +14,7 @@ namespace amD::cda {
 class Item;
 class CodeItem;
 
-static constexpr uint32_t g_maxOpcodeSize = 24;
+static constexpr uint32_t g_m68MaxOpSize = 24;
 static constexpr uint32_t g_chunkSize = 64; // 6 bit
 static constexpr uint32_t g_chunkMask = g_chunkSize - 1;
 static constexpr uint32_t g_maxPages = 64;
@@ -35,7 +35,7 @@ struct CodeChunk : public eastl::intrusive_list_node {
     };
 
     bool isValid() const { return m_codeValid; }
-    bool isIn(AddrRef addr) const { return addr >= m_addr && addr < (m_addr + cda::g_chunkSize); }
+    bool isIn(AddrRef addr) const { return addr >= m_addr && (uint64_t)addr < ((uint64_t)m_addr + cda::g_chunkSize); }
     bool empty() const { return m_addr == 0; }
     void removeCodeItems();
 

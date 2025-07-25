@@ -17,8 +17,13 @@ class DisassemblyView : public amD::AmDbgWindow {
     eastl::optional<AddrRef> m_viewBaseAddr;
     qd::vector<amD::cda::Item *> m_disasmLines;
     bool m_snapViewPc = true;
-    AddrRef m_addrViewStart = 0;
+    AddrRef m_addrExtraViewStart = 0;
+    AddrRef m_reqViewAddr = 0;
+    int m_reqViewAddrDesiredLine = 0;
     AddrRef m_addrViewEnd = 0;
+    AddrRef m_prevRegPc = 0;
+    constexpr static int g_extraScrollLines = 4;
+
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {

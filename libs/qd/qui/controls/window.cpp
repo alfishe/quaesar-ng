@@ -10,7 +10,7 @@ void UiWindow::drawImp()
 {
     assert(!m_title.empty());
 
-    uint32_t flg = ImGuiWindowFlags_NoScrollbar;
+    uint32_t flg = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
     const bool bModal = isModal();
 
     Tribool vis;
