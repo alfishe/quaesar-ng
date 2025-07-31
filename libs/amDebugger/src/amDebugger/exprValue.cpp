@@ -86,7 +86,7 @@ void ExprValStr::parse()
 }
 
 
-bool ExprValStr::evaluate(const amD::VM* vm, qd::Var16& res)
+bool ExprValStr::evaluate(const amD::AbsEmu* vm, qd::Var16& res)
 {
     if (!m_pParsedExpr)
         return false;

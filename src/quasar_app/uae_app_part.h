@@ -10,34 +10,31 @@ class UaeWndDesktop;
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 
 
-class UaeAppPart : public qd::AppPartBase {
-    TS_BEGIN_REFLECT_CLASS(UaeAppPart, qd::AppPartBase);
+// AppPart that represents UAE-emulator window in main-thread
+//
+class UaeAppPart : public qd::AppPart {
+    TS_BEGIN_REFLECT_CLASS(UaeAppPart, qd::AppPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("UAE Emulator"));
     TS_END();
 
 private:
+    class UaeWorker* m_pUaeWorker = nullptr;
     UaeWndDesktop* m_pDesktop = nullptr;
-    int m_wndWidth = 754;
-    int m_wndHeight = 576;
     int m_renderedFrameNo = -1;
-    uint32_t* m_pAmigaBuffer = nullptr;
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pUaeRenderer = nullptr;
-    SDL_atomic_t m_scrFrameNo = {};
     SDL_Texture* m_pUaeScrTexture = nullptr;
-    qd::Mutex m_UaeScrTextureMutex;
     qd::QImGuiContext* m_pImGui = nullptr;
     bool m_bShowImgui = false;
 
 public:
-    virtual void onPartCreate(AppPartBase::OnCreate_t& prm) override;
+    virtual void onPartCreate(AppPart::OnCreate_t& prm) override;
 
     void createUaeWindow();
     virtual void update(float dt, float time) override;
-    virtual void render() override;
 
-    uint32_t* lockUaeScreenTexBuf(int amiga_width, int amiga_height);
-    void unlockUaeScreenTexBuf();
+    void updGuiMenus();
+    virtual void render() override;
 
     virtual void destroyImp() override;
 
@@ -46,8 +43,7 @@ public:
     }
 
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) override;
-
-    virtual void onSdlEventProc(SDL_Event& event) override;
+    virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
     bool getShowImgui() const {
         return m_bShowImgui;
@@ -57,7 +53,7 @@ public:
     }
 
 private:
-    void recreateTexture(int newWidth, int newHeight);
+    void tryRecreateEmuScreenTexture(int newWidth, int newHeight);
     void destroyUaeWindow();
 
 

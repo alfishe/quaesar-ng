@@ -1,8 +1,8 @@
 #include "memory_graph_wnd.h"
 #include <EASTL/span.h>
 #include <SDL.h>
-#include <amDebugger/debugger.h>
-#include <amDebugger/vm/vm.h>
+#include <amDebugger/debuggerApp.h>
+#include <amDebugger/vm/absEmu.h>
 #include <imgui/imgui_internal.h>
 #include <qd/ImGui/imgui_eastl.h>
 #include "qd/imGui/imGuiHelperClass.h"
@@ -14,7 +14,7 @@ namespace window {
 
 
 void MemoryGraphWnd::drawContentImp() {
-    VM* vm = getDbg()->getVm();
+    AbsEmu* vm = getDbg()->getVm();
 
     mNewTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
 

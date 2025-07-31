@@ -14,7 +14,7 @@
 #include <uae_lib/include/debug.h>
 // clang-format on
 #include "amDebugger/commonOperations.h"
-#include "amDebugger/debugger.h"
+#include "amDebugger/debuggerApp.h"
 #include "amDebugger/msg_list.h"
 #include "quasar_app/quaesar.h"
 #include "quasar_app/uae_app_part.h"

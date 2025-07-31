@@ -1,6 +1,6 @@
 #include "quaesar_app.h"
 #include "SDL.h"
-#include "amDebugger/debugger.h"
+#include "amDebugger/debuggerApp.h"
 #include "qd/app/appPartsMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "uae_app_part.h"
@@ -17,14 +17,14 @@ void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
 
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
-    m_pDebugger = getAppParts()->createPart_<amD::Debugger>("Debugger");
+    m_pDebuggerPart = getAppParts()->createPart_<amD::Debugger>("Debugger");
     m_pUaeAppPart = getAppParts()->createPart_<UaeAppPart>("Emulator");
 }
 
 
 void QuasarApp::initialize() {
-    m_pDebugger->init();
-    m_pDebugger->toggleWndVisible(amD::DebuggerMode_Live);
+    m_pDebuggerPart->init();
+    m_pDebuggerPart->toggleWndVisible(amD::DebuggerMode_Live);
 }
 
 
@@ -44,15 +44,6 @@ void QuasarApp::onSdlEventProc(SDL_Event& event) {
     TSuper::onSdlEventProc(event);
 
     switch (event.type) {
-        case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_ESCAPE) {
-                // requestAppToQuit();
-                break;
-            } else if (event.key.keysym.sym == SDLK_F12) {
-                // activate_debugger();
-                // qd::Debugger_toggle(m_pDebugger, qd::DebuggerMode_Live);
-            }
-            break;
         case SDL_WINDOWEVENT: {
             Uint8 wndEvent = event.window.event;
             if (wndEvent == SDL_WINDOWEVENT_CLOSE) {

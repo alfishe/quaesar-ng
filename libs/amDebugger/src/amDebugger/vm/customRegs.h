@@ -2,7 +2,7 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/string.h>
 #include <EASTL/string_view.h>
-#include <amDebugger/vm/custom_regs_list.h>
+#include <amDebugger/vm/customRegsList.h>
 #include <amDebugger/vm/memory.h>
 #include <stdint.h>
 

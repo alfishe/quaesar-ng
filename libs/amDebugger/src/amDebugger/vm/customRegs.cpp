@@ -1,6 +1,6 @@
-#include "custom_regs.h"
+#include "customRegs.h"
 #include <EASTL/array.h>
-#include "custom_regs_list.h"
+#include "customRegsList.h"
 
 namespace amD {
 

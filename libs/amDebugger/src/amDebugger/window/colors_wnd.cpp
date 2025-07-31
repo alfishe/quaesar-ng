@@ -1,7 +1,7 @@
 #include "colors_wnd.h"
 #include <EASTL/fixed_vector.h>
-#include <amDebugger/debugger.h>
-#include <amDebugger/vm/vm.h>
+#include <amDebugger/debuggerApp.h>
+#include <amDebugger/vm/absEmu.h>
 #include <qd/base/color.h>
 #include <qd/ImGui/imgui_eastl.h>
 
@@ -9,7 +9,7 @@ namespace amD {
 namespace window {
 
 void ColorsWnd::drawContentImp() {
-    VM* vm = getDbg()->getVm();
+    AbsEmu* vm = getDbg()->getVm();
 
     eastl::fixed_vector<qd::Color, 256> palette;
 

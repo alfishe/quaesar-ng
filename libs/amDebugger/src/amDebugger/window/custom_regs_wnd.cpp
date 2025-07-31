@@ -1,5 +1,5 @@
 #include "custom_regs_wnd.h"
-#include "amDebugger/debugger.h"
+#include "amDebugger/debuggerApp.h"
 #include "qd/ImGui/imgui_eastl.h"
 #include "amDebugger/ui/ui_style.h"
 
@@ -9,7 +9,7 @@ namespace window {
 
 
 struct FlagsTooltipContent {
-    void drawRegisterFlagsTooltip(amD::VM::CustomRegs* custRegs, CustReg reg_id)
+    void drawRegisterFlagsTooltip(amD::AbsEmu::CustomRegs* custRegs, CustReg reg_id)
     {
         const CustomFlagsDesc* fd = reg_id.getFlagDesc();
         if (!fd)
@@ -63,7 +63,7 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
 
 
 struct DrawCustomRegColumn {
-    amD::VM::CustomRegs* custRegs;
+    amD::AbsEmu::CustomRegs* custRegs;
     void drawColumn(CustReg reg_id) {
         stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
         ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
@@ -97,9 +97,9 @@ private:
 
 void CustomRegsWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    amD::VM* vm = dbg->vm;
+    amD::AbsEmu* vm = dbg->vm;
 
-    amD::VM::CustomRegs* custRegs = vm->custom;
+    amD::AbsEmu::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;

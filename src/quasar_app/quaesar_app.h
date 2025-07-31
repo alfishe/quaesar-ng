@@ -12,7 +12,6 @@ struct SDL_Renderer;
 class UaeAppPart;
 
 namespace amD {
-extern qd::ThreadEvent* onUaeInitialized;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -20,7 +19,7 @@ class QuasarApp : public qd::Application {
     typedef qd::Application TSuper;
 
 public:
-    amD::Debugger* m_pDebugger = nullptr;
+    amD::Debugger* m_pDebuggerPart = nullptr;
     UaeAppPart* m_pUaeAppPart = nullptr;
 
 public:
@@ -40,7 +39,7 @@ public:
     virtual void onSdlEventProc(SDL_Event& event) override;
 
     amD::Debugger* getDbg() const {
-        return m_pDebugger;
+        return m_pDebuggerPart;
     }
     UaeAppPart* getUaeApp() const {
         return m_pUaeAppPart;

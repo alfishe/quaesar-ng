@@ -4,6 +4,7 @@
 #include "qd/math/fixedPoint.h"
 #include <imgui/imgui.h>
 #include "qd/base/color.h"
+#include "qd/base/flowEnum.h"
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -71,7 +72,7 @@ public:
 
     void destroy();
 
-    void onSdlEventProc(SDL_Event& event);
+    qd::EFlow onSdlEventProc(SDL_Event& event);
 
 }; // class QImGuiContext
 //////////////////////////////////////////////////////////////////////////

@@ -7,13 +7,13 @@
 namespace qd {
 
 
- AppPartBase::~AppPartBase(void)
+ AppPart::~AppPart(void)
  {
      c_def(this);
  }
 
 
-void AppPartBase::onPartCreate(AppPartBase::OnCreate_t& prm)
+void AppPart::onPartCreate(AppPart::OnCreate_t& prm)
 {
     m_pApp = prm.app;
 
@@ -25,13 +25,13 @@ void AppPartBase::onPartCreate(AppPartBase::OnCreate_t& prm)
 }
 
 
-AppPartsManager* AppPartBase::getAppParts() const
+AppPartsManager* AppPart::getAppParts() const
 {
     return m_pApp->getAppParts();
 }
 
 
-void AppPartBase::setZOrder(const float& zOrder)
+void AppPart::setZOrder(const float& zOrder)
 {
     if (m_ZOrder == zOrder)
         return;
@@ -42,7 +42,7 @@ void AppPartBase::setZOrder(const float& zOrder)
 }
 
 
-bool AppPartBase::setPartActive(bool bActive)
+bool AppPart::setPartActive(bool bActive)
 {
     if (isPartActive() == bActive)
         return bActive;
@@ -54,7 +54,7 @@ bool AppPartBase::setPartActive(bool bActive)
 }
 
 
-bool AppPartBase::setPartVisisble(bool bPartVisisble)
+bool AppPart::setPartVisisble(bool bPartVisisble)
 {
     if (isPartVisible() == bPartVisisble)
         return bPartVisisble;
@@ -67,7 +67,7 @@ bool AppPartBase::setPartVisisble(bool bPartVisisble)
 }
 
 
-qd::EFlow AppPartBase::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
+qd::EFlow AppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
 {
     switch (in_msg.id)
     {
@@ -81,7 +81,7 @@ qd::EFlow AppPartBase::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
 
 
 
-void AppPartBase::destroy()
+void AppPart::destroy()
 {
     destroyImp();
 }

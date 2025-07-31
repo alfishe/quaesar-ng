@@ -92,7 +92,7 @@ public:
         m_nInstructions = 0;
     }
 
-    void disasm(amD::VM* vm, AddrRef begAddr, AddrRef endAddr)
+    void disasm(amD::AbsEmu* vm, AddrRef begAddr, AddrRef endAddr)
     {
         reset();
         const uint8_t* startDisasmDat = vm->mem->getRealAddr(begAddr);
@@ -153,7 +153,7 @@ struct InstructionProcessor
 };
 
 
-void CodeAnalyzerServer::requestAnalyzedBlock(amD::VM* vm, AddrRef reqAddr, int nItems,
+void CodeAnalyzerServer::requestAnalyzedBlock(amD::AbsEmu* vm, AddrRef reqAddr, int nItems,
     qd::vector<amD::cda::Item*>* outItems, const AddrRef* pAnchorAddr)
 {
     outItems->clear();
@@ -253,7 +253,7 @@ CodeChunk& CodeAnalyzerServer::getOrCreateCodePage(AddrRef addr, bool* bOutPageW
 }
 
 
-amD::cda::CodeChunk& CodeAnalyzerServer::requestCodeChunk(amD::VM* vm, AddrRef addr)
+amD::cda::CodeChunk& CodeAnalyzerServer::requestCodeChunk(amD::AbsEmu* vm, AddrRef addr)
 {
     bool bExistChunk = false;
     CodeChunk& curCodeChunk = getOrCreateCodePage(addr, &bExistChunk);

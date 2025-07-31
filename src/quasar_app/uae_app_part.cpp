@@ -18,12 +18,17 @@
 #include "qd/qimGui/controls/qimMenu.h"
 #include "qd/qui/controls/menuItemOperation.h"
 #include "quaesar.h"
+#include "quasar_app/amdbg_uae/uae_worker.h"
 #include "quasar_app/ui/uae_wnd_desktop.h"
 #include "ui/uae_options_wnd.h"
 
 
-void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
+void UaeAppPart::onPartCreate(AppPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
+
+    m_pUaeWorker = new UaeWorker();
+    m_pUaeWorker->initialize();
+
     setPartActive(true);
     setPartVisisble(true);
 
@@ -43,15 +48,12 @@ void UaeAppPart::onPartCreate(AppPartBase::OnCreate_t& prm) {
 void UaeAppPart::createUaeWindow() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
 
-    SDL_AtomicSet(&m_scrFrameNo, 0);
-
-    m_wndWidth = 754;
-    m_wndHeight = 576;
-    m_pAmigaBuffer = new uint32_t[m_wndWidth * m_wndHeight];
+    int wndWidth = m_pUaeWorker->m_scrWidth;
+    int wndHeight = m_pUaeWorker->m_scrHeight;
 
     // Create a window
-    m_pWindow = SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_wndWidth, m_wndHeight,
-                                 window_flags);
+    m_pWindow =
+        SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, wndWidth, wndHeight, window_flags);
 
     if (!m_pWindow) {
         SDL_Log("Could not create window: %s", SDL_GetError());
@@ -66,8 +68,8 @@ void UaeAppPart::createUaeWindow() {
         return;
     }
 
-    m_pUaeScrTexture = SDL_CreateTexture(m_pUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING,
-                                         m_wndWidth, m_wndHeight);
+    m_pUaeScrTexture =
+        SDL_CreateTexture(m_pUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, wndWidth, wndHeight);
 
     if (!m_pUaeScrTexture) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
@@ -80,7 +82,7 @@ void UaeAppPart::createUaeWindow() {
 
 void UaeAppPart::render() {
     // render UAE texture screen
-    int curFrame = SDL_AtomicGet(&m_scrFrameNo);
+    int curFrame = m_pUaeWorker->getScrFrameNo();
     if (curFrame == m_renderedFrameNo) {
         return;
     }
@@ -91,33 +93,39 @@ void UaeAppPart::render() {
     int window_width, window_height;
     SDL_GetWindowSize(m_pWindow, &window_width, &window_height);
 
-    // Maintain aspect ratio
-    float image_aspect = (float)m_wndWidth / (float)m_wndHeight;
-    float window_aspect = (float)window_width / (float)window_height;
+    if (m_pUaeWorker->m_UaeScrTextureMutex.tryLock()) {
+        int uaeWidth = m_pUaeWorker->m_scrWidth;
+        int uaeHeight = m_pUaeWorker->m_scrHeight;
+        if (!uaeWidth || !uaeHeight)
+            return;
 
-    if (window_aspect < image_aspect) {
-        new_width = window_width;
-        new_height = (int)(window_width / image_aspect);
-    } else {
-        new_height = window_height;
-        new_width = (int)(window_height * image_aspect);
-    }
-    SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
-    SDL_RenderClear(m_pUaeRenderer);
-    if (m_UaeScrTextureMutex.tryLock()) {
-        recreateTexture(m_wndWidth, m_wndHeight);  // Recreate texture if needed
+        // Maintain aspect ratio
+        float image_aspect = (float)uaeWidth / (float)uaeHeight;
+        float window_aspect = (float)window_width / (float)window_height;
+
+        if (window_aspect < image_aspect) {
+            new_width = window_width;
+            new_height = (int)(window_width / image_aspect);
+        } else {
+            new_height = window_height;
+            new_width = (int)(window_height * image_aspect);
+        }
+        SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
+        SDL_RenderClear(m_pUaeRenderer);
+
+        tryRecreateEmuScreenTexture(uaeWidth, uaeHeight);  // Recreate texture if needed
         uint32_t* texture_pixels = nullptr;
         int pitch = 0;
         if (SDL_LockTexture(m_pUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
-            for (int y = 0; y < m_wndHeight; y++) {
-                uint8_t* dest = (uint8_t*)&texture_pixels[y * m_wndWidth];
-                memcpy(dest, &m_pAmigaBuffer[y * m_wndWidth], m_wndWidth * 4);
+            for (int y = 0; y < uaeHeight; y++) {
+                uint8_t* dest = (uint8_t*)&texture_pixels[y * uaeWidth];
+                memcpy(dest, &m_pUaeWorker->m_pAmigaBuffer[y * uaeWidth], uaeWidth * 4);
             }
             SDL_UnlockTexture(m_pUaeScrTexture);
         }
 
         SDL_RenderCopy(m_pUaeRenderer, m_pUaeScrTexture, NULL, &rect);
-        m_UaeScrTextureMutex.unlock();
+        m_pUaeWorker->m_UaeScrTextureMutex.unlock();
     }
 
     if (m_bShowImgui)
@@ -128,22 +136,17 @@ void UaeAppPart::render() {
 
 
 // Function to recreate a dynamic texture with new dimensions
-void UaeAppPart::recreateTexture(int newWidth, int newHeight) {
-    int currentWidth = 0;
-    int currentHeight = 0;
-
+void UaeAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
     // Get the format of the old texture
+    int access, currentWidth, currentHeight;
     Uint32 format;
-    int access;
-    SDL_QueryTexture(m_pUaeScrTexture, &format, &access, &currentWidth, &currentHeight);
-
+    if (SDL_QueryTexture(m_pUaeScrTexture, &format, &access, &currentWidth, &currentHeight) != 0)
+        return;
     if (newWidth == currentWidth && newHeight == currentHeight) {
         return;
     }
-
     // Destroy the old texture
     SDL_DestroyTexture(m_pUaeScrTexture);
-
     // Create a new texture with the desired dimensions
     m_pUaeScrTexture = SDL_CreateTexture(m_pUaeRenderer, format,
                                          access,  // Using the same access pattern as the original
@@ -151,30 +154,15 @@ void UaeAppPart::recreateTexture(int newWidth, int newHeight) {
 }
 
 
-uint32_t* UaeAppPart::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
-    m_UaeScrTextureMutex.lock();
-
-    if (amiga_width > m_wndWidth || amiga_height > m_wndHeight) {
-        delete[] m_pAmigaBuffer;
-        m_pAmigaBuffer = new uint32_t[m_wndWidth * m_wndHeight];
-    }
-
-    m_wndWidth = amiga_width;
-    m_wndHeight = amiga_height;
-
-    return m_pAmigaBuffer;
-}
-
-
-void UaeAppPart::unlockUaeScreenTexBuf() {
-    m_UaeScrTextureMutex.unlock();
-    SDL_AtomicIncRef(&m_scrFrameNo);
-}
-
-
 void UaeAppPart::update(float Delta, float Time) {
-    m_pImGui->newFrame();
+    updGuiMenus();
+}
 
+
+void UaeAppPart::updGuiMenus() {
+    if (!m_bShowImgui)
+        return;
+    m_pImGui->newFrame();
     if (ImGui::BeginMainMenuBar()) {
         if (auto p1 = qIm::LockMenu("File")) {
             if (ImGui::MenuItem("Open DF0:")) {
@@ -200,9 +188,7 @@ void UaeAppPart::update(float Delta, float Time) {
         ImGui::EndMainMenuBar();
     }
 
-    if (m_bShowImgui)
-        m_pDesktop->draw();
-
+    m_pDesktop->draw();
     m_pImGui->endFrame();
 }
 
@@ -233,26 +219,38 @@ qd::EFlow UaeAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
 }
 
 
-void UaeAppPart::onSdlEventProc(SDL_Event& event) {
-    uint32_t wndId = SDL_GetWindowID(m_pWindow);
+qd::EFlow UaeAppPart::onSdlEventProc(SDL_Event& event) {
+    uint32_t uaeWndId = SDL_GetWindowID(m_pWindow);
     switch (event.type) {
         case SDL_KEYDOWN: {
-            if (event.key.windowID != wndId)
-                break;
-        }
+            if (event.key.windowID != uaeWndId)
+                return qd::EFlow::CONTINUE;
             if (event.key.keysym.sym == SDLK_F12) {
                 setShowImgui(!m_bShowImgui);
+                return qd::EFlow::STOP;
             }
+            m_pUaeWorker->pushSdlEvent(event);
+            return qd::EFlow::STOP;
+        } break;
+        case SDL_KEYUP: {
+            if (event.key.keysym.sym == SDLK_F12)
+                return qd::EFlow::STOP;
+            m_pUaeWorker->pushSdlEvent(event);
+        } break;
         default:
             break;
     }
-
     if (m_bShowImgui)
-        m_pImGui->onSdlEventProc(event);
+        return m_pImGui->onSdlEventProc(event);
+
+    return qd::EFlow::CONTINUE;
 }
 
 
 void UaeAppPart::destroyUaeWindow() {
+    m_pUaeWorker->destroy();
+    SAFE_DELETE(m_pUaeWorker);
+
     SDL_DestroyTexture(m_pUaeScrTexture);
     m_pUaeScrTexture = nullptr;
     SDL_DestroyRenderer(m_pUaeRenderer);

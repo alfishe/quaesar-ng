@@ -32,9 +32,9 @@ struct EAppPartMtd {
 
 //////////////////////////////////////////////////////////////////////////
 // CrioGen Application Parts
-class AppPartBase : public qd::Node
+class AppPart : public qd::Node
 {
-    TS_BEGIN_REFLECT_CLASS(qd::AppPartBase, qd::Node);
+    TS_BEGIN_REFLECT_CLASS(qd::AppPart, qd::Node);
     TS_END();
     friend class AppPartsManager;
 
@@ -50,15 +50,15 @@ protected:
     bool m_bNeedRepaint = true;
 
 public:
-    AppPartBase() { m_Methods += EAppPartMtd::UPDATE; }
-    virtual ~AppPartBase(void);
+    AppPart() { m_Methods += EAppPartMtd::UPDATE; }
+    virtual ~AppPart(void);
 
     struct OnCreate_t {
         qd::string name;
         const qd::TypeInfo* typeInfo = nullptr;
         qd::Application* app = nullptr;
     };
-    virtual void onPartCreate(AppPartBase::OnCreate_t& prm);
+    virtual void onPartCreate(AppPart::OnCreate_t& prm);
 
     bool isNeedRepaint() const { return m_bNeedRepaint; }
     void setNeedRepaint(bool NeedRepaint) { m_bNeedRepaint = NeedRepaint; }
@@ -67,7 +67,7 @@ public:
 
     inline bool hasMtd(EAppPartMtd Mtd) const { return m_Methods.has(Mtd); }
 
-    inline AppPartBase& modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods = EAppPartMtd::NONE)
+    inline AppPart& modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods = EAppPartMtd::NONE)
     {
         m_Methods -= ResetMethods;
         m_Methods += SetMethods;
@@ -94,7 +94,7 @@ public:
     virtual void update(float dt, float time) {}
     virtual void render() {}
 
-    virtual void onSdlEventProc(SDL_Event& event) {}
+    virtual qd::EFlow onSdlEventProc(SDL_Event& event) { return qd::EFlow::UNDEF; }
 
     virtual void postRender() {}
 
@@ -119,7 +119,7 @@ public:
     void setPartInit(bool Init) { m_bPartInit = Init; }
     bool isPartDone() const { return m_bPartDone; }
     void setPartDone(bool Done) { m_bPartDone = Done; }
-}; // class AppPartBase
+}; // class AppPart
 //////////////////////////////////////////////////////////////////////////
 
 

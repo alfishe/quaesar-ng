@@ -76,17 +76,17 @@ void Application::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
 void Application::doMainLoop()
 {
     SDL_Event event;
-    while (true)
+    for (;;)
     {
-        if (hasQuitRequest())
-            break;
-
         while (SDL_PollEvent(&event) != 0)
         {
             onSdlEventProc(event);
         }
 
-        m_pAppParts->update(0, 0);
+        if (hasQuitRequest())
+            break;
+
+        m_pAppParts->update(0, 0); // todo delta-time
         m_pAppParts->render();
     }
 }

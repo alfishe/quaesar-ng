@@ -3,7 +3,7 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/string.h>
 #include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/vm.h>
+#include <amDebugger/vm/absEmu.h>
 #include <qd/base/base.h>
 #include <qd/app/appPart.h>
 #include <qd/base/classIdCC.h>
@@ -21,7 +21,7 @@ FORWARD_DECLARATION_2(qd, UiOperationMgr);
 //////////////////////////////////////////////////////////////////////////
 namespace amD {
 class DbgGuiDesktop;
-class VM;
+class AbsEmu;
 
 
 constexpr static int BREAKPOINTS_MAX = 20;
@@ -59,16 +59,16 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class Debugger : public qd::AppPartBase
+class Debugger : public qd::AppPart
 {
-    TS_REFLECT_CLASS(amD::Debugger, qd::AppPartBase);
+    TS_REFLECT_CLASS(amD::Debugger, qd::AppPart);
 
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pRenderer = nullptr;
     qd::QImGuiContext* m_pQimGui = nullptr;
 
 public:
-    amD::VM* vm = nullptr;
+    amD::AbsEmu* vm = nullptr;
     amD::DbgGuiDesktop* m_pGui = nullptr;
     qd::UiOperationMgr* m_pOperationMgr = nullptr;
 
@@ -92,9 +92,9 @@ public:
     virtual void render() override;
     bool isVisible() const;
     void toggleWndVisible(DebuggerMode mode);
-    virtual void onSdlEventProc(SDL_Event& event) override;
+    virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
-    amD::VM* getVm() const {
+    amD::AbsEmu* getVm() const {
         return vm;
     }
 

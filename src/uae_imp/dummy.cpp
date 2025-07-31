@@ -53,9 +53,10 @@
 
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
-#include <amDebugger/debugger.h>
+#include <amDebugger/debuggerApp.h>
 #include <qd/Log/log.h>
 #include <qd/thread/thread.h>
+#include <quasar_app/amdbg_uae/uae_worker.h>
 #include <quasar_app/quaesar.h>
 #include <quasar_app/quaesar_debug.h>
 #include <quasar_app/uae_app_part.h>
@@ -128,11 +129,6 @@ void screenshot(int /*monid*/, int, int) {
 int same_aname(const TCHAR* an1, const TCHAR* an2) {
     //return CompareString(LOCALE_INVARIANT, NORM_IGNORECASE, an1, -1, an2, -1) == CSTR_EQUAL;
     return SDL_strcasecmp(an1, an2) == 0;
-}
-
-int input_get_default_keyboard(int /*i*/) {
-    TRACE();
-    return 0;
 }
 
 uae_s64 getsetpositionvideograb(uae_s64 /*framepos*/) {
@@ -210,11 +206,6 @@ int dummy_get_flags(int /*device_id*/) {
 }
 
 struct inputdevice_functions inputdevicefunc_mouse = {
-    dummy_init,           dummy_close,           dummy_acquire,          dummy_unacquire,
-    dummy_read,           dummy_get_num,         dummy_get_friendlyname, dummy_get_uniquename,
-    dummy_get_widget_num, dummy_get_widget_type, dummy_get_widget_first, dummy_get_flags};
-
-struct inputdevice_functions inputdevicefunc_keyboard = {
     dummy_init,           dummy_close,           dummy_acquire,          dummy_unacquire,
     dummy_read,           dummy_get_num,         dummy_get_friendlyname, dummy_get_uniquename,
     dummy_get_widget_num, dummy_get_widget_type, dummy_get_widget_first, dummy_get_flags};
@@ -905,7 +896,7 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    amD::onUaeInitialized->set();
+    UaeWorker::get()->setUaeInitialized(true);
     return 1;
 }
 
@@ -922,18 +913,17 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     if (!vb || !vb->bufmem) {
         return;
     }
-
+    const int imgSizeX = vb->outwidth;
+    const int imgSizeY = vb->outheight;
     uint8_t* sptr = vb->bufmem;
-    int imgSizeX = vb->outwidth;
-    int imgSizeY = vb->outheight;
-    uint32_t* pTxBuf = g_pApp->m_pUaeAppPart->lockUaeScreenTexBuf(imgSizeX, imgSizeY);
-    if (pTxBuf) {
+    UaeWorker* pWorker = UaeWorker::get();
+    if (uint32_t* pDestTxBuf = pWorker->lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
         for (int y = 0; y < imgSizeY; y++) {
-            uint8_t* dest = (uint8_t*)&pTxBuf[y * imgSizeX];
+            uint8_t* dest = (uint8_t*)&pDestTxBuf[y * imgSizeX];
             memcpy(dest, sptr, imgSizeX * 4);
             sptr += vb->rowbytes;
         }
-        g_pApp->m_pUaeAppPart->unlockUaeScreenTexBuf();
+        pWorker->unlockUaeScreenTexBuf();
     }
 }
 
@@ -965,8 +955,7 @@ bool gui_ask_disk(int, char*) {
 }
 
 bool handle_events() {
-    TRACE();
-    return false;
+    return UaeWorker::get()->onUaeHandleEvents();
 }
 
 bool hydra_init(autoconfig_info*) {

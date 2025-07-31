@@ -1,19 +1,10 @@
-// clang-format off
-#include "sysconfig.h"
-#include "sysdeps.h"
-#include "uae/time.h"
-#include "options.h"
-#include "uae_imp/adf.h"
-#include "uae.h"
-// clang-format on
-
 #include "quaesar.h"
 #include <SDL.h>
-#include <amDebugger/debugger.h>
+#include <amDebugger/debuggerApp.h>
 #include <nfd.h>
-#include <qd/App/appPartsMgr.h>
-#include <qd/App/appliction.h>
-#include <qd/Thread/thread.h>
+#include <qd/app/appPartsMgr.h>
+#include <qd/app/appliction.h>
+#include <qd/thread/thread.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include "cli11/CLI11.hpp"
@@ -30,89 +21,28 @@
 
 
 amD::QuasarApp* g_pApp = nullptr;
-
-extern void real_main(int argc, TCHAR** argv);
-extern void keyboard_settrans();
-
-namespace amD {
-extern void quae_parse_cmdline(int argc, TCHAR** argv);
-};  //namespace amD
-
-
-static std::vector<std::string> uaeCliArgVals;
-
-int uae_thread_main_func(void*) {
-    std::vector<const char*> argv;
-    argv.push_back("quasar.exe");
-    argv.reserve(uaeCliArgVals.size() * 2 + 1);
-    for (const std::string& s : uaeCliArgVals) {
-        argv.push_back("-s");
-        argv.push_back(s.c_str());
-    }
-    amD::quae_parse_cmdline((int)argv.size(), const_cast<char**>(&argv[0]));
-
-    ::real_main(0, nullptr);
-    return 0;
-}
+QuaesarOptions g_initOptions = {};
 
 
 // Quaesar main
 int SDL_main(int argc, char* argv[]) {
-    g_pApp = new amD::QuasarApp();
-    qd::CreateApplicationParams prm;
-    g_pApp->onConstruct(prm);
-
-    NFD_Init();
-    ::syncbase = 1000000;
-
-    Options options;
+    // read options from CLI
+    QuaesarOptions& options = g_initOptions;
     CLI::App cliApp{"Quaesar"};
     cliApp.allow_extras();
     cliApp.add_option("input", options.input, "Executable or image file (adf, dms)");     // ->check(CLI::ExistingFile);
     cliApp.add_option("-k,--kickstart", options.kickstart, "Path to the kickstart ROM");  // ->check(CLI::ExistingFile);
     cliApp.add_option("--serial_port", options.serial_port, "Serial port path");
-    cliApp.add_option("-s", uaeCliArgVals,
+    cliApp.add_option("-s", options.uaeExtArgs,
                       "key followed by the original WinUAE commands. Example:\n"
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
-
     cliApp.parse(argc, argv);
 
-    keyboard_settrans();
-    default_prefs(&::currprefs, true, 0);
-    fixup_prefs(&::currprefs, true);
-
-    if (!options.input.empty()) {
-        // TODO: cleanup
-        if (qd::ends_with(options.input, ".exe") || !qd::ends_with(options.input, ".adf")) {
-            if (FILE* check_file = fopen(options.input.c_str(), "rb")) {
-                fclose(check_file);
-                Adf::create_for_exefile(options.input.c_str());
-                strcpy(::currprefs.floppyslots[0].df, "dummy.adf");
-            } else {
-                SDL_Log("can't open input file:'%s'", options.input.c_str());
-            }
-        } else {
-            strcpy(::currprefs.floppyslots[0].df, options.input.c_str());
-        }
-    }
-
-    if (!options.serial_port.empty()) {
-        currprefs.use_serial = 1;
-        strcpy(currprefs.sername, options.serial_port.c_str());
-    }
-
-    // Most compatible mode
-    currprefs.cpu_cycle_exact = 1;
-    currprefs.cpu_memory_cycle_exact = 1;
-    currprefs.blitter_cycle_exact = 1;
-    currprefs.floppy_speed = 100;
-    //    currprefs.turbo_emulation = 1; // it disables sound
-    currprefs.sound_stereo_separation = 0;
-    currprefs.uaeboard = 1;
-    currprefs.win32_filesystem_mangle_reserved_names = true;  // required for FS
-    currprefs.filesys_custom_uaefsdb = false;                 // hack to not implement 'custom_fsdb_*' funcs now
-
-    strcpy(currprefs.romfile, options.kickstart.c_str());
+    // Create Quaesar APP
+    NFD_Init();
+    g_pApp = new amD::QuasarApp();
+    qd::CreateApplicationParams prm;
+    g_pApp->onConstruct(prm);
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
@@ -121,25 +51,10 @@ int SDL_main(int argc, char* argv[]) {
     }
     atexit(&SDL_Quit);
 
-    // start UAE in separate thread
-    SDL_Thread* uae_thread_handler;
-    uae_thread_handler = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
-
-    // wait UAE initialization
-    amD::onUaeInitialized = new qd::ThreadEvent(true);
-    amD::onUaeInitialized->wait();
 
     // quaesar main loop
     ::g_pApp->initialize();
     ::g_pApp->doMainLoop();
-
-    // quit
-    SDL_Log("Waiting UAE thread over ...");
-    g_pApp->m_pDebugger->execConsoleCmd("q");
-
-    // wait UAE done
-    SDL_WaitThread(uae_thread_handler, nullptr);
-    SAFE_DELETE(amD::onUaeInitialized);
 
     ::g_pApp->destroy();
     NFD_Quit();

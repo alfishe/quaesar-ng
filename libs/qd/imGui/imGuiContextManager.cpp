@@ -76,10 +76,12 @@ void ImGuiContextManager::destroyModule()
 
 
 
-void QImGuiContext::onSdlEventProc(SDL_Event& event)
+qd::EFlow QImGuiContext::onSdlEventProc(SDL_Event& event)
 {
     useCurrent();
-    ImGui_ImplSDL2_ProcessEvent(&event);
+    if (ImGui_ImplSDL2_ProcessEvent(&event))
+        return qd::EFlow::DONE;
+    return qd::EFlow::CONTINUE;
 }
 
 

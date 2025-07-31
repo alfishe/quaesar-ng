@@ -12,7 +12,7 @@ union SDL_Event;
 
 namespace qd {
 
-class AppPartBase;
+class AppPart;
 
 
 class AppPartsManager : public IModuleInterface
@@ -20,7 +20,7 @@ class AppPartsManager : public IModuleInterface
     TS_REFLECT_CLASS(qd::AppPartsManager, qd::IModuleInterface);
 
 private:
-    qd::vector<ref_ptr<AppPartBase>> m_pParts;
+    qd::vector<ref_ptr<AppPart>> m_pParts;
     Application* m_pApp = nullptr;
     TTime64 m_timeNowFrame = 0;
 
@@ -46,7 +46,7 @@ public:
     }
 
 
-    // TPartClass base of AppPartBase*
+    // TPartClass base of AppPart*
     template<class TPartClass>
     inline TPartClass* findPart_() const
     {
@@ -56,16 +56,16 @@ public:
         return pExistPart;
     }
 
-    AppPartBase* getPartByInd(int Index) { return m_pParts[Index]; }
+    AppPart* getPartByInd(int Index) { return m_pParts[Index]; }
 
 
 
-    // TPartClass base of AppPartBase*
+    // TPartClass base of AppPart*
     template<class TPartClass>
     inline TPartClass* createPart_(qd::string name, bool bOverride = false)
     {
         TPartClass* pPart = new TPartClass();
-        qd::AppPartBase::OnCreate_t prm;
+        qd::AppPart::OnCreate_t prm;
         prm.name = name;
         prm.typeInfo = &qd::typeof_<TPartClass>();
         prm.app = getApp();
@@ -74,13 +74,13 @@ public:
         return pPart;
     }
 
-    AppPartBase* findPartByName(const qd::string& strPartID) const;
+    AppPart* findPartByName(const qd::string& strPartID) const;
 
 
-    int findPartIndex(AppPartBase* pPart) const;
-    bool addPartTry(ref_ptr<AppPartBase> pPart);
-    void addPart(ref_ptr<AppPartBase> p_part);
-    void addPart(ref_ptr<AppPartBase> p_part, const qd::string& part_name_id);
+    int findPartIndex(AppPart* pPart) const;
+    bool addPartTry(ref_ptr<AppPart> pPart);
+    void addPart(ref_ptr<AppPart> p_part);
+    void addPart(ref_ptr<AppPart> p_part, const qd::string& part_name_id);
 
     template<class TPart>
     void addPart_(TPart* pPart)
@@ -91,22 +91,22 @@ public:
     template<class TPartClass>
     void destroyPart_()
     {
-        ref_ptr<AppPartBase> pPart = findPart_<TPartClass>();
+        ref_ptr<AppPart> pPart = findPart_<TPartClass>();
         destroyPart(pPart);
     }
 
-    void destroyPart(ref_ptr<AppPartBase> pPart);
+    void destroyPart(ref_ptr<AppPart> pPart);
     void destroy();
     virtual ~AppPartsManager();
 
     void update(float dt, float time);
     void render();
-    void onSdlEventProc(SDL_Event& event);
+    qd::EFlow onSdlEventProc(SDL_Event& event);
 
     Application* getApp() const { return m_pApp; }
     void setApp(Application* pApplication) { m_pApp = pApplication; }
 
-    static inline bool _getZOrderSort(AppPartBase* pl, AppPartBase* pr)
+    static inline bool _getZOrderSort(AppPart* pl, AppPart* pr)
     {
         if (pl->getZOrder() < pr->getZOrder())
             return true;

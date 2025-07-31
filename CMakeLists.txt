@@ -36,7 +36,7 @@ add_subdirectory(libs/exprParser)
 set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
 add_subdirectory(libs/uae_lib)
 
-
+# Quasar *.h/cpp files
 file(GLOB_RECURSE QUAESAR_SOURCES "src/*.cpp")
 file(GLOB_RECURSE QUAESAR_HEADERS "src/*.h")
 
@@ -73,8 +73,13 @@ add_custom_target(incbin_resources DEPENDS resources_inc.cpp resources_inc.h)
 # Recursively glob for all .cpp files in the src directory
 list(APPEND QUAESAR_SOURCES resources_inc.cpp)
 list(APPEND QUAESAR_HEADERS resources_inc.h)
-#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------
 
+# Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${QUAESAR_HEADERS} ${QUAESAR_SOURCES})
+
+#-------------------------------------------------------------------------------------------
 add_executable(quaesar ${QUAESAR_SOURCES})
 target_sources(quaesar PRIVATE ${QUAESAR_SOURCES} ${QUAESAR_HEADERS})
 add_dependencies(quaesar incbin_resources)
@@ -89,10 +94,6 @@ if (WIN32)
         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     )
 endif()
-
-# Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${QUAE_HEADERS} ${QUAE_SOURCES} ${SDL2_INCLUDE_DIRS})
 
 
  # Link libraries

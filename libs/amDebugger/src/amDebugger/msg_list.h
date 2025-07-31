@@ -1,7 +1,7 @@
 #pragma once
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/vm.h>
+#include <amDebugger/vm/absEmu.h>
 #include <qd/base/types.h>
 #include "qd/qui/uiOperationMessages.h"
 

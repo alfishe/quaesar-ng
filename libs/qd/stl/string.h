@@ -1,8 +1,8 @@
 #pragma once
 #include "qd/stl/forwardDecl.h"
+#include <EASTL/fixed_string.h>
 #include <EASTL/string.h>
 #include <EASTL/string_view.h>
-#include <EASTL/fixed_string.h>
 
 
 namespace qd {
@@ -24,6 +24,11 @@ inline qd::string string_format(const char* pFormat, ...)
     result.sprintf_va_list(pFormat, argList);
     va_end(argList);
     return result;
+}
+
+inline qd::string string_format()
+{ // for zero args template
+    return {};
 }
 
 template<class TString>

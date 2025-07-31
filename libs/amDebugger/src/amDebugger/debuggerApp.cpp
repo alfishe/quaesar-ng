@@ -1,4 +1,4 @@
-#include "debugger.h"
+#include "debuggerApp.h"
 #include <EASTL/queue.h>
 #include <EASTL/sort.h>
 #include <SDL.h>
@@ -8,7 +8,7 @@
 #include "qd/imGui/backends/imgui_impl_sdlrenderer2.h"
 #include "amDebugger/dbgOperation.h"
 #include "amDebugger/msg_list.h"
-#include "amDebugger/vm/vm.h"
+#include "amDebugger/vm/absEmu.h"
 #include "qd/thread/thread.h"
 #include "amDebugger/ui/dbgGuiDesktop.h"
 #include "amDebugger/ui/ui_style.h"
@@ -81,7 +81,7 @@ void Debugger::init() {
     mbInit = true;
     createRenderWindow();
     initImGui();
-    vm = amD::VM::setVmInst(createByFactory<amD::VM>());
+    vm = amD::AbsEmu::setVmInst(createByFactory<amD::AbsEmu>());
     vm->init();
 
     qd::UiNodeCreator mk;
@@ -201,7 +201,7 @@ void Debugger::destroy() {
     delete m_pGui;
     m_pGui = nullptr;
     vm = nullptr;
-    VM::destrotVmInst();
+    AbsEmu::destrotVmInst();
 
     SDL_DestroyRenderer(m_pRenderer);
     m_pRenderer = nullptr;
@@ -248,8 +248,8 @@ void Debugger::toggleWndVisible(DebuggerMode mode) {
 }
 
 
-void Debugger::onSdlEventProc(SDL_Event& event) {
-    m_pQimGui->onSdlEventProc(event);
+qd::EFlow Debugger::onSdlEventProc(SDL_Event& event) {
+    return m_pQimGui->onSdlEventProc(event);
 }
 
 

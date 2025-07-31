@@ -18,7 +18,7 @@ void AppPartsManager::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
 {
     for (size_t i = 0; i < m_pParts.size(); ++i)
     {
-        AppPartBase* pCurPart = getPartByInd((int)i);
+        AppPart* pCurPart = getPartByInd((int)i);
         if (!pCurPart)
             return;
         pCurPart->onAppEventProcImp(in_msg);
@@ -26,11 +26,11 @@ void AppPartsManager::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
 }
 
 
-qd::AppPartBase* AppPartsManager::findPartByName(const qd::string& strPartID) const
+qd::AppPart* AppPartsManager::findPartByName(const qd::string& strPartID) const
 {
     for (auto it = m_pParts.begin(); it != m_pParts.end(); ++it)
     {
-        AppPartBase* pCurPart = *it;
+        AppPart* pCurPart = *it;
         if (pCurPart && pCurPart->getPartName() == strPartID)
             return pCurPart;
     }
@@ -38,12 +38,12 @@ qd::AppPartBase* AppPartsManager::findPartByName(const qd::string& strPartID) co
 }
 
 
-int AppPartsManager::findPartIndex(AppPartBase* pPart) const
+int AppPartsManager::findPartIndex(AppPart* pPart) const
 {
     int nSize = (int)m_pParts.size();
     for (int i = 0; i < nSize; ++i)
     {
-        AppPartBase* pCurPart = m_pParts[i];
+        AppPart* pCurPart = m_pParts[i];
         if (pCurPart == pPart)
             return i;
     }
@@ -51,7 +51,7 @@ int AppPartsManager::findPartIndex(AppPartBase* pPart) const
 }
 
 
-bool AppPartsManager::addPartTry(ref_ptr<AppPartBase> pPart)
+bool AppPartsManager::addPartTry(ref_ptr<AppPart> pPart)
 {
     assert(pPart);
     if (!pPart)
@@ -73,7 +73,7 @@ bool AppPartsManager::addPartTry(ref_ptr<AppPartBase> pPart)
 }
 
 
-void AppPartsManager::addPart(ref_ptr<AppPartBase> pPart)
+void AppPartsManager::addPart(ref_ptr<AppPart> pPart)
 {
     assert(pPart);
     if (!pPart)
@@ -90,14 +90,14 @@ void AppPartsManager::addPart(ref_ptr<AppPartBase> pPart)
 }
 
 
-void AppPartsManager::addPart(ref_ptr<AppPartBase> p_part, const qd::string& part_name_id)
+void AppPartsManager::addPart(ref_ptr<AppPart> p_part, const qd::string& part_name_id)
 {
     p_part->setPartName(part_name_id);
     addPart(p_part);
 }
 
 
-void AppPartsManager::destroyPart(ref_ptr<AppPartBase> pPart)
+void AppPartsManager::destroyPart(ref_ptr<AppPart> pPart)
 {
     if (!pPart)
         return;
@@ -124,7 +124,7 @@ void AppPartsManager::destroy()
     for (int i = 0; i < (int)m_pParts.size(); i++)
     {
         int nPart = ((int)m_pParts.size() - 1) - i;
-        AppPartBase* pPart = m_pParts[nPart];
+        AppPart* pPart = m_pParts[nPart];
         if (!pPart)
             continue;
         if (!pPart->isPartDone())
@@ -138,7 +138,7 @@ void AppPartsManager::destroy()
     for (int i = 0; i < (int)m_pParts.size(); i++)
     {
         int nPart = ((int)m_pParts.size() - 1) - i;
-        ref_ptr<AppPartBase> pPart = m_pParts[nPart];
+        ref_ptr<AppPart> pPart = m_pParts[nPart];
         m_pParts[nPart] = nullptr;
         if (!pPart)
             continue;
@@ -163,7 +163,7 @@ void AppPartsManager::update(float dt, float time)
     m_timeNowFrame = (TTime64)std::time(nullptr);
     for (int i = 0; i < getNumAppParts(); i++)
     {
-        AppPartBase* pCurPart = getPartByInd(i);
+        AppPart* pCurPart = getPartByInd(i);
 
         if (pCurPart && pCurPart->hasMtd(EAppPartMtd::UPDATE))
         {
@@ -177,30 +177,31 @@ void AppPartsManager::update(float dt, float time)
 }
 
 
-void AppPartsManager::onSdlEventProc(SDL_Event& event)
+qd::EFlow AppPartsManager::onSdlEventProc(SDL_Event& event)
 {
     for (int i = 0; i < getNumAppParts(); i++)
     {
-        AppPartBase* pCurPart = m_pParts[i];
-
+        AppPart* pCurPart = m_pParts[i];
         if (pCurPart && pCurPart->hasMtd(EAppPartMtd::UPDATE))
         {
-            pCurPart->onSdlEventProc(event);
+            qd::EFlow r = pCurPart->onSdlEventProc(event);
+            if (r.isStop())
+                return r;
         }
     }
-
+    return qd::EFlow::UNDEF;
 }
 
 
 void AppPartsManager::render()
 {
-    static qd::vector<AppPartBase*> pActParts;
+    static qd::vector<AppPart*> pActParts;
     pActParts.clear();
 
     // MAIN RENDER
     for (int i = 0; i < getNumAppParts(); i++)
     {
-        AppPartBase* pCurPart = m_pParts[i];
+        AppPart* pCurPart = m_pParts[i];
 
         if (pCurPart && pCurPart->hasMtd(EAppPartMtd::RENDER))
         {
@@ -212,7 +213,7 @@ void AppPartsManager::render()
 
     for (int i = 0; i < (int)pActParts.size(); ++i)
     {
-        AppPartBase* pCurPart = pActParts[i];
+        AppPart* pCurPart = pActParts[i];
         pCurPart->render();
     }
 }
@@ -240,7 +241,7 @@ void AppPartsManager::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
 void AppPartsManager::_onImGuiDebugControl(qd::ImAPI::CImGuiBase& im)
 {
 #ifdef CGMOD_IMGUI
-    for (AppPartBase* pCurPart : m_pParts)
+    for (AppPart* pCurPart : m_pParts)
     {
         if (!pCurPart)
             continue;

@@ -16,7 +16,7 @@
     {                                                                                       \
         while (!(condition))                                                                \
         {                                                                                   \
-            qd::string textFormat = qd::string_format(pFormat, ##__VA_ARGS__);               \
+            qd::string textFormat = qd::string_format(pFormat, ##__VA_ARGS__);              \
             struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
             const SDL_AssertState sdl_assert_state =                                        \
                 SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \
@@ -43,8 +43,7 @@
 #endif // #if SDL_ASSERT_LEVEL
 
 
-#define ASSERT_F(expr, format, ...) \
-    EASTL_ASSERT_MSG(expr, eastl::string(eastl::string::CtorSprintf(), format, __VA_ARGS__).c_str());
+#define ASSERT_F(expr, format, ...) EASTL_ASSERT_MSG(expr, qd::string_format(format, __VA_ARGS__).c_str());
 
 
 #define QD_HALT(pFormat, ...) QDSDL_enabled_assert_2(0, pFormat, ##__VA_ARGS__)
@@ -54,14 +53,12 @@
 #define ASSERT_AND_DO(expression, do_action, ...)                                       \
     if (EASTL_UNLIKELY(!(expression)))                                                  \
     {                                                                                   \
-        qd::string textFormat = qd::string_format(__VA_ARGS__);                          \
+        qd::string textFormat = qd::string_format(__VA_ARGS__);                         \
         struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
         const SDL_AssertState sdl_assert_state =                                        \
             SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \
         if (sdl_assert_state == SDL_ASSERTION_BREAK)                                    \
-        {                                                                               \
             SDL_TriggerBreakpoint();                                                    \
-        }                                                                               \
         do_action;                                                                      \
     }                                                                                   \
     else

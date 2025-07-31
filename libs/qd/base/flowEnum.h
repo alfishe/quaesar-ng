@@ -15,10 +15,8 @@ struct EFlow {
         SUCCESS = 1,
 
         CONTINUE = 2,
-        FAILED = 2,
-
-        REPEAT = 3,
-        LOOP = 3,
+        REPEAT = 2,
+        LOOP = 2,
     };
     EFlow::Type mVal = EFlow::UNDEF;
 
@@ -30,6 +28,10 @@ struct EFlow {
     {}
 
     constexpr operator EFlow::Type () const { return mVal; }
+    bool isStop() const { return mVal == EFlow::STOP; }
+    bool isContinue() const { return mVal == EFlow::CONTINUE; }
+    bool hasResult() const { return mVal != EFlow::UNDEF; }
+    bool maybeContinue() const { return mVal == EFlow::UNDEF || mVal == EFlow::CONTINUE; }
 
 }; // enum EFlow
 //////////////////////////////////////////////////////////////////////////

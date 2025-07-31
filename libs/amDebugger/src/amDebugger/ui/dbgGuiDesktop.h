@@ -1,5 +1,5 @@
 #pragma once
-#include <amDebugger/debugger.h>
+#include <amDebugger/debuggerApp.h>
 #include <amDebugger/ui/ui_view.h>
 #include "qd/qui/controls/desktop.h"
 #include "qd/stl/vector.h"

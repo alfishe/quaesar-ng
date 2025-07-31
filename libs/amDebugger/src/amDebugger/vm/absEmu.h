@@ -1,8 +1,8 @@
 #pragma once
 #include <qd/base/types.h>
 #include <EASTL/span.h>
-#include <amDebugger/vm/custom_regs.h>
-#include <amDebugger/vm/vm_defs.h>
+#include <amDebugger/vm/customRegs.h>
+#include <amDebugger/vm/emuDefs.h>
 
 namespace amD {
 
@@ -10,29 +10,29 @@ enum DebuggerMode;
 
 
 //////////////////////////////////////////////////////////////////////////
-//: public vm::imp::UaeEmuVmImp
-class VM {
+
+class AbsEmu {
 protected:
     int amiga_width = (754 + 7) & ~7;
     int amiga_height = 576;
     bool mInit = false;
-    static VM* staticVmInst;
-    VM();
+    static AbsEmu* staticVmInst;
+    AbsEmu();
 
 public:
-    static VM* get() {
-        return VM::staticVmInst;
+    static AbsEmu* get() {
+        return AbsEmu::staticVmInst;
     }
-    static VM* setVmInst(VM* vm_inst) {
-        VM::staticVmInst = vm_inst;
-        return VM::staticVmInst;
+    static AbsEmu* setVmInst(AbsEmu* vm_inst) {
+        AbsEmu::staticVmInst = vm_inst;
+        return AbsEmu::staticVmInst;
     }
     static void destrotVmInst() {
-        VM* oldVm = VM::staticVmInst;
-        VM::staticVmInst = nullptr;
+        AbsEmu* oldVm = AbsEmu::staticVmInst;
+        AbsEmu::staticVmInst = nullptr;
         delete oldVm;
     }
-    virtual ~VM();
+    virtual ~AbsEmu();
 
     virtual void init() = 0;
 
@@ -73,7 +73,7 @@ public:
         }
 
     };  // struct Memory
-    amD::VM::Memory* mem = nullptr;
+    amD::AbsEmu::Memory* mem = nullptr;
 
 
     class Cpu {
@@ -84,7 +84,7 @@ public:
         virtual bool getFlg(CpuFlg_ f) const = 0;
         virtual int getIntMask() const = 0;
     };  // struct Cpu
-    amD::VM::Cpu* cpu = nullptr;
+    amD::AbsEmu::Cpu* cpu = nullptr;
 
 
     class CustomRegs {
@@ -96,7 +96,7 @@ public:
         virtual void setRegVal(CustReg reg, uint16_t new_val) = 0;
 
     };  // class CustomRegs
-    amD::VM::CustomRegs* custom = nullptr;
+    amD::AbsEmu::CustomRegs* custom = nullptr;
 
 
     class Copper {
@@ -104,7 +104,7 @@ public:
         virtual void fetch() = 0;
         virtual AddrRef getCopperAddr(CopperAddr_ copno) = 0;
     };  // class Copper
-    amD::VM::Copper* copper = nullptr;
+    amD::AbsEmu::Copper* copper = nullptr;
 
 
     struct Blitter {
@@ -112,17 +112,17 @@ public:
         virtual bool isBlitterActive() const = 0;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) = 0;
     };  // Blitter
-    amD::VM::Blitter* blitter = nullptr;
+    amD::AbsEmu::Blitter* blitter = nullptr;
 
 
     struct Emu {
     public:
         virtual void setDebugMode(DebuggerMode debug_mode) /*base*/ {}
     };
-    amD::VM::Emu* emu = nullptr;
+    amD::AbsEmu::Emu* emu = nullptr;
 
 
-};  // class VM
+};  // class AbsEmu
 
 
 void* impFactoryCreateInstance(const std::type_info& type);

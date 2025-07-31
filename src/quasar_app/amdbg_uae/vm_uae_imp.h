@@ -10,10 +10,10 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/span.h>
 #include <EASTL/vector.h>
-#include <amDebugger/vm/custom_regs.h>
+#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/vm/customRegs.h>
+#include <amDebugger/vm/emuDefs.h>
 #include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/vm.h>
-#include <amDebugger/vm/vm_defs.h>
 #include <qd/Base/color.h>
 #include <qd/Base/types.h>
 
@@ -24,13 +24,13 @@ namespace amD {
 namespace vm {
 namespace imp {
 
-class UaeEmuVmImp final : public VM {
+class UaeEmuVmImp final : public amD::AbsEmu {
 public:
     UaeEmuVmImp();
     virtual void init() override;
 
 
-    struct Cpu : public VM::Cpu {
+    struct Cpu : public AbsEmu::Cpu {
         uint32_t getRegA(int i) const override {
             return m68k_areg(::regs, i);
         }
@@ -64,7 +64,7 @@ public:
     Cpu instCpu;
 
     ///
-    struct Memory final : public VM::Memory {
+    struct Memory final : public AbsEmu::Memory {
     public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override {
             return (uint8_t*)::memory_get_real_address(ptr);
@@ -89,7 +89,7 @@ public:
     Memory instMemory;
 
     //
-    struct Blitter final : public VM::Blitter {
+    struct Blitter final : public AbsEmu::Blitter {
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
@@ -97,7 +97,7 @@ public:
 
 
     //
-    class CustomRegs final : public VM::CustomRegs {
+    class CustomRegs final : public AbsEmu::CustomRegs {
         static constexpr size_t data_offset = 2;
         eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
 
@@ -115,7 +115,7 @@ public:
     CustomRegs instCustomRegs;
 
 
-    class Copper final : public VM::Copper {
+    class Copper final : public AbsEmu::Copper {
     public:
         virtual void fetch() override;
         virtual AddrRef getCopperAddr(CopperAddr_ copno) override;
@@ -123,14 +123,14 @@ public:
     Copper instCopper;
 
 
-    class Emu final : public VM::Emu {
+    class Emu final : public AbsEmu::Emu {
     public:
         virtual void setDebugMode(DebuggerMode debug_mode) override;
     };  // class Emu
     Emu instEmu;
 
 
-};  // class UaeEmuVM
+};  // class UaeEmuVmImp
 //////////////////////////////////////////////////////////////////////////
 
 

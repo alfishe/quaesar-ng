@@ -15,9 +15,9 @@
 #include <uae_lib/include/debug.h>
 // clang-format on
 #include <SDL_log.h>
-#include <amDebugger/debugger.h>
+#include <amDebugger/debuggerApp.h>
 #include <amDebugger/msg_list.h>
-#include <amDebugger/vm/vm.h>
+#include <amDebugger/vm/absEmu.h>
 #include <qd/base/endian.h>
 #include <qd/qui/uiOperationMgr.h>
 #include <quasar_app/quaesar.h>
@@ -45,7 +45,7 @@ void UaeEmuVmImp::init() {
     if (mInit)
         return;
     mInit = true;
-    amD::VM* s = (amD::VM*)(this);
+    amD::AbsEmu* s = (amD::AbsEmu*)(this);
     uint32_t hiAddr = 0;
     while (hiAddr < MEMORY_BANKS) {
         addrbank* uaeBank = mem_banks[hiAddr];
@@ -192,7 +192,7 @@ void BreakpointsSortedList::init() {
 
 
 void* impFactoryCreateInstance(const std::type_info& type) {
-    if (type == typeid(amD::VM)) {
+    if (type == typeid(amD::AbsEmu)) {
         return new amD::vm::imp::UaeEmuVmImp();
     }
     UNIMPLEMENTED();
