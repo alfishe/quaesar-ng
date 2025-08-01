@@ -7,9 +7,10 @@
 #include "uae.h"
 // clang-format on
 
-#include "uae_app_part.h"
-#include "SDL.h"
-#include "amDebugger/commonOperations.h"
+#include "uae_wnd_app_part.h"
+#include <SDL.h>
+#include <amDebugger/commonOperations.h>
+#include "amdbg_uae/uae_worker.h"
 #include "cli11/CLI11.hpp"
 #include "parse_options.h"
 #include "qd/app/appMessages.h"
@@ -18,12 +19,11 @@
 #include "qd/qimGui/controls/qimMenu.h"
 #include "qd/qui/controls/menuItemOperation.h"
 #include "quaesar.h"
-#include "quasar_app/amdbg_uae/uae_worker.h"
-#include "quasar_app/ui/uae_wnd_desktop.h"
 #include "ui/uae_options_wnd.h"
+#include "ui/uae_wnd_desktop.h"
 
 
-void UaeAppPart::onPartCreate(AppPart::OnCreate_t& prm) {
+void UaeWndAppPart::onPartCreate(AppPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
     m_pUaeWorker = new UaeWorker();
@@ -45,7 +45,7 @@ void UaeAppPart::onPartCreate(AppPart::OnCreate_t& prm) {
 }
 
 
-void UaeAppPart::createUaeWindow() {
+void UaeWndAppPart::createUaeWindow() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
 
     int wndWidth = m_pUaeWorker->m_scrWidth;
@@ -80,7 +80,7 @@ void UaeAppPart::createUaeWindow() {
 }
 
 
-void UaeAppPart::render() {
+void UaeWndAppPart::render() {
     // render UAE texture screen
     int curFrame = m_pUaeWorker->getScrFrameNo();
     if (curFrame == m_renderedFrameNo) {
@@ -136,7 +136,7 @@ void UaeAppPart::render() {
 
 
 // Function to recreate a dynamic texture with new dimensions
-void UaeAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
+void UaeWndAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
     // Get the format of the old texture
     int access, currentWidth, currentHeight;
     Uint32 format;
@@ -154,12 +154,12 @@ void UaeAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
 }
 
 
-void UaeAppPart::update(float Delta, float Time) {
+void UaeWndAppPart::update(float Delta, float Time) {
     updGuiMenus();
 }
 
 
-void UaeAppPart::updGuiMenus() {
+void UaeWndAppPart::updGuiMenus() {
     if (!m_bShowImgui)
         return;
     m_pImGui->newFrame();
@@ -193,7 +193,7 @@ void UaeAppPart::updGuiMenus() {
 }
 
 
-void UaeAppPart::destroyImp() {
+void UaeWndAppPart::destroyImp() {
     destroyUaeWindow();
 
     if (m_pDesktop) {
@@ -204,7 +204,7 @@ void UaeAppPart::destroyImp() {
 }
 
 
-qd::EFlow UaeAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
+qd::EFlow UaeWndAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
     switch (in_msg.id) {
         case qd::appMsg::OnAppRequestToQuit::CID: {
             ::quit_program = UAE_QUIT;
@@ -219,7 +219,7 @@ qd::EFlow UaeAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
 }
 
 
-qd::EFlow UaeAppPart::onSdlEventProc(SDL_Event& event) {
+qd::EFlow UaeWndAppPart::onSdlEventProc(SDL_Event& event) {
     uint32_t uaeWndId = SDL_GetWindowID(m_pWindow);
     switch (event.type) {
         case SDL_KEYDOWN: {
@@ -247,7 +247,7 @@ qd::EFlow UaeAppPart::onSdlEventProc(SDL_Event& event) {
 }
 
 
-void UaeAppPart::destroyUaeWindow() {
+void UaeWndAppPart::destroyUaeWindow() {
     m_pUaeWorker->destroy();
     SAFE_DELETE(m_pUaeWorker);
 

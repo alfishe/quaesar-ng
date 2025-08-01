@@ -1,14 +1,14 @@
 // clang-format off
-#include <uae_imp/sysconfig.h>
-#include "sysdeps.h"
-#include "options.h"
-#include "keyboard.h"
-#include "inputdevice.h"
-#include "inputrecord.h"
-#include "keybuf.h"
-#include "custom.h"
-#include "xwin.h"
-#include "drawing.h"
+#include <sysconfig.h>
+#include <sysdeps.h>
+#include <options.h>
+#include <keyboard.h>
+#include <inputdevice.h>
+#include <inputrecord.h>
+#include <keybuf.h>
+#include <custom.h>
+#include <xwin.h>
+#include <drawing.h>
 #include <uae_lib/include/savestate.h>
 #include <uae_lib/include/uae.h>
 #include <uae_lib/include/debug.h>
@@ -17,7 +17,7 @@
 #include "amDebugger/debuggerApp.h"
 #include "amDebugger/msg_list.h"
 #include "quasar_app/quaesar.h"
-#include "quasar_app/uae_app_part.h"
+#include "quasar_app/uae_wnd_app_part.h"
 
 
 namespace amD::operation {

@@ -49,18 +49,18 @@
 #include "fpp.h"
 #include "custom.h"
 #include "drawing.h"
+#include <sounddep/sound.h>
 // clang-format on
 
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
+#include <amdbg_uae/uae_worker.h>
 #include <qd/Log/log.h>
 #include <qd/thread/thread.h>
-#include <quasar_app/amdbg_uae/uae_worker.h>
-#include <quasar_app/quaesar.h>
-#include <quasar_app/quaesar_debug.h>
-#include <quasar_app/uae_app_part.h>
-#include <uae_imp/sounddep/sound.h>
+#include <quaesar.h>
+#include <quaesar_debug.h>
+#include <uae_wnd_app_part.h>
 #include <cstdarg>
 #include <filesystem>
 

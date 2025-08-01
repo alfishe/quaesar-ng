@@ -1,18 +1,18 @@
 #include "vm_uae_imp.h"
 // clang-format off
-#include <uae_imp/sysconfig.h>
-#include <uae_lib/include/sysdeps.h>
-#include <uae_lib/include/options.h>
-#include <uae_lib/include/keyboard.h>
-#include <uae_lib/include/inputdevice.h>
-#include <uae_lib/include/inputrecord.h>
-#include <uae_lib/include/keybuf.h>
-#include <uae_lib/include/custom.h>
-#include <uae_lib/include/blitter.h>
-#include <uae_lib/include/xwin.h>
-#include <uae_lib/include/drawing.h>
-#include <uae_lib/include/savestate.h>
-#include <uae_lib/include/debug.h>
+#include <sysconfig.h>
+#include <sysdeps.h>
+#include <options.h>
+#include <keyboard.h>
+#include <inputdevice.h>
+#include <inputrecord.h>
+#include <keybuf.h>
+#include <custom.h>
+#include <blitter.h>
+#include <xwin.h>
+#include <drawing.h>
+#include <savestate.h>
+#include <debug.h>
 // clang-format on
 #include <SDL_log.h>
 #include <amDebugger/debuggerApp.h>

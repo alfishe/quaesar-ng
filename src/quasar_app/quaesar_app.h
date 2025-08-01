@@ -9,7 +9,7 @@ struct SDL_Window;
 struct SDL_Texture;
 struct SDL_Renderer;
 
-class UaeAppPart;
+class UaeWndAppPart;
 
 namespace amD {
 
@@ -20,7 +20,7 @@ class QuasarApp : public qd::Application {
 
 public:
     amD::Debugger* m_pDebuggerPart = nullptr;
-    UaeAppPart* m_pUaeAppPart = nullptr;
+    UaeWndAppPart* m_pUaeAppPart = nullptr;
 
 public:
     QuasarApp() {
@@ -41,7 +41,7 @@ public:
     amD::Debugger* getDbg() const {
         return m_pDebuggerPart;
     }
-    UaeAppPart* getUaeApp() const {
+    UaeWndAppPart* getUaeApp() const {
         return m_pUaeAppPart;
     }
 

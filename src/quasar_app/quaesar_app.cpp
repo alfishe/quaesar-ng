@@ -3,7 +3,7 @@
 #include "amDebugger/debuggerApp.h"
 #include "qd/app/appPartsMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
-#include "uae_app_part.h"
+#include "uae_wnd_app_part.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
     m_pDebuggerPart = getAppParts()->createPart_<amD::Debugger>("Debugger");
-    m_pUaeAppPart = getAppParts()->createPart_<UaeAppPart>("Emulator");
+    m_pUaeAppPart = getAppParts()->createPart_<UaeWndAppPart>("Emulator");
 }
 
 

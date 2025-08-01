@@ -12,8 +12,8 @@ FORWARD_DECLARATION_2(qd, QImGuiContext);
 
 // AppPart that represents UAE-emulator window in main-thread
 //
-class UaeAppPart : public qd::AppPart {
-    TS_BEGIN_REFLECT_CLASS(UaeAppPart, qd::AppPart);
+class UaeWndAppPart : public qd::AppPart {
+    TS_BEGIN_REFLECT_CLASS(UaeWndAppPart, qd::AppPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("UAE Emulator"));
     TS_END();
 
@@ -57,5 +57,5 @@ private:
     void destroyUaeWindow();
 
 
-};  // class UaeAppPart
+};  // class UaeWndAppPart
 //////////////////////////////////////////////////////////////////////////

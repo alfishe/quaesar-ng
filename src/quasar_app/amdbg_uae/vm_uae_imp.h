@@ -1,6 +1,6 @@
 #pragma once
 // clang-format off
-#include <uae_imp/sysconfig.h>
+#include <sysconfig.h>
 #include <uae_lib/include/sysdeps.h>
 #include <uae_lib/include/options.h>
 #include <uae_lib/include/memory.h>

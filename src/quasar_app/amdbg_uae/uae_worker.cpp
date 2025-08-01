@@ -3,7 +3,7 @@
 #include "sysdeps.h"
 #include "uae/time.h"
 #include "options.h"
-#include "uae_imp/adf.h"
+#include "adf.h"
 #include "uae.h"
 #include "inputdevice.h"
 // clang-format on

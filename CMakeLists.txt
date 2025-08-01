@@ -33,7 +33,7 @@ add_subdirectory(libs/exprParser)
 
 
 # Define a global variable
-set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
+set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_lib_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
 add_subdirectory(libs/uae_lib)
 
 # Quasar *.h/cpp files
@@ -131,7 +131,8 @@ target_include_directories(quaesar PRIVATE
 	external
 	libs
 	src
-	src/uae_imp
+    src/quasar_app
+	src/uae_lib_imp
 )
 
 target_link_libraries(quaesar PRIVATE
