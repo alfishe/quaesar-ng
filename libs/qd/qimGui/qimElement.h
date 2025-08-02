@@ -105,7 +105,7 @@ public:
     {
         if (!m_pParentElem)
             return nullptr;
-        if (!m_pParentElem->getTypeInfo().isDerivedFrom_<T>())
+        if (!m_pParentElem->get_type_info().isDerivedFrom_<T>())
             return nullptr;
         return static_cast<T*>(m_pParentElem);
     }

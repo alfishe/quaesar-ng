@@ -104,6 +104,13 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+//------------------------------------------------------------------------
+// Usage example:
+// TS_BEGIN_REFLECT_CLASS(qim::UiMenuBeh, qim::BehaviorElem);
+// TS_ATTRIBUTE(qd::tsAttr::CreateClassCb(&qim::createElemBehCb_<TRefClass>));
+// TS_END();
+//------------------------------------------------------------------------
+
 
 #define TS_BEGIN_REFLECT_CLASS_BASE(nApproxInherited, ObjectType, ...) \
     TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__))       \
@@ -114,26 +121,26 @@ public:
 // Declare reflected TypeInfo with class and derives. Use `void` as null base class
 #define TS_BEGIN_REFLECT_CLASS(ObjectType, ...)                  \
     TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
-    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__)
+    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__) /*declare base classes*/
 
 
-#define TS_REFLECT_CLASS_BASE(nApproxInherited, ObjectType, ...) \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
-    TS_BASE_FOR_N_TYPES(nApproxInherited);                       \
-    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__)                   \
+#define TS_REFLECT_CLASS_BASE(nApproxInherited, ObjectType, ...)        \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__))        \
+    TS_BASE_FOR_N_TYPES(nApproxInherited);                              \
+    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__) /*declare base classes*/ \
     TS_END()
 
 
-#define TS_REFLECT_CLASS_FINAL(ObjectType, ...)                  \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
-    TS_MARK_AS_FINAL();                                          \
-    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__)                   \
+#define TS_REFLECT_CLASS_FINAL(ObjectType, ...)                         \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__))        \
+    TS_MARK_AS_FINAL();                                                 \
+    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__) /*declare base classes*/ \
     TS_END()
 
 
-#define TS_REFLECT_CLASS(ObjectType, ...)                        \
-    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__)) \
-    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__)                   \
+#define TS_REFLECT_CLASS(ObjectType, ...)                               \
+    TS_BEGIN_REFLECT_TYPE(ObjectType, TS_FIRST_ARG(__VA_ARGS__))        \
+    TS_FOR_EACH(TS_ADD_BASE_TYPE, __VA_ARGS__) /*declare base classes*/ \
     TS_END()
 
 

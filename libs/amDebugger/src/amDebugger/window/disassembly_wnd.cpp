@@ -137,7 +137,7 @@ void DisassemblyView::drawContentImp()
             }
             if (ImGui::Selectable(strTmp.c_str(), false, 0, ImVec2(0, row_min_height)))
             {
-                operation::msg::DisasmToggleBreakpoint p;
+                operation::args::DisasmToggleBreakpoint p;
                 p.address = curAddr;
                 p.reg = EReg::PC;
                 dbg->applyOperationMsg(&p);

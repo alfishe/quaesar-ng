@@ -2,7 +2,7 @@
 #include "qd/base/types.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/qui/uiOperation.h"
-#include "qd/qui/uiOperationMessages.h"
+#include "qd/qui/uiOperationArgs.h"
 
 
 namespace amD {
@@ -58,7 +58,7 @@ public:
     void addShortcut(shortcut::EId sid) { UiOperation::addShortcut((int)sid); }
     amD::Debugger* getDbg() const;
 
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* p_msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* p_msg) override { return qd::EFlow::NO_RESULT; }
 
     virtual void onOperationCreate(qd::UiOperationCreator* cp) override;
 

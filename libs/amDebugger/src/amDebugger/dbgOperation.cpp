@@ -15,12 +15,6 @@ Debugger* Operation::getDbg() const
 }
 
 
-qd::EFlow Operation::applyOperationMsgProc(qd::operation::msg::Base* p_msg)
-{
-    return TSuper::_applyMsgProcDefImp(p_msg);
-}
-
-
 void Operation::onOperationCreate(qd::UiOperationCreator* cp)
 {
     TSuper::onOperationCreate(cp);
@@ -35,7 +29,7 @@ void Operation::onOperationCreate(qd::UiOperationCreator* cp)
 
 void Operation::doOperationBase()
 {
-    qd::operation::msg::DoOperation ms;
+    qd::operation::args::DoOperation ms;
     applyOperationMsgProc(&ms);
 }
 

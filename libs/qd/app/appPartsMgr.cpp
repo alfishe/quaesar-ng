@@ -202,13 +202,9 @@ void AppPartsManager::render()
     for (int i = 0; i < getNumAppParts(); i++)
     {
         AppPart* pCurPart = m_pParts[i];
-
-        if (pCurPart && pCurPart->hasMtd(EAppPartMtd::RENDER))
-        {
+        if (pCurPart && pCurPart->isPartVisible())
             pActParts.push_back(pCurPart);
-        }
     }
-
     eastl::stable_sort(pActParts.begin(), pActParts.end(), &_getZOrderSort);
 
     for (int i = 0; i < (int)pActParts.size(); ++i)

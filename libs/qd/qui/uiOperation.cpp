@@ -17,17 +17,4 @@ void UiOperation::addShortcut(int sid) {
 }
 
 
-qd::EFlow UiOperation::_applyMsgProcDefImp(operation::msg::Base* pBaseMtd) {
-/*
-    for (Node* curComp : m_pComps) {
-        EFlow flow = curComp->onNodeMessageProc(pBaseMtd);
-        if (flow != EFlow::NO_RESULT)
-            return flow;
-    }
-*/
-    return EFlow::NO_RESULT;
-}
-
-
-
 };  // namespace qd

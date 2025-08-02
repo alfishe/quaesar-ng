@@ -77,19 +77,25 @@ ConsoleQueue console_queue;
 
 //////////////////////////////////////////////////////////////////////////
 
-void Debugger::init() {
-    mbInit = true;
+void Debugger::onPartCreate(AppPart::OnCreate_t& prm)
+{
+    TSuper::onPartCreate(prm);
+
     createRenderWindow();
     initImGui();
+
+}
+
+
+void Debugger::init() {
+    mbInit = true;
     vm = amD::AbsEmu::setVmInst(createByFactory<amD::AbsEmu>());
     vm->init();
 
     qd::UiNodeCreator mk;
     m_pGui = mk.make_<amD::DbgGuiDesktop>(this);
-
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
-
     assert(m_pOperationMgr->getNumOps());
 }
 
@@ -146,7 +152,7 @@ void Debugger::setDebugMode(DebuggerMode debug_mode) {
     return;
 }
 
-qd::EFlow Debugger::applyOperationMsg(qd::operation::msg::Base* p_msg) const {
+qd::EFlow Debugger::applyOperationMsg(qd::operation::args::Base* p_msg) const {
     return m_pOperationMgr->applyOperationMsg(p_msg);
 }
 
@@ -170,7 +176,7 @@ amD::Debugger* Debugger::get() {
 }
 
 
- Debugger::Debugger()
+Debugger::Debugger()
 {
     Debugger::g_pInstance = this;
 
@@ -214,7 +220,7 @@ void Debugger::destroy() {
 
 void Debugger::update(float dt, float time)
 {
-    if (isVisible())
+    if (isWndVisible())
     {
         m_pQimGui->newFrame();
         m_pGui->drawImGuiMainFrame();
@@ -224,12 +230,13 @@ void Debugger::update(float dt, float time)
 
 
 void Debugger::render() {
-    m_pQimGui->render(qd::Color(128,128,128));
+    if (isWndVisible())
+        m_pQimGui->render(qd::Color(128,128,128));
 
 }
 
 
-bool Debugger::isVisible() const {
+bool Debugger::isWndVisible() const {
     uint32_t window_flags = SDL_GetWindowFlags(m_pWindow);
     if (window_flags & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED)) {
         return false;
@@ -240,7 +247,7 @@ bool Debugger::isVisible() const {
 
 
 void Debugger::toggleWndVisible(DebuggerMode mode) {
-    if (!isVisible()) {
+    if (!isWndVisible()) {
         SDL_ShowWindow(m_pWindow);
     } else {
         SDL_HideWindow(m_pWindow);

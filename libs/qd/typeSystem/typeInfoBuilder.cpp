@@ -100,4 +100,11 @@ void validateStaticTypeInfoPtr(TypeInfo const* pPtr)
 }
 
 
+const qd::TypeInfo& typeof_by_name(const char* pClass)
+{
+    TypeRegistry* pTypeReg = TypeRegistry::get();
+    return pTypeReg->getTypeByName(pClass);
+}
+
+
 }; // namespace qd

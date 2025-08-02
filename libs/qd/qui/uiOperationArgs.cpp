@@ -1,8 +1,8 @@
-#include "uiOperationMessages.h"
+#include "uiOperationArgs.h"
 #include "qd/typeSystem/typeInfo.h"
 
 
-namespace qd::operation::msg {
+namespace qd::operation::args {
 
 
 bool Base::tryCast(const qd::TypeInfo& msg_type)

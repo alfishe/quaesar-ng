@@ -14,26 +14,30 @@ class TypeRegistry;
 class TypeInfoAttribute;
 
 void validateStaticTypeInfoPtr(qd::TypeInfo const* pPtr);
-const TypeInfo& getTypeInfo(const StdTypeId& ti);
+
+const qd::TypeInfo& get_type_info(const qd::StdTypeId& ti);
 
 
 template<typename T>
-inline const TypeInfo& typeof_()
+inline const qd::TypeInfo& typeof_()
 {
     static const qd::TypeInfo* staticType = nullptr;
     if (!staticType)
     {
         constexpr StdTypeId ti = qd::makeStdTypeId_<T>();
-        staticType = &qd::getTypeInfo(ti);
+        staticType = &qd::get_type_info(ti);
     }
     return *staticType;
 }
 
+
 template<typename T>
-inline const TypeInfo& typeof(T pInst)
+inline const qd::TypeInfo& typeof(T pInst)
 {
     return pInst.getTypeInfo();
 }
+
+extern const qd::TypeInfo& typeof_by_name(const char* pClass);
 
 
 constexpr THash32 hash_type_info_name(const char* class_name)
@@ -41,10 +45,12 @@ constexpr THash32 hash_type_info_name(const char* class_name)
     return qd::fnv1aHash(class_name);
 }
 
+
 constexpr THash32 hash_type_info_name(const char* class_name, size_t len)
 {
     return qd::fnv1aHash(class_name, (uint32_t)len);
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 struct TypeInfoBuilder {

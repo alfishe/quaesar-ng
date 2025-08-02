@@ -44,13 +44,14 @@ qd::TypeRegistry* TypeRegistry::get()
 }
 
 
-const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined /*= false*/)
+const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined /*= false*/) const
 {
-    TypeInfoMap& typeMap = getSharedData()->m_TypeMap;
-    TypeInfoMap::iterator Iter = typeMap.find(ti.getTypePtr());
+    const TypeInfoMap& typeMap = getSharedData()->m_TypeMap;
+    const std::type_info* typePtr = ti.getTypePtr();
+    TypeInfoMap::const_iterator Iter = typeMap.find(typePtr);
     if (Iter != typeMap.end())
         return *Iter->second;
-    return _createUnNamedTypeInfoByStdType(ti);
+    return const_cast<TypeRegistry*>(this)->_createUnNamedTypeInfoByStdType(ti);
 }
 
 
@@ -161,9 +162,9 @@ const qd::TypeInfo& TypeRegistry::getTypeByName(const char* pName) const
 }
 
 
-const qd::TypeInfo& getTypeInfo(const StdTypeId& ti)
+const qd::TypeInfo& get_type_info(const StdTypeId& ti)
 {
-    TypeRegistry* pRegistry = TypeRegistry::get();
+    const TypeRegistry* pRegistry = TypeRegistry::get();
     const qd::TypeInfo& pTypeInfo = pRegistry->getTypeInfo(ti);
     return pTypeInfo;
 }

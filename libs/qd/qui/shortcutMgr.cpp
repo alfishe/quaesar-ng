@@ -3,7 +3,7 @@
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/base/base.h"
 #include "qd/thread/thread.h"
-#include "qd/qui/uiOperationMessages.h"
+#include "qd/qui/uiOperationArgs.h"
 #include "qd/qui/uiOperation.h"
 #include "qd/qui/comps/uiOperationMgrComp.h"
 
@@ -74,7 +74,7 @@ bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const {
 bool ShortcutsMgr::triggerShortcut(uint32_t id) {
     const Shortcut* pShortcut = getShortcut(id);
     if (UiOperation* pOperation = findOperationByShortcut(pShortcut)) {
-        operation::msg::DoOperation t;
+        operation::args::DoOperation t;
         pOperation->applyOperationMsgProc(&t);
         return true;
     }

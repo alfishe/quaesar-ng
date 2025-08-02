@@ -1,22 +1,29 @@
 #pragma once
-#include <qd/node/node.h>
-#include <qd/mem/fnvHash.h>
+#include "qd/node/node.h"
+#include "qd/mem/fnvHash.h"
 #include "qd/base/variant16.h"
+#include "qd/typeSystem/typeDeclare.h"
 
 
-namespace qd::operation::msg {
+#define DECLARE_OPERATION(TArgClass, TOpClass) \
+    TS_REFLECT_CLASS(TArgClass, qd::operation::args::Base); \
+    inline static const qd::TypeInfo& s_OperationType = qd::typeof_by_name(#TOpClass);
+
+
+
+namespace qd::operation::args {
 
 template<int>
 struct Base_;
 
 
 struct Base {
-    TS_REFLECT_CLASS(operation::msg::Base, void);
+    TS_REFLECT_CLASS(qd::operation::args::Base, void);
     template<int TClassId>
     friend struct Base_;
 
 public:
-    inline Base() {}
+    inline Base() = default;
 
     template<class T>
     T* cast_()
@@ -31,22 +38,15 @@ public:
 
     virtual bool tryCast(const qd::TypeInfo& msg_type);
 
-}; // struct msg::Base
+}; // struct args::Base
 //////////////////////////////////////////////////////////////////////////
 
-
-template<int TClassId>
-struct Base_ : public Base {
-    static constexpr int ID = TClassId;
-    Base_()
-        : Base(TClassId)
-    {}
-}; // struct Base_
 
 
 
 struct DoOperation : public Base {
-    TS_REFLECT_CLASS(DoOperation, operation::msg::Base);
+    TS_REFLECT_CLASS(DoOperation, qd::operation::args::Base);
+    //DECLARE_OPERATION(qd::operation::args::DoOperation, qd::operation::DoOperation);
     qd::Var16 arg0;
 
     DoOperation() = default;
@@ -54,4 +54,4 @@ struct DoOperation : public Base {
 
 
 
-}; // namespace qd::operation::msg
+}; // namespace qd::operation::args

@@ -63,7 +63,7 @@ void UiOperationMgr::destroy()
 
 
 
-void UiOperationMgr::sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::msg::Base& msg) const
+void UiOperationMgr::sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::args::Base& msg) const
 {
     auto operationsIter = m_operationsByMsgTypeMap.find(&msg_type);
     if (operationsIter == m_operationsByMsgTypeMap.end())
@@ -76,7 +76,7 @@ void UiOperationMgr::sendOperationMsg(const qd::TypeInfo& msg_type, qd::operatio
 }
 
 
-EFlow UiOperationMgr::applyOperationMsg(qd::operation::msg::Base* p_msg) const
+EFlow UiOperationMgr::applyOperationMsg(qd::operation::args::Base* p_msg) const
 {
     for (UiOperation* pCurOperation : m_pOperations)
     {

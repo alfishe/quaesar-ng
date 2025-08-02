@@ -8,17 +8,20 @@
 
 namespace qIm {
 
+// ImGui's Operation menu control by operation's ClassName
+//
 struct MenuItemOperation {
     qd::UiOperation* m_pOperation = nullptr;
 
 public:
     MenuItemOperation(const char* pOperationClass, bool bDoOperation = true)
     {
-        ImGuiStorage* storage = ImGui::GetStateStorage();
+        ImGuiStorage* pImGuiStorage = ImGui::GetStateStorage();
 
-        void** pOpStorage = storage->GetVoidPtrRef(ImGui::GetID(pOperationClass));
-        if (!*pOpStorage)
+        void** pCachedOpInstance = pImGuiStorage->GetVoidPtrRef(ImGui::GetID(pOperationClass));
+        if (!*pCachedOpInstance)
         {
+            // find operation TYPE via reflection by ClassName
             const qd::TypeInfo* pOperationType = qd::TypeRegistry::get()->findTypeByName(pOperationClass);
             if (!pOperationType)
             {
@@ -26,20 +29,21 @@ public:
                 return;
             }
 
-            qd::UiOperationMgr* pOpMgr = qd::UiOperationMgr::get();
-            assert(pOpMgr);
-            if (pOpMgr)
+            // find operation instance by operation Type
+            if (qd::UiOperationMgr* pOpMgr = qd::UiOperationMgr::get())
             {
                 qd::UiOperation* pOperation = pOpMgr->findOperationByType(*pOperationType);
                 assert(pOperation);
-                *pOpStorage = pOperation;
+                *pCachedOpInstance = pOperation; // save instance in ImGui cache storage
             }
+            else
+                assert(0 && "No operation manager");
         }
-
-        qd::UiOperation* pOperation = reinterpret_cast<qd::UiOperation*>(*pOpStorage);
+        qd::UiOperation* pOperation = reinterpret_cast<qd::UiOperation*>(*pCachedOpInstance);
         if (!pOperation)
             return;
 
+        // print shortcut abbr
         qd::ShortcutHnd* pShortcuts = pOperation->getShortcuts();
         qd::string shortcutName;
         if (pShortcuts && pShortcuts->getNumShortcuts() > 0)
@@ -59,8 +63,7 @@ public:
     }
 
     operator bool () const { return m_pOperation; }
-
-    ~MenuItemOperation() {}
+    ~MenuItemOperation() = default;
 
 }; // struct MenuItemOperation
 //////////////////////////////////////////////////////////////////////////

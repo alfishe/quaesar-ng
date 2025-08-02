@@ -13,7 +13,7 @@ struct SDL_Window;
 struct SDL_Renderer;
 union SDL_Event;
 
-FORWARD_DECLARATION_4S(qd, operation, msg, Base);
+FORWARD_DECLARATION_4S(qd, operation, args, Base);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 FORWARD_DECLARATION_2(qd, UiOperationMgr);
 
@@ -86,11 +86,12 @@ public:
     inline static Debugger* g_pInstance = nullptr;
     static Debugger* get();
 
+    virtual void onPartCreate(AppPart::OnCreate_t& prm) override;
     void init();
     virtual void destroy() override;
     virtual void update(float dt, float time) override;
     virtual void render() override;
-    bool isVisible() const;
+    bool isWndVisible() const;
     void toggleWndVisible(DebuggerMode mode);
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
@@ -106,7 +107,7 @@ public:
     static bool isDebugActivatedFull();
     void setDebugMode(DebuggerMode debug_mode);
 
-    qd::EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
+    qd::EFlow applyOperationMsg(qd::operation::args::Base* p_msg) const;
 
     void execConsoleCmd(eastl::string&& cmd);
 

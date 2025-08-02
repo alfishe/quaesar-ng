@@ -14,9 +14,9 @@ struct DebugDmaOption : public amD::operation::Operation {
 
     void setup() { m_name = "Debug DMA"; }
 
-    qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* p_msg) override
+    qd::EFlow applyOperationMsgProc(qd::operation::args::Base* p_msg) override
     {
-        if (auto p = p_msg->cast_<qd::operation::msg::DoOperation>())
+        if (auto p = p_msg->cast_<qd::operation::args::DoOperation>())
         {
             changeDebugDmaMode(p->arg0.getInt());
             return qd::EFlow::SUCCESS;
@@ -42,7 +42,7 @@ struct UaeWndAlwaysOnTop : public amD::operation::Operation {
         addShortcut(amD::shortcut::EId::AlwaysOnTopEmu);
     }
 
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* p_msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* p_msg) override;
 
     SDL_Window* getEmulatorMainWindow();
 };
@@ -57,7 +57,7 @@ struct DisasmTraceStep : public amD::operation::Operation {
         m_name = "Step Into";
         addShortcut(amD::shortcut::EId::DebugTraceStepInto);
     }
-    virtual void doOperation(qd::OperationHistory* history = nullptr) override;
+    virtual void doOperation(qd::OperationEnvironment* history = nullptr) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +69,7 @@ struct DisasmTraceStepOut : public amD::operation::Operation {
         m_name = "Step Out";
         addShortcut(amD::shortcut::EId::DebugTraceStepOut);
     }
-    virtual void doOperation(qd::OperationHistory* history = nullptr) override;
+    virtual void doOperation(qd::OperationEnvironment* history = nullptr) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -81,7 +81,7 @@ struct DebugTraceStart : public amD::operation::Operation {
         m_name = "Debug Trace Mode";
         addShortcut(amD::shortcut::EId::DebugTraceStart);
     }
-    virtual void doOperation(qd::OperationHistory* history = nullptr) override;
+    virtual void doOperation(qd::OperationEnvironment* history = nullptr) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -93,7 +93,7 @@ struct DebugTraceContinue : public amD::operation::Operation {
         m_name = "Continue";
         addShortcut(amD::shortcut::EId::DebugTraceContinue);
     }
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -105,7 +105,7 @@ struct DebugWaitScanLines : public amD::operation::Operation {
         m_name = "Wait N scanlines";
         addShortcut(amD::shortcut::EId::DebugWaitScanLines);
     }
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -118,7 +118,7 @@ struct DisasmToggleBreakpoint : public amD::operation::Operation {
         addShortcut(amD::shortcut::EId::DisasmToggleBreakpoint);
     }
 
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -130,7 +130,7 @@ struct CopperTraceStep : public Operation {
         m_name = "Copper Trace Step";
         addShortcut(amD::shortcut::EId::CopperTraceStep);
     }
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -142,7 +142,7 @@ struct CopperToggleBreakpoint : public Operation {
         m_name = "Copper breakpoint";
         addShortcut(amD::shortcut::EId::CopperToggleBreakpoint);
     }
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::msg::Base* msg) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* msg) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -154,7 +154,7 @@ struct ToggleTurboEmulation : public Operation {
         m_name = "Turbo Emulation";
         addShortcut(amD::shortcut::EId::ToggleTurboEmulation);
     }
-    virtual void doOperation(qd::OperationHistory* history = nullptr) override;
+    virtual void doOperation(qd::OperationEnvironment* history = nullptr) override;
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -167,7 +167,7 @@ struct UaeResetAmiga : public Operation {
         addShortcut(amD::shortcut::EId::ResetAmigaEmu);
     }
 
-    virtual void doOperation(qd::OperationHistory* history = nullptr) override;
+    virtual void doOperation(qd::OperationEnvironment* history = nullptr) override;
 };
 //////////////////////////////////////////////////////////////////////////
 

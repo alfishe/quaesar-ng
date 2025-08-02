@@ -4,9 +4,8 @@
 #include "qd/stl/vector_map.h"
 #include "qd/stl/span.h"
 #include "qd/stl/vector.h"
-#include "qd/stl/vector_map.h"
 #include "qd/qui/uiOperation.h"
-#include "qd/qui/uiOperationMessages.h"
+#include "qd/qui/uiOperationArgs.h"
 
 
 namespace qd {
@@ -38,7 +37,7 @@ public:
 
     int getNumOps() const { return (int)m_pOperations.size(); }
 
-    EFlow applyOperationMsg(qd::operation::msg::Base* p_msg) const;
+    EFlow applyOperationMsg(qd::operation::args::Base* p_msg) const;
 
     void addOperation(UiOperation* pNewOperation);
 
@@ -64,7 +63,7 @@ public:
     }
 
 
-    void sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::msg::Base& p_msg) const;
+    void sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::args::Base& p_msg) const;
 
     template<class TMsg>
     void sendOperationMsgT(TMsg& msg) const
@@ -77,7 +76,7 @@ public:
 
 
 
-struct OperationSupportedMsgVisitor : public operation::msg::Base {
+struct OperationSupportedMsgVisitor : public operation::args::Base {
     qd::vector<const qd::TypeInfo*> m_pSupportedMtd;
 
 public:

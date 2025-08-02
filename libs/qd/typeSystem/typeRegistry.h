@@ -44,7 +44,7 @@ public:
 
     static TypeRegistry* get();
     SharedData* getSharedData() const;
-    const TypeInfo& getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined = false);
+    const TypeInfo& getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined = false) const;
     void bindNamedTypeInfo(const TypeInfo& type_info);
 
     inline const TypeInfoMap& getTypesMap();
