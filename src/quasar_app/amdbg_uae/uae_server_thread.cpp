@@ -8,8 +8,9 @@
 #include "inputdevice.h"
 // clang-format on
 
-#include "uae_worker.h"
+#include "uae_server_thread.h"
 #include <SDL.h>
+#include <queue>
 #include "qd/debug/assert.h"
 #include "qd/thread/thread.h"
 #include "quasar_app/parse_options.h"
@@ -22,6 +23,55 @@ extern void qs_keyboard_set_translation();
 namespace amD {
 extern void quae_parse_cmdline(int argc, TCHAR** argv);
 };  //namespace amD
+
+
+class ConsoleQueue {
+public:
+    std::queue<qd::string> m_consoleCmdQueue;
+    qd::ThreadEvent* m_pThreadEvent;
+    qd::Mutex* m_pMutex;
+
+public:
+    ConsoleQueue() {
+        m_pThreadEvent = new qd::ThreadEvent(true);
+        m_pMutex = new qd::Mutex();
+    }
+
+    void addCmdToQueue(eastl::string cmd) {
+        if (cmd.empty())
+            return;
+        m_pMutex->lock();
+        m_consoleCmdQueue.push(eastl::move(cmd));
+        m_pMutex->unlock();
+        m_pThreadEvent->set();
+    }
+
+    bool waitConsoleCmd(eastl::string& out) {
+        m_pThreadEvent->wait(100);
+        qd::MutexLock ml(*m_pMutex);
+        if (m_consoleCmdQueue.empty())
+            return false;
+        const eastl::string& cmd = m_consoleCmdQueue.front();
+        out = eastl::move(cmd);
+        m_consoleCmdQueue.pop();
+        return true;
+    }
+
+    void destroy() {
+        m_consoleCmdQueue = {};
+        if (m_pThreadEvent) {
+            m_pThreadEvent->set();
+            SAFE_DELETE(m_pThreadEvent);
+        }
+        SAFE_DELETE(m_pMutex);
+    }
+
+    ~ConsoleQueue() {
+        destroy();
+    }
+
+};  // class ConsoleQueue
+//////////////////////////////////////////////////////////////////////////
 
 
 int uae_thread_main_func(void*) {
@@ -40,20 +90,26 @@ int uae_thread_main_func(void*) {
 }
 
 
-UaeWorker::UaeWorker() {
+void* UaeServerThread::getOpEnvPtr(const qd::TypeInfo& classType) const {
+    assert(0);
+    return nullptr;
+}
+
+
+qd::EFlow UaeServerThread::applyOperationMsg(qd::operation::args::Base* args) {
+    assert(0);
+    return qd::EFlow::STOP;
+}
+
+
+UaeServerThread::UaeServerThread() {
     assert(!g_pSingleton);
     g_pSingleton = this;
+    m_pConsoleQueue = new ConsoleQueue();
 }
 
 
-UaeWorker::~UaeWorker() {
-    destroy();
-    assert(g_pSingleton == this);
-    g_pSingleton = nullptr;
-}
-
-
-void UaeWorker::initialize() {
+void UaeServerThread::initialize() {
     ::syncbase = 1000000;
     qs_keyboard_set_translation();
     ::default_prefs(&::currprefs, true, 0);
@@ -107,9 +163,13 @@ void UaeWorker::initialize() {
 }
 
 
-void UaeWorker::destroy() {
+void UaeServerThread::destroy() {
     SDL_Log("Waiting UAE thread over ...");
     //g_pApp->m_pDebuggerPart->execConsoleCmd("q");
+
+    if (m_pConsoleQueue)
+        m_pConsoleQueue->destroy();
+    SAFE_DELETE(m_pConsoleQueue);
 
     // wait UAE done
     SDL_WaitThread(m_uaeThread, nullptr);
@@ -119,13 +179,20 @@ void UaeWorker::destroy() {
 }
 
 
-void UaeWorker::setUaeInitialized(bool) {
+UaeServerThread::~UaeServerThread() {
+    destroy();
+    assert(g_pSingleton == this);
+    g_pSingleton = nullptr;
+}
+
+
+void UaeServerThread::setUaeInitialized(bool) {
     ASSERT_AND_DO(m_onUaeInitialized, return);
     m_onUaeInitialized->set();
 }
 
 
-uint32_t* UaeWorker::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
+uint32_t* UaeServerThread::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     m_UaeScrTextureMutex.lock();
 
     if (amiga_width > m_scrWidth || amiga_height > m_scrHeight) {
@@ -138,24 +205,24 @@ uint32_t* UaeWorker::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
 }
 
 
-void UaeWorker::unlockUaeScreenTexBuf() {
+void UaeServerThread::unlockUaeScreenTexBuf() {
     m_UaeScrTextureMutex.unlock();
     SDL_AtomicIncRef(&m_scrFrameNo);
 }
 
 
-int UaeWorker::getScrFrameNo() {
+int UaeServerThread::getScrFrameNo() {
     return SDL_AtomicGet(&m_scrFrameNo);
 }
 
 
-void UaeWorker::pushSdlEvent(const SDL_Event& event) {
+void UaeServerThread::pushSdlEvent(const SDL_Event& event) {
     qd::MutexLock ml(m_eventMutex);
     m_eventQueue.push_back(std::move(event));
 }
 
 
-bool UaeWorker::onUaeHandleEvents() {
+bool UaeServerThread::onUaeHandleEvents() {
     qd::MutexLock ml(m_eventMutex);
     if (m_eventQueue.empty())
         return false;
@@ -166,7 +233,7 @@ bool UaeWorker::onUaeHandleEvents() {
 }
 
 
-void UaeWorker::onSdlEventProc(const SDL_Event& event) {
+void UaeServerThread::onSdlEventProc(const SDL_Event& event) {
     switch (event.type) {
         case SDL_KEYDOWN: {
             const SDL_Keycode scancode = event.key.keysym.scancode;
@@ -185,4 +252,28 @@ void UaeWorker::onSdlEventProc(const SDL_Event& event) {
         default:
             break;
     }
+}
+
+
+void UaeServerThread::applyImmediateConsoleCmd(qd::string&& cmd) {
+    amD::uae::do_console_cmd_immediate(cmd.c_str());
+}
+
+
+void UaeServerThread::execConsoleCmd(qd::string&& cmd) {
+    m_pConsoleQueue->addCmdToQueue(std::move(cmd));
+}
+
+
+int UaeServerThread::waitConsoleCmd(char* out, int maxlen) {
+    eastl::string cmd;
+    if (!m_pConsoleQueue->waitConsoleCmd(cmd))
+        return -1;
+
+    const int len = (int)cmd.size();
+    if (len < maxlen)
+        strcpy(out, cmd.data());
+    else
+        EASTL_ASSERT(0);
+    return len;
 }

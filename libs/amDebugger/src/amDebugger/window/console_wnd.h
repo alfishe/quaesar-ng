@@ -1,5 +1,5 @@
 #pragma once
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/uiView.h>
 
 namespace amD {
 namespace window {
@@ -9,7 +9,7 @@ class ConsoleLogWriter;
 class ConsoleWnd : public AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::Console, amD::window::ConsoleWnd, amD::AmDbgWindow);
 
-    eastl::string inputStr;
+    eastl::string m_inputStr;
     ConsoleLogWriter* mpConsoleWriter = nullptr;
 
 public:

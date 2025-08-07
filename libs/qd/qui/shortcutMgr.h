@@ -16,6 +16,8 @@ class Shortcut;
 using ShortcutSetupFunc = void (*)(qd::Shortcut&);
 class UiOperation;
 class UiOperationMgr;
+class IOperationEnvironment;
+
 
 class Key
 {
@@ -77,7 +79,7 @@ public:
 
     void init(eastl::span<ShortcutSetupFunc> shortcuts_list);
     void done();
-    void update(UiOperationMgr* pOpMgr);
+    void update(qd::IOperationEnvironment* env, UiOperationMgr* pOpMgr);
 
     const qd::Shortcut* getShortcut(uint32_t shortcut_id) const;
     template<typename T>
@@ -89,12 +91,12 @@ public:
     qd::UiOperation* findOperationByShortcut(const Shortcut* pShortcut) const;
 
     bool isShortcutTriggered(const qd::Shortcut* shortcut) const;
-    bool triggerShortcut(uint32_t id);
-    bool triggerShortcut(const qd::Shortcut* shortcut)
+    bool triggerShortcut(qd::IOperationEnvironment* env, uint32_t id);
+    bool triggerShortcut(qd::IOperationEnvironment* env, const qd::Shortcut* shortcut)
     {
         if (!shortcut)
             return false;
-        return triggerShortcut(shortcut->getId());
+        return triggerShortcut(env, shortcut->getId());
     }
 
     virtual ~ShortcutsMgr();

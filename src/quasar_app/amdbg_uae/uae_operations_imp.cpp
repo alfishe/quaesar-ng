@@ -15,7 +15,7 @@
 // clang-format on
 #include "amDebugger/commonOperations.h"
 #include "amDebugger/debuggerApp.h"
-#include "amDebugger/msg_list.h"
+#include "amDebugger/debuggerOps.h"
 #include "quasar_app/quaesar.h"
 #include "quasar_app/uae_wnd_app_part.h"
 
@@ -23,92 +23,101 @@
 namespace amD::operation {
 
 
-int DebugDmaOption::getCurDebugDmaMode() {
+int DebugDmaOption::getCurDebugDmaMode(qd::IOperationEnvironment* env) {
     return ::debug_dma;
 }
 
 
-void DebugDmaOption::changeDebugDmaMode(int nMode) {
+void DebugDmaOption::changeDebugDmaMode(qd::IOperationEnvironment* env, int nMode) {
     eastl::string buf(eastl::string::CtorSprintf(), "v -%d", nMode + 1);
-    getDbg()->applyImmediateConsoleCmd(eastl::move(buf));
+    amD::Debugger* pDbg = env->getPtr_<amD::Debugger>();
+    pDbg->execConsoleCmd(eastl::move(buf));
 }
 
 
-SDL_Window* UaeWndAlwaysOnTop::getEmulatorMainWindow() {
+SDL_Window* UaeWndAlwaysOnTop::getEmulatorMainWindow(qd::IOperationEnvironment* env) {
     return g_pApp->m_pUaeAppPart->getSdlWindow();
 }
 
 
-void DisasmTraceStep::doOperation(qd::OperationHistory* history /*= nullptr*/) {
-    getDbg()->setDebugMode(DebuggerMode_Break);
-    getDbg()->execConsoleCmd("t");
+void DisasmTraceStep::doOperation(qd::IOperationEnvironment* env) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    pDbg->setDebugMode(DebuggerMode_Break);
+    pDbg->execConsoleCmd("t");
 }
 
 
-void DisasmTraceStepOut::doOperation(qd::OperationHistory* history /*= nullptr*/) {
-    getDbg()->execConsoleCmd("z");
+void DisasmTraceStepOut::doOperation(qd::IOperationEnvironment* env) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    pDbg->execConsoleCmd("z");
 }
 
 
-void DebugTraceStart::doOperation(qd::OperationHistory* history /*= nullptr*/) {
-    getDbg()->setDebugMode(DebuggerMode_Break);
+void DebugTraceStart::doOperation(qd::IOperationEnvironment* env) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    pDbg->setDebugMode(DebuggerMode_Break);
 }
 
 
-qd::EFlow DebugTraceContinue::applyOperationMsgProc(qd::operation::msg::Base* msg) {
-    if (msg->cast_<qd::operation::msg::DoOperation>() || msg->cast_<amD::operation::msg::DoDebugTraceContinue>()) {
-        getDbg()->execConsoleCmd("g");
-        return qd::EFlow::SUCCESS;
-    } else
-        return Operation::applyOperationMsgProc(msg);
+void uae_op_debug_trace_continue(qd::IOperationEnvironment* env, amD::operation::args::DoDebugTraceContinue* p) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    pDbg->execConsoleCmd("g");
 }
 
 
-qd::EFlow DebugWaitScanLines::applyOperationMsgProc(qd::operation::msg::Base* msg) {
-    if (msg->cast_<qd::operation::msg::DoOperation>() || msg->cast_<amD::operation::msg::DoDebugTraceContinue>()) {
+qd::EFlow DebugWaitScanLines::applyOperationMsgProc(qd::IOperationEnvironment* env,
+                                                    amD::operation::OperationArgs* p_msg) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    if (p_msg->cast_<qd::operation::args::DoOperation>() ||
+        p_msg->cast_<amD::operation::args::DoDebugTraceContinue>()) {
         eastl::string cmd;
-        cmd.append_sprintf("fs %i", getDbg()->getWaitScanLines());
-        getDbg()->execConsoleCmd(eastl::move(cmd));
+        cmd.append_sprintf("fs %i", pDbg->getWaitScanLines());
+        pDbg->execConsoleCmd(eastl::move(cmd));
         return qd::EFlow::SUCCESS;
     } else
-        return Operation::applyOperationMsgProc(msg);
+        return Operation::applyOperationMsgProc(env, p_msg);
 }
 
 
-qd::EFlow DisasmToggleBreakpoint::applyOperationMsgProc(qd::operation::msg::Base* msg) {
-    if (auto p = msg->cast_<amD::operation::msg::DisasmToggleBreakpoint>()) {
+qd::EFlow DisasmToggleBreakpoint::applyOperationMsgProc(qd::IOperationEnvironment* env,
+                                                        amD::operation::OperationArgs* p_msg) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    if (auto p = p_msg->cast_<amD::operation::args::DisasmToggleBreakpoint>()) {
         eastl::string cmd;
         cmd.sprintf("f %08x", (uint32_t)p->address);
         if (p->nBreakpoint >= 0)
             cmd.append_sprintf(" %i", p->nBreakpoint);
-        getDbg()->execConsoleCmd(eastl::move(cmd));
+        pDbg->execConsoleCmd(eastl::move(cmd));
         return qd::EFlow::SUCCESS;
     } else
-        return Operation::applyOperationMsgProc(msg);
+        return Operation::applyOperationMsgProc(env, p_msg);
 }
 
 
-qd::EFlow CopperTraceStep::applyOperationMsgProc(qd::operation::msg::Base* msg) {
-    if (msg->cast_<qd::operation::msg::DoOperation>() || msg->cast_<amD::operation::msg::CopperTraceStep>()) {
-        getDbg()->execConsoleCmd("ot");
+qd::EFlow CopperTraceStep::applyOperationMsgProc(qd::IOperationEnvironment* env, amD::operation::OperationArgs* p_msg) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    if (p_msg->cast_<qd::operation::args::DoOperation>() || p_msg->cast_<amD::operation::args::CopperTraceStep>()) {
+        pDbg->execConsoleCmd("ot");
         return qd::EFlow::SUCCESS;
     } else
-        return Operation::applyOperationMsgProc(msg);
+        return Operation::applyOperationMsgProc(env, p_msg);
 }
 
 
-qd::EFlow CopperToggleBreakpoint::applyOperationMsgProc(qd::operation::msg::Base* msg) {
-    if (auto p = msg->cast_<amD::operation::msg::CopperToggleBreakpoint>()) {
+qd::EFlow CopperToggleBreakpoint::applyOperationMsgProc(qd::IOperationEnvironment* env,
+                                                        amD::operation::OperationArgs* p_msg) {
+    auto pDbg = env->getPtr_<amD::Debugger>();
+    if (auto p = p_msg->cast_<amD::operation::args::CopperToggleBreakpoint>()) {
         eastl::string cmd;
         cmd.sprintf("ob %08x", (uint32_t)p->address);
-        getDbg()->execConsoleCmd(eastl::move(cmd));
+        pDbg->execConsoleCmd(eastl::move(cmd));
         return qd::EFlow::SUCCESS;
     } else
-        return Operation::applyOperationMsgProc(msg);
+        return Operation::applyOperationMsgProc(env, p_msg);
 }
 
 
-void ToggleTurboEmulation::doOperation(qd::OperationHistory* history /*= nullptr*/) {
+void ToggleTurboEmulation::doOperation(qd::IOperationEnvironment* env /*= nullptr*/) {
     if (currprefs.turbo_emulation != 0) {
         // off
         warpmode(0);
@@ -119,7 +128,7 @@ void ToggleTurboEmulation::doOperation(qd::OperationHistory* history /*= nullptr
 }
 
 
-void UaeResetAmiga::doOperation(qd::OperationHistory* history /*= nullptr*/) {
+void UaeResetAmiga::doOperation(qd::IOperationEnvironment* env /*= nullptr*/) {
     ::uae_reset(1, 1);
 }
 

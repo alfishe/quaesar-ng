@@ -62,32 +62,31 @@ void UiOperationMgr::destroy()
 }
 
 
+// void UiOperationMgr::sendOperationMsg(qd::IOperationEnvironment* env, const qd::TypeInfo& msg_type, qd::operation::args::Base& msg) const
+// {
+//     auto operationsIter = m_operationsByMsgTypeMap.find(&msg_type);
+//     if (operationsIter == m_operationsByMsgTypeMap.end())
+//         return;
+//     const eastl::vector<UiOperation*>& actList = operationsIter->second;
+//     for (UiOperation* pCurAct : actList)
+//     {
+//         pCurAct->applyOperationMsgProc(env, &msg);
+//     }
+// }
 
-void UiOperationMgr::sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::args::Base& msg) const
-{
-    auto operationsIter = m_operationsByMsgTypeMap.find(&msg_type);
-    if (operationsIter == m_operationsByMsgTypeMap.end())
-        return;
-    const eastl::vector<UiOperation*>& actList = operationsIter->second;
-    for (UiOperation* pCurAct : actList)
-    {
-        pCurAct->applyOperationMsgProc(&msg);
-    }
-}
 
-
-EFlow UiOperationMgr::applyOperationMsg(qd::operation::args::Base* p_msg) const
-{
-    for (UiOperation* pCurOperation : m_pOperations)
-    {
-        if (!pCurOperation)
-            continue;
-        EFlow r = pCurOperation->applyOperationMsgProc(p_msg);
-        if (r != EFlow::NO_RESULT)
-            return r;
-    }
-    return EFlow::NO_RESULT;
-}
+// EFlow UiOperationMgr::applyOperationMsg(qd::IOperationEnvironment* env, qd::operation::args::Base* p_msg) const
+// {
+//     for (UiOperation* pCurOperation : m_pOperations)
+//     {
+//         if (!pCurOperation)
+//             continue;
+//         EFlow r = pCurOperation->applyOperationMsgProc(env, p_msg);
+//         if (r != EFlow::NO_RESULT)
+//             return r;
+//     }
+//     return EFlow::NO_RESULT;
+// }
 
 
 void UiOperationMgr::addOperation(UiOperation* pNewOperation)
@@ -96,12 +95,13 @@ void UiOperationMgr::addOperation(UiOperation* pNewOperation)
     const qd::TypeInfo* curOperationType = &pNewOperation->getTypeInfo();
     m_operationByOperationTypeMap[curOperationType] = pNewOperation;
 
-    OperationSupportedMsgVisitor visitor;
-    pNewOperation->applyOperationMsgProc(&visitor);
-
-    for(const qd::TypeInfo* pCurType : visitor.m_pSupportedMtd)
+//     OperationSupportedMsgVisitor visitor;
+//     pNewOperation->applyOperationMsgProc(env, &visitor);
+//     for(const qd::TypeInfo* pCurType : visitor.m_pSupportedMtd)
     {
-        auto& actList = m_operationsByMsgTypeMap[pCurType];
+        //auto& actList = m_operationsByMsgTypeMap[pCurType];
+
+        auto& actList = m_operationsByMsgTypeMap[curOperationType];
         actList.push_back(pNewOperation);
     }
 }
@@ -137,13 +137,6 @@ eastl::span<UiOperation* const> UiOperationMgr::getOperationsList() const
 }
 
 
-bool OperationSupportedMsgVisitor::tryCast(const qd::TypeInfo& msg_type)
-{
-    msg_type.checkDefined();
-    m_pSupportedMtd.push_back(&msg_type);
-
-    return false;
-}
 
 
 }; // namespace qd

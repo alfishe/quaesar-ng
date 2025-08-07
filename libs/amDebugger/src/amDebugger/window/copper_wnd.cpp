@@ -1,15 +1,15 @@
 #include "qd/stl/string.h"
 #include "qd/stl/fixed_vector.h"
 #include "amDebugger/debuggerApp.h"
-#include "amDebugger/msg_list.h"
+#include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/memory.h"
-#include "amDebugger/vm/absEmu.h"
+#include "amDebugger/vm/absVM.h"
 #include "qd/base/color.h"
 #include "qd/imGui/imgui_eastl.h"
-#include "amDebugger/ui/ui_style.h"
-#include "amDebugger/ui/ui_view.h"
-#include "amDebugger/ui/dbgGuiDesktop.h"
-#include "amDebugger/shortcut_list.h"
+#include "amDebugger/ui/uiStyle.h"
+#include "amDebugger/ui/uiView.h"
+#include "amDebugger/ui/debuggerDesktop.h"
+#include "amDebugger/shortcutsList.h"
 #include "qd/qui/shortcutMgr.h"
 
 
@@ -127,7 +127,7 @@ public:
     }
 
 
-    void decodeLines(AbsEmu* vm, AddrRef startAddr, int num_lines) {
+    void decodeLines(AbsVM* vm, AddrRef startAddr, int num_lines) {
         decoded.clear();
         AddrRef addr = startAddr;
         decoded.reserve(num_lines);
@@ -152,9 +152,9 @@ namespace window {
 
 void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsEmu* vm = dbg->vm;
+    AbsVM* vm = dbg->vm;
 
-    amD::AbsEmu::CustomRegs* custRegs = vm->custom;
+    amD::AbsVM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;
@@ -170,8 +170,9 @@ void CopperDbgWnd::drawContentImp() {
     ImGui::Checkbox("COPEN", &bCopEn);
     ImGui::SameLine();
 
-    if (ImGui::Button("Trace")) {
-        this->ui->getShortcuts()->triggerShortcut((int)amD::shortcut::EId::CopperToggleBreakpoint);
+    if (ImGui::Button("Trace"))
+    {
+        getUi()->getShortcuts()->triggerShortcut(this, (int)amD::shortcut::EId::CopperToggleBreakpoint);
     }
 
     AddrRef pcAddr = vm->copper->getCopperAddr(amD::CopperAddr_ip);

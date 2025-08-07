@@ -7,11 +7,11 @@
 #include "qd/imGui/backends/imgui_impl_sdl2.h"
 #include "qd/imGui/backends/imgui_impl_sdlrenderer2.h"
 #include "amDebugger/dbgOperation.h"
-#include "amDebugger/msg_list.h"
-#include "amDebugger/vm/absEmu.h"
+#include "amDebugger/debuggerOps.h"
+#include "amDebugger/vm/absVM.h"
 #include "qd/thread/thread.h"
-#include "amDebugger/ui/dbgGuiDesktop.h"
-#include "amDebugger/ui/ui_style.h"
+#include "amDebugger/ui/debuggerDesktop.h"
+#include "amDebugger/ui/uiStyle.h"
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/app/moduleManager.h"
@@ -20,103 +20,63 @@
 namespace amD {
 
 
-//////////////////////////////////////////////////////////////////////////
-namespace imp {
-class ConsoleQueue {
-public:
-    eastl::queue<eastl::string> m_consoleCmdQueue;
-    qd::ThreadEvent* m_pThreadEvent;
-    qd::Mutex* m_pMutex;
-
-public:
-    ConsoleQueue() {
-        m_pThreadEvent = new qd::ThreadEvent(true);
-        m_pMutex = new qd::Mutex();
-    }
-
-    void addCmdToQueue(eastl::string cmd) {
-        if (cmd.empty())
-            return;
-        m_pMutex->lock();
-        m_consoleCmdQueue.push(eastl::move(cmd));
-        m_pMutex->unlock();
-        m_pThreadEvent->set();
-    }
-
-    bool waitConsoleCmd(eastl::string& out) {
-        m_pThreadEvent->wait(100);
-        qd::MutexLock ml(*m_pMutex);
-        if (m_consoleCmdQueue.empty())
-            return false;
-        const eastl::string& cmd = m_consoleCmdQueue.front();
-        out = eastl::move(cmd);
-        m_consoleCmdQueue.pop();
-        return true;
-    }
-
-    void destroy() {
-        m_consoleCmdQueue = {};
-        if (m_pThreadEvent) {
-            m_pThreadEvent->set();
-            SAFE_DELETE(m_pThreadEvent);
-        }
-        SAFE_DELETE(m_pMutex);
-    }
-
-    ~ConsoleQueue() {
-        destroy();
-    }
-
-};  // class ConsoleQueue
-ConsoleQueue console_queue;
-
-
-};  // namespace imp
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-
-void Debugger::onPartCreate(AppPart::OnCreate_t& prm)
+void DebuggerApp::setCurDbgClientIdx(uint32_t curDbgClientIdx)
 {
-    TSuper::onPartCreate(prm);
-
-    createRenderWindow();
-    initImGui();
-
+    if (curDbgClientIdx >= m_pClients.size())
+        ASSERT_AND_DO(0, curDbgClientIdx = 0, "Bad client index");
+    m_nCurDbgClientIdx = curDbgClientIdx;
+    m_pCurDbgClient = m_pClients[m_nCurDbgClientIdx];
 }
 
 
-void Debugger::init() {
+DebuggerApp::DebuggerApp()
+{
+    DebuggerApp::g_pInstance = this;
+
+    m_pClients.push_back(new Debugger(this)); // DummyClient
+
+    setPartActive(true);
+    setPartVisisble(true);
+}
+
+
+void DebuggerApp::onPartCreate(AppPart::OnCreate_t& prm)
+{
+    TSuper::onPartCreate(prm);
+}
+
+void DebuggerApp::init() {
     mbInit = true;
-    vm = amD::AbsEmu::setVmInst(createByFactory<amD::AbsEmu>());
-    vm->init();
+    createRenderWindow();
+    initImGui();
+
+    getApp()->get
+
+    m_pClients.push_back(new Debugger(this));
 
     qd::UiNodeCreator mk;
-    m_pGui = mk.make_<amD::DbgGuiDesktop>(this);
+    m_pGui = mk.make_<amD::DebuggerDesktop>(m_pCurDbgClient);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
     assert(m_pOperationMgr->getNumOps());
 }
 
 
-void Debugger::createRenderWindow() {
+void DebuggerApp::createRenderWindow() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN;
     SDL_Window* window =
-        SDL_CreateWindow("Quaesar: Debugger", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+        SDL_CreateWindow("Quaesar: DebuggerApp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
 
     // From 2.0.18: Enable native IME.
 #ifdef SDL_HINT_IME_SHOW_UI
     SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
 #endif
-
     if (!window) {
         fprintf(stderr, "Error creating window.\n");
         return;
     }
-
-    m_pRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
-    if (!m_pRenderer) {
+    m_pWndRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    if (!m_pWndRenderer) {
         SDL_DestroyWindow(window);
         SDL_Log("Error creating SDL_Renderer!");
         return;
@@ -126,10 +86,10 @@ void Debugger::createRenderWindow() {
 }
 
 
-void Debugger::initImGui() {
+void DebuggerApp::initImGui() {
 
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
-    m_pQimGui = pImGuiMgr->createContextImGui(m_pWindow, m_pRenderer);
+    m_pQimGui = pImGuiMgr->createContextImGui(m_pWindow, m_pWndRenderer);
 
     // Setup Dear ImGui context
     ImGuiIO& io = m_pQimGui->getIO();
@@ -142,59 +102,35 @@ void Debugger::initImGui() {
 }
 
 
-Debugger::~Debugger() {
+DebuggerApp::~DebuggerApp() {
     assert(!mbInit);
 }
 
 
-void Debugger::setDebugMode(DebuggerMode debug_mode) {
-    vm->emu->setDebugMode(debug_mode);
-    return;
-}
-
-qd::EFlow Debugger::applyOperationMsg(qd::operation::args::Base* p_msg) const {
-    return m_pOperationMgr->applyOperationMsg(p_msg);
+qd::EFlow DebuggerApp::applyOperationMsg(qd::operation::args::Base* p_msg)
+{
+    return m_pCurDbgClient->applyOperationMsg(p_msg);
 }
 
 
-int Debugger::waitConsoleCmd(char* out, int maxlen) {
-    eastl::string cmd;
-    if (!amD::imp::console_queue.waitConsoleCmd(cmd))
-        return -1;
-
-    const int len = (int)cmd.size();
-    if (len < maxlen)
-        strcpy(out, cmd.data());
-    else
-        EASTL_ASSERT(0);
-    return len;
+void* DebuggerApp::getOpEnvPtr(const qd::TypeInfo& classType) const
+{
+    if (classType == this->getStaticTypeInfo())
+        return const_cast<void*>((const void*)this);
+    return nullptr;
 }
 
 
-amD::Debugger* Debugger::get() {
+amD::DebuggerApp* DebuggerApp::get() {
     return g_pInstance;
 }
 
 
-Debugger::Debugger()
-{
-    Debugger::g_pInstance = this;
-
-    setPartActive(true);
-    setPartVisisble(true);
-}
 
 
-void amD::Debugger::execConsoleCmd(eastl::string&& cmd)
-{
-    imp::console_queue.addCmdToQueue(eastl::move(cmd));
-}
-
-
-void Debugger::destroy() {
+void DebuggerApp::destroy() {
     if (m_pGui)
         m_pGui->destroy();
-    imp::console_queue.destroy();
     if (m_pOperationMgr)
         m_pOperationMgr->destroy();
     m_pOperationMgr = nullptr;
@@ -206,11 +142,10 @@ void Debugger::destroy() {
 
     delete m_pGui;
     m_pGui = nullptr;
-    vm = nullptr;
-    AbsEmu::destrotVmInst();
+    AbsVM::destrotVmInst();
 
-    SDL_DestroyRenderer(m_pRenderer);
-    m_pRenderer = nullptr;
+    SDL_DestroyRenderer(m_pWndRenderer);
+    m_pWndRenderer = nullptr;
     SDL_DestroyWindow(m_pWindow);
     m_pWindow = nullptr;
 
@@ -218,7 +153,7 @@ void Debugger::destroy() {
 }
 
 
-void Debugger::update(float dt, float time)
+void DebuggerApp::update(float dt, float time)
 {
     if (isWndVisible())
     {
@@ -229,14 +164,14 @@ void Debugger::update(float dt, float time)
 }
 
 
-void Debugger::render() {
+void DebuggerApp::render() {
     if (isWndVisible())
         m_pQimGui->render(qd::Color(128,128,128));
 
 }
 
 
-bool Debugger::isWndVisible() const {
+bool DebuggerApp::isWndVisible() const {
     uint32_t window_flags = SDL_GetWindowFlags(m_pWindow);
     if (window_flags & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED)) {
         return false;
@@ -246,7 +181,7 @@ bool Debugger::isWndVisible() const {
 }
 
 
-void Debugger::toggleWndVisible(DebuggerMode mode) {
+void DebuggerApp::toggleWndVisible(DebuggerMode mode) {
     if (!isWndVisible()) {
         SDL_ShowWindow(m_pWindow);
     } else {
@@ -255,7 +190,7 @@ void Debugger::toggleWndVisible(DebuggerMode mode) {
 }
 
 
-qd::EFlow Debugger::onSdlEventProc(SDL_Event& event) {
+qd::EFlow DebuggerApp::onSdlEventProc(SDL_Event& event) {
     return m_pQimGui->onSdlEventProc(event);
 }
 

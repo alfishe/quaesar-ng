@@ -1,4 +1,4 @@
-#include "shortcut_list.h"
+#include "shortcutsList.h"
 #include <qd/qui/shortcutMgr.h>
 
 

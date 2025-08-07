@@ -10,7 +10,7 @@
 #include "uae_wnd_app_part.h"
 #include <SDL.h>
 #include <amDebugger/commonOperations.h>
-#include "amdbg_uae/uae_worker.h"
+#include "amdbg_uae/uae_server_thread.h"
 #include "cli11/CLI11.hpp"
 #include "parse_options.h"
 #include "qd/app/appMessages.h"
@@ -23,45 +23,51 @@
 #include "ui/uae_wnd_desktop.h"
 
 
+UaeWndAppPart::UaeWndAppPart() {
+}
+
+
+UaeWndAppPart::~UaeWndAppPart() {
+}
+
+
 void UaeWndAppPart::onPartCreate(AppPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
-    m_pUaeWorker = new UaeWorker();
-    m_pUaeWorker->initialize();
+    m_pUaeServer = new UaeServerThread();
+    m_pUaeServer->initialize();
 
     setPartActive(true);
     setPartVisisble(true);
 
-    createUaeWindow();
+    _createUaeWindow();
 
+    // independent ImGui draw context
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
     m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
     m_pImGui->getIO().IniFilename = "";
 
-
+    // UAE's root ui-window
     qd::UiNodeCreator mk;
     m_pDesktop = mk.make_<UaeWndDesktop>();
-    auto pDlg = m_pDesktop->addChild_<UaeOptionsDlg>("options");
+    m_pDesktop->setup();
 }
 
 
-void UaeWndAppPart::createUaeWindow() {
-    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
-
-    int wndWidth = m_pUaeWorker->m_scrWidth;
-    int wndHeight = m_pUaeWorker->m_scrHeight;
+void UaeWndAppPart::_createUaeWindow() {
+    int wndWidth = m_pUaeServer->m_scrWidth;
+    int wndHeight = m_pUaeServer->m_scrHeight;
 
     // Create a window
+    uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
     m_pWindow =
         SDL_CreateWindow("Quaesar", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, wndWidth, wndHeight, window_flags);
-
     if (!m_pWindow) {
         SDL_Log("Could not create window: %s", SDL_GetError());
         return;
     }
 
     m_pUaeRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED);
-
     if (!m_pUaeRenderer) {
         SDL_Log("Could not create renderer: %s", SDL_GetError());
         SDL_DestroyWindow(m_pWindow);
@@ -70,7 +76,6 @@ void UaeWndAppPart::createUaeWindow() {
 
     m_pUaeScrTexture =
         SDL_CreateTexture(m_pUaeRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, wndWidth, wndHeight);
-
     if (!m_pUaeScrTexture) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
         SDL_DestroyRenderer(m_pUaeRenderer);
@@ -79,10 +84,23 @@ void UaeWndAppPart::createUaeWindow() {
     }
 }
 
+void UaeWndAppPart::update(float Delta, float Time) {
+    _drawGuiMenus();
+}
+
+
+void UaeWndAppPart::_drawGuiMenus() {
+    if (!m_bShowImgui)
+        return;
+    m_pImGui->newFrame();
+    m_pDesktop->draw();
+    m_pImGui->endFrame();
+}
+
 
 void UaeWndAppPart::render() {
     // render UAE texture screen
-    int curFrame = m_pUaeWorker->getScrFrameNo();
+    int curFrame = m_pUaeServer->getScrFrameNo();
     if (curFrame == m_renderedFrameNo) {
         return;
     }
@@ -93,9 +111,9 @@ void UaeWndAppPart::render() {
     int window_width, window_height;
     SDL_GetWindowSize(m_pWindow, &window_width, &window_height);
 
-    if (m_pUaeWorker->m_UaeScrTextureMutex.tryLock()) {
-        int uaeWidth = m_pUaeWorker->m_scrWidth;
-        int uaeHeight = m_pUaeWorker->m_scrHeight;
+    if (m_pUaeServer->m_UaeScrTextureMutex.tryLock()) {
+        int uaeWidth = m_pUaeServer->m_scrWidth;
+        int uaeHeight = m_pUaeServer->m_scrHeight;
         if (!uaeWidth || !uaeHeight)
             return;
 
@@ -119,13 +137,13 @@ void UaeWndAppPart::render() {
         if (SDL_LockTexture(m_pUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
             for (int y = 0; y < uaeHeight; y++) {
                 uint8_t* dest = (uint8_t*)&texture_pixels[y * uaeWidth];
-                memcpy(dest, &m_pUaeWorker->m_pAmigaBuffer[y * uaeWidth], uaeWidth * 4);
+                memcpy(dest, &m_pUaeServer->m_pAmigaBuffer[y * uaeWidth], uaeWidth * 4);
             }
             SDL_UnlockTexture(m_pUaeScrTexture);
         }
 
         SDL_RenderCopy(m_pUaeRenderer, m_pUaeScrTexture, NULL, &rect);
-        m_pUaeWorker->m_UaeScrTextureMutex.unlock();
+        m_pUaeServer->m_UaeScrTextureMutex.unlock();
     }
 
     if (m_bShowImgui)
@@ -154,45 +172,6 @@ void UaeWndAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
 }
 
 
-void UaeWndAppPart::update(float Delta, float Time) {
-    updGuiMenus();
-}
-
-
-void UaeWndAppPart::updGuiMenus() {
-    if (!m_bShowImgui)
-        return;
-    m_pImGui->newFrame();
-    if (ImGui::BeginMainMenuBar()) {
-        if (auto p1 = qIm::LockMenu("File")) {
-            if (ImGui::MenuItem("Open DF0:")) {
-                floppyslot& cfgFloppy = ::changed_prefs.floppyslots[0];
-                show_image_file_open_dlg(cfgFloppy);
-                qd::UiOperationMgr::get()->doOperation_<amD::operation::UaeResetAmiga>();
-            }
-
-            if (ImGui::MenuItem("Settings")) {
-                UaeOptionsDlg* pOptionsDlg = m_pDesktop->findChildByIdName_<UaeOptionsDlg>("options");
-                m_pDesktop->showModal(pOptionsDlg);
-            }
-            if (ImGui::MenuItem("Exit")) {
-                g_pApp->requestAppToQuit();
-            }
-        }
-
-        if (auto p2 = qIm::LockMenu("Emulator", true)) {
-            qIm::menuItemOperation(STRINGIFY(amD::operation::ToggleTurboEmulation));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::UaeResetAmiga));
-        }
-        ImGui::EndMainMenuBar();
-    }
-
-    m_pDesktop->draw();
-    m_pImGui->endFrame();
-}
-
-
 void UaeWndAppPart::destroyImp() {
     destroyUaeWindow();
 
@@ -201,6 +180,12 @@ void UaeWndAppPart::destroyImp() {
         delete m_pDesktop;
         m_pDesktop = nullptr;
     }
+}
+
+
+void UaeWndAppPart::bringWndToFront() {
+    if (m_pWindow)
+        SDL_RaiseWindow(m_pWindow);
 }
 
 
@@ -214,7 +199,6 @@ qd::EFlow UaeWndAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
         default:
             break;
     }
-
     return qd::EFlow::NO_RESULT;
 }
 
@@ -229,13 +213,13 @@ qd::EFlow UaeWndAppPart::onSdlEventProc(SDL_Event& event) {
                 setShowImgui(!m_bShowImgui);
                 return qd::EFlow::STOP;
             }
-            m_pUaeWorker->pushSdlEvent(event);
+            m_pUaeServer->pushSdlEvent(event);
             return qd::EFlow::STOP;
         } break;
         case SDL_KEYUP: {
             if (event.key.keysym.sym == SDLK_F12)
                 return qd::EFlow::STOP;
-            m_pUaeWorker->pushSdlEvent(event);
+            m_pUaeServer->pushSdlEvent(event);
         } break;
         default:
             break;
@@ -248,8 +232,8 @@ qd::EFlow UaeWndAppPart::onSdlEventProc(SDL_Event& event) {
 
 
 void UaeWndAppPart::destroyUaeWindow() {
-    m_pUaeWorker->destroy();
-    SAFE_DELETE(m_pUaeWorker);
+    m_pUaeServer->destroy();
+    SAFE_DELETE(m_pUaeServer);
 
     SDL_DestroyTexture(m_pUaeScrTexture);
     m_pUaeScrTexture = nullptr;

@@ -1,9 +1,10 @@
 #pragma once
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/uiView.h>
 
 namespace amD {
 namespace window {
 
+// Debugger screen window
 class ScreenWnd : public AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::Screen, amD::window::ScreenWnd, amD::AmDbgWindow);
 

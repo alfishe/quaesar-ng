@@ -1,7 +1,7 @@
 #include "screen_wnd.h"
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/vm/absVM.h>
 #include <qd/ImGui/imgui_eastl.h>
 #include "qd/imGui/imGuiHelperClass.h"
 //#include <quaesar.h>
@@ -10,7 +10,8 @@ namespace amD {
 namespace window {
 
 void ScreenWnd::drawContentImp() {
-    AbsEmu* vm = getDbg()->getVm();
+    Debugger* dbg = getDbg();
+    AbsVM* vm = dbg->getVm();
     //ImGuiIO& io = ImGui::GetIO();
 
     int amiga_width = vm->getScreenSizeX();
@@ -20,7 +21,7 @@ void ScreenWnd::drawContentImp() {
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
             return;
 
-        SDL_Texture* scrTexture = SDL_CreateTexture(getDbg()->getRenderer(), SDL_PIXELFORMAT_ARGB8888,
+        SDL_Texture* scrTexture = SDL_CreateTexture(dbg->getDbgApp()->getRenderer(), SDL_PIXELFORMAT_ARGB8888,
                                                     SDL_TEXTUREACCESS_STREAMING, amiga_width, amiga_height);
         if (scrTexture) {
             mTextureId = (ImTextureID)scrTexture;

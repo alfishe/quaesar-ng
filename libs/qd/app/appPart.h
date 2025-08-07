@@ -87,8 +87,8 @@ public:
 
     void updateActivateTime() { m_nUpdates++; }
 
-    Application* getApp() const { return m_pApp; }
-    void setApp(Application* pApp) { m_pApp = pApp; }
+    qd::Application* getApp() const { return m_pApp; }
+    void setApp(qd::Application* pApp) { m_pApp = pApp; }
 
 
     virtual void update(float dt, float time) {}

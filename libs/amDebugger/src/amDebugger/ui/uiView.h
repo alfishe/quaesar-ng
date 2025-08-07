@@ -1,24 +1,25 @@
 #pragma once
-#include "amDebugger/ui_defs.h"
+#include "amDebugger/ui/uiDefs.h"
 #include "qd/base/classInfoReg.h"
 #include "qd/base/color.h"
 #include "qd/ImGui/imgui_eastl.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/qui/controls/window.h"
+#include "qd/qui/uiOperation.h"
 
 
 
 namespace amD {
 
-class DbgGuiDesktop;
+class DebuggerDesktop;
 class Debugger;
 
 
 struct UiViewCreateCtx {
-    DbgGuiDesktop* gui;
+    DebuggerDesktop* gui;
     bool visible = true;
 
-    UiViewCreateCtx(DbgGuiDesktop* _ui)
+    UiViewCreateCtx(DebuggerDesktop* _ui)
         : gui(_ui)
     {}
 }; // struct CreateUiViewParams
@@ -35,13 +36,13 @@ public:                      \
 // Base class of all ui
 //
 
-class AmDbgWindow : public qd::UiWindow
+class AmDbgWindow : public qd::UiWindow, public qd::IOperationEnvironment
 {
     TS_BEGIN_REFLECT_CLASS_BASE(50, amD::AmDbgWindow, qd::UiWindow);
     TS_END();
 
 public:
-    DbgGuiDesktop* ui = nullptr;
+    DebuggerDesktop* ui = nullptr;
 
 public:
     AmDbgWindow() = default;
@@ -52,11 +53,16 @@ public:
         ui = cp->gui;
     }
 
+    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
+
     virtual void drawImp() override
     {
         TSuper::drawImp();
     }
     Debugger* getDbg() const;
+    DebuggerDesktop* getUi() {
+        return ui;
+    }
 
 }; // class AmDbgWindow
 //////////////////////////////////////////////////////////////////////////

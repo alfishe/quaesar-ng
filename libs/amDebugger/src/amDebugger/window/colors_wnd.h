@@ -1,5 +1,5 @@
 #pragma once
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/uiView.h>
 
 namespace amD {
 namespace window {

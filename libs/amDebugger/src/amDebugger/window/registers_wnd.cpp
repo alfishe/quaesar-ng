@@ -1,8 +1,9 @@
 #include "registers_wnd.h"
-#include <amDebugger/debuggerApp.h>
-#include <amDebugger/vm/absEmu.h>
+#include "amDebugger/debuggerApp.h"
+#include "amDebugger/vm/absVM.h"
 #include "qd/imGui/imgui_eastl.h"
-#include <amDebugger/ui/ui_style.h>
+#include "amDebugger/ui/uiStyle.h"
+#include "qd/stl/string.h"
 
 namespace amD {
 namespace window {
@@ -35,15 +36,17 @@ static const FlagDef s_flagDefs[] = {
 };
 // clang-format on
 
+
+
 void RegistersView::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsEmu* vm = dbg->vm;
-    AbsEmu::Cpu* cpu = vm->cpu;
+    AbsVM* vm = dbg->getVm();
+    AbsVM::Cpu* cpu = vm->cpu;
 
     QImPushFloatLock st;
     st.pushFloat(&ImGui::GetStyle().CellPadding.y, 0);
 
-    eastl::fixed_string<char, 128, false> stVal, stCmd, stId;
+    qd::InlineString stVal, stCmd, stId;
 
     auto displayRegName = [](const char* name) {
         ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegName));

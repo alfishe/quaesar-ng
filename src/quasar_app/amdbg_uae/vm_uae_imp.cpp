@@ -16,10 +16,12 @@
 // clang-format on
 #include <SDL_log.h>
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/msg_list.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/debuggerOps.h>
+#include <amDebugger/vm/absVM.h>
 #include <qd/base/endian.h>
 #include <qd/qui/uiOperationMgr.h>
+#include <qd/thread/thread.h>
+#include <qd/typeSystem/typeInfo.h>
 #include <quasar_app/quaesar.h>
 
 
@@ -28,24 +30,27 @@ extern uaecptr bplpt[MAX_PLANES], bplptx[MAX_PLANES];
 
 
 namespace amD {
-namespace vm {
-namespace imp {
+namespace vm::imp {
 
-UaeEmuVmImp::UaeEmuVmImp() {
+
+UaeVmImp::UaeVmImp() {
     cpu = &instCpu;
     mem = &instMemory;
     custom = &instCustomRegs;
     copper = &instCopper;
     blitter = &instBlitter;
-    emu = &instEmu;
+    {
+        instEmu.vm = this;
+        emu = &instEmu;
+    }
 }
 
 
-void UaeEmuVmImp::init() {
+void UaeVmImp::init() {
     if (mInit)
         return;
     mInit = true;
-    amD::AbsEmu* s = (amD::AbsEmu*)(this);
+    amD::AbsVM* s = (amD::AbsVM*)(this);
     uint32_t hiAddr = 0;
     while (hiAddr < MEMORY_BANKS) {
         addrbank* uaeBank = mem_banks[hiAddr];
@@ -78,7 +83,11 @@ void UaeEmuVmImp::init() {
 }
 
 
-void* UaeEmuVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) {
+UaeVmImp::~UaeVmImp() {
+}
+
+
+void* UaeVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) {
     vidbuf_description* vidinfo = &adisplays[mon_id].gfxvidinfo;
     vidbuffer* vb = &vidinfo->drawbuffer;
     if (!vb || !vb->bufmem)
@@ -90,12 +99,12 @@ void* UaeEmuVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* ou
 }
 
 
-bool UaeEmuVmImp::Blitter::isBlitterActive() const {
+bool UaeVmImp::Blitter::isBlitterActive() const {
     return blt_info.blit_main || blt_info.blit_finald || blt_info.blit_queued;
 }
 
 
-void UaeEmuVmImp::CustomRegs::fetch() {
+void UaeVmImp::CustomRegs::fetch() {
     size_t dump_len;
     ::save_custom(&dump_len, (uae_u8*)regsData.data(), 1);
     for (size_t i = 0; i < regsData.size(); ++i)
@@ -103,7 +112,7 @@ void UaeEmuVmImp::CustomRegs::fetch() {
 }
 
 
-void UaeEmuVmImp::CustomRegs::commit() {
+void UaeVmImp::CustomRegs::commit() {
     eastl::fixed_vector<uint16_t, CustReg::_COUNT_ + data_offset, false> dst = {regsData.begin(), regsData.end()};
     uint8_t* beg = (uint8_t*)dst.begin();
     dst.erase((uint16_t*)(beg + 0x120), (uint16_t*)(beg + 0x180));
@@ -115,48 +124,40 @@ void UaeEmuVmImp::CustomRegs::commit() {
 }
 
 
-amD::AddrRef UaeEmuVmImp::Copper::getCopperAddr(CopperAddr_ copno) {
+amD::AddrRef UaeVmImp::Copper::getCopperAddr(CopperAddr_ copno) {
     return ::get_copper_address(copno);
 }
 
 
-void UaeEmuVmImp::Copper::fetch() {
+void UaeVmImp::Copper::fetch() {
 }
 
 
-void UaeEmuVmImp::Emu::setDebugMode(DebuggerMode debug_mode) {
+void UaeVmImp::Emu::setDebugMode(DebuggerMode debug_mode) {
     if (debug_mode == DebuggerMode_Break) {
-        while (!Debugger::isDebugActivatedFull()) {
+        while (!isDebugActivatedFull()) {
             ::debugger_active = 0;
             ::debugging = 0;
             ::activate_debugger_new();
         }
     } else if (debug_mode == DebuggerMode_Live) {
-        amD::operation::msg::DoDebugTraceContinue m;
-        amD::Debugger::get()->getOperations()->applyOperationMsg(&m);
+        amD::operation::args::DoDebugTraceContinue m;
+        vm->applyOperationProc(&m);
         ::debugger_active = 0;
     }
 }
 
-
-};  // namespace imp
-//////////////////////////////////////////////////////////////////////////
-
-};  // namespace vm
-
-
-bool Debugger::isDebugActivated() {
+bool UaeVmImp::Emu::isDebugActivated() const {
     return ::debugging > 0 && (::debugger_active > 0);
 }
 
-bool Debugger::isDebugActivatedFull() {
+bool UaeVmImp::Emu::isDebugActivatedFull() const {
     return ::debugging > 0 && (::debugger_active > 0 && ::regs.spcflags & SPCFLAG_BRK);
 }
 
 
-void Debugger::applyImmediateConsoleCmd(eastl::string&& cmd) {
-    amD::uae::do_console_cmd_immediate(cmd.c_str());
-}
+};  // namespace vm::imp
+//////////////////////////////////////////////////////////////////////////
 
 
 static bool uae_bp_reg_convert(int uae_reg, EReg& out) {
@@ -192,8 +193,8 @@ void BreakpointsSortedList::init() {
 
 
 void* impFactoryCreateInstance(const std::type_info& type) {
-    if (type == typeid(amD::AbsEmu)) {
-        return new amD::vm::imp::UaeEmuVmImp();
+    if (type == typeid(amD::AbsVM)) {
+        return new amD::vm::imp::UaeVmImp();
     }
     UNIMPLEMENTED();
     return nullptr;

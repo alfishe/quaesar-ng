@@ -6,10 +6,10 @@
 #include "uae_wnd_app_part.h"
 
 
-//////////////////////////////////////////////////////////////////////////
-namespace amD {
-
-qd::ThreadEvent* onUaeInitialized = nullptr;
+namespace amD::uae {
+extern void on_app_exit_debug();
+extern void on_app_exit_drawing();
+};  // namespace amD::uae
 
 
 void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
@@ -17,21 +17,17 @@ void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
 
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
-    m_pDebuggerPart = getAppParts()->createPart_<amD::Debugger>("Debugger");
-    m_pUaeAppPart = getAppParts()->createPart_<UaeWndAppPart>("Emulator");
+    m_pDebuggerPart = getAppParts()->createPart_<amD::DebuggerApp>("Amiga Debugger");
+    m_pUaeAppPart = getAppParts()->createPart_<UaeWndAppPart>("UAE Amiga emulator");
+
+    m_pDebuggerPart->init();
+    m_pUaeAppPart->bringWndToFront();
 }
 
 
 void QuasarApp::initialize() {
-    m_pDebuggerPart->init();
-    m_pDebuggerPart->toggleWndVisible(amD::DebuggerMode_Live);
+    //m_pDebuggerPart->toggleWndVisible(amD::DebuggerMode_Live);
 }
-
-
-namespace uae {
-extern void on_app_exit_debug();
-extern void on_app_exit_drawing();
-};  // namespace uae
 
 
 void QuasarApp::destroyImp() {
@@ -58,4 +54,6 @@ void QuasarApp::onSdlEventProc(SDL_Event& event) {
 }
 
 
-};  // namespace amD
+amD::Debugger* QuasarApp::getDbg() const {
+    return m_pDebuggerPart->getDbg();
+}

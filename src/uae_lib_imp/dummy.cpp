@@ -55,7 +55,7 @@
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
-#include <amdbg_uae/uae_worker.h>
+#include <amdbg_uae/uae_server_thread.h>
 #include <qd/Log/log.h>
 #include <qd/thread/thread.h>
 #include <quaesar.h>
@@ -588,11 +588,11 @@ void console_flush() {
 }
 
 int console_get(char* out, int maxlen) {
-    amD::Debugger* dbg = g_pApp->getDbg();
-    if (!dbg)
+    auto server = UaeServerThread::get();
+    if (!server)
         return -1;
     for (;;) {
-        int len = dbg->waitConsoleCmd(out, maxlen);
+        int len = server->waitConsoleCmd(out, maxlen);
         if (len > 0)
             return len;
     }
@@ -896,7 +896,7 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    UaeWorker::get()->setUaeInitialized(true);
+    UaeServerThread::get()->setUaeInitialized(true);
     return 1;
 }
 
@@ -916,7 +916,7 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     const int imgSizeX = vb->outwidth;
     const int imgSizeY = vb->outheight;
     uint8_t* sptr = vb->bufmem;
-    UaeWorker* pWorker = UaeWorker::get();
+    UaeServerThread* pWorker = UaeServerThread::get();
     if (uint32_t* pDestTxBuf = pWorker->lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
         for (int y = 0; y < imgSizeY; y++) {
             uint8_t* dest = (uint8_t*)&pDestTxBuf[y * imgSizeX];
@@ -955,7 +955,7 @@ bool gui_ask_disk(int, char*) {
 }
 
 bool handle_events() {
-    return UaeWorker::get()->onUaeHandleEvents();
+    return UaeServerThread::get()->onUaeHandleEvents();
 }
 
 bool hydra_init(autoconfig_info*) {

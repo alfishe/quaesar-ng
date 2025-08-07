@@ -12,6 +12,7 @@
 
 namespace qim {
 
+#if 0
 
 void UiMenuOperation::setup(const char* operation_class_name)
 {
@@ -103,5 +104,6 @@ void UiMenuItem::onBeforeEndImp(qim::Context* ctx)
 #endif // 0
 }
 
+#endif // 
 
 }; // namespace qim

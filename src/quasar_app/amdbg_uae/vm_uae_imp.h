@@ -10,12 +10,13 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/span.h>
 #include <EASTL/vector.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/vm/absVM.h>
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/emuDefs.h>
 #include <amDebugger/vm/memory.h>
 #include <qd/Base/color.h>
 #include <qd/Base/types.h>
+#include "qd/typeSystem/typeDeclare.h"
 
 
 namespace amD {
@@ -24,13 +25,20 @@ namespace amD {
 namespace vm {
 namespace imp {
 
-class UaeEmuVmImp final : public amD::AbsEmu {
+class UaeVmImp final : public amD::AbsVM {
+    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, amD::AbsVM);
+
 public:
-    UaeEmuVmImp();
+    UaeVmImp();
+    virtual ~UaeVmImp();
     virtual void init() override;
 
+    //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
+    virtual qd::EFlow applyOperationProc(qd::operation::args::Base* args) override {
+        return qd::EFlow::NO_RESULT;
+    }
 
-    struct Cpu : public AbsEmu::Cpu {
+    struct Cpu : public AbsVM::Cpu {
         uint32_t getRegA(int i) const override {
             return m68k_areg(::regs, i);
         }
@@ -64,7 +72,7 @@ public:
     Cpu instCpu;
 
     ///
-    struct Memory final : public AbsEmu::Memory {
+    struct Memory final : public AbsVM::Memory {
     public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override {
             return (uint8_t*)::memory_get_real_address(ptr);
@@ -89,7 +97,7 @@ public:
     Memory instMemory;
 
     //
-    struct Blitter final : public AbsEmu::Blitter {
+    struct Blitter final : public AbsVM::Blitter {
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
@@ -97,7 +105,7 @@ public:
 
 
     //
-    class CustomRegs final : public AbsEmu::CustomRegs {
+    class CustomRegs final : public AbsVM::CustomRegs {
         static constexpr size_t data_offset = 2;
         eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
 
@@ -115,7 +123,7 @@ public:
     CustomRegs instCustomRegs;
 
 
-    class Copper final : public AbsEmu::Copper {
+    class Copper final : public AbsVM::Copper {
     public:
         virtual void fetch() override;
         virtual AddrRef getCopperAddr(CopperAddr_ copno) override;
@@ -123,14 +131,17 @@ public:
     Copper instCopper;
 
 
-    class Emu final : public AbsEmu::Emu {
+    class Emu final : public AbsVM::Emu {
     public:
+        UaeVmImp* vm = nullptr;
         virtual void setDebugMode(DebuggerMode debug_mode) override;
+        bool isDebugActivatedFull() const;
+        bool isDebugActivated() const;
     };  // class Emu
     Emu instEmu;
 
 
-};  // class UaeEmuVmImp
+};  // class UaeVmImp
 //////////////////////////////////////////////////////////////////////////
 
 

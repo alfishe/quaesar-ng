@@ -14,7 +14,7 @@ struct MenuItemOperation {
     qd::UiOperation* m_pOperation = nullptr;
 
 public:
-    MenuItemOperation(const char* pOperationClass, bool bDoOperation = true)
+    MenuItemOperation(qd::IOperationEnvironment* env, const char* pOperationClass, bool bDoOperation = true)
     {
         ImGuiStorage* pImGuiStorage = ImGui::GetStateStorage();
 
@@ -58,7 +58,7 @@ public:
         {
             m_pOperation = pOperation;
             if (bDoOperation)
-                m_pOperation->doOperation();
+                m_pOperation->doOperation(env);
         }
     }
 
@@ -69,9 +69,9 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-inline void menuItemOperation(const char* pOperationClass, bool bDoOperation = true)
+inline void menuItemOperation(qd::IOperationEnvironment* env, const char* pOperationClass, bool bDoOperation = true)
 {
-    qIm::MenuItemOperation menu(pOperationClass, bDoOperation);
+    qIm::MenuItemOperation menu(env, pOperationClass, bDoOperation);
 }
 
 }; // namespace qIm

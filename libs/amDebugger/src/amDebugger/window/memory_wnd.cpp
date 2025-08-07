@@ -55,7 +55,7 @@
 
 #include "memory_wnd.h"
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/vm/absVM.h>
 #include "qd/imGui/imGuiHelperClass.h"
 
 namespace amD {
@@ -83,7 +83,7 @@ static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
     const amD::MemBank* pBank = pMemView->m_pLastBank;
     if (!pBank || !pBank->isAddrIn((AddrRef)addr))
     {
-        AbsEmu* vm = AbsEmu::get();
+        AbsVM* vm = AbsVM::get();
         pBank = vm->mem->findBankByAddr((AddrRef)addr);
         pMemView->m_pLastBank = pBank;
     }
@@ -108,7 +108,7 @@ void MemoryView::onCreate(UiViewCreateCtx* cp)
     AmDbgWindow::onCreate(cp);
     m_title = "Memory";
     setVisible(true);
-    AbsEmu* vm = AbsEmu::get();
+    AbsVM* vm = AbsVM::get();
     setMemAddr(this, 0xFFFFFFF0u / 2u, 0x0000);
     read_fn = &read_mem_imp;
     write_fn = &write_mem_imp;

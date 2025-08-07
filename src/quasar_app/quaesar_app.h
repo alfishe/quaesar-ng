@@ -2,16 +2,13 @@
 #include "qd/app/appliction.h"
 
 
-FORWARD_DECLARATION_2(qd, ThreadEvent);
-FORWARD_DECLARATION_2(amD, Debugger);
-
 struct SDL_Window;
 struct SDL_Texture;
 struct SDL_Renderer;
-
 class UaeWndAppPart;
-
-namespace amD {
+FORWARD_DECLARATION_2(qd, ThreadEvent);
+FORWARD_DECLARATION_2(amD, DebuggerApp);
+FORWARD_DECLARATION_2(amD, Debugger);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -19,7 +16,7 @@ class QuasarApp : public qd::Application {
     typedef qd::Application TSuper;
 
 public:
-    amD::Debugger* m_pDebuggerPart = nullptr;
+    amD::DebuggerApp* m_pDebuggerPart = nullptr;
     UaeWndAppPart* m_pUaeAppPart = nullptr;
 
 public:
@@ -29,7 +26,6 @@ public:
     virtual void onConstruct(qd::CreateApplicationParams& in) override;
 
     inline static QuasarApp* g_pInstance = nullptr;
-    ;
     static QuasarApp* get() {
         return g_pInstance;
     }
@@ -38,9 +34,7 @@ public:
 
     virtual void onSdlEventProc(SDL_Event& event) override;
 
-    amD::Debugger* getDbg() const {
-        return m_pDebuggerPart;
-    }
+    amD::Debugger* getDbg() const;
     UaeWndAppPart* getUaeApp() const {
         return m_pUaeAppPart;
     }
@@ -49,8 +43,8 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+namespace amD {
 namespace uae {
 extern void do_console_cmd_immediate(const char* cmd);
 };
-
 };  //namespace amD

@@ -1,7 +1,10 @@
 #pragma once
 #include <SDL.h>
 #include <deque>
+#include "amDebugger/debuggerServer.h"
 #include "qd/base/base.h"
+#include "qd/qui/uiOperation.h"
+#include "qd/stl/string.h"
 #include "qd/thread/thread.h"
 
 
@@ -9,13 +12,14 @@ FORWARD_DECLARATION_2(qd, ThreadEvent);
 
 
 //////////////////////////////////////////////////////////////////////////
-// UAE work-thread
-//
-class UaeWorker {
+// UAE's parent server-work-thread
+// (it works in the same thread as UAE)
+class UaeServerThread : public amD::DebuggerServer {
     struct SDL_Thread* m_uaeThread = nullptr;  // start UAE in separate thread
-    inline static UaeWorker* g_pSingleton = nullptr;
+    inline static UaeServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;
     std::deque<SDL_Event> m_eventQueue;
+    class ConsoleQueue* m_pConsoleQueue = nullptr;
 
 public:
     int m_scrWidth = 754;
@@ -25,9 +29,12 @@ public:
     qd::ThreadEvent* m_onUaeInitialized = nullptr;  // event to wait for UAE initialization
     SDL_atomic_t m_scrFrameNo = {};
 
+    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
+    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
+
 public:
-    UaeWorker();
-    ~UaeWorker();
+    UaeServerThread();
+    ~UaeServerThread();
     void initialize();
     void destroy();
     void setUaeInitialized(bool);
@@ -35,18 +42,20 @@ public:
     uint32_t* lockUaeScreenTexBuf(int amiga_width, int amiga_height);
     void unlockUaeScreenTexBuf();
     int getScrFrameNo();
-
     void pushSdlEvent(const SDL_Event& event);
-
     bool onUaeHandleEvents();
 
+    void execConsoleCmd(qd::string&& cmd);
+    void applyImmediateConsoleCmd(qd::string&& cmd);
+    int waitConsoleCmd(char* out, int maxlen);
+
 public:
-    static UaeWorker* get() {
+    static UaeServerThread* get() {
         return g_pSingleton;
     }
 
 protected:
     void onSdlEventProc(const SDL_Event& event);
 
-};  // class UaeWorker
+};  // class UaeServerThread
 //////////////////////////////////////////////////////////////////////////

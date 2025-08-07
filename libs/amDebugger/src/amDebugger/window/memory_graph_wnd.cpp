@@ -2,7 +2,7 @@
 #include <EASTL/span.h>
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/vm/absVM.h>
 #include <imgui/imgui_internal.h>
 #include <qd/ImGui/imgui_eastl.h>
 #include "qd/imGui/imGuiHelperClass.h"
@@ -14,7 +14,8 @@ namespace window {
 
 
 void MemoryGraphWnd::drawContentImp() {
-    AbsEmu* vm = getDbg()->getVm();
+    amD::Debugger* dbg = getDbg();
+    AbsVM* vm = dbg->getVm();
 
     mNewTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
 
@@ -28,7 +29,7 @@ void MemoryGraphWnd::drawContentImp() {
         if (mNewTextureSize.y > 1 && mNewTextureSize.y > 0) {
             mTextureSize = mNewTextureSize;
             SDL_Texture* scrTexture = nullptr;
-            scrTexture = SDL_CreateTexture(getDbg()->getRenderer(), SDL_PIXELFORMAT_ARGB8888,
+            scrTexture = SDL_CreateTexture(dbg->getDbgApp()->getRenderer(), SDL_PIXELFORMAT_ARGB8888,
                                            SDL_TEXTUREACCESS_STREAMING, mTextureSize.x, mTextureSize.y);
             if (scrTexture) {
                 mTextureId = (ImTextureID)(scrTexture);

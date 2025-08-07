@@ -1,9 +1,9 @@
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/msg_list.h>
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/debuggerOps.h>
+#include <amDebugger/ui/uiView.h>
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/vm/absVM.h>
 #include <EASTL/fixed_string.h>
 #include <EASTL/fixed_vector.h>
 #include "qd/imGui/imGuiHelperClass.h"
@@ -33,7 +33,7 @@ public:
 struct DeclareDmaSrcUiArgs {
     uint16_t bltCon0;
     uint16_t bltCon1;
-    amD::AbsEmu::CustomRegs* custRegs;
+    amD::AbsVM::CustomRegs* custRegs;
     char dmaLetter;
     BC0F::Type srcEnFlag;
     CustReg bltXPtH;
@@ -109,9 +109,9 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi()
 void BlitterWnd::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    AbsEmu* vm = dbg->vm;
+    AbsVM* vm = dbg->vm;
 
-    amD::AbsEmu::CustomRegs* custRegs = vm->custom;
+    amD::AbsVM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
 

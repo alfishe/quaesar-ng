@@ -9,7 +9,7 @@ FORWARD_DECLARATION_2(qd, UiOperation);
 namespace qim {
 class UiMenuBeh;
 
-
+#if 0
 
 struct UiMenu : public qim::CtrlElement {
     QIM_ELEMENT_CLASS(qim::UiMenu, qim::CtrlElement, qim::UiMenuBeh);
@@ -86,7 +86,6 @@ public:
 class UiMenuOperationBeh;
 
 
-
 struct UiMenuOperation : public qim::CtrlElement {
     QIM_ELEMENT_CLASS(qim::UiMenuOperation, qim::CtrlElement, qim::UiMenuOperationBeh);
 
@@ -111,6 +110,7 @@ public:
     Behavior* createElementData(const qd::TypeInfo& type) override { return new UiMenuOperation(); }
 
 }; // class UiMenuOperationBeh
+#endif //
 
 
 }; // namespace qim

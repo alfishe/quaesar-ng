@@ -2,7 +2,7 @@
 #include <EASTL/optional.h>
 #include <qd/stl/vector.h>
 #include "amDebugger/vm/memory.h"
-#include "amDebugger/ui/ui_view.h"
+#include "amDebugger/ui/uiView.h"
 #include "amDebugger/exprValue.h"
 
 FORWARD_DECLARATION_3(amD, cda, Item);

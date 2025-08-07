@@ -1,9 +1,16 @@
-#include "ui_view.h"
-#include <amDebugger/ui/dbgGuiDesktop.h>
+#include "uiView.h"
+#include <amDebugger/ui/debuggerDesktop.h>
 #include <qd/typeSystem/typeInfo.h>
 
 
 namespace amD {
+
+
+void* AmDbgWindow::getOpEnvPtr(const qd::TypeInfo& classType) const
+{
+    return ui->getOpEnvPtr(classType);
+}
+
 
 Debugger* AmDbgWindow::getDbg() const
 {

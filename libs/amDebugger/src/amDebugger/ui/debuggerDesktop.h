@@ -1,6 +1,6 @@
 #pragma once
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/uiView.h>
 #include "qd/qui/controls/desktop.h"
 #include "qd/stl/vector.h"
 #include "qd/base/base.h"
@@ -15,9 +15,9 @@ FORWARD_DECLARATION_3(qd, operation, Operation);
 namespace amD {
 
 //------------------------------------------------------------------------
-class DbgGuiDesktop : public qd::UiDesktop
+class DebuggerDesktop : public qd::UiDesktop, public qd::IOperationEnvironment
 {
-    TS_REFLECT_CLASS(amD::DbgGuiDesktop, qd::UiDesktop);
+    TS_REFLECT_CLASS(amD::DebuggerDesktop, qd::UiDesktop);
 
 public:
     amD::Debugger* m_pDbg = nullptr;
@@ -25,10 +25,10 @@ public:
     qd::ShortcutsMgr* m_pShortcutMgr = nullptr;
 
 public:
-    DbgGuiDesktop(Debugger* dbg);
+    DebuggerDesktop(Debugger* dbg);
     virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
 
-    virtual ~DbgGuiDesktop();
+    virtual ~DebuggerDesktop();
 
     void drawImGuiMainFrame();
 
@@ -46,6 +46,8 @@ public:
 
     qd::UiOperationMgr* getOperationMgr() const { return m_pOperationMgr; }
     qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
+
+    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
 
 private:
     void createAllUiWndows();

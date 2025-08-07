@@ -1,6 +1,6 @@
 #pragma once
 #include <imgui/imgui.h>
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/uiView.h>
 
 namespace amD {
 namespace window {

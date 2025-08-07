@@ -6,6 +6,7 @@
 
 FORWARD_DECLARATION_2(qd, AppPartsManager);
 FORWARD_DECLARATION_2(qd, ModuleManager);
+FORWARD_DECLARATION_2(qd, TypeInfo);
 FORWARD_DECLARATION_2S(qd, CreateApplicationParams);
 FORWARD_DECLARATION_3S(qd, appMsg, BaseMsg);
 
@@ -23,15 +24,13 @@ class Application
 
 public:
     Application();
+    virtual ~Application();
     inline static Application* g_pInstance = nullptr;
     static Application* get() { return g_pInstance; }
 
     virtual void onConstruct(qd::CreateApplicationParams& in);
 
-    virtual ~Application();
-
-
-    AppPartsManager* getAppParts() const { return m_pAppParts; }
+    qd::AppPartsManager* getAppParts() const { return m_pAppParts; }
 
     virtual void destroyImp() {}
     void destroy();
@@ -39,10 +38,15 @@ public:
     qd::EFlow requestAppToQuit();
     bool hasQuitRequest() const;
 
+    template<class T>
+    T* getInterface_()
+    {
+        return reinterpret_cast<T*>(getInterface(qd::typeof_<T>()));
+    }
+    virtual void* getInterface(const qd::TypeInfo& inerface) { return nullptr; }
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg);
 
     void sendAppEventMsg(qd::appMsg::BaseMsg& in_msg);
-
 
     void doMainLoop();
 

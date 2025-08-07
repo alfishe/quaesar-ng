@@ -58,6 +58,7 @@ bool Application::hasQuitRequest() const
 }
 
 
+
 qd::EFlow Application::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
 {
     return EFlow::NO_RESULT;

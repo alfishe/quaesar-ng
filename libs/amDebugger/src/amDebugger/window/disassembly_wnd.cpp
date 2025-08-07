@@ -1,9 +1,9 @@
 #include "disassembly_wnd.h"
 #include "qd/imGui/imGuiHelperClass.h"
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/msg_list.h>
-#include <amDebugger/ui/ui_style.h>
-#include <amDebugger/vm/absEmu.h>
+#include <amDebugger/debuggerOps.h>
+#include <amDebugger/ui/uiStyle.h>
+#include <amDebugger/vm/absVM.h>
 #include <capstone/capstone.h>
 #include <EASTL/fixed_string.h>
 #include <EASTL/string.h>
@@ -35,7 +35,7 @@ int find_disasm_addr_line_idx(const qd::vector<amD::cda::Item*> &disasm_lines, A
 void DisassemblyView::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    AbsEmu* vm = dbg->getVm();
+    AbsVM* vm = dbg->getVm();
     ImGuiContext& g = *ImGui::GetCurrentContext();
 
     // btn: goto addr

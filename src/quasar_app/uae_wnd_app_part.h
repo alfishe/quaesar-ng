@@ -7,6 +7,7 @@ struct SDL_Window;
 struct SDL_Texture;
 struct SDL_Renderer;
 class UaeWndDesktop;
+class UaeServerThread;
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 
 
@@ -18,7 +19,7 @@ class UaeWndAppPart : public qd::AppPart {
     TS_END();
 
 private:
-    class UaeWorker* m_pUaeWorker = nullptr;
+    ref_ptr<UaeServerThread> m_pUaeServer = nullptr;
     UaeWndDesktop* m_pDesktop = nullptr;
     int m_renderedFrameNo = -1;
     SDL_Window* m_pWindow = nullptr;
@@ -28,12 +29,13 @@ private:
     bool m_bShowImgui = false;
 
 public:
+    UaeWndAppPart();
+    virtual ~UaeWndAppPart();
+
     virtual void onPartCreate(AppPart::OnCreate_t& prm) override;
 
-    void createUaeWindow();
+    void _createUaeWindow();
     virtual void update(float dt, float time) override;
-
-    void updGuiMenus();
     virtual void render() override;
 
     virtual void destroyImp() override;
@@ -41,6 +43,7 @@ public:
     SDL_Window* getSdlWindow() const {
         return m_pWindow;
     }
+    void bringWndToFront();
 
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) override;
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
@@ -53,6 +56,7 @@ public:
     }
 
 private:
+    void _drawGuiMenus();
     void tryRecreateEmuScreenTexture(int newWidth, int newHeight);
     void destroyUaeWindow();
 

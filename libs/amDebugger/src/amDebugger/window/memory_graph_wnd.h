@@ -1,7 +1,7 @@
 #pragma once
 #include <amDebugger/vm/memory.h>
 #include "qd/math/point2.h"
-#include <amDebugger/ui/ui_view.h>
+#include <amDebugger/ui/uiView.h>
 #include "amDebugger/exprValue.h"
 
 

@@ -20,7 +20,7 @@
 #endif  // WIN32
 
 
-amD::QuasarApp* g_pApp = nullptr;
+QuasarApp* g_pApp = nullptr;
 QuaesarOptions g_initOptions = {};
 
 
@@ -39,8 +39,8 @@ int SDL_main(int argc, char* argv[]) {
     cliApp.parse(argc, argv);
 
     // Create Quaesar APP
-    NFD_Init();
-    g_pApp = new amD::QuasarApp();
+    NFD_Init();  // init NativeFileDialog lib
+    g_pApp = new QuasarApp();
     qd::CreateApplicationParams prm;
     g_pApp->onConstruct(prm);
 

@@ -1,4 +1,4 @@
-#include "dbgGuiDesktop.h"
+#include "debuggerDesktop.h"
 #include "amDebugger/commonOperations.h"
 #include "EASTL/optional.h"
 #include "EASTL/span.h"
@@ -13,7 +13,7 @@
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/typeSystem/typeRegistry.h"
 #include <amDebugger/dbgOperation.h>
-#include <amDebugger/shortcut_list.h>
+#include <amDebugger/shortcutsList.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
@@ -22,53 +22,50 @@
 namespace amD {
 
 using namespace operation;
-inline static const char* dma_options = "off\0"
-                                        "mode 2\0"
-                                        "mode 3\0"
-                                        "mode 4\0"
-                                        "\0";
 
 
-DbgGuiDesktop::DbgGuiDesktop(Debugger* in_dbg)
+DebuggerDesktop::DebuggerDesktop(Debugger* in_dbg)
     : m_pDbg(in_dbg)
 {}
 
 
-void DbgGuiDesktop::_drawMainMenuBar()
+void DebuggerDesktop::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
+        qd::IOperationEnvironment* env = this;
+
         if (auto pm = qIm::LockMenu("File"))
         {
         }
 
         if (auto pm = qIm::LockMenu("Emulator"))
         {
-            qIm::menuItemOperation(STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::UaeResetAmiga));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::UaeResetAmiga));
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
-            qIm::menuItemOperation(STRINGIFY(amD::operation::DebugTraceStart));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::DebugTraceStart));
             ImGui::Separator();
-            qIm::menuItemOperation(STRINGIFY(amD::operation::DisasmTraceStep));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::DisasmTraceStepOut));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::DebugTraceContinue));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::DisasmToggleBreakpoint));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::DisasmTraceStep));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::DisasmTraceStepOut));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::DebugTraceContinue));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::DisasmToggleBreakpoint));
             ImGui::Separator();
-            qIm::menuItemOperation(STRINGIFY(amD::operation::CopperTraceStep));
-            qIm::menuItemOperation(STRINGIFY(amD::operation::CopperToggleBreakpoint));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::CopperTraceStep));
+            qIm::menuItemOperation(env, STRINGIFY(amD::operation::CopperToggleBreakpoint));
             ImGui::Separator();
 
             amD::operation::DebugDmaOption* pDebugDmaOp;
             pDebugDmaOp = getOperationMgr()->getOperation_<amD::operation::DebugDmaOption>();
             if (pDebugDmaOp)
             {
-                int dmaMode = pDebugDmaOp->getCurDebugDmaMode();
+                int dmaMode = pDebugDmaOp->getCurDebugDmaMode(this);
                 int n = dmaMode > 0 ? dmaMode - 1 : 0;
-                if (ImGui::Combo(pDebugDmaOp->getName().c_str(), &n, dma_options))
-                    pDebugDmaOp->changeDebugDmaMode(n);
+                if (ImGui::Combo(pDebugDmaOp->getName().c_str(), &n, pDebugDmaOp->dma_options))
+                    pDebugDmaOp->changeDebugDmaMode(this, n);
             }
         }
 
@@ -89,7 +86,7 @@ void DbgGuiDesktop::_drawMainMenuBar()
 }
 
 
-void DbgGuiDesktop::onNodeCreated(qd::UiNodeCreator* mk)
+void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
 {
     TSuper::onNodeCreated(mk);
 
@@ -110,7 +107,7 @@ void DbgGuiDesktop::onNodeCreated(qd::UiNodeCreator* mk)
 }
 
 
-void DbgGuiDesktop::createAllUiWndows()
+void DebuggerDesktop::createAllUiWndows()
 {
     qd::TypeInfoSpan windowTypes = qd::TypeRegistry::get()->findAllDerivedFromTypesCached_<amD::AmDbgWindow>(false);
     for (int i = 0; i < windowTypes.size(); ++i)
@@ -130,15 +127,15 @@ void DbgGuiDesktop::createAllUiWndows()
 }
 
 
-DbgGuiDesktop::~DbgGuiDesktop()
+DebuggerDesktop::~DebuggerDesktop()
 {
     assert(m_pWindows.empty());
 }
 
 
-void DbgGuiDesktop::drawImGuiMainFrame()
+void DebuggerDesktop::drawImGuiMainFrame()
 {
-    getShortcuts()->update(m_pOperationMgr);
+    getShortcuts()->update(this, m_pOperationMgr);
 
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -167,8 +164,9 @@ void DbgGuiDesktop::drawImGuiMainFrame()
 }
 
 
-void DbgGuiDesktop::_drawToolBar()
+void DebuggerDesktop::_drawToolBar()
 {
+    qd::IOperationEnvironment* env = this;
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
@@ -205,7 +203,7 @@ void DbgGuiDesktop::_drawToolBar()
         {
             if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
             {
-                shMgr->triggerShortcut(pCurShortcut);
+                shMgr->triggerShortcut(env, pCurShortcut);
             }
             ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
 
@@ -231,7 +229,7 @@ void DbgGuiDesktop::_drawToolBar()
         pCurShortcut = shMgr->getShortcut(shortcut::EId::DebugWaitScanLines);
         if (ImGui::Button("Wait Scanlines"))
         {
-            shMgr->triggerShortcut(pCurShortcut);
+            shMgr->triggerShortcut(env, pCurShortcut);
         }
     }
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
@@ -239,11 +237,20 @@ void DbgGuiDesktop::_drawToolBar()
 
 
 
-void DbgGuiDesktop::destroy()
+void DebuggerDesktop::destroy()
 {
     TSuper::destroy();
 }
 
+
+
+void* DebuggerDesktop::getOpEnvPtr(const qd::TypeInfo& classType) const
+{
+    if (classType == m_pDbg->getStaticTypeInfo())
+        return m_pDbg;
+    assert(0);
+    return nullptr;
+}
 
 
 }; // namespace amD

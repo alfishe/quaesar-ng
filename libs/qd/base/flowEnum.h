@@ -28,6 +28,7 @@ struct EFlow {
     {}
 
     constexpr operator EFlow::Type () const { return mVal; }
+    bool isDone() const { return mVal == EFlow::DONE; }
     bool isStop() const { return mVal == EFlow::STOP; }
     bool isContinue() const { return mVal == EFlow::CONTINUE; }
     bool hasResult() const { return mVal != EFlow::UNDEF; }

@@ -11,6 +11,8 @@
 namespace qd {
 class UiOperation;
 struct UiOperationCreator;
+class IOperationEnvironment;
+FORWARD_DECLARATION_3S(operation, args, Base);
 
 
 class UiOperationMgr : public qd::RefCounted
@@ -37,7 +39,7 @@ public:
 
     int getNumOps() const { return (int)m_pOperations.size(); }
 
-    EFlow applyOperationMsg(qd::operation::args::Base* p_msg) const;
+    //EFlow applyOperationMsg(qd::IOperationEnvironment* env, qd::operation::args::Base* p_msg) const;
 
     void addOperation(UiOperation* pNewOperation);
 
@@ -53,36 +55,27 @@ public:
         return static_cast<TClass*>(pOp);
     }
 
-    template<typename TClass>
-    void doOperation_() const
-    {
-        qd::UiOperation* pOp = findOperationByType(TClass::getStaticTypeInfo());
-        assert(pOp);
-        if (pOp)
-            pOp->doOperation();
-    }
+//     template<typename TClass>
+//     void doOperation_() const
+//     {
+//         qd::UiOperation* pOp = findOperationByType(TClass::getStaticTypeInfo());
+//         assert(pOp);
+//         if (pOp)
+//             pOp->doOperation();
+//     }
 
-
-    void sendOperationMsg(const qd::TypeInfo& msg_type, qd::operation::args::Base& p_msg) const;
-
-    template<class TMsg>
-    void sendOperationMsgT(TMsg& msg) const
-    {
-        sendOperationMsg(TMsg::getStaticTypeInfo(), msg);
-    }
+//     void sendOperationMsg(qd::IOperationEnvironment* env, const qd::TypeInfo& msg_type, qd::operation::args::Base& p_msg) const;
+//
+//     template<class TMsg>
+//     void sendOperationMsgT(TMsg& msg) const
+//     {
+//         sendOperationMsg(TMsg::getStaticTypeInfo(), msg);
+//     }
 
 }; // class UiOperationMgr
 //////////////////////////////////////////////////////////////////////////
 
 
-
-struct OperationSupportedMsgVisitor : public operation::args::Base {
-    qd::vector<const qd::TypeInfo*> m_pSupportedMtd;
-
-public:
-    virtual bool tryCast(const qd::TypeInfo& msg_type) override;
-};
-//////////////////////////////////////////////////////////////////////////
 
 
 
