@@ -17,7 +17,7 @@
 #include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
 #include "quasar_app/quaesar.h"
-#include "quasar_app/uae_wnd_app_part.h"
+#include "quasar_app/uae_app_imp/uae_client_app_part.h"
 
 
 namespace amD::operation {
@@ -36,7 +36,7 @@ void DebugDmaOption::changeDebugDmaMode(qd::IOperationEnvironment* env, int nMod
 
 
 SDL_Window* UaeWndAlwaysOnTop::getEmulatorMainWindow(qd::IOperationEnvironment* env) {
-    return g_pApp->m_pUaeAppPart->getSdlWindow();
+    return g_pApp->m_pUaeClientAppPart->getSdlWindow();
 }
 
 

@@ -4,7 +4,7 @@ namespace amD {
 
 static constexpr int breakpoint_reg_end = 37;  // instead of #define BREAKPOINT_REG_END
 
-enum CopperAddr_ {
+enum ECopperAddr_ {
     CopperAddr_null = 0,
     CopperAddr_cop1lc = 1,
     CopperAddr_cop2lc = 2,
@@ -12,7 +12,8 @@ enum CopperAddr_ {
     CopperAddr_ip = -1,
 };
 
-enum CpuFlg_ {
+
+enum ECpuFlg_ {
     CpuFlg_Z,
     CpuFlg_C,
     CpuFlg_V,
@@ -21,7 +22,7 @@ enum CpuFlg_ {
 };
 
 
-enum CopperStates {
+enum ECopperStates {
     COP_stop,
     COP_waitforever,
     COP_read1,
@@ -46,13 +47,10 @@ enum CopperStates {
 };
 
 
-enum DebuggerMode {
+enum EDebuggerMode {
     DebuggerMode_Live,
     DebuggerMode_Break,
 };
 
 
-
 };  // namespace amD
-
-

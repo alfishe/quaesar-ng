@@ -55,14 +55,12 @@
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
-#include <amdbg_uae/uae_server_thread.h>
-#include <qd/Log/log.h>
+#include <qd/log/log.h>
 #include <qd/thread/thread.h>
 #include <quaesar.h>
 #include <quaesar_debug.h>
-#include <uae_wnd_app_part.h>
-#include <cstdarg>
 #include <filesystem>
+#include "qsrimp_proxy.h"
 
 
 int avioutput_enabled = 0;
@@ -588,11 +586,8 @@ void console_flush() {
 }
 
 int console_get(char* out, int maxlen) {
-    auto server = UaeServerThread::get();
-    if (!server)
-        return -1;
     for (;;) {
-        int len = server->waitConsoleCmd(out, maxlen);
+        int len = qsrimp_waitConsoleCmd(out, maxlen);
         if (len > 0)
             return len;
     }
@@ -896,7 +891,7 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    UaeServerThread::get()->setUaeInitialized(true);
+    qsrimp_setUaeInitiized(true);
     return 1;
 }
 
@@ -916,14 +911,13 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     const int imgSizeX = vb->outwidth;
     const int imgSizeY = vb->outheight;
     uint8_t* sptr = vb->bufmem;
-    UaeServerThread* pWorker = UaeServerThread::get();
-    if (uint32_t* pDestTxBuf = pWorker->lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
+    if (uint32_t* pDestTxBuf = qsrimp_lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
         for (int y = 0; y < imgSizeY; y++) {
             uint8_t* dest = (uint8_t*)&pDestTxBuf[y * imgSizeX];
             memcpy(dest, sptr, imgSizeX * 4);
             sptr += vb->rowbytes;
         }
-        pWorker->unlockUaeScreenTexBuf();
+        qsrimp_unlockUaeScreenTexBuf();
     }
 }
 
@@ -955,7 +949,7 @@ bool gui_ask_disk(int, char*) {
 }
 
 bool handle_events() {
-    return UaeServerThread::get()->onUaeHandleEvents();
+    return qsrimp_onUaeHandleEvents();
 }
 
 bool hydra_init(autoconfig_info*) {

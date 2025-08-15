@@ -1,4 +1,4 @@
-#include "qd/app/appliction.h"
+#include "qd/app/application.h"
 #include "qd/app/appMessages.h"
 #include "qd/app/appPartsMgr.h"
 #include "SDL_events.h"

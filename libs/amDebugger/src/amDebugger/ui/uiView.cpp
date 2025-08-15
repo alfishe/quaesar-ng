@@ -18,13 +18,15 @@ Debugger* AmDbgWindow::getDbg() const
 }
 
 
-namespace window {
-
-void ImGuiDemoWindow::drawImp() {
-    ImGui::ShowDemoWindow(&m_bVisible);
+AbsVM::VM* AmDbgWindow::getVm() const
+{
+    return getDbg()->getVm();
 }
 
-};  // namespace window
+
+void window::ImGuiDemoWindow::drawImp() {
+    ImGui::ShowDemoWindow(&m_bVisible);
+}
 
 
 void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, amD::AmDbgWindow * newInst)

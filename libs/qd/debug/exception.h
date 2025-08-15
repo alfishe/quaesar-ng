@@ -70,14 +70,11 @@ public:
         QDASSERT_EX(0, "%s", m_Error.c_str());
     }
 
-
-    explicit Exception(const string& Error) : m_ErrType(EException::DEFAULT), m_Error(Error) {
+    explicit Exception(const qd::string& Error) : m_ErrType(EException::DEFAULT), m_Error(Error) {
         QDASSERT_EX(0, "%s", m_Error.c_str());
     }
 
-
     explicit Exception(const char* pError, ...);
-    explicit Exception(const wchar_t* pError, ...);
 
 
     qd::EException getErrType() const {

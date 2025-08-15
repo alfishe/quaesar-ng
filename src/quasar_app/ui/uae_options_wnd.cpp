@@ -8,17 +8,21 @@
 // clang-format on
 #include "uae_options_wnd.h"
 #include <nfd.h>
+#include "amDebugger/vm/absVM.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 #include "qd/imGui/imGuiHelperClass.h"
 #include "qd/log/log.h"
 #include "qd/qimGui/controls/qimInputBox.h"
 #include "qd/qimGui/qimGui.h"
+#include "qd/qui/uiMessages.h"
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
 
 
-void show_image_file_open_dlg(::floppyslot& cfgFloppy) {
+namespace qsr {
+
+void open_file_dlg_select_adf(AbsVM::Floppy& cfgFloppy) {
     nfdu8char_t* outPath;
     nfdu8filteritem_t filters[1] = {{"Amiga images", "adf,exe,dms,zip"}};
     nfdopendialogu8args_t args = {0};
@@ -26,42 +30,45 @@ void show_image_file_open_dlg(::floppyslot& cfgFloppy) {
     args.filterCount = EAArrayCount(filters);
     nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
     if (result == NFD_OKAY) {
-        strcpy(cfgFloppy.df, outPath);
+        //strcpy(cfgFloppy.df, outPath);
         NFD_FreePathU8(outPath);
     }
 }
 
 
-void opt_floppy_draw(int nFloppy) {
+void opt_floppy_draw(OptionDrawContext* ctx, int nFloppy) {
     qd::string strDF = qd::string_format("DF%i:", nFloppy);
 
-    floppyslot& cfgFloppy = ::changed_prefs.floppyslots[nFloppy];
-    bool bEnabled = cfgFloppy.dfxtype >= 0;
+    //::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[nFloppy];
+    AbsVM::Floppy* pFloppyCfg = ctx->vm->floppySlots[nFloppy];
+    bool bEnabled = pFloppyCfg->active;
     if (ImGui::Checkbox(strDF.c_str(), &bEnabled))
-        cfgFloppy.dfxtype = bEnabled ? 0 : -1;
+        pFloppyCfg->active = bEnabled;  // ? 0 : -1;
 
     if (bEnabled) {
         ImGui::SameLine();
         if (ImGui::Button("Select image file")) {
-            show_image_file_open_dlg(cfgFloppy);
+            open_file_dlg_select_adf(*pFloppyCfg);
         }
         ImGui::SameLine();
-        ImGui::Checkbox("Write-protected", &cfgFloppy.forcedwriteprotect);
+        bool wp = pFloppyCfg->writeProtect;
+        if (ImGui::Checkbox("Write-protected", &wp))
+            pFloppyCfg->writeProtect = wp;
 
         ImGui::SameLine();
         if (ImGui::Button("Eject")) {
-            cfgFloppy.dfxtype = -1;
-            cfgFloppy.df[0] = 0;
+            pFloppyCfg->active = false;
+            //cfgFloppy.df[0] = '\0';
         }
-        ImGui::InputText("##Image file", cfgFloppy.df, sizeof(cfgFloppy.df), ImGuiInputTextFlags_EnterReturnsTrue);
+        //ImGui::InputText("##Image file", cfgFloppy.df, sizeof(cfgFloppy.df), ImGuiInputTextFlags_EnterReturnsTrue);
     }
 }
 
 
-void draw_option(UOption* pOption) {
-    if (pOption->m_drawCb) {
+void draw_option(OptionDrawContext* ctx, UOption* pOption) {
+    if (pOption->m_drawOptionCb) {
         ImGui::PushID(pOption);
-        pOption->m_drawCb();
+        pOption->m_drawOptionCb(ctx);
         ImGui::PopID();
     }
 }
@@ -80,10 +87,10 @@ void UaeOptionsDlg::onNodeCreated(qd::UiNodeCreator* mk) {
     UCategory* pCatCpu = createCategory(EOptionCat::HARDWARE, EOptionCat::CPU);
     UCategory* pCatFloppy = createCategory(EOptionCat::HARDWARE, EOptionCat::FLOPPY);
 
-    createOption(pCatFloppy, "Floppy 0")->setDrawCallback([]() { opt_floppy_draw(0); });
-    createOption(pCatFloppy, "Floppy 1")->setDrawCallback([]() { opt_floppy_draw(1); });
-    createOption(pCatFloppy, "Floppy 2")->setDrawCallback([]() { opt_floppy_draw(2); });
-    createOption(pCatFloppy, "Floppy 3")->setDrawCallback([]() { opt_floppy_draw(3); });
+    createOption(pCatFloppy, "Floppy 0")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 0); });
+    createOption(pCatFloppy, "Floppy 1")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 1); });
+    createOption(pCatFloppy, "Floppy 2")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 2); });
+    createOption(pCatFloppy, "Floppy 3")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 3); });
 }
 
 
@@ -152,6 +159,8 @@ void UaeOptionsDlg::drawContentImp() {
     ImVec2 wndR = ImVec2(0, rgn.y);
     if (auto bc = qIm::LockChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders,
                                  ImGuiWindowFlags_None)) {
+        OptionDrawContext ctx;
+        ctx.vm = m_pVm;
         UCategory* pSelCat = m_pSelectedCat;
         if (pSelCat) {
             switch (pSelCat->m_id) {
@@ -166,7 +175,7 @@ void UaeOptionsDlg::drawContentImp() {
                         for (UOption* pOpt : pSelCat->m_pOptions) {
                             if (!pOpt)
                                 continue;
-                            draw_option(pOpt);
+                            draw_option(&ctx, pOpt);
                         }
                     }
                 } break;
@@ -182,6 +191,15 @@ void UaeOptionsDlg::drawContentImp() {
     ImGui::SameLine();
     if (ImGui::Button("Cancel", ImVec2(100, 0)))
         setVisible(false);
+}
+
+
+EFlow UaeOptionsDlg::onUiNodeMessageProc(qd::UiMessage* in_msg) {
+    if (auto p = in_msg->cast_<qd::uiMsg::OnVisibleChanged>()) {
+        if (p->m_bVisible)
+            BPT();
+    }
+    return TSuper::onUiNodeMessageProc(in_msg);
 }
 
 
@@ -202,3 +220,6 @@ UCategory* UaeOptionsDlg::createCategory(EOptionCat nParentCat, EOptionCat nOpt)
 
 UaeOptionsDlg::~UaeOptionsDlg() {
 }
+
+
+};  // namespace qsr

@@ -38,7 +38,7 @@ void UiOperationMgr::createOperations(qd::UiOperationCreator* ca)
         auto* pCreator = curOperationType->getAttribute_<qd::tsAttr::CreateClassCb>();
         if (!pCreator)
         {
-            SDL_Log("Creator not defined in class:'%s'", curOperationType->getFullName().c_str());
+            log_error("Creator not defined in class:'%s'", curOperationType->getFullName().c_str());
             continue;
         }
         ca->uiOpsMgr = this;
@@ -101,8 +101,8 @@ void UiOperationMgr::addOperation(UiOperation* pNewOperation)
     {
         //auto& actList = m_operationsByMsgTypeMap[pCurType];
 
-        auto& actList = m_operationsByMsgTypeMap[curOperationType];
-        actList.push_back(pNewOperation);
+//         auto& actList = m_operationsByMsgTypeMap[curOperationType];
+//         actList.push_back(pNewOperation);
     }
 }
 

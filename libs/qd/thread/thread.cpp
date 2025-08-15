@@ -1,7 +1,156 @@
 #include "thread.h"
+#include "qd/debug/exceptTryCatch.h"
+#include "qd/log/log.h"
+#include "qd/debug/exception.h"
+#include "SDL_thread.h"
 
 
 namespace qd {
+
+//////////////////////////////////////////////////////////////////////////
+namespace Details {
+class CThreadData
+{
+public:
+    //void (*m_pThreadProc)(void* pData) = nullptr;
+    Thread::ThreadFunc m_pThreadProc;
+    qd::Thread* m_pThread = nullptr; // backPtr
+    bool m_bStarted = false;
+
+public:
+    CThreadData(qd::Thread* pThread)
+        : m_pThread(pThread)
+    {}
+
+    ~CThreadData()
+    {
+    }
+
+    void setOnThreadDone()
+    {
+        m_bStarted = false;
+        m_pThread->m_OnDoneEvent.set();
+    }
+}; // struct CThreadData
+
+
+int _threadSDLProcStatic(void* _pData)
+{
+    qd::Details::CThreadData* pThreadData = static_cast<qd::Details::CThreadData*>(_pData);
+    if (pThreadData)
+    {
+        pThreadData->m_bStarted = true;
+        G_TRY
+        {
+            pThreadData->m_pThreadProc();
+        }
+        G_CATCH(std::exception & ex)
+        {
+            log_error("EXCEPTION WARNING: Thread Exists with Exception: \"%s\"", ex.what());
+            assert2(0, "Thread - Exception: %s", ex.what());
+        };
+        G_CATCH(...)
+        {
+            log_error("UNHANDLED THREAD EXCEPTION ERROR HAPPENED!");
+            assert2(0, "Thread -Unhandled Exception");
+        };
+        pThreadData->setOnThreadDone();
+    }
+    return 0;
+}
+
+}; // namespace Details
+//////////////////////////////////////////////////////////////////////////
+
+
+ Thread::~Thread()
+{
+    if (m_pSDLThread)
+    {
+        SDL_DetachThread(m_pSDLThread);
+        m_pSDLThread = nullptr;
+    }
+    SAFE_DELETE(m_pThreadData);
+}
+
+
+ void Thread::create(void (*pThreadProc)(void*), void* pData, uint32_t nStackSize /*= 0*/)
+ {
+     create([pThreadProc, pData]() { (*pThreadProc)(pData); }, nStackSize);
+ }
+
+
+void Thread::create(Thread::ThreadFunc&& threadProc, uint32_t nStackSize /*= 0*/)
+{
+    assert(!m_pThreadData);
+    m_pThreadData = new Details::CThreadData(this);
+    m_pThreadData->m_pThreadProc = std::move(threadProc);
+    //m_pThreadData->m_pData = pData;
+
+    m_pSDLThread = SDL_CreateThread(Details::_threadSDLProcStatic, m_pThreadName.data(), m_pThreadData);
+    if (!m_pSDLThread)
+        throw qd::Exception("can't create thread");
+}
+
+
+bool Thread::isActive()
+{
+    if (!m_pSDLThread)
+        return false;
+    return true;
+}
+
+void Thread::kill()
+{
+    SDL_DetachThread(m_pSDLThread);
+    m_pSDLThread = nullptr;
+    m_pThreadData = nullptr;
+}
+
+
+void Thread::join()
+{
+    SDL_WaitThread(m_pSDLThread, nullptr);
+    m_pSDLThread = nullptr;
+    m_pThreadData = nullptr;
+}
+
+
+bool Thread::waitForDeath(float TimeOut)
+{
+    if (!m_pThreadData || !m_pSDLThread)
+        return true;
+
+    if (m_pThreadData->m_bStarted && m_OnDoneEvent.wait((uint32_t)TimeOut))
+    { // Done Event
+        // WAIT IS STILL ALIVE
+        if (m_pThreadData && m_pThreadData->m_bStarted)
+        {
+            return false;
+        }
+        SDL_WaitThread(m_pSDLThread, nullptr);
+        // SDL_DetachThread(m_pSDLThread);
+        m_pSDLThread = nullptr;
+        m_pThreadData = nullptr;
+        return true;
+    }
+    else
+    {
+        if (m_pThreadData->m_bStarted)
+            return false;
+        else
+            return true;
+    }
+}
+
+
+
+void Thread::setThreadName(const qd::string_view& pName)
+{
+    m_pThreadName = pName;
+}
+
+
 
 ThreadEvent::ThreadEvent(bool auto_reset_event)
     : mbState(false)

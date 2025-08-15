@@ -21,7 +21,7 @@ class UiOperationMgr : public qd::RefCounted
     qd::vector<ref_ptr<UiOperation>> m_pOperations;
     using TOpList = qd::vector<ref_ptr<UiOperation>>;
     qd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
-    qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
+    //qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
 
     bool mInit = false;
 

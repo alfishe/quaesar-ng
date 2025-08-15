@@ -14,22 +14,25 @@
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/emuDefs.h>
 #include <amDebugger/vm/memory.h>
+#include <qd/Base/baseTypes.h>
 #include <qd/Base/color.h>
-#include <qd/Base/types.h>
 #include "qd/typeSystem/typeDeclare.h"
 
 
-namespace amD {
+FORWARD_DECLARATION_1(UaeServerThread);
 
 
-namespace vm {
-namespace imp {
+namespace amD::vm::imp {
 
-class UaeVmImp final : public amD::AbsVM {
-    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, amD::AbsVM);
+class UaeVmImp final : public AbsVM::VM {
+    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, AbsVM::VM);
+    UaeServerThread* m_pUaeThread = nullptr;
 
 public:
     UaeVmImp();
+    void setServerImp(UaeServerThread* pUaeThread) {
+        m_pUaeThread = pUaeThread;
+    }
     virtual ~UaeVmImp();
     virtual void init() override;
 
@@ -49,7 +52,7 @@ public:
             return m68k_getpc();
         }
 
-        virtual bool getFlg(CpuFlg_ f) const override {
+        virtual bool getFlg(ECpuFlg_ f) const override {
             switch (f) {
                 case amD::CpuFlg_Z:
                     return GET_ZFLG();
@@ -70,6 +73,7 @@ public:
         }
     };  // struct Cpu
     Cpu instCpu;
+
 
     ///
     struct Memory final : public AbsVM::Memory {
@@ -95,6 +99,7 @@ public:
         }
     };  // struct Memory
     Memory instMemory;
+
 
     //
     struct Blitter final : public AbsVM::Blitter {
@@ -126,7 +131,7 @@ public:
     class Copper final : public AbsVM::Copper {
     public:
         virtual void fetch() override;
-        virtual AddrRef getCopperAddr(CopperAddr_ copno) override;
+        virtual AddrRef getCopperAddr(amD::ECopperAddr_ copno) override;
     };  // class Copper
     Copper instCopper;
 
@@ -134,9 +139,13 @@ public:
     class Emu final : public AbsVM::Emu {
     public:
         UaeVmImp* vm = nullptr;
-        virtual void setDebugMode(DebuggerMode debug_mode) override;
+        virtual void setDebugMode(amD::EDebuggerMode debug_mode) override;
         bool isDebugActivatedFull() const;
         bool isDebugActivated() const;
+        virtual void getScreenSize(int* out_w, int* out_h) const override {
+            *out_w = 754;
+            *out_h = 576;
+        }
     };  // class Emu
     Emu instEmu;
 
@@ -145,6 +154,4 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-};  // namespace imp
-};  // namespace vm
-};  //namespace amD
+};  //namespace amD::vm::imp

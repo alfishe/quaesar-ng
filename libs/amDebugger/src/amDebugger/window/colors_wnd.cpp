@@ -9,7 +9,7 @@ namespace amD {
 namespace window {
 
 void ColorsWnd::drawContentImp() {
-    AbsVM* vm = getDbg()->getVm();
+    AbsVM::VM* vm = getDbg()->getVm();
 
     eastl::fixed_vector<qd::Color, 256> palette;
 

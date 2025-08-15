@@ -76,18 +76,11 @@ void TypeRegistry::bindNamedTypeInfo(const TypeInfo& ti)
 }
 
 
-const TypeInfo& TypeRegistry::_createUnNamedTypeInfoByStdType(const StdTypeId& ti)
+const TypeInfo& TypeRegistry::_createUnNamedTypeInfoByStdType(const qd::StdTypeId& ti)
 {
     SharedData* pSharedData = getSharedData();
     TypeInfoMap& typeMap = pSharedData->m_TypeMap;
     assert(typeMap.find(ti.getTypePtr()) == typeMap.end());
-    //     if (Iter != typeMap.end())
-    //     {
-    //         TypeInfo* pOldType = Iter->second;
-    //         assert(pOldType->getStdTypeId() == ti);
-    //         return pOldType;
-    //     }
-
     TypeInfo* pType = new TypeInfo(ti);
     typeMap[ti.getTypePtr()] = pType;
     return *pType;
@@ -98,9 +91,7 @@ void TypeRegistry::_createSharedData() const
 {
     TypeRegistry* pThis = const_cast<TypeRegistry*>(this);
     assert(pThis == TypeRegistry::get());
-    pThis->m_pSharedData = new SharedData();
-
-    TypeRegistry::SharedData* pData = pThis->m_pSharedData;
+    pThis->m_pSharedData = new TypeRegistry::SharedData();
 
     TypeInfoBuilder voidBldr(makeStdTypeId_<void>(), pThis);
     voidBldr.declareType("void");

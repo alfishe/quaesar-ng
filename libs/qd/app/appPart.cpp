@@ -1,6 +1,6 @@
-#include <qd/app/appliction.h>
-#include <qd/app/appPart.h>
-#include <qd/app/appPartsMgr.h>
+#include "qd/app/application.h"
+#include "qd/app/appPart.h"
+#include "qd/app/appPartsMgr.h"
 #include "qd/app/appMessages.h"
 
 
@@ -54,7 +54,7 @@ bool AppPart::setPartActive(bool bActive)
 }
 
 
-bool AppPart::setPartVisisble(bool bPartVisisble)
+bool AppPart::setPartVisible(bool bPartVisisble)
 {
     if (isPartVisible() == bPartVisisble)
         return bPartVisisble;

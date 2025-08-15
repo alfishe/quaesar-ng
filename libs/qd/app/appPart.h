@@ -1,10 +1,10 @@
 #pragma once
-#include "qd/base/flowEnum.h"
+#include "qd/base/eFlow.h"
 #include "qd/stl/string.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include <qd/base/base.h>
 //#include <qd/base/classIdCC.h>
-#include <qd/base/ref_ptr.h>
+#include <qd/stl/ref_ptr.h>
 #include <qd/enum/enumBase.h>
 #include <qd/node/node.h>
 #include <qd/typeSystem/reflectedType.h>
@@ -31,7 +31,7 @@ struct EAppPartMtd {
 
 
 //////////////////////////////////////////////////////////////////////////
-// CrioGen Application Parts
+// qd Application Parts
 class AppPart : public qd::Node
 {
     TS_BEGIN_REFLECT_CLASS(qd::AppPart, qd::Node);
@@ -42,7 +42,7 @@ class AppPart : public qd::Node
 protected:
     qd::string m_PartName;
     EAppPartMtd m_Methods;
-    float m_ZOrder = 0; // CrioGen.AppParts.EBaseZOrder
+    float m_ZOrder = 0; // qd.AppParts.EBaseZOrder
     qd::Application* m_pApp = nullptr;
     int m_nUpdates = 0;
     bool m_bPartInit = false;
@@ -80,7 +80,7 @@ public:
     bool setPartActive(bool bActive);
 
     bool isPartVisible() const { return hasMtd(EAppPartMtd::RENDER); }
-    bool setPartVisisble(bool PartVisisble);
+    bool setPartVisible(bool PartVisisble);
 
 
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg);

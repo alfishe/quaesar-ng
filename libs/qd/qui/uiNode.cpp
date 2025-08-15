@@ -240,7 +240,7 @@ bool UiNode::setVisible(bool bVisible)
         return bVisible;
     m_bVisible = bVisible;
 
-    uiMsg::OnVisibleChanged t;
+    qd::uiMsg::OnVisibleChanged t;
     t.m_pCtrl = this;
     t.m_bVisible = bVisible;
     onUiNodeMessageProc(&t);

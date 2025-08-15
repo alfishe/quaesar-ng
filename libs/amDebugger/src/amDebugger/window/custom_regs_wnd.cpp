@@ -9,7 +9,7 @@ namespace window {
 
 
 struct FlagsTooltipContent {
-    void drawRegisterFlagsTooltip(amD::AbsVM::CustomRegs* custRegs, CustReg reg_id)
+    void drawRegisterFlagsTooltip(AbsVM::CustomRegs* custRegs, amD::CustReg reg_id)
     {
         const CustomFlagsDesc* fd = reg_id.getFlagDesc();
         if (!fd)
@@ -63,7 +63,7 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
 
 
 struct DrawCustomRegColumn {
-    amD::AbsVM::CustomRegs* custRegs;
+    AbsVM::CustomRegs* custRegs;
     void drawColumn(CustReg reg_id) {
         stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
         ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
@@ -97,9 +97,9 @@ private:
 
 void CustomRegsWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    amD::AbsVM* vm = dbg->vm;
+    AbsVM::VM* vm = dbg->vm;
 
-    amD::AbsVM::CustomRegs* custRegs = vm->custom;
+    AbsVM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;
@@ -135,12 +135,6 @@ void CustomRegsWnd::drawContentImp() {
             ImGui::EndTable();
         }
     }
-
-    //    if (ImGui::BeginPopupContextItem("#flagsPopup", ImGuiPopupFlags_MouseButtonLeft)) {
-    //         FlagsTooltipContent flgContent;
-    //         flgContent.drawRegisterFlagsTooltip(custRegs);
-    //        ImGui::EndPopup();
-    //    }
 }
 
 };  // namespace window

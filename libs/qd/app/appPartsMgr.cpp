@@ -251,7 +251,7 @@ void AppPartsManager::_onImGuiDebugControl(qd::ImAPI::CImGuiBase& im)
             bool bVis = pCurPart->isPartVisible();
             if (im.Checkbox("IsVisible", &bVis))
             {
-                pCurPart->setPartVisisble(bVis);
+                pCurPart->setPartVisible(bVis);
             }
             float zOrder = pCurPart->m_ZOrder.ToFloat();
             if (im.InputFloat("ZOrder", &zOrder))

@@ -48,7 +48,7 @@ public:                                                                         
     inline static const qd::TypeInfo* s_pTypeInfo = qd::_regTypeInfo_<ClassMeta>(); \
     constexpr static THash32 CID = qd::hash_type_info_name(#ObjectClass);           \
     QD_DISABLE_CLANG_WARNING("-Winconsistent-missing-override");                    \
-    virtual THash32 getCid() const /*override*/                                     \
+    virtual inline THash32 getCid() const /*override*/                                     \
     {                                                                               \
         return ObjectClass::CID; /* constexpr ID from fnv1hhash of type name */     \
     }                                                                               \

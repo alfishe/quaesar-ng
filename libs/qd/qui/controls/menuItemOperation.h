@@ -18,6 +18,7 @@ public:
     {
         ImGuiStorage* pImGuiStorage = ImGui::GetStateStorage();
 
+        // find & store operation Type
         void** pCachedOpInstance = pImGuiStorage->GetVoidPtrRef(ImGui::GetID(pOperationClass));
         if (!*pCachedOpInstance)
         {
@@ -73,5 +74,18 @@ inline void menuItemOperation(qd::IOperationEnvironment* env, const char* pOpera
 {
     qIm::MenuItemOperation menu(env, pOperationClass, bDoOperation);
 }
+
+
+inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* p_arg, const char* gui_label)
+{
+    const char* shortcutName = "";
+    bool bChecked = false;
+    bool bEnabled = true;
+    if (ImGui::MenuItem(gui_label, shortcutName, &bChecked, bEnabled))
+    {
+        pEnv->applyOperationMsg(p_arg);
+    }
+}
+
 
 }; // namespace qIm

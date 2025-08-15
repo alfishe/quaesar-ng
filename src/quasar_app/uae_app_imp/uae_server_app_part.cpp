@@ -1,0 +1,46 @@
+#include "uae_server_app_part.h"
+#include "qd/thread/thread.h"
+#include "quaesar_app.h"
+#include "uae_server_thread.h"
+
+
+namespace qsr {
+
+
+UaeServerAppPart::UaeServerAppPart() {
+}
+
+
+UaeServerAppPart::~UaeServerAppPart() {
+}
+
+
+void UaeServerAppPart::onPartCreate(qd::AppPart::OnCreate_t& prm) {
+    TSuper::onPartCreate(prm);
+
+    m_pUaeThread = new UaeServerThread();
+    m_pUaeThread->initialize();
+
+    QuaesarServersMgr* pSvMgr = ((QuasarApp*)getApp())->m_pServersMgr;
+    pSvMgr->registerVmServer(EQuaServerId::S_UAE, m_pUaeThread);
+}
+
+
+void UaeServerAppPart::destroyImp() {
+    m_pUaeThread->destroy();
+    SAFE_DELETE(m_pUaeThread);
+    return TSuper::destroyImp();
+}
+
+
+AbsVM::VM* UaeServerAppPart::getVm() const {
+    return m_pUaeThread->getVm();
+}
+
+
+UaeServerThread* UaeServerAppPart::getUaeThread() const {
+    return m_pUaeThread;
+}
+
+
+};  // namespace qsr

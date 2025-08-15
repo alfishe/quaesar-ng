@@ -1,20 +1,23 @@
 #pragma once
 #include <SDL.h>
 #include <deque>
+#include "amDebugger/dbgConnection.h"
 #include "amDebugger/debuggerServer.h"
 #include "qd/base/base.h"
 #include "qd/qui/uiOperation.h"
 #include "qd/stl/string.h"
-#include "qd/thread/thread.h"
+#include "qd/thread/mutex.h"
+//#include "uae_vm_imp.h"
 
 
 FORWARD_DECLARATION_2(qd, ThreadEvent);
+FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 
 
 //////////////////////////////////////////////////////////////////////////
 // UAE's parent server-work-thread
 // (it works in the same thread as UAE)
-class UaeServerThread : public amD::DebuggerServer {
+class UaeServerThread : public amD::IDebuggerServer {
     struct SDL_Thread* m_uaeThread = nullptr;  // start UAE in separate thread
     inline static UaeServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;
@@ -28,6 +31,8 @@ public:
     uint32_t* m_pAmigaBuffer = nullptr;
     qd::ThreadEvent* m_onUaeInitialized = nullptr;  // event to wait for UAE initialization
     SDL_atomic_t m_scrFrameNo = {};
+    ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;
+    ref_ptr<amD::IDbgConnection> m_pConnection = amD::create_shared_connection("UAE server");  //temp
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
     virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
@@ -44,6 +49,11 @@ public:
     int getScrFrameNo();
     void pushSdlEvent(const SDL_Event& event);
     bool onUaeHandleEvents();
+
+    AbsVM::VM* getVm() const;
+    virtual amD::IDbgConnection* getConnection() const override {
+        return m_pConnection.get();
+    }
 
     void execConsoleCmd(qd::string&& cmd);
     void applyImmediateConsoleCmd(qd::string&& cmd);

@@ -1,9 +1,9 @@
 #pragma once
 #include "qd/base/base.h"
-#include "qd/base/ref_ptr.h"
+#include "qd/stl/ref_ptr.h"
 #include "qd/typeSystem/typeDeclare.h"
 #include "qd/typeSystem/typeInfo.h"
-#include "qd/base/flowEnum.h"
+#include "qd/base/eFlow.h"
 #include "EASTL/fixed_vector.h"
 
 
@@ -87,7 +87,7 @@ public:
     virtual void onNodeCreated(qd::UiNodeCreator* mk);
     virtual void destroy();
 
-    void setup() {}
+    void init() {}
 
     inline UiNode* getParent() const { return m_pParent; }
     void setParent(qd::UiNode* pParent);
@@ -311,7 +311,7 @@ T* UiNode::addChild_(const char* p_name, TArgs&&... args)
     pChild->onNodeCreated(&mk);
     if (p_name)
         pChild->setText(p_name);
-    pChild->setup(std::forward<TArgs>(args)...);
+    pChild->init(std::forward<TArgs>(args)...);
     UiNode* pNode = addChild(pChild);
     return static_cast<T*>(pNode);
 }

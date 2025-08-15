@@ -3,10 +3,10 @@
 #include <EASTL/vector.h>
 #include <qd/stl/forwardDecl.h>
 
-#include <qd/base/ref_ptr.h>
-#include <qd/base/types.h>
+#include <qd/stl/ref_ptr.h>
+#include <qd/base/baseTypes.h>
 #include <qd/typeSystem/typeDeclare.h>
-#include "qd/base/flowEnum.h"
+#include "qd/base/eFlow.h"
 
 
 namespace qd {

@@ -25,6 +25,7 @@ namespace shortcut {
     SHORTCUT(ToggleTurboEmulation, [](qd::Shortcut& s) { s.addKey(ImGuiKey_NumLock); })                           \
     SHORTCUT(ResetAmigaEmu, [](qd::Shortcut&) {})                                                                 \
     SHORTCUT(AlwaysOnTopEmu, [](qd::Shortcut& s) { s.addKey(ImGuiKey_T).addKey(ImGuiMod_Ctrl); })                 \
+    SHORTCUT(ShowDebuggerWnd, [](qd::Shortcut&) {})                                                               \
     /* END OF SHORTCUTS LIST */
 //////////////////////////////////////////////////////////////////////////
 

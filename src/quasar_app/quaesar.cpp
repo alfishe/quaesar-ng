@@ -3,7 +3,7 @@
 #include <amDebugger/debuggerApp.h>
 #include <nfd.h>
 #include <qd/app/appPartsMgr.h>
-#include <qd/app/appliction.h>
+#include <qd/app/application.h>
 #include <qd/thread/thread.h>
 #include <stdarg.h>
 #include <stdio.h>

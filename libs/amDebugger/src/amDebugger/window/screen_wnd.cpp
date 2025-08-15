@@ -11,7 +11,7 @@ namespace window {
 
 void ScreenWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM* vm = dbg->getVm();
+    AbsVM::VM* vm = dbg->getVm();
     //ImGuiIO& io = ImGui::GetIO();
 
     int amiga_width = vm->getScreenSizeX();

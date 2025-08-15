@@ -1,4 +1,4 @@
-#include "vm_uae_imp.h"
+#include "uae_vm_imp.h"
 // clang-format off
 #include <sysconfig.h>
 #include <sysdeps.h>
@@ -15,14 +15,15 @@
 #include <debug.h>
 // clang-format on
 #include <SDL_log.h>
-#include <amDebugger/debuggerApp.h>
-#include <amDebugger/debuggerOps.h>
-#include <amDebugger/vm/absVM.h>
-#include <qd/base/endian.h>
-#include <qd/qui/uiOperationMgr.h>
-#include <qd/thread/thread.h>
-#include <qd/typeSystem/typeInfo.h>
-#include <quasar_app/quaesar.h>
+#include "amDebugger/debuggerApp.h"
+#include "amDebugger/debuggerOps.h"
+#include "amDebugger/vm/absVM.h"
+#include "qd/base/endian.h"
+#include "qd/qui/uiOperationMgr.h"
+#include "qd/thread/thread.h"
+#include "qd/typeSystem/typeInfo.h"
+#include "quasar_app/quaesar.h"
+#include "uae_server_thread.h"
 
 
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
@@ -50,7 +51,7 @@ void UaeVmImp::init() {
     if (mInit)
         return;
     mInit = true;
-    amD::AbsVM* s = (amD::AbsVM*)(this);
+    AbsVM::VM* s = (AbsVM::VM*)(this);
     uint32_t hiAddr = 0;
     while (hiAddr < MEMORY_BANKS) {
         addrbank* uaeBank = mem_banks[hiAddr];
@@ -124,7 +125,7 @@ void UaeVmImp::CustomRegs::commit() {
 }
 
 
-amD::AddrRef UaeVmImp::Copper::getCopperAddr(CopperAddr_ copno) {
+amD::AddrRef UaeVmImp::Copper::getCopperAddr(amD::ECopperAddr_ copno) {
     return ::get_copper_address(copno);
 }
 
@@ -133,7 +134,7 @@ void UaeVmImp::Copper::fetch() {
 }
 
 
-void UaeVmImp::Emu::setDebugMode(DebuggerMode debug_mode) {
+void UaeVmImp::Emu::setDebugMode(EDebuggerMode debug_mode) {
     if (debug_mode == DebuggerMode_Break) {
         while (!isDebugActivatedFull()) {
             ::debugger_active = 0;
@@ -160,7 +161,7 @@ bool UaeVmImp::Emu::isDebugActivatedFull() const {
 //////////////////////////////////////////////////////////////////////////
 
 
-static bool uae_bp_reg_convert(int uae_reg, EReg& out) {
+static bool uae_bp_reg_convert(int uae_reg, amD::EReg& out) {
     if (uae_reg >= amD::breakpoint_reg_end)
         return false;
     out = (EReg::Type)uae_reg;
@@ -191,14 +192,14 @@ void BreakpointsSortedList::init() {
     }
 }
 
+};  //namespace amD
+//////////////////////////////////////////////////////////////////////////
 
-void* impFactoryCreateInstance(const std::type_info& type) {
-    if (type == typeid(amD::AbsVM)) {
+
+void* AbsVM::impFactoryCreateInstance(const std::type_info& type) {
+    if (type == typeid(AbsVM::VM)) {
         return new amD::vm::imp::UaeVmImp();
     }
     UNIMPLEMENTED();
     return nullptr;
 }
-
-
-};  //namespace amD

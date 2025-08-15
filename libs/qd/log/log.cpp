@@ -1,5 +1,6 @@
 #include "log.h"
 #include <qd/base/base.h>
+#include <SDL_log.h>
 
 
 namespace qd {
@@ -55,12 +56,59 @@ qd::Log& logConsole() {
     return instance;
 }
 
-void logDebug(const char* fmt, ...)
+TermMsg log_info(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    SDL_LogMessageV(0, SDL_LOG_PRIORITY_INFO, fmt, args);
+    TermMsg r(TermMsg::W_INFO);
+    r.setMsgV(fmt, args);
     va_end(args);
+    return std::move(r);
+}
+
+
+TermMsg log_debug(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    TermMsg r(TermMsg::W_DEBUG);
+    r.setMsgV(fmt, args);
+    va_end(args);
+    return std::move(r);
+}
+
+
+TermMsg log_warn(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    TermMsg r(TermMsg::W_WARNING);
+    r.setMsgV(fmt, args);
+    va_end(args);
+    return std::move(r);
+}
+
+TermMsg log_error(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    TermMsg r(TermMsg::W_ERROR);
+    r.setMsgV(fmt, args);
+    va_end(args);
+    return std::move(r);
+}
+
+
+qd::TermMsg::TThis* TermMsg::setMsgV(const char* pFormat, va_list arguments)
+{
+    m_logStr.sprintf_va_list(pFormat, arguments);
+    return this;
+}
+
+
+void TermMsg::_flushLogMsg()
+{
+    SDL_LogMessage(0, (SDL_LogPriority)m_nMsgType, m_logStr.c_str());
 }
 
 

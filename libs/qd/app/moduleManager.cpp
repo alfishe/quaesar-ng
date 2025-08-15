@@ -1,11 +1,11 @@
+#include "qd/app/moduleManager.h"
 #include "moduleBase.h"
+#include "qd/app/application.h"
+#include "qd/debug/assert.h"
+#include "qd/debug/exception.h"
 #include "qd/mem/ptrMath.h"
+#include "qd/stl/unique_ptr.h"
 #include "qd/typeSystem/typeInfo.h"
-#include <qd/app/appliction.h>
-#include <qd/app/moduleManager.h>
-#include <qd/debug/assert.h>
-#include <qd/debug/exception.h>
-#include <qd/stl/unique_ptr.h>
 
 
 namespace qd {
@@ -165,7 +165,7 @@ qd::ModuleManager* ModuleManager::I()
     // PHOENIX SINGLETON
     if (!TThis::m_pSingleInstance && !TThis::m_bSingleDestroyed)
     {
-        // qd::String::gInitStaticData(); // First create CString(W) + Destroy Singleton
+        // qd::String::gInitStaticData(); // First create qd::string(W) + Destroy Singleton
         m_pSingleInstance = new TThis();
         ::atexit(&TThis::_destroySingleton);
         m_bSingleDestroyed = false;
@@ -220,7 +220,7 @@ ModuleManager::~ModuleManager(void)
     while (!m_pModuleInfoMap.empty())
     {
         auto It = m_pModuleInfoMap.rbegin();
-        eastl::unique_ptr<ModuleInfo> pModuleInfo = eastl::move(It->m_pModuleInfo);
+        qd::unique_ptr<ModuleInfo> pModuleInfo = eastl::move(It->m_pModuleInfo);
         m_pModuleInfoMap.erase(It);
         if (pModuleInfo)
         {
@@ -244,7 +244,7 @@ uint32_t ModuleManager::destroyModule(const qd::TypeInfo& moduleId)
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo)
     {
-        // throw CException( "Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint)moduleId );
+        // throw Exception( "Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint)moduleId );
         return 0;
     }
     return pModuleInfo->releaseInstance();

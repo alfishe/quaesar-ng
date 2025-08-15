@@ -4,6 +4,8 @@
 #define M_F2PI 6.28318530717958647692f
 #define M_FPI2 1.57079632679489661923f
 
+#undef min
+#undef max
 
 namespace qd {
 template<typename T1, typename T2>

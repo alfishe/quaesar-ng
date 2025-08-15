@@ -4,7 +4,7 @@
 #include "qd/math/fixedPoint.h"
 #include <imgui/imgui.h>
 #include "qd/base/color.h"
-#include "qd/base/flowEnum.h"
+#include "qd/base/eFlow.h"
 
 struct SDL_Window;
 struct SDL_Renderer;

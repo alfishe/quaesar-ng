@@ -8,6 +8,8 @@
 #include "qd/qui/uiOperation.h"
 
 
+FORWARD_DECLARATION_2(AbsVM, VM);
+
 
 namespace amD {
 
@@ -22,7 +24,7 @@ struct UiViewCreateCtx {
     UiViewCreateCtx(DebuggerDesktop* _ui)
         : gui(_ui)
     {}
-}; // struct CreateUiViewParams
+}; // struct UiViewCreateCtx
 
 
 
@@ -63,6 +65,7 @@ public:
     DebuggerDesktop* getUi() {
         return ui;
     }
+    AbsVM::VM* getVm() const;
 
 }; // class AmDbgWindow
 //////////////////////////////////////////////////////////////////////////

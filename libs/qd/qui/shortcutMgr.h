@@ -42,26 +42,26 @@ public:
 class Shortcut
 {
 public:
-    int mId = -1;
+    int m_id = -1;
     typedef eastl::fixed_set<qd::Key, 4, false> Keys;
-    Keys mKeys;
-    bool mRepeat = false;
+    Shortcut::Keys m_keys;
+    bool m_bRepeat = false;
 
 public:
     Shortcut() = default;
     ~Shortcut();
-    int getId() const { return mId; }
-    const Shortcut::Keys& getKeys() const { return mKeys; }
+    int getId() const { return m_id; }
+    const Shortcut::Keys& getKeys() const { return m_keys; }
     ImGuiKeyChord getChord() const;
 
     Shortcut& addKey(ImGuiKey key);
     Shortcut& setRepeat(bool val = true)
     {
-        mRepeat = val;
+        m_bRepeat = val;
         return *this;
     }
 
-    eastl::string toString() const;
+    qd::string toString() const;
 
 }; // class Shortcut
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ public:
 class ShortcutsMgr : public qd::RefCounted
 {
     TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::RefCounted);
-    eastl::vector_map<int /*shortcut::ETypeId*/, Shortcut*> mShortcuts;
+    eastl::vector_map<int /*shortcut::ETypeId*/, Shortcut*> m_shortcuts;
 
 public:
     ShortcutsMgr() {}

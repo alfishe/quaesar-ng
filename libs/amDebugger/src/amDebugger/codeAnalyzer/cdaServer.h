@@ -1,5 +1,5 @@
 #pragma once
-#include "qd/base/types.h"
+#include "qd/base/baseTypes.h"
 #include "qd/stl/vector.h"
 #include "amDebugger/base.h"
 #include "amDebugger/vm/absVM.h"
@@ -74,9 +74,9 @@ public:
     void destroy();
 
 public:
-    void requestAnalyzedBlock(amD::AbsVM* vm, AddrRef addr, int nItems, qd::vector<amD::cda::Item *> *outItems, const AddrRef* pCheckAddr = nullptr);
+    void requestAnalyzedBlock(AbsVM::VM* vm, AddrRef addr, int nItems, qd::vector<amD::cda::Item *> *outItems, const AddrRef* pCheckAddr = nullptr);
 
-    CodeChunk &requestCodeChunk(amD::AbsVM *vm, AddrRef addr);
+    CodeChunk &requestCodeChunk(AbsVM::VM *vm, AddrRef addr);
 
     CodeChunk &getOrCreateCodePage(AddrRef addr, bool *bOutPageWasFound = nullptr);
 

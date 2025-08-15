@@ -23,7 +23,7 @@ static const char* s_regLookup[] = {
 struct FlagDef {
     const char* name;
     const char* displayName;
-    CpuFlg_ flagType;
+    ECpuFlg_ flagType;
 };
 
 // clang-format off
@@ -40,7 +40,7 @@ static const FlagDef s_flagDefs[] = {
 
 void RegistersView::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM* vm = dbg->getVm();
+    AbsVM::VM* vm = dbg->getVm();
     AbsVM::Cpu* cpu = vm->cpu;
 
     QImPushFloatLock st;

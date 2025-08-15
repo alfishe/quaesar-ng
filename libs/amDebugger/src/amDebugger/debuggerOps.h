@@ -1,22 +1,15 @@
 #pragma once
-#include <amDebugger/shortcutsList.h>
-#include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/absVM.h>
-#include "qd/base/types.h"
+#include "qd/base/baseTypes.h"
 #include "qd/qui/uiOperationArgs.h"
+#include <amDebugger/shortcutsList.h>
+#include <amDebugger/vm/absVM.h>
+#include <amDebugger/vm/memory.h>
 
 
 FORWARD_DECLARATION_2(amD, Debugger);
 FORWARD_DECLARATION_2(amD, DebuggerDesktop);
 FORWARD_DECLARATION_3(amD, operation, Operation);
 
-
-#define DECLARE_OPERATION_1(TArgClass)                                       \
-    TS_REFLECT_CLASS(TArgClass, amD::operation::OperationArgs);                  \
-    virtual Base* clone(amD::operation::IOpArgAllocator& allocator) override \
-    {                                                                        \
-        return amD::operation::clone_op_(*this, allocator);                  \
-    }
 
 
 namespace amD {
@@ -26,38 +19,14 @@ enum class EId;
 };
 
 namespace operation {
+using qd::operation::args::OpDesc;
+static constexpr size_t MAX_OP_SIZE = 192;
 
-
-class OpDesc : public qd::operation::args::OpDesc
-{
-public:
-};
-
-
-class IOpArgAllocator
-{
-public:
-    virtual void* alloc(size_t mem_size) = 0;
-    virtual void dealloc(void* pPtr) = 0;
-};
-
-
-template<class TClass>
-TClass* clone_op_(const TClass& src, operation::IOpArgAllocator& allocator)
-{
-    size_t size = sizeof(TClass);
-    void* pBuffer = allocator.alloc(size);
-    TClass* pInst = new (pBuffer) TClass();
-    *pInst = src; // deep copy
-    return pInst;
-}
 
 
 class OperationArgs : public qd::operation::args::Base
 {
 public:
-    virtual Base* clone(amD::operation::IOpArgAllocator& allocator) { ASSERT_AND_DO(0, return nullptr, ); }
-
     static void setup(amD::operation::OpDesc& d) {}
 };
 
@@ -139,8 +108,8 @@ struct ExecConsoleCmd : public amD::operation::OperationArgs {
 
 
 struct MenuItemStateGet : public amD::operation::OperationArgs {
-    //TS_REFLECT_CLASS(MenuItemStateGet, amD::operation::OperationArgs);
-    //DECLARE_OPERATION(amD::operation::args::MenuItemStateGet, amD::operation::UaeWndAlwaysOnTop);
+    // TS_REFLECT_CLASS(MenuItemStateGet, amD::operation::OperationArgs);
+    // DECLARE_OPERATION(amD::operation::args::MenuItemStateGet, amD::operation::UaeWndAlwaysOnTop);
     DECLARE_OPERATION_1(amD::operation::args::MenuItemStateGet);
     int checked = -1;
 };
@@ -148,17 +117,17 @@ struct MenuItemStateGet : public amD::operation::OperationArgs {
 
 
 struct DoDebugTraceContinue : public amD::operation::OperationArgs {
-    //TS_REFLECT_CLASS(DoDebugTraceContinue, amD::operation::OperationArgs);
-    //DECLARE_OPERATION(amD::operation::args::DoDebugTraceContinue, amD::operation::DebugTraceContinue);
+    // TS_REFLECT_CLASS(DoDebugTraceContinue, amD::operation::OperationArgs);
+    // DECLARE_OPERATION(amD::operation::args::DoDebugTraceContinue, amD::operation::DebugTraceContinue);
     DECLARE_OPERATION_1(amD::operation::args::DoDebugTraceContinue);
-    amD::DebuggerMode debugMode = DebuggerMode_Live;
-
+    amD::EDebuggerMode debugMode = DebuggerMode_Live;
 };
 
 
 struct DisasmToggleBreakpoint : public amD::operation::OperationArgs {
-    //TS_REFLECT_CLASS(amD::operation::args::DisasmToggleBreakpoint, amD::operation::OperationArgs);
-    DECLARE_OPERATION(amD::operation::args::DisasmToggleBreakpoint, amD::operation::DisasmToggleBreakpoint);
+    // TS_REFLECT_CLASS(amD::operation::args::DisasmToggleBreakpoint, amD::operation::OperationArgs);
+    // DECLARE_OPERATION(amD::operation::args::DisasmToggleBreakpoint, amD::operation::DisasmToggleBreakpoint);
+    DECLARE_OPERATION_1(amD::operation::args::DisasmToggleBreakpoint);
     AddrRef address = {};
     EReg reg = EReg::PC;
     int setBreakpoint = -1;
@@ -167,18 +136,20 @@ struct DisasmToggleBreakpoint : public amD::operation::OperationArgs {
 
 
 struct CopperToggleBreakpoint : public amD::operation::OperationArgs {
-    //TS_REFLECT_CLASS(CopperToggleBreakpoint, amD::operation::OperationArgs);
-    DECLARE_OPERATION(amD::operation::args::CopperToggleBreakpoint, amD::operation::CopperToggleBreakpoint);
+    // TS_REFLECT_CLASS(CopperToggleBreakpoint, amD::operation::OperationArgs);
+    // DECLARE_OPERATION(amD::operation::args::CopperToggleBreakpoint, amD::operation::CopperToggleBreakpoint);
+    DECLARE_OPERATION_1(amD::operation::args::CopperToggleBreakpoint);
     AddrRef address = {};
 };
 
 
 struct CopperTraceStep : public amD::operation::OperationArgs {
-    //TS_REFLECT_CLASS(CopperTraceStep, amD::operation::OperationArgs);
-    DECLARE_OPERATION(amD::operation::args::CopperTraceStep, amD::operation::CopperTraceStep);
+    // TS_REFLECT_CLASS(CopperTraceStep, amD::operation::OperationArgs);
+    // DECLARE_OPERATION(amD::operation::args::CopperTraceStep, amD::operation::CopperTraceStep);
+    DECLARE_OPERATION_1(amD::operation::args::CopperTraceStep);
 };
 
 
-};  // namespace args
-};  // namespace operation
-};  // namespace amD
+}; // namespace args
+}; // namespace operation
+}; // namespace amD

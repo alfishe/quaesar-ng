@@ -15,6 +15,7 @@
 #include "qd/thread/thread.h"
 #include "quasar_app/parse_options.h"
 #include "quasar_app/quaesar.h"
+#include "uae_vm_imp.h"
 
 
 extern void real_main(int argc, TCHAR** argv);
@@ -160,6 +161,9 @@ void UaeServerThread::initialize() {
     m_onUaeInitialized = new qd::ThreadEvent(true);
     m_uaeThread = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
     m_onUaeInitialized->wait();
+
+    m_pVm = new amD::vm::imp::UaeVmImp();
+    m_pVm->setServerImp(this);
 }
 
 
@@ -230,6 +234,11 @@ bool UaeServerThread::onUaeHandleEvents() {
     onSdlEventProc(event);
     m_eventQueue.pop_front();
     return true;
+}
+
+
+AbsVM::VM* UaeServerThread::getVm() const {
+    return m_pVm;
 }
 
 

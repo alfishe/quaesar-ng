@@ -12,16 +12,16 @@ namespace qd {
 
 
 qd::Shortcut& Shortcut::addKey(ImGuiKey key) {
-    mKeys.insert(key);
+    m_keys.insert(key);
     return *this;
 }
 
 
-eastl::string Shortcut::toString() const {
-    eastl::string result;
-    for (auto it = mKeys.begin(); it != mKeys.end(); ++it) {
+qd::string Shortcut::toString() const {
+    qd::string result;
+    for (auto it = m_keys.begin(); it != m_keys.end(); ++it) {
         const qd::Key& curKey = *it;
-        if (it != mKeys.begin())
+        if (it != m_keys.begin())
             result += '+';
         result += curKey.toString();
     }
@@ -61,7 +61,7 @@ bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const {
             nKeysMatch++;
         else if ((curKey == ImGuiMod_Ctrl || curKey == ImGuiKey_LeftCtrl || curKey == ImGuiKey_RightCtrl) && io.KeyCtrl)
             nKeysMatch++;
-        else if (ImGui::IsKeyPressed(curKey.getKeyCode(), p_shortcut->mRepeat))
+        else if (ImGui::IsKeyPressed(curKey.getKeyCode(), p_shortcut->m_bRepeat))
             nKeysMatch++;
     }
     if (keysList.size() == nKeysMatch) {
@@ -101,15 +101,15 @@ void ShortcutsMgr::init(eastl::span<ShortcutSetupFunc> shortcuts_list) {
 
         ShortcutSetupFunc setupFunc = shortcuts_list[id];
         qd::Shortcut* curShortcut = new qd::Shortcut();
-        curShortcut->mId = id;
+        curShortcut->m_id = id;
         setupFunc(*curShortcut);
 
-        EASTL_ASSERT((int)curShortcut->mId == id);
+        EASTL_ASSERT((int)curShortcut->m_id == id);
         if (getShortcut(id)) {
             ASSERT_F(0, "Shortcut ID:%i already registered", id);
             continue;
         }
-        mShortcuts[id] = curShortcut;
+        m_shortcuts[id] = curShortcut;
     }
 
 #if 0
@@ -132,10 +132,10 @@ void ShortcutsMgr::init(eastl::span<ShortcutSetupFunc> shortcuts_list) {
 
 
 void ShortcutsMgr::done() {
-    while (!mShortcuts.empty()) {
-        auto& p = mShortcuts.back();
+    while (!m_shortcuts.empty()) {
+        auto& p = m_shortcuts.back();
         delete p.second;
-        mShortcuts.pop_back();
+        m_shortcuts.pop_back();
     }
 }
 
@@ -158,8 +158,8 @@ void ShortcutsMgr::update(qd::IOperationEnvironment* env, UiOperationMgr* pOpera
 
 
 const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
-    auto it = mShortcuts.find((int)shortcut_id);
-    if (it == mShortcuts.end())
+    auto it = m_shortcuts.find((int)shortcut_id);
+    if (it == m_shortcuts.end())
         return nullptr;
     return it->second;
 }

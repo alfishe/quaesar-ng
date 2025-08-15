@@ -4,6 +4,7 @@
 #include <qd/log/log.h>
 #include <qd/thread/thread.h>
 #include "qd/imGui/imGuiHelperClass.h"
+#include "qd/thread/mutex.h"
 
 
 namespace amD {

@@ -1,8 +1,8 @@
 #pragma once
 #include "qd/base/base.h"
 #include "qd/base/classInfoReg.h"
-#include "qd/base/flowEnum.h"
-#include "qd/base/types.h"
+#include "qd/base/eFlow.h"
+#include "qd/base/baseTypes.h"
 #include "qd/debug/assert.h"
 #include "qd/qui/shortcutHnd.h"
 #include "qd/qui/uiOperationArgs.h"
@@ -23,6 +23,12 @@
     inline static const qd::TypeInfo& s_OperationType = qd::typeof_by_name(#TOpClass);
 
 
+#define DECLARE_OPERATION_1(TArgClass)                                                                 \
+    TS_REFLECT_CLASS(TArgClass, qd::operation::args::Base);                                            \
+    virtual qd::operation::args::Base* clone(qd::operation::args::IOpArgAllocator& allocator) override \
+    {                                                                                                  \
+        return qd::operation::args::clone_op_<TArgClass>(*this, allocator);                            \
+    }
 
 
 namespace qd {
@@ -66,7 +72,7 @@ class IOperationEnvironment
 
 public:
     virtual IOperationEnvironment* getOpEnvParent() const { return nullptr; }
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const = 0;
+    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const { return nullptr; }
     virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args)
     {
         IOperationEnvironment* pEnv = getOpEnvParent();
@@ -176,7 +182,27 @@ public:
     {
         addShortcut((int)sid);
     }
+}; // class OpDesc
+
+
+class IOpArgAllocator
+{
+public:
+    virtual void* alloc(size_t mem_size) = 0;
+    virtual void dealloc(void* pPtr) = 0;
 };
+
+
+template<class TClass>
+TClass* clone_op_(const TClass& src, qd::operation::args::IOpArgAllocator& allocator)
+{
+    size_t size = sizeof(TClass);
+    void* pBuffer = allocator.alloc(size);
+    TClass* pInst = new (pBuffer) TClass();
+    *pInst = src; // deep copy
+    return pInst;
+}
+
 
 
 struct Base {
@@ -197,7 +223,7 @@ public:
     }
 
     virtual bool tryCast(const qd::TypeInfo& msg_type);
-
+    virtual Base* clone(qd::operation::args::IOpArgAllocator& allocator) { ASSERT_AND_DO(0, return nullptr, ); }
     static void setup(qd::operation::args::OpDesc& d) {}
 
 }; // struct args::Base

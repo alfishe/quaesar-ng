@@ -10,14 +10,14 @@
 //
 // Usage:
 //   // Create a window and draw memory editor inside it:
-//   static MemoryView mem_edit_1;
+//   static MemoryHexViewWnd mem_edit_1;
 //   static char data[0x10000];
 //   size_t data_size = 0x10000;
 //   mem_edit_1.draw_window("Memory Editor", data, data_size);
 //
 // Usage:
 //   // If you already have a window, use draw_contents() instead:
-//   static MemoryView mem_edit_2;
+//   static MemoryHexViewWnd mem_edit_2;
 //   ImGui::Begin("MyWindow")
 //   mem_edit_2.draw_contents(this, sizeof(*this), (size_t)this);
 //   ImGui::End();
@@ -69,8 +69,8 @@ class MemBank;
 
 namespace window {
 
-class MemoryView : public AmDbgWindow {
-    QDB_WINDOW_REGISTER(WndId::MemoryView, amD::window::MemoryView, amD::AmDbgWindow);
+class MemoryHexViewWnd : public amD::AmDbgWindow {
+    QDB_WINDOW_REGISTER(WndId::MemoryView, amD::window::MemoryHexViewWnd, amD::AmDbgWindow);
 
     void* m_memAddr = 0;
     size_t m_memSize = 0;
@@ -145,7 +145,7 @@ public:
         }
     };
 
-    MemoryView();
+    MemoryHexViewWnd();
     virtual void onCreate(UiViewCreateCtx* cp) override;
     virtual void drawContentImp() override;
 

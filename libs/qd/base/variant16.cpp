@@ -27,7 +27,7 @@ void VariantFast::setString(const qd::string_view& Value)
 {
     if (m_type == DATA_STRING)
     {
-        Details::CAnyTypeHolder_<CString>* pVar = (Details::CAnyTypeHolder_<CString>*)m_pExtHolder;
+        Details::CAnyTypeHolder_<qd::string>* pVar = (Details::CAnyTypeHolder_<qd::string>*)m_pExtHolder;
         pVar->m_Value = Value;
     }
     else
@@ -41,7 +41,7 @@ void VariantFast::setString(const qd::string_view& Value)
 const qd::string_view& VariantFast::getString() const
 {
     assert(m_type == DATA_STRING);
-    Details::CAnyTypeHolder_<CString>* pVal = getPtr_< Details::CAnyTypeHolder_<CString> >();
+    Details::CAnyTypeHolder_<qd::string>* pVal = getPtr_< Details::CAnyTypeHolder_<qd::string> >();
     return pVal->getValue();
 }
 
@@ -63,7 +63,7 @@ bool VariantFast::toFloat(float& val) const
         val = (float)m_Bool;
         return true;
     default:
-        throw CException("User Data has no valid Value");
+        throw Exception("User Data has no valid Value");
     }
 }
 
@@ -82,14 +82,14 @@ bool VariantFast::toInt32(int& val) const
         return true;
     default:
         return false;
-        // throw CException("User Data has no valid Value");
+        // throw Exception("User Data has no valid Value");
     }
 }
 
 
 void VariantFast::_setString(const qd::string_view& Value)
 {
-    Details::CAnyTypeHolder_<CString>* pVar = new Details::CAnyTypeHolder_<CString>(Value);
+    Details::CAnyTypeHolder_<qd::string>* pVar = new Details::CAnyTypeHolder_<qd::string>(Value);
     m_pPointer = (void*)pVar;
     m_type = DATA_STRING;
     m_SizeOf = (uint8_t)sizeof(void*);
@@ -101,13 +101,13 @@ bool VariantFast::toString(qd::string& outVal) const
     switch (m_type)
     {
     case VariantFast::DATA_INT32:
-        outVal = CString("%1").argI(m_Int32);
+        outVal = qd::string("%1").argI(m_Int32);
         return true;
     case VariantFast::DATA_UINT32:
-        outVal = CString("%1").argU(m_UInt32);
+        outVal = qd::string("%1").argU(m_UInt32);
         return true;
     case VariantFast::DATA_BOOL:
-        outVal = CString("%1").argB(m_Bool != 0);
+        outVal = qd::string("%1").argB(m_Bool != 0);
         return true;
     case VariantFast::DATA_FLOAT:
         outVal = stringFormat("%f", m_Float);

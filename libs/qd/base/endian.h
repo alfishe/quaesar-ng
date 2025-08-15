@@ -6,6 +6,11 @@
 
 namespace qd {
 
+constexpr inline bool is_big_endian()
+{
+    return eastl::endian::native == eastl::endian::big;
+}
+
 // endian bit's swapping from little-endian to big-endian
 template <int TBytesCount>
 inline void swapBytes_(void*);

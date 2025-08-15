@@ -116,7 +116,7 @@ void DebuggerDesktop::createAllUiWndows()
         auto* pCreateAttr = pCurWindowType->getAttribute_<qd::tsAttr::CreateClassCb>();
         if (!pCreateAttr)
         {
-            SDL_Log("Creator not defined in class:'%s'", pCurWindowType->getFullName().c_str());
+            log_error("Creator not defined in class:'%s'", pCurWindowType->getFullName().c_str());
             continue;
         }
         UiViewCreateCtx cv(this);

@@ -127,7 +127,7 @@ public:
     }
 
 
-    void decodeLines(AbsVM* vm, AddrRef startAddr, int num_lines) {
+    void decodeLines(AbsVM::VM* vm, AddrRef startAddr, int num_lines) {
         decoded.clear();
         AddrRef addr = startAddr;
         decoded.reserve(num_lines);
@@ -152,9 +152,9 @@ namespace window {
 
 void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM* vm = dbg->vm;
+    AbsVM::VM* vm = dbg->vm;
 
-    amD::AbsVM::CustomRegs* custRegs = vm->custom;
+    AbsVM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;

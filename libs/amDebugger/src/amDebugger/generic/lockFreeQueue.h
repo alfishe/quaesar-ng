@@ -41,7 +41,7 @@ public:
     return _tail.load(std::memory_order_relaxed) - head;
   }
   
-  T* push()
+  T* push_back()
   {
     Node* node;
     size_t tail = _tail.load(std::memory_order_relaxed);
@@ -58,8 +58,25 @@ public:
     return pBuf;
   }
 
+  T* front()
+  {
+      Node* node;
+      size_t head = _head.load(std::memory_order_relaxed);
+      for (;;)
+      {
+          node = &_queue[head & _capacityMask];
+          if (node->head.load(std::memory_order_relaxed) != head)
+              return nullptr;
+          if (_head.compare_exchange_weak(head, head + 1, std::memory_order_relaxed))
+              break;
+      }
+      T* result = &node->data;
+      //(&node->data)->~T();
+      //node->tail.store(head + _capacity, std::memory_order_release);
+      return result;
+  }
 
-  bool pop(T& result)
+  bool pop_front()
   {
     Node* node;
     size_t head = _head.load(std::memory_order_relaxed);
@@ -71,7 +88,7 @@ public:
       if(_head.compare_exchange_weak(head, head + 1, std::memory_order_relaxed))
         break;
     }
-    result = node->data;
+    //result = node->data;
     (&node->data)->~T();
     node->tail.store(head + _capacity, std::memory_order_release);
     return true;

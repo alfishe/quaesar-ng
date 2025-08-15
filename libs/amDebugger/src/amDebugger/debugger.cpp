@@ -9,7 +9,7 @@ namespace amD
 
 void Debugger::init()
 {
-    vm = amD::AbsVM::setVmInst(amD::createByFactory<amD::AbsVM>());
+    vm = AbsVM::VM::setVmInst(AbsVM::createByFactory_<AbsVM::VM>());
     vm->init();
 }
 
@@ -36,7 +36,7 @@ void Debugger::execConsoleCmd(qd::string&& cmd)
 }
 
 
-void Debugger::setDebugMode(DebuggerMode debug_mode)
+void Debugger::setDebugMode(EDebuggerMode debug_mode)
 {
     amD::operation::args::DoDebugTraceContinue dd;
     dd.debugMode = debug_mode;

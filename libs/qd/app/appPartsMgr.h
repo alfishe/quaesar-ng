@@ -2,8 +2,8 @@
 #include <qd/stl/vector.h>
 #include <qd/app/appPart.h>
 #include <qd/base/base.h>
-#include <qd/base/ref_ptr.h>
-#include <qd/base/types.h>
+#include <qd/stl/ref_ptr.h>
+#include <qd/base/baseTypes.h>
 
 
 FORWARD_DECLARATION_3(qd, ImAPI, CImGuiBase);
@@ -61,10 +61,10 @@ public:
 
 
     // TPartClass base of AppPart*
-    template<class TPartClass>
-    inline TPartClass* createPart_(qd::string name, bool bOverride = false)
+    template<class TPartClass, typename ...TArgs>
+    inline TPartClass* createPart_(qd::string name, TArgs&&... args)
     {
-        TPartClass* pPart = new TPartClass();
+        TPartClass* pPart = new TPartClass(args...);
         qd::AppPart::OnCreate_t prm;
         prm.name = name;
         prm.typeInfo = &qd::typeof_<TPartClass>();

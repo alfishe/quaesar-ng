@@ -3,7 +3,9 @@
 #include <EASTL/string.h>
 #include <cstdarg>
 #include <ctime>
-#include <SDL_log.h>
+#include "qd/stl/string.h"
+#include "qd/debug/assert.h"
+#include "qd/debug/exception.h"
 
 
 namespace qd {
@@ -90,7 +92,71 @@ public:
 
 extern qd::Log& logConsole();
 
-void logDebug(const char* msg, ...);
+
+class TermMsg
+{
+    typedef TermMsg TThis;
+
+public:
+    enum eLogMsgType : uint8_t {
+        W_VERBOSE = 0,
+        W_DEBUG,
+        W_INFO,
+        W_WARNING,
+        W_ERROR,
+        W_EXCEPTION,
+    };
+    qd::string m_logStr;
+    eLogMsgType m_nMsgType = TThis::W_INFO;
+
+public:
+    TThis* operator->() { return this; }
+
+    TermMsg(TermMsg::eLogMsgType nType)
+        : m_nMsgType(nType)
+    {}
+
+    ~TermMsg()
+    {
+        _flushLogMsg();
+    }
+
+    TThis* setMsgV(const char* pFormat, va_list arguments);
+
+    TThis* ASSERT_DLG()
+    {
+        ASSERT_F(0, "%s", m_logStr.c_str());
+        return this;
+    }
+
+    qd::Exception GET_EXCEPTION(qd::EException excType = qd::EException::DEFAULT)
+    {
+        _flushLogMsg();
+        return qd::Exception(excType, m_logStr);
+    }
+
+    inline void Throw_Exception(qd::EException excType = qd::EException::DEFAULT) { throw GET_EXCEPTION(excType); }
+
+    inline void THROW_ASSERT(qd::EException excType = qd::EException::DEFAULT)
+    {
+        this->ASSERT_DLG();
+        throw this->GET_EXCEPTION(excType);
+    }
+
+    void _flushLogMsg();
+};
+
+
+TermMsg log_info(const char* msg, ...);
+TermMsg log_debug(const char* msg, ...);
+TermMsg log_warn(const char* msg, ...);
+TermMsg log_error(const char* msg, ...);
+
+
 
 };  // namespace qd
+//////////////////////////////////////////////////////////////////////////
 
+using qd::log_debug;
+using qd::log_warn;
+using qd::log_error;

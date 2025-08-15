@@ -1,14 +1,18 @@
 #pragma once
-#include "qd/app/appliction.h"
+#include "amDebugger/debuggerApp.h"
+#include "qd/app/application.h"
+#include "qd/typeSystem/typeDeclare.h"
 
 
-struct SDL_Window;
-struct SDL_Texture;
-struct SDL_Renderer;
-class UaeWndAppPart;
+FORWARD_DECLARATION_1S(SDL_Window);
+FORWARD_DECLARATION_1S(SDL_Texture);
+FORWARD_DECLARATION_1S(SDL_Renderer);
+FORWARD_DECLARATION_2(qsr, UaeClientAppPart);
+FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 FORWARD_DECLARATION_2(qd, ThreadEvent);
 FORWARD_DECLARATION_2(amD, DebuggerApp);
 FORWARD_DECLARATION_2(amD, Debugger);
+FORWARD_DECLARATION_2(amD, IDebuggerServer);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -17,12 +21,13 @@ class QuasarApp : public qd::Application {
 
 public:
     amD::DebuggerApp* m_pDebuggerPart = nullptr;
-    UaeWndAppPart* m_pUaeAppPart = nullptr;
+    qsr::UaeClientAppPart* m_pUaeClientAppPart = nullptr;
+    qsr::UaeServerAppPart* m_pUaeServerAppPart = nullptr;
+    class QuaesarServersMgr* m_pServersMgr = nullptr;
 
 public:
-    QuasarApp() {
-        QuasarApp::g_pInstance = this;
-    }
+    QuasarApp();
+    virtual ~QuasarApp();
     virtual void onConstruct(qd::CreateApplicationParams& in) override;
 
     inline static QuasarApp* g_pInstance = nullptr;
@@ -35,16 +40,46 @@ public:
     virtual void onSdlEventProc(SDL_Event& event) override;
 
     amD::Debugger* getDbg() const;
-    UaeWndAppPart* getUaeApp() const {
-        return m_pUaeAppPart;
+    qsr::UaeClientAppPart* getUaeClientApp() const {
+        return m_pUaeClientAppPart;
     }
+
+    virtual void* getInterface(const qd::TypeInfo& p_interface) override;
 
 };  // class App
 //////////////////////////////////////////////////////////////////////////
 
 
-namespace amD {
-namespace uae {
-extern void do_console_cmd_immediate(const char* cmd);
+enum class EQuaServerId {
+    UNDEF = 0,
+    S_UAE = _MAKE4C('_UAE'),
 };
-};  //namespace amD
+
+
+class QuaesarServersMgr : public amD::IDbgConnectionManager {
+    TS_REFLECT_CLASS(QuaesarServersMgr, amD::IDbgConnectionManager);
+    QuasarApp* m_pApp;
+    struct Item {
+        EQuaServerId m_id;
+        amD::IDebuggerServer* m_server;
+    };
+    qd::vector<Item> m_pServers;
+
+public:
+    QuaesarServersMgr(QuasarApp* pApp);
+    virtual ~QuaesarServersMgr();
+
+public:
+    virtual uint32_t getNumConnections() override;
+    virtual amD::IDbgConnection* getConnectionByNo(uint32_t idx) override;
+    void registerVmServer(EQuaServerId id, amD::IDebuggerServer* pServer);
+
+    amD::IDebuggerServer* getServerById(EQuaServerId id) const;
+
+};  // class QuasarServersMgr
+//////////////////////////////////////////////////////////////////////////
+
+
+namespace amD::uae {
+extern void do_console_cmd_immediate(const char* cmd);
+};  //namespace amD::uae

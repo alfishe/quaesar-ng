@@ -1,13 +1,12 @@
 #pragma once
-// #include "EASTL/fixed_map.h"
-#include "EASTL/fixed_vector.h"
-#include "EASTL/vector_map.h"
+#include "qd/app/moduleBase.h"
 #include "qd/base/base.h"
-#include "qd/base/ref_ptr.h"
+#include "qd/stl/ref_ptr.h"
+#include "qd/stl/fixed_vector.h"
 #include "qd/stl/string.h"
+#include "qd/stl/unique_ptr.h"
+#include "qd/stl/vector_map.h"
 #include <EASTL/fixed_function.h>
-#include <EASTL/unique_ptr.h>
-#include <qd/app/moduleBase.h>
 
 
 /* Declares struct that register class module creation */
@@ -93,7 +92,7 @@ class ModuleManager
 
     struct InfoItem {
         const qd::TypeInfo* m_pType = nullptr;
-        eastl::unique_ptr<ModuleInfo> m_pModuleInfo;
+        qd::unique_ptr<ModuleInfo> m_pModuleInfo;
     };
     qd::vector<ModuleManager::InfoItem> m_pModuleInfoMap;
 
@@ -105,6 +104,7 @@ public:
 private:
     static TThis* m_pSingleInstance;
     static bool m_bSingleDestroyed;
+
 public:
     qd::ModuleCreateParams m_defaultCreateParam;
 

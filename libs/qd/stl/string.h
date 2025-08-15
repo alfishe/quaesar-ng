@@ -20,7 +20,7 @@ inline qd::string string_format(const char* pFormat, ...)
 {
     va_list argList;
     va_start(argList, pFormat);
-    string result;
+    qd::string result;
     result.sprintf_va_list(pFormat, argList);
     va_end(argList);
     return result;
@@ -69,20 +69,12 @@ bool ends_with(const TString& str, const TString& end)
 //////////////////////////////////////////////////////////////////////////
 
 
+// clang-format off
 template<class TString>
-inline const char* CC(const TString& str)
-{
-    return str.c_str();
-}
-inline const char* CC(const char* pStr)
-{
-    return pStr;
-}
-inline const wchar_t* CC(const wchar_t* pStr)
-{
-    return pStr;
-}
-inline const wchar_t* CW(const wchar_t* pStr)
-{
-    return pStr;
-}
+inline const char* CC(const TString& str) { return str.c_str(); }
+inline const char* CC(const qd::string_view& pStr) { return pStr.data(); }
+inline const char* CC(const char* pStr) { return pStr; }
+inline const wchar_t* CC(const wchar_t* pStr) { return pStr; }
+inline const wchar_t* CW(const wchar_t* pStr) { return pStr; }
+
+// clang-format on

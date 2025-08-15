@@ -13,7 +13,7 @@ namespace qd
 	// TF - Number of bits for Frac Part
 
 	template<typename RawIntT, int TF>
-	class CFixedPoint
+	class FixedPoint_
 	{
 	public:
 		enum {
@@ -22,12 +22,12 @@ namespace qd
 		typedef RawIntT TRawType;
 
 	protected:
-		typedef CFixedPoint<TRawType, TF> myself;
+		typedef FixedPoint_<TRawType, TF> myself;
 		TRawType mV = 0;
 
 	public:
-		typedef CFixedPoint<int32_t, 12> CFixed32;
-		typedef CFixedPoint<int64_t, 12> CFixed64;
+		typedef FixedPoint_<int32_t, 12> Fixed32;
+		typedef FixedPoint_<int64_t, 12> Fixed64;
 
 		static constexpr inline const TRawType getFactor() { return 1 << (FracBits); }
 		static constexpr inline uint32_t getTotalBits() { return (uint32_t)sizeof(TRawType) * 8; }
@@ -38,30 +38,30 @@ namespace qd
 
 	public:
 
-		inline CFixedPoint() = default;
+		inline FixedPoint_() = default;
 
 		// For integral types only:
 		template<typename TVal, class = typename eastl::enable_if<std::is_integral<TVal>::value>::type>
-		inline constexpr CFixedPoint(TVal Value)
+		inline constexpr FixedPoint_(TVal Value)
 			: mV(myself::_fromIntVal<TVal>(Value))
 		{}
 
-		inline constexpr /*explicit*/ CFixedPoint(float v)
+		inline constexpr /*explicit*/ FixedPoint_(float v)
 			: mV(myself::_fromFloatVal(v))
 		{}
 
- 		inline constexpr /*explicit*/ CFixedPoint(double v)
+ 		inline constexpr /*explicit*/ FixedPoint_(double v)
 			: mV(myself::_fromFloatVal<double>(v))
 		{}
 
-		inline CFixedPoint(const myself& v) = default;
+		inline FixedPoint_(const myself& v) = default;
 
 	#ifdef RVALUE_REFERENCES_SUPPORTED
-		//CFixedPoint(myself&& rv) = default;
+		//FixedPoint_(myself&& rv) = default;
 	#endif // RVALUE_REFERENCES_SUPPORTED
 
 		template<typename ValueT2>
-		inline CFixedPoint(const CFixedPoint<ValueT2, TF>& Value) {
+		inline FixedPoint_(const FixedPoint_<ValueT2, TF>& Value) {
 			assert(sizeof(TRawType) >= sizeof(ValueT2) );
 			mV = (TRawType)Value.getRaw();
 		}
@@ -120,10 +120,10 @@ namespace qd
 			return res;
 		}
 
-		inline CFixed32 toFix32() const;
+		inline FixedPoint_<int32_t, 12> toFix32() const;
 
-		inline CFixed64 toFix64() const {
-			CFixed64 Fix64 = CFixed64::createFromRaw( (int64_t)mV );
+		inline Fixed64 toFix64() const {
+			Fixed64 Fix64 = Fixed64::createFromRaw( (int64_t)mV );
 			return Fix64;
 		}
 
@@ -172,7 +172,6 @@ namespace qd
 		}
 
 
-
 		inline void setInt(TRawType Val) {
 			mV = _fromIntVal(Val);
 		}
@@ -182,7 +181,7 @@ namespace qd
 		}
 
 		template<typename ValueT2>
-		myself& fromFixed(const CFixedPoint<ValueT2, TF>& r) {
+		myself& fromFixed(const FixedPoint_<ValueT2, TF>& r) {
 			if ( c_def(sizeof(ValueT2) > sizeof(TRawType)) ) {
 				assert( r.GetRaw() <= (ValueT2)std::numeric_limits<TRawType>::max() );
 			}
@@ -200,14 +199,14 @@ namespace qd
 		}
 
 		inline static myself createFromFloat(float v) {
-			CFixedPoint fp; fp.mV = _fromFloatVal(v);
+			FixedPoint_ fp; fp.mV = _fromFloatVal(v);
 			return fp;
 		}
 
 
 		// from Int (1000 ms == 1sec)
 		inline static myself createFromTimeMs(TRawType v) {
-			CFixedPoint fp;
+			FixedPoint_ fp;
 			fp.mV = (TRawType) ( ( v * ((1 << FracBits) / 8) ) / (1000/8) );
 			return fp;
 		}
@@ -218,20 +217,19 @@ namespace qd
 			//CLog3::get()->PrintLn("TotalBits: %u, FracBits: %u, sizeof(TRawType): %u, MaxVal: 0x%lX", GetTotalBits(), GetFracBits(), (int)sizeof(TRawType), (long)MaxVal() );
 		}
 
-	}; // class CFixedPoint
+	}; // class FixedPoint_
 	//////////////////////////////////////////////////////////////////////////
 
 
 	template<typename TRawType, int TF>
-	inline CFixedPoint<int32_t, 12> CFixedPoint<TRawType, TF>::toFix32() const {
-		CG_ASSERT( (int)myself::FracBits == (int)CFixed32::FracBits );
-		CFixed32 Fix32 = CFixed32::CreateFromRaw( (int32_t)mV );
-		//assert( CFloat::Compare( ToFloat(), Fix32.ToFloat() ) );
-		return Fix32;
+	inline FixedPoint_<int32_t, 12> FixedPoint_<TRawType, TF>::toFix32() const {
+		static_assert( (int)myself::FracBits == (int)qd::Fixed32::FracBits );
+		qd::Fixed32 res = qd::Fixed32::createFromRaw( (int32_t)mV );
+		return res;
 	}
 
 
-	typedef CFixedPoint<int32_t, 12> Fixed32;
+	typedef FixedPoint_<int32_t, 12> Fixed32;
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -319,8 +317,8 @@ namespace qd
 
 
 
-typedef CFixedPoint<int32_t, 12> Fixed32;
-typedef CFixedPoint<int64_t, 12> Fixed64;
+typedef FixedPoint_<int32_t, 12> Fixed32;
+typedef FixedPoint_<int64_t, 12> Fixed64;
 
 	// FIX32_MAX == 524288 sec == 145 hours == 6 days
 #define FIX32_MAX Fixed32::MaxVal()
@@ -329,3 +327,8 @@ typedef CFixedPoint<int64_t, 12> Fixed64;
 
 
 }; // namespace qd
+//////////////////////////////////////////////////////////////////////////
+
+using qd::Fixed32;
+using qd::Fixed64;
+

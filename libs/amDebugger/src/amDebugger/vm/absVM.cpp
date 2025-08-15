@@ -1,30 +1,31 @@
 #include "absVM.h"
 
-namespace amD {
-AbsVM* AbsVM::staticVmInst = nullptr;
-
-
-AbsVM::AbsVM() {
-}
-
-
-amD::AbsVM* AbsVM::setVmInst(AbsVM* vm_inst)
+namespace AbsVM
 {
-    AbsVM::staticVmInst = vm_inst;
-    return AbsVM::staticVmInst;
-}
+	AbsVM::VM* VM::staticVmInst = nullptr;
 
 
-void AbsVM::destrotVmInst()
-{
-    AbsVM* oldVm = AbsVM::staticVmInst;
-    AbsVM::staticVmInst = nullptr;
-    delete oldVm;
-}
+	VM::VM() {
+	}
 
 
-AbsVM::~AbsVM() {
-}
+	AbsVM::VM* VM::setVmInst(AbsVM::VM* vm_inst)
+	{
+	    AbsVM::VM::staticVmInst = vm_inst;
+	    return AbsVM::VM::staticVmInst;
+	}
 
 
-};  // namespace amD
+	void VM::destrotVmInst()
+	{
+	    AbsVM::VM* oldVm = AbsVM::VM::staticVmInst;
+	    AbsVM::VM::staticVmInst = nullptr;
+	    delete oldVm;
+	}
+
+
+	VM::~VM() {
+	}
+
+
+}; // namespace AbsVM

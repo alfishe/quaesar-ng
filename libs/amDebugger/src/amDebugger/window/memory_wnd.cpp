@@ -9,14 +9,14 @@
 //
 // Usage:
 //   // Create a window and draw memory editor inside it:
-//   static MemoryView mem_edit_1;
+//   static MemoryHexViewWnd mem_edit_1;
 //   static char data[0x10000];
 //   size_t data_size = 0x10000;
 //   mem_edit_1.draw_window("Memory Editor", data, data_size);
 //
 // Usage:
 //   // If you already have a window, use draw_contents() instead:
-//   static MemoryView mem_edit_2;
+//   static MemoryHexViewWnd mem_edit_2;
 //   ImGui::Begin("MyWindow")
 //   mem_edit_2.draw_contents(this, sizeof(*this), (size_t)this);
 //   ImGui::End();
@@ -79,11 +79,11 @@ namespace window {
 
 static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
 {
-    MemoryView* pMemView = (MemoryView*)data;
+    MemoryHexViewWnd* pMemView = (MemoryHexViewWnd*)data;
     const amD::MemBank* pBank = pMemView->m_pLastBank;
     if (!pBank || !pBank->isAddrIn((AddrRef)addr))
     {
-        AbsVM* vm = AbsVM::get();
+        AbsVM::VM* vm = pMemView->getVm();
         pBank = vm->mem->findBankByAddr((AddrRef)addr);
         pMemView->m_pLastBank = pBank;
     }
@@ -95,7 +95,7 @@ static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
 
 static void write_mem_imp(uint8_t* data, size_t addr, uint8_t v)
 {
-    MemoryView* pMemView = (MemoryView*)data;
+    MemoryHexViewWnd* pMemView = (MemoryHexViewWnd*)data;
     const amD::MemBank* pBank = pMemView->m_pLastBank;
     if (!pBank || !pBank->isAddrIn((AddrRef)addr))
         return;
@@ -103,19 +103,18 @@ static void write_mem_imp(uint8_t* data, size_t addr, uint8_t v)
 }
 
 
-void MemoryView::onCreate(UiViewCreateCtx* cp)
+void MemoryHexViewWnd::onCreate(UiViewCreateCtx* cp)
 {
     AmDbgWindow::onCreate(cp);
     m_title = "Memory";
     setVisible(true);
-    AbsVM* vm = AbsVM::get();
     setMemAddr(this, 0xFFFFFFF0u / 2u, 0x0000);
     read_fn = &read_mem_imp;
     write_fn = &write_mem_imp;
 }
 
 
-MemoryView::MemoryView() {
+MemoryHexViewWnd::MemoryHexViewWnd() {
     // Settings
     read_only = false;
     cols = 16;
@@ -146,7 +145,7 @@ MemoryView::MemoryView() {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::goto_address_and_highlight(size_t addr_min, size_t addr_max) {
+void MemoryHexViewWnd::goto_address_and_highlight(size_t addr_min, size_t addr_max) {
     goto_address = addr_min;
     highlight_min = addr_min;
     hightlight_max = addr_max;
@@ -154,7 +153,7 @@ void MemoryView::goto_address_and_highlight(size_t addr_min, size_t addr_max) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::calc_sizes(Sizes& s, size_t mem_size, size_t base_display_addr) {
+void MemoryHexViewWnd::calc_sizes(Sizes& s, size_t mem_size, size_t base_display_addr) {
     ImGuiStyle& style = ImGui::GetStyle();
     s.addr_digits_count = opt_addr_digits_count;
 
@@ -188,14 +187,14 @@ void MemoryView::calc_sizes(Sizes& s, size_t mem_size, size_t base_display_addr)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::setMemAddr(void* mem_data, size_t mem_size, size_t base_display_addr) {
+void MemoryHexViewWnd::setMemAddr(void* mem_data, size_t mem_size, size_t base_display_addr) {
     m_memAddr = mem_data;
     m_memSize = mem_size;
     m_baseDisplayAddr = base_display_addr;
 }
 
-void MemoryView::drawContentImp() {
-    MemoryView::Sizes s;
+void MemoryHexViewWnd::drawContentImp() {
+    MemoryHexViewWnd::Sizes s;
     calc_sizes(s, m_memSize, m_baseDisplayAddr);
     ImGui::SetNextWindowSize(ImVec2(s.window_width, s.window_width * 0.60f), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, 0.0f), ImVec2(s.window_width, FLT_MAX));
@@ -215,7 +214,7 @@ void MemoryView::drawContentImp() {
     ImGui::End();
 }
 
-void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base_display_addr) {
+void MemoryHexViewWnd::draw_contents(void* mem_data_void, size_t mem_size, size_t base_display_addr) {
     if (cols < 1)
         cols = 1;
 
@@ -493,7 +492,7 @@ void MemoryView::draw_contents(void* mem_data_void, size_t mem_size, size_t base
     }
 }
 
-void MemoryView::draw_options_line(const Sizes& s, void* mem_data, size_t mem_size, size_t base_display_addr) {
+void MemoryHexViewWnd::draw_options_line(const Sizes& s, void* mem_data, size_t mem_size, size_t base_display_addr) {
     IM_UNUSED(mem_data);
     ImGuiStyle& style = ImGui::GetStyle();
     const char* format_range = opt_upper_case_hex ? "Range %0*" _PRISizeT "X..%0*" _PRISizeT "X"
@@ -552,7 +551,7 @@ void MemoryView::draw_options_line(const Sizes& s, void* mem_data, size_t mem_si
     }
 }
 
-void MemoryView::draw_preview_line(const Sizes& s, void* mem_data_void, size_t mem_size, size_t base_display_addr) {
+void MemoryHexViewWnd::draw_preview_line(const Sizes& s, void* mem_data_void, size_t mem_size, size_t base_display_addr) {
     IM_UNUSED(base_display_addr);
     uint8_t* mem_data = (uint8_t*)mem_data_void;
     ImGuiStyle& style = ImGui::GetStyle();
@@ -595,7 +594,7 @@ void MemoryView::draw_preview_line(const Sizes& s, void* mem_data_void, size_t m
 }
 
 // Utilities for Data Preview
-const char* MemoryView::data_dype_get_desc(ImGuiDataType data_type) const {
+const char* MemoryHexViewWnd::data_dype_get_desc(ImGuiDataType data_type) const {
     const char* descs[] = {"Int8", "Uint8", "Int16", "Uint16", "Int32", "Uint32", "Int64", "Uint64", "Float", "Double"};
     IM_ASSERT(data_type >= 0 && data_type < ImGuiDataType_COUNT);
     return descs[data_type];
@@ -603,7 +602,7 @@ const char* MemoryView::data_dype_get_desc(ImGuiDataType data_type) const {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-size_t MemoryView::data_type_get_size(ImGuiDataType data_type) const {
+size_t MemoryHexViewWnd::data_type_get_size(ImGuiDataType data_type) const {
     const size_t sizes[] = {1, 1, 2, 2, 4, 4, 8, 8, sizeof(float), sizeof(double)};
     IM_ASSERT(data_type >= 0 && data_type < ImGuiDataType_COUNT);
     return sizes[data_type];
@@ -612,7 +611,7 @@ size_t MemoryView::data_type_get_size(ImGuiDataType data_type) const {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
-const char* get_format_get_desc(MemoryView::DataFormat data_format) {
+const char* get_format_get_desc(MemoryHexViewWnd::DataFormat data_format) {
     const char* descs[] = {"Bin", "Dec", "Hex"};
     IM_ASSERT(data_format >= 0 && data_format < DataFormat_COUNT);
     return descs[data_format];
@@ -655,7 +654,7 @@ static void* endianness_copy_little_endian(void* _dst, void* _src, size_t s, int
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void* MemoryView::endianness_copy(void* dst, void* src, size_t size) const {
+void* MemoryHexViewWnd::endianness_copy(void* dst, void* src, size_t size) const {
     static void* (*fp)(void*, void*, size_t, int) = NULL;
     if (fp == NULL)
         fp = is_big_endian() ? endianness_copy_big_endian : endianness_copy_little_endian;
@@ -681,7 +680,7 @@ static const char* format_binary(const uint8_t* buf, int width) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MemoryView::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t mem_size, ImGuiDataType data_type,
+void MemoryHexViewWnd::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t mem_size, ImGuiDataType data_type,
                                    DataFormat data_format, char* out_buf, size_t out_buf_size) const {
     uint8_t buf[8];
     size_t elem_size = data_type_get_size(data_type);

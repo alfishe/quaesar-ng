@@ -16,21 +16,23 @@ union SDL_Event;
 FORWARD_DECLARATION_4S(qd, operation, args, Base);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 FORWARD_DECLARATION_2(qd, UiOperationMgr);
+FORWARD_DECLARATION_2(AbsVM, VM);
 
 
 //////////////////////////////////////////////////////////////////////////
 namespace amD {
+
 class DebuggerDesktop;
-class AbsVM;
 class IDbgConnection;
 
 
 class IDbgConnectionManager
 {
+    TS_REFLECT_CLASS(amD::IDbgConnectionManager, void);
 public:
     virtual uint32_t getNumConnections() = 0;
-    virtual eastl::shared_ptr<IDbgConnection> getConnection(uint32_t idx) = 0;
-};
+    virtual amD::IDbgConnection* getConnectionByNo(uint32_t idx) = 0;
+}; // class IDbgConnectionManager
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,10 +73,10 @@ public:
     virtual void update(float dt, float time) override;
     virtual void render() override;
     bool isWndVisible() const;
-    void toggleWndVisible(DebuggerMode mode);
+    void toggleWndVisible(EDebuggerMode mode);
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
-    amD::AbsVM* getVm() const {
+    AbsVM::VM* getVm() const {
         return m_pCurDbgClient->vm;
     }
 

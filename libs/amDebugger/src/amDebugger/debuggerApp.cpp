@@ -15,6 +15,8 @@
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/app/moduleManager.h"
+#include "dbgConnection.h"
+#include "qd/app/application.h"
 
 
 namespace amD {
@@ -33,10 +35,10 @@ DebuggerApp::DebuggerApp()
 {
     DebuggerApp::g_pInstance = this;
 
-    m_pClients.push_back(new Debugger(this)); // DummyClient
+    m_pClients.push_back(new Debugger(this, amD::create_dummy_connection())); // DummyClient
 
     setPartActive(true);
-    setPartVisisble(true);
+    setPartVisible(true);
 }
 
 
@@ -50,9 +52,13 @@ void DebuggerApp::init() {
     createRenderWindow();
     initImGui();
 
-    getApp()->get
-
-    m_pClients.push_back(new Debugger(this));
+    IDbgConnectionManager* pConnMgr = m_pApp->getInterface_<IDbgConnectionManager>();
+    ASSERT_AND_DO(pConnMgr, return);
+    for (uint32_t i = 0; i < pConnMgr->getNumConnections(); ++ i)
+    {
+        if (ref_ptr<IDbgConnection> pCon = pConnMgr->getConnectionByNo(i))
+            m_pClients.push_back(new Debugger(this, pCon));
+    }
 
     qd::UiNodeCreator mk;
     m_pGui = mk.make_<amD::DebuggerDesktop>(m_pCurDbgClient);
@@ -142,7 +148,7 @@ void DebuggerApp::destroy() {
 
     delete m_pGui;
     m_pGui = nullptr;
-    AbsVM::destrotVmInst();
+    AbsVM::VM::destrotVmInst();
 
     SDL_DestroyRenderer(m_pWndRenderer);
     m_pWndRenderer = nullptr;
@@ -181,7 +187,7 @@ bool DebuggerApp::isWndVisible() const {
 }
 
 
-void DebuggerApp::toggleWndVisible(DebuggerMode mode) {
+void DebuggerApp::toggleWndVisible(EDebuggerMode mode) {
     if (!isWndVisible()) {
         SDL_ShowWindow(m_pWindow);
     } else {

@@ -1,12 +1,19 @@
 #pragma once
+#include "EASTL/fixed_function.h"
 #include "qd/enum/enumBase.h"
 #include "qd/qui/controls/dialog.h"
 #include "qd/stl/array.h"
 #include "qd/stl/unique_ptr.h"
 #include "qd/stl/vector.h"
 
-struct UCategory;
 
+FORWARD_DECLARATION_2(AbsVM, VM);
+FORWARD_DECLARATION_2(AbsVM, Floppy);
+
+
+namespace qsr {
+
+struct UCategory;
 
 struct EOptionCat {
 #define OPTIONS_LIST(IT)          \
@@ -23,7 +30,7 @@ struct EOptionCat {
 
     enum Enum { OPTIONS_LIST(ENUM_TAKE_ITEM_1) };
     inline static const char* g_enumNames[] = {OPTIONS_LIST(ENUM_TAKE_ITEM_2)};
-    ENUM_DECLARE_BASE(::, EOptionCat, Enum, 0);
+    ENUM_DECLARE_BASE(qsr::, EOptionCat, Enum, 0);
 
     inline static const char* to_string(Enum value) {
         return g_enumNames[value];
@@ -32,17 +39,22 @@ struct EOptionCat {
 //////////////////////////////////////////////////////////////////////////
 
 
+struct OptionDrawContext {
+    AbsVM::VM* vm = nullptr;
+};
+
 struct UOption {
 public:
     qd::string m_title;
     UCategory* m_pCategory = nullptr;
-    eastl::function<void()> m_drawCb;
+    using TDrawOptionCb = eastl::fixed_function<2 * sizeof(void*), void(OptionDrawContext*)>;
+    TDrawOptionCb m_drawOptionCb;
 
     UOption(const char* title) : m_title(title) {
     }
 
-    UOption& setDrawCallback(eastl::function<void()> cb) {
-        m_drawCb = std::move(cb);
+    UOption& setDrawCallback(UOption::TDrawOptionCb&& cb) {
+        m_drawOptionCb = std::move(cb);
         return *this;
     }
 };
@@ -68,12 +80,13 @@ class UaeOptionsDlg : public qd::UiDialog {
 
     qd::array<qd::unique_ptr<UCategory>, EOptionCat::MAX_COUNT> m_pCategories = {};
     qd::vector<qd::unique_ptr<UOption>> m_pOptions;
-
     UCategory* m_pSelectedCat = nullptr;
+    AbsVM::VM* m_pVm = nullptr;
 
 public:
     virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
     virtual void drawContentImp() override;
+    virtual EFlow onUiNodeMessageProc(qd::UiMessage* in_msg) override;
 
     UCategory* getCategoryById(EOptionCat nOpt) const {
         return m_pCategories[nOpt].get();
@@ -81,13 +94,11 @@ public:
 
     UCategory* createCategory(EOptionCat nParentCat, EOptionCat nOpt);
 
-
     template <typename... TArgs>
     UOption* createOption(UCategory* pCategory, TArgs&&... args) {
+        assert(pCategory);
         UOption* pOpt = new UOption(args...);
         m_pOptions.push_back(qd::unique_ptr<UOption>(pOpt));
-
-        assert(pCategory);
         pOpt->m_pCategory = pCategory;
         pCategory->m_pOptions.push_back(pOpt);
         return pOpt;
@@ -95,7 +106,15 @@ public:
 
     virtual ~UaeOptionsDlg();
 
+    AbsVM::VM* getVm() const {
+        return m_pVm;
+    }
+    void setVm(AbsVM::VM* Vm) {
+        m_pVm = Vm;
+    }
 };  // class UaeOptionsDlg
 
 
-void show_image_file_open_dlg(::floppyslot& cfgFloppy);
+extern void open_file_dlg_select_adf(AbsVM::Floppy& cfgFloppy);
+
+};  // namespace qsr

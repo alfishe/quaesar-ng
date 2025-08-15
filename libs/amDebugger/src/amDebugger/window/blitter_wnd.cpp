@@ -33,7 +33,7 @@ public:
 struct DeclareDmaSrcUiArgs {
     uint16_t bltCon0;
     uint16_t bltCon1;
-    amD::AbsVM::CustomRegs* custRegs;
+    AbsVM::CustomRegs* custRegs;
     char dmaLetter;
     BC0F::Type srcEnFlag;
     CustReg bltXPtH;
@@ -109,9 +109,9 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi()
 void BlitterWnd::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    AbsVM* vm = dbg->vm;
+    AbsVM::VM* vm = dbg->vm;
 
-    amD::AbsVM::CustomRegs* custRegs = vm->custom;
+    AbsVM::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
 

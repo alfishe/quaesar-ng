@@ -35,7 +35,7 @@ int find_disasm_addr_line_idx(const qd::vector<amD::cda::Item*> &disasm_lines, A
 void DisassemblyView::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    AbsVM* vm = dbg->getVm();
+    AbsVM::VM* vm = dbg->getVm();
     ImGuiContext& g = *ImGui::GetCurrentContext();
 
     // btn: goto addr

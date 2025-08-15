@@ -81,12 +81,12 @@ void ExprValStr::parse()
     }
     catch (const ExprError& e)
     {
-        qd::logDebug("[ FAIL ] ParserOop: \"%s\" unexpected error: %s\n", m_strVal.c_str(), e.message());
+        qd::log_debug("[ FAIL ] ParserOop: \"%s\" unexpected error: %s\n", m_strVal.c_str(), e.message());
     }
 }
 
 
-bool ExprValStr::evaluate(const amD::AbsVM* vm, qd::Var16& res)
+bool ExprValStr::evaluate(const AbsVM::VM* vm, qd::Var16& res)
 {
     if (!m_pParsedExpr)
         return false;

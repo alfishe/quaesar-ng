@@ -5,20 +5,28 @@
 
 extern class QuasarApp* g_pApp;
 
-class UaeWndDesktop : public qd::UiDesktop, public qd::IOperationEnvironment {
-    TS_REFLECT_CLASS(UaeWndDesktop, qd::UiDesktop);
+namespace qsr {
+
+class UaeGuiDesktop : public qd::UiDesktop, public qd::IOperationEnvironment {
+    TS_REFLECT_CLASS(UaeGuiDesktop, qd::UiDesktop);
+    class UaeClientAppPart* m_pUaeClientApp = nullptr;
 
 public:
-    UaeWndDesktop() {
+    UaeGuiDesktop(UaeClientAppPart* pEmuApp) : m_pUaeClientApp(pEmuApp) {
     }
 
-    void setup();
+    void init();
 
     virtual void drawContentImp() override;
-
 
     virtual IOperationEnvironment* getOpEnvParent() const override;
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
 
-};  // class UaeWndDesktop
+    class UaeClientAppPart* getUaeClientApp() const {
+        return m_pUaeClientApp;
+    }
+};  // class UaeGuiDesktop
+
+
+};  // namespace qsr

@@ -6,21 +6,21 @@ namespace amD
 {
 
 
-void DebuggerServer::init()
+void IDebuggerServer::init()
 {
-    vm = amD::AbsVM::setVmInst(createByFactory<amD::AbsVM>());
+    vm = AbsVM::VM::setVmInst(AbsVM::createByFactory_<AbsVM::VM>());
     vm->init();
 }
 
 
 
-void* DebuggerServer::getOpEnvPtr(const qd::TypeInfo& classType) const
+void* IDebuggerServer::getOpEnvPtr(const qd::TypeInfo& classType) const
 {
     return nullptr;
 }
 
 
-qd::EFlow DebuggerServer::applyOperationMsg(qd::operation::args::Base* args)
+qd::EFlow IDebuggerServer::applyOperationMsg(qd::operation::args::Base* args)
 {
     return qd::EFlow::DONE;
 }

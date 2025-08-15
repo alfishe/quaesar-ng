@@ -3,10 +3,11 @@
 #include "amDebugger/vm/memory.h"
 #include "amDebugger/vm/absVM.h"
 #include "EASTL/fixed_set.h"
-#include "EASTL/shared_ptr.h"
+#include "dbgConnection.h"
 
 
 namespace amD {
+
 class DebuggerApp;
 class IDbgConnection;
 
@@ -49,13 +50,13 @@ class Debugger : public qd::RefCounted, public qd::IOperationEnvironment
 {
     int m_nTraceWaitScanLines = 1;
     DebuggerApp* m_pDbgApp = nullptr;
-    eastl::shared_ptr<IDbgConnection> m_pConnection;
+    ref_ptr<IDbgConnection> m_pConnection;
 
 public:
-    amD::AbsVM* vm = nullptr;
+    AbsVM::VM* vm = nullptr;
 
 public:
-    Debugger(DebuggerApp* _app, eastl::shared_ptr<IDbgConnection> pCon)
+    Debugger(DebuggerApp* _app, ref_ptr<IDbgConnection> pCon)
         : m_pDbgApp(_app)
         , m_pConnection(pCon)
     {
@@ -63,7 +64,7 @@ public:
     virtual ~Debugger() = default;
 
     void init();
-    amD::AbsVM* getVm() const { return vm; }
+    AbsVM::VM* getVm() const { return vm; }
     amD::DebuggerApp* getDbgApp() const { return m_pDbgApp; }
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
@@ -100,7 +101,7 @@ public:
     {
         return vm->emu->m_debugMode == DebuggerMode_Break;
     }
-    void setDebugMode(DebuggerMode debug_mode);
+    void setDebugMode(EDebuggerMode debug_mode);
 
 
 }; // class Debugger

@@ -15,7 +15,7 @@ namespace window {
 
 void MemoryGraphWnd::drawContentImp() {
     amD::Debugger* dbg = getDbg();
-    AbsVM* vm = dbg->getVm();
+    AbsVM::VM* vm = dbg->getVm();
 
     mNewTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
 
