@@ -3,7 +3,7 @@
 #include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/memory.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "qd/base/color.h"
 #include "qd/imGui/imgui_eastl.h"
 #include "amDebugger/ui/uiStyle.h"
@@ -127,7 +127,7 @@ public:
     }
 
 
-    void decodeLines(AbsVM::VM* vm, AddrRef startAddr, int num_lines) {
+    void decodeLines(IVm::VM* vm, AddrRef startAddr, int num_lines) {
         decoded.clear();
         AddrRef addr = startAddr;
         decoded.reserve(num_lines);
@@ -152,9 +152,9 @@ namespace window {
 
 void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->vm;
+    IVm::VM* vm = dbg->m_pVm;
 
-    AbsVM::CustomRegs* custRegs = vm->custom;
+    IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;

@@ -9,7 +9,7 @@ namespace window {
 
 
 struct FlagsTooltipContent {
-    void drawRegisterFlagsTooltip(AbsVM::CustomRegs* custRegs, amD::CustReg reg_id)
+    void drawRegisterFlagsTooltip(IVm::CustomRegs* custRegs, amD::CustReg reg_id)
     {
         const CustomFlagsDesc* fd = reg_id.getFlagDesc();
         if (!fd)
@@ -63,7 +63,7 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
 
 
 struct DrawCustomRegColumn {
-    AbsVM::CustomRegs* custRegs;
+    IVm::CustomRegs* custRegs;
     void drawColumn(CustReg reg_id) {
         stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
         ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
@@ -97,9 +97,9 @@ private:
 
 void CustomRegsWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->vm;
+    IVm::VM* vm = dbg->m_pVm;
 
-    AbsVM::CustomRegs* custRegs = vm->custom;
+    IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
     QImPushFloatLock st;

@@ -4,7 +4,7 @@
 #include "qd/base/variant16.h"
 
 FORWARD_DECLARATION_2(ParserOop, Expr);
-FORWARD_DECLARATION_2(AbsVM, VM);
+FORWARD_DECLARATION_2(IVm, VM);
 
 namespace amD
 {
@@ -26,7 +26,7 @@ namespace amD
 	    }
 	
 	    void parse();
-        bool evaluate(const AbsVM::VM* vm, qd::Var16& res);
+        bool evaluate(const IVm::VM* vm, qd::Var16& res);
 
         ~ExprValStr();
 

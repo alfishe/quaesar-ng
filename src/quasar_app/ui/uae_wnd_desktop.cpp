@@ -10,7 +10,7 @@
 #include "uae_wnd_desktop.h"
 #include "amDebugger/commonOperations.h"
 #include "amDebugger/debuggerOps.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "qd/app/application.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/imGui/imGuiHelperClass.h"
@@ -31,11 +31,11 @@ void UaeGuiDesktop::init() {
 
 void UaeGuiDesktop::drawContentImp() {
     // Main TOOLBAR
-    AbsVM::VM* vm = getUaeClientApp()->getVm();
+    IVm::VM* vm = getUaeClientApp()->getVm();
     if (ImGui::BeginMainMenuBar()) {
         if (auto p1 = qIm::LockMenu("File")) {
             if (ImGui::MenuItem("Open DF0:")) {
-                AbsVM::Floppy* cfgFloppy = vm->floppySlots[0];
+                IVm::Floppy* cfgFloppy = vm->floppies[0];
                 assert(cfgFloppy);
                 qsr::open_file_dlg_select_adf(*cfgFloppy);
                 doOperation_<amD::operation::args::UaeResetAmiga>();

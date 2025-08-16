@@ -18,7 +18,7 @@ Debugger* AmDbgWindow::getDbg() const
 }
 
 
-AbsVM::VM* AmDbgWindow::getVm() const
+IVm::VM* AmDbgWindow::getVm() const
 {
     return getDbg()->getVm();
 }

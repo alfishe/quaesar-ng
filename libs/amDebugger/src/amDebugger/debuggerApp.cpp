@@ -8,7 +8,7 @@
 #include "qd/imGui/backends/imgui_impl_sdlrenderer2.h"
 #include "amDebugger/dbgOperation.h"
 #include "amDebugger/debuggerOps.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "qd/thread/thread.h"
 #include "amDebugger/ui/debuggerDesktop.h"
 #include "amDebugger/ui/uiStyle.h"
@@ -22,20 +22,9 @@
 namespace amD {
 
 
-void DebuggerApp::setCurDbgClientIdx(uint32_t curDbgClientIdx)
-{
-    if (curDbgClientIdx >= m_pClients.size())
-        ASSERT_AND_DO(0, curDbgClientIdx = 0, "Bad client index");
-    m_nCurDbgClientIdx = curDbgClientIdx;
-    m_pCurDbgClient = m_pClients[m_nCurDbgClientIdx];
-}
-
-
 DebuggerApp::DebuggerApp()
 {
     DebuggerApp::g_pInstance = this;
-
-    m_pClients.push_back(new Debugger(this, amD::create_dummy_connection())); // DummyClient
 
     setPartActive(true);
     setPartVisible(true);
@@ -48,20 +37,22 @@ void DebuggerApp::onPartCreate(AppPart::OnCreate_t& prm)
 }
 
 void DebuggerApp::init() {
-    mbInit = true;
+    m_init = true;
     createRenderWindow();
     initImGui();
 
-    IDbgConnectionManager* pConnMgr = m_pApp->getInterface_<IDbgConnectionManager>();
+    amD::IDbgConnectionManager* pConnMgr = m_pApp->getInterface_<IDbgConnectionManager>();
     ASSERT_AND_DO(pConnMgr, return);
-    for (uint32_t i = 0; i < pConnMgr->getNumConnections(); ++ i)
-    {
-        if (ref_ptr<IDbgConnection> pCon = pConnMgr->getConnectionByNo(i))
-            m_pClients.push_back(new Debugger(this, pCon));
-    }
+    ref_ptr<IDbgConnection> pCurConnect = pConnMgr->createConnectionByInd(0);
+    assert(pCurConnect);
+    
+    m_pDebugger = new Debugger(this, pCurConnect); // DummyClient
+    m_pDebugger->init();
 
+
+    assert(m_pDebugger);
     qd::UiNodeCreator mk;
-    m_pGui = mk.make_<amD::DebuggerDesktop>(m_pCurDbgClient);
+    m_pGui = mk.make_<amD::DebuggerDesktop>(m_pDebugger);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
     assert(m_pOperationMgr->getNumOps());
@@ -109,13 +100,13 @@ void DebuggerApp::initImGui() {
 
 
 DebuggerApp::~DebuggerApp() {
-    assert(!mbInit);
+    assert(!m_init);
 }
 
 
 qd::EFlow DebuggerApp::applyOperationMsg(qd::operation::args::Base* p_msg)
 {
-    return m_pCurDbgClient->applyOperationMsg(p_msg);
+    return m_pDebugger->applyOperationMsg(p_msg);
 }
 
 
@@ -148,14 +139,14 @@ void DebuggerApp::destroy() {
 
     delete m_pGui;
     m_pGui = nullptr;
-    AbsVM::VM::destrotVmInst();
+    IVm::VM::destrotVmInst();
 
     SDL_DestroyRenderer(m_pWndRenderer);
     m_pWndRenderer = nullptr;
     SDL_DestroyWindow(m_pWindow);
     m_pWindow = nullptr;
 
-    mbInit = false;
+    m_init = false;
 }
 
 
@@ -187,13 +178,16 @@ bool DebuggerApp::isWndVisible() const {
 }
 
 
-void DebuggerApp::toggleWndVisible(EDebuggerMode mode) {
-    if (!isWndVisible()) {
+void DebuggerApp::setWndVisible(bool v) {
+    if (v) {
         SDL_ShowWindow(m_pWindow);
+        setPartVisible(true);
     } else {
         SDL_HideWindow(m_pWindow);
+        setPartVisible(false);
     }
 }
+
 
 
 qd::EFlow DebuggerApp::onSdlEventProc(SDL_Event& event) {

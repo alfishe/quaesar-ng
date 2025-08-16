@@ -1,5 +1,5 @@
 #include "amDebugger/debuggerServer.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 
 
 namespace amD
@@ -8,7 +8,7 @@ namespace amD
 
 void IDebuggerServer::init()
 {
-    vm = AbsVM::VM::setVmInst(AbsVM::createByFactory_<AbsVM::VM>());
+    vm = IVm::VM::setVmInst(IVm::createByFactory_<IVm::VM>());
     vm->init();
 }
 

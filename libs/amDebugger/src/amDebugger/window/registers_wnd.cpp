@@ -1,6 +1,6 @@
 #include "registers_wnd.h"
 #include "amDebugger/debuggerApp.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "qd/imGui/imgui_eastl.h"
 #include "amDebugger/ui/uiStyle.h"
 #include "qd/stl/string.h"
@@ -40,8 +40,8 @@ static const FlagDef s_flagDefs[] = {
 
 void RegistersView::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->getVm();
-    AbsVM::Cpu* cpu = vm->cpu;
+    IVm::VM* vm = dbg->getVm();
+    IVm::Cpu* cpu = vm->cpu;
 
     QImPushFloatLock st;
     st.pushFloat(&ImGui::GetStyle().CellPadding.y, 0);

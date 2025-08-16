@@ -32,20 +32,20 @@ void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
 
     m_pServersMgr = new QuaesarServersMgr(this);
 
-    m_pDebuggerPart = getAppParts()->createPart_<amD::DebuggerApp>("Amiga Debugger");
+    m_pDebuggerApp = getAppParts()->createPart_<amD::DebuggerApp>("Amiga Debugger");
 
     m_pUaeServerAppPart = getAppParts()->createPart_<qsr::UaeServerAppPart>("UAE server");
-    AbsVM::VM* vm = m_pUaeServerAppPart->getVm();
+    IVm::VM* vm = m_pUaeServerAppPart->getVm();
     assert(vm);
     m_pUaeClientAppPart = getAppParts()->createPart_<qsr::UaeClientAppPart>("UAE client", vm);
 
-    m_pDebuggerPart->init();
+    m_pDebuggerApp->init();
     m_pUaeClientAppPart->bringWndToFront();
 }
 
 
 void QuasarApp::initialize() {
-    //m_pDebuggerPart->toggleWndVisible(amD::DebuggerMode_Live);
+    //m_pDebuggerApp->toggleWndVisible(amD::DebuggerMode_Live);
 }
 
 
@@ -74,7 +74,7 @@ void QuasarApp::onSdlEventProc(SDL_Event& event) {
 
 
 amD::Debugger* QuasarApp::getDbg() const {
-    return m_pDebuggerPart->getDbg();
+    return m_pDebuggerApp->getDbg();
 }
 
 
@@ -100,13 +100,13 @@ uint32_t QuaesarServersMgr::getNumConnections() {
 }
 
 
-amD::IDbgConnection* QuaesarServersMgr::getConnectionByNo(uint32_t idx) {
+ref_ptr<amD::IDbgConnection> QuaesarServersMgr::createConnectionByInd(uint32_t idx) {
     if (idx >= m_pServers.size())
         return nullptr;
     amD::IDebuggerServer* pServer = m_pServers[idx].m_server;
     if (!pServer)
         return nullptr;
-    return pServer->getConnection();
+    return pServer->createConnection();
 }
 
 

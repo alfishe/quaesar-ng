@@ -17,7 +17,7 @@
 #include <SDL_log.h>
 #include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "qd/base/endian.h"
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/thread/thread.h"
@@ -35,14 +35,19 @@ namespace vm::imp {
 
 
 UaeVmImp::UaeVmImp() {
-    cpu = &instCpu;
-    mem = &instMemory;
-    custom = &instCustomRegs;
-    copper = &instCopper;
-    blitter = &instBlitter;
+    TSuper::cpu = &instCpu;
+    TSuper::mem = &instMemory;
+    TSuper::custom = &instCustomRegs;
+    TSuper::copper = &instCopper;
+    TSuper::blitter = &instBlitter;
     {
         instEmu.vm = this;
-        emu = &instEmu;
+        TSuper::emu = &instEmu;
+    }
+    for (size_t i = 0; i < TSuper::floppies.size(); ++i) {
+        UaeVmImp::Floppy& curFloppy = instFloppies[i];
+        curFloppy.m_nFloppy = (int)i;
+        TSuper::floppies[i] = &curFloppy;
     }
 }
 
@@ -51,7 +56,7 @@ void UaeVmImp::init() {
     if (mInit)
         return;
     mInit = true;
-    AbsVM::VM* s = (AbsVM::VM*)(this);
+    IVm::VM* s = (IVm::VM*)(this);
     uint32_t hiAddr = 0;
     while (hiAddr < MEMORY_BANKS) {
         addrbank* uaeBank = mem_banks[hiAddr];
@@ -85,6 +90,17 @@ void UaeVmImp::init() {
 
 
 UaeVmImp::~UaeVmImp() {
+}
+
+
+qd::EFlow UaeVmImp::applyOperationMsg(qd::operation::args::Base* args) {
+    bool r = false;
+    if (auto p = args->cast_<amD::operation::args::DoDebugTraceContinue>()) {
+        r = true;
+        m_pUaeThread->execConsoleCmd("g");
+    }
+
+    return r ? EFlow::STOP : EFlow::NO_RESULT;
 }
 
 
@@ -143,7 +159,7 @@ void UaeVmImp::Emu::setDebugMode(EDebuggerMode debug_mode) {
         }
     } else if (debug_mode == DebuggerMode_Live) {
         amD::operation::args::DoDebugTraceContinue m;
-        vm->applyOperationProc(&m);
+        vm->applyOperationMsg(&m);
         ::debugger_active = 0;
     }
 }
@@ -154,6 +170,18 @@ bool UaeVmImp::Emu::isDebugActivated() const {
 
 bool UaeVmImp::Emu::isDebugActivatedFull() const {
     return ::debugging > 0 && (::debugger_active > 0 && ::regs.spcflags & SPCFLAG_BRK);
+}
+
+
+bool UaeVmImp::Floppy::getEnabled() {
+    ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
+    return cfgFloppy.dfxtype >= 0;
+}
+
+
+void UaeVmImp::Floppy::setEnabled(bool v) {
+    ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
+    cfgFloppy.dfxtype = v ? 0 : -1;
 }
 
 
@@ -196,8 +224,8 @@ void BreakpointsSortedList::init() {
 //////////////////////////////////////////////////////////////////////////
 
 
-void* AbsVM::impFactoryCreateInstance(const std::type_info& type) {
-    if (type == typeid(AbsVM::VM)) {
+void* IVm::impFactoryCreateInstance(const std::type_info& type) {
+    if (type == typeid(IVm::VM)) {
         return new amD::vm::imp::UaeVmImp();
     }
     UNIMPLEMENTED();

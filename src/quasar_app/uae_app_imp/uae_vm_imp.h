@@ -10,12 +10,13 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/span.h>
 #include <EASTL/vector.h>
-#include <amDebugger/vm/absVM.h>
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/emuDefs.h>
 #include <amDebugger/vm/memory.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <qd/Base/baseTypes.h>
 #include <qd/Base/color.h>
+#include "SDL_stdinc.h"  // strlcpy
 #include "qd/typeSystem/typeDeclare.h"
 
 
@@ -24,8 +25,8 @@ FORWARD_DECLARATION_1(UaeServerThread);
 
 namespace amD::vm::imp {
 
-class UaeVmImp final : public AbsVM::VM {
-    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, AbsVM::VM);
+class UaeVmImp final : public IVm::VM {
+    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, IVm::VM);
     UaeServerThread* m_pUaeThread = nullptr;
 
 public:
@@ -37,11 +38,9 @@ public:
     virtual void init() override;
 
     //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationProc(qd::operation::args::Base* args) override {
-        return qd::EFlow::NO_RESULT;
-    }
+    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
 
-    struct Cpu : public AbsVM::Cpu {
+    struct Cpu : public IVm::Cpu {
         uint32_t getRegA(int i) const override {
             return m68k_areg(::regs, i);
         }
@@ -76,7 +75,7 @@ public:
 
 
     ///
-    struct Memory final : public AbsVM::Memory {
+    struct Memory final : public IVm::Memory {
     public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override {
             return (uint8_t*)::memory_get_real_address(ptr);
@@ -102,7 +101,7 @@ public:
 
 
     //
-    struct Blitter final : public AbsVM::Blitter {
+    struct Blitter final : public IVm::Blitter {
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
@@ -110,7 +109,7 @@ public:
 
 
     //
-    class CustomRegs final : public AbsVM::CustomRegs {
+    class CustomRegs final : public IVm::CustomRegs {
         static constexpr size_t data_offset = 2;
         eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
 
@@ -128,7 +127,7 @@ public:
     CustomRegs instCustomRegs;
 
 
-    class Copper final : public AbsVM::Copper {
+    class Copper final : public IVm::Copper {
     public:
         virtual void fetch() override;
         virtual AddrRef getCopperAddr(amD::ECopperAddr_ copno) override;
@@ -136,7 +135,7 @@ public:
     Copper instCopper;
 
 
-    class Emu final : public AbsVM::Emu {
+    class Emu final : public IVm::Emu {
     public:
         UaeVmImp* vm = nullptr;
         virtual void setDebugMode(amD::EDebuggerMode debug_mode) override;
@@ -149,6 +148,29 @@ public:
     };  // class Emu
     Emu instEmu;
 
+
+    class Floppy : public IVm::Floppy {
+    public:
+        virtual bool getEnabled() override;
+        virtual void setEnabled(bool v) override;
+        virtual bool getWriteProtect() override {
+            ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
+            return cfgFloppy.forcedwriteprotect;
+        }
+        virtual void setWriteProtect(bool v) override {
+            ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
+            cfgFloppy.forcedwriteprotect = v;
+        }
+        virtual qd::string getAdfPath() override {
+            ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
+            return cfgFloppy.df;
+        }
+        virtual void setAdfPath(const qd::string& v) override {
+            ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
+            SDL_strlcpy(cfgFloppy.df, v.c_str(), EAArrayCount(cfgFloppy.df));
+        }
+    };
+    qd::array<Floppy, IVm::MAX_FLOPPIES> instFloppies = {};
 
 };  // class UaeVmImp
 //////////////////////////////////////////////////////////////////////////

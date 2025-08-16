@@ -30,7 +30,7 @@
 namespace qsr {
 
 
-UaeClientAppPart::UaeClientAppPart(AbsVM::VM* _vm) : m_pVm(_vm) {
+UaeClientAppPart::UaeClientAppPart(IVm::VM* _vm) : m_pVm(_vm) {
 }
 
 UaeClientAppPart::~UaeClientAppPart() {
@@ -235,8 +235,7 @@ qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
 
 
 UaeServerThread* UaeClientAppPart::getUaeThread() const {
-    QuasarApp* pApp = QuasarApp::get();
-    return pApp->m_pUaeServerAppPart->getUaeThread();
+    return getApp()->m_pUaeServerAppPart->getUaeThread();
 }
 
 
@@ -246,17 +245,16 @@ void* UaeClientAppPart::getOpEnvPtr(const qd::TypeInfo& classType) const {
 
 
 qd::EFlow UaeClientAppPart::applyOperationMsg(qd::operation::args::Base* args) {
-    switch (args->getCid()) {
-        case qsr::operation::args::ShowDebuggerWnd::CID:
-            break;
-        default:
-            break;
+    if (auto p = args->cast_<qsr::operation::args::ShowDebuggerWnd>()) {
+        amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();
+        pDbg->setWndVisible(true);
+        return qd::EFlow::STOP;
     }
     return qd::EFlow::STOP;
 }
 
 
-AbsVM::VM* UaeClientAppPart::getVm() const {
+IVm::VM* UaeClientAppPart::getVm() const {
     return m_pVm.get();
 }
 

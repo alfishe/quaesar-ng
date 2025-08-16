@@ -2,7 +2,7 @@
 #include "qd/base/baseTypes.h"
 #include "qd/stl/vector.h"
 #include "amDebugger/base.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "amDebugger/codeAnalyzer/QuadTreeAddrMap.h"
 #include "EASTL/intrusive_list.h"
 
@@ -74,9 +74,9 @@ public:
     void destroy();
 
 public:
-    void requestAnalyzedBlock(AbsVM::VM* vm, AddrRef addr, int nItems, qd::vector<amD::cda::Item *> *outItems, const AddrRef* pCheckAddr = nullptr);
+    void requestAnalyzedBlock(IVm::VM* vm, AddrRef addr, int nItems, qd::vector<amD::cda::Item *> *outItems, const AddrRef* pCheckAddr = nullptr);
 
-    CodeChunk &requestCodeChunk(AbsVM::VM *vm, AddrRef addr);
+    CodeChunk &requestCodeChunk(IVm::VM *vm, AddrRef addr);
 
     CodeChunk &getOrCreateCodePage(AddrRef addr, bool *bOutPageWasFound = nullptr);
 

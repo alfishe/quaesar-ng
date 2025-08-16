@@ -2,7 +2,7 @@
 #include "qd/base/baseTypes.h"
 #include "qd/qui/uiOperationArgs.h"
 #include <amDebugger/shortcutsList.h>
-#include <amDebugger/vm/absVM.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <amDebugger/vm/memory.h>
 
 
@@ -120,6 +120,7 @@ struct DoDebugTraceContinue : public amD::operation::OperationArgs {
     // TS_REFLECT_CLASS(DoDebugTraceContinue, amD::operation::OperationArgs);
     // DECLARE_OPERATION(amD::operation::args::DoDebugTraceContinue, amD::operation::DebugTraceContinue);
     DECLARE_OPERATION_1(amD::operation::args::DoDebugTraceContinue);
+    DoDebugTraceContinue() { BPT(); }
     amD::EDebuggerMode debugMode = DebuggerMode_Live;
 };
 

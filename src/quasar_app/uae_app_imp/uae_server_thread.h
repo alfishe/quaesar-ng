@@ -31,8 +31,7 @@ public:
     uint32_t* m_pAmigaBuffer = nullptr;
     qd::ThreadEvent* m_onUaeInitialized = nullptr;  // event to wait for UAE initialization
     SDL_atomic_t m_scrFrameNo = {};
-    ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;
-    ref_ptr<amD::IDbgConnection> m_pConnection = amD::create_shared_connection("UAE server");  //temp
+    ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;  // create shared VM
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
     virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
@@ -50,10 +49,8 @@ public:
     void pushSdlEvent(const SDL_Event& event);
     bool onUaeHandleEvents();
 
-    AbsVM::VM* getVm() const;
-    virtual amD::IDbgConnection* getConnection() const override {
-        return m_pConnection.get();
-    }
+    IVm::VM* getVm() const;
+    virtual ref_ptr<amD::IDbgConnection> createConnection() const override;
 
     void execConsoleCmd(qd::string&& cmd);
     void applyImmediateConsoleCmd(qd::string&& cmd);

@@ -104,6 +104,10 @@ qd::EFlow UaeServerThread::applyOperationMsg(qd::operation::args::Base* args) {
 
 
 UaeServerThread::UaeServerThread() {
+    m_pVm = new amD::vm::imp::UaeVmImp();
+    m_pVm->setServerImp(this);
+    //m_pVm->init();
+
     assert(!g_pSingleton);
     g_pSingleton = this;
     m_pConsoleQueue = new ConsoleQueue();
@@ -161,9 +165,6 @@ void UaeServerThread::initialize() {
     m_onUaeInitialized = new qd::ThreadEvent(true);
     m_uaeThread = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
     m_onUaeInitialized->wait();
-
-    m_pVm = new amD::vm::imp::UaeVmImp();
-    m_pVm->setServerImp(this);
 }
 
 
@@ -237,8 +238,42 @@ bool UaeServerThread::onUaeHandleEvents() {
 }
 
 
-AbsVM::VM* UaeServerThread::getVm() const {
+IVm::VM* UaeServerThread::getVm() const {
     return m_pVm;
+}
+
+
+class UaeSharedConnectionImp : public amD::IDbgConnection {
+public:
+    amD::vm::imp::UaeVmImp* m_pUaeVm;
+
+    UaeSharedConnectionImp(amD::vm::imp::UaeVmImp* pUaeVm) : m_pUaeVm(pUaeVm) {
+    }
+
+    virtual void pushOperation(amD::operation::OperationArgs*) override {
+    }
+
+    virtual amD::operation::OperationArgs* getFrontOperation() override {
+        return nullptr;
+    }
+
+    virtual void popFrontOperation() override {
+    }
+
+    virtual ref_ptr<IVm::VM> getClientVm() override {
+        return m_pUaeVm;
+    }
+
+    virtual ref_ptr<IVm::VM> getServerVm() override {
+        return m_pUaeVm;
+    }
+};  // class UaeSharedConnectionImp
+//////////////////////////////////////////////////////////////////////////
+
+
+ref_ptr<amD::IDbgConnection> UaeServerThread::createConnection() const {
+    ref_ptr<UaeSharedConnectionImp> pInst = new UaeSharedConnectionImp(m_pVm);
+    return pInst;
 }
 
 

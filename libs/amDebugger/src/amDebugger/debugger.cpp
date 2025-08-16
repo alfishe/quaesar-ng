@@ -1,5 +1,5 @@
 #include "amDebugger/debugger.h"
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "amDebugger/debuggerOps.h"
 
 
@@ -7,12 +7,19 @@ namespace amD
 {
 
 
-void Debugger::init()
+Debugger::Debugger(DebuggerApp* _app, ref_ptr<IDbgConnection> pCon)
+    : m_pDbgApp(_app)
+    , m_pConnection(pCon)
 {
-    vm = AbsVM::VM::setVmInst(AbsVM::createByFactory_<AbsVM::VM>());
-    vm->init();
+     assert(m_pConnection);
 }
 
+
+void Debugger::init()
+{
+    m_pVm = m_pConnection->getClientVm();
+    assert(m_pVm);
+}
 
 
 void* Debugger::getOpEnvPtr(const qd::TypeInfo& classType) const
@@ -23,9 +30,9 @@ void* Debugger::getOpEnvPtr(const qd::TypeInfo& classType) const
 
 qd::EFlow Debugger::applyOperationMsg(qd::operation::args::Base* args)
 {
-    return qd::EFlow::DONE;
+    qd::EFlow r = m_pVm->applyOperationMsg(args);
+    return r;
 }
-
 
 
 void Debugger::execConsoleCmd(qd::string&& cmd)
@@ -38,9 +45,7 @@ void Debugger::execConsoleCmd(qd::string&& cmd)
 
 void Debugger::setDebugMode(EDebuggerMode debug_mode)
 {
-    amD::operation::args::DoDebugTraceContinue dd;
-    dd.debugMode = debug_mode;
-    sendOperationBoth(&dd);
+    m_pVm->emu->setDebugMode(debug_mode);
 }
 
 

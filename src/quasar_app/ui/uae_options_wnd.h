@@ -7,8 +7,8 @@
 #include "qd/stl/vector.h"
 
 
-FORWARD_DECLARATION_2(AbsVM, VM);
-FORWARD_DECLARATION_2(AbsVM, Floppy);
+FORWARD_DECLARATION_2(IVm, VM);
+FORWARD_DECLARATION_2(IVm, Floppy);
 
 
 namespace qsr {
@@ -40,7 +40,7 @@ struct EOptionCat {
 
 
 struct OptionDrawContext {
-    AbsVM::VM* vm = nullptr;
+    IVm::VM* vm = nullptr;
 };
 
 struct UOption {
@@ -81,7 +81,7 @@ class UaeOptionsDlg : public qd::UiDialog {
     qd::array<qd::unique_ptr<UCategory>, EOptionCat::MAX_COUNT> m_pCategories = {};
     qd::vector<qd::unique_ptr<UOption>> m_pOptions;
     UCategory* m_pSelectedCat = nullptr;
-    AbsVM::VM* m_pVm = nullptr;
+    IVm::VM* m_pVm = nullptr;
 
 public:
     virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
@@ -106,15 +106,15 @@ public:
 
     virtual ~UaeOptionsDlg();
 
-    AbsVM::VM* getVm() const {
+    IVm::VM* getVm() const {
         return m_pVm;
     }
-    void setVm(AbsVM::VM* Vm) {
+    void setVm(IVm::VM* Vm) {
         m_pVm = Vm;
     }
 };  // class UaeOptionsDlg
 
 
-extern void open_file_dlg_select_adf(AbsVM::Floppy& cfgFloppy);
+extern void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy);
 
 };  // namespace qsr

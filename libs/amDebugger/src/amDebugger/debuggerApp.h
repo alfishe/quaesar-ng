@@ -16,7 +16,7 @@ union SDL_Event;
 FORWARD_DECLARATION_4S(qd, operation, args, Base);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 FORWARD_DECLARATION_2(qd, UiOperationMgr);
-FORWARD_DECLARATION_2(AbsVM, VM);
+FORWARD_DECLARATION_2(IVm, VM);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class IDbgConnectionManager
     TS_REFLECT_CLASS(amD::IDbgConnectionManager, void);
 public:
     virtual uint32_t getNumConnections() = 0;
-    virtual amD::IDbgConnection* getConnectionByNo(uint32_t idx) = 0;
+    virtual ref_ptr<amD::IDbgConnection> createConnectionByInd(uint32_t idx) = 0;
 }; // class IDbgConnectionManager
 
 
@@ -44,28 +44,20 @@ private:
     SDL_Renderer* m_pWndRenderer = nullptr;
     qd::QImGuiContext* m_pQimGui = nullptr;
     uint32_t m_nCurDbgClientIdx = 0;
-    int mbInit = false;
+    int m_init = false;
 
 public:
 
-    amD::Debugger* m_pCurDbgClient = nullptr;
-    qd::vector<ref_ptr<amD::Debugger>> m_pClients;
+    ref_ptr <amD::Debugger> m_pDebugger = nullptr; // current debugger client
     amD::DebuggerDesktop* m_pGui = nullptr;
     qd::UiOperationMgr* m_pOperationMgr = nullptr;
 
 public:
-    SDL_Renderer* getRenderer() const {
-        return m_pWndRenderer;
-    }
-
-    uint32_t getCurDbgClientIdx() const {
-        return m_nCurDbgClientIdx;
-    }
-    void setCurDbgClientIdx(uint32_t curDbgClientIdx);
-
     DebuggerApp();
     inline static DebuggerApp* g_pInstance = nullptr;
     static DebuggerApp* get();
+    SDL_Renderer* getRenderer() const { return m_pWndRenderer; }
+    uint32_t getCurDbgClientIdx() const { return m_nCurDbgClientIdx; }
 
     virtual void onPartCreate(AppPart::OnCreate_t& prm) override;
     void init();
@@ -73,15 +65,15 @@ public:
     virtual void update(float dt, float time) override;
     virtual void render() override;
     bool isWndVisible() const;
-    void toggleWndVisible(EDebuggerMode mode);
+    void setWndVisible(bool v);
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
-    AbsVM::VM* getVm() const {
-        return m_pCurDbgClient->vm;
+    IVm::VM* getVm() const {
+        return m_pDebugger->getVm();
     }
 
     amD::Debugger* getDbg() const {
-        return m_pCurDbgClient;
+        return m_pDebugger;
     }
 
     qd::UiOperationMgr* getOperations() const {

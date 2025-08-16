@@ -9,7 +9,7 @@ struct SDL_Renderer;
 FORWARD_DECLARATION_1(UaeServerThread);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
 FORWARD_DECLARATION_2(qsr, UaeGuiDesktop);
-FORWARD_DECLARATION_2(AbsVM, VM);
+FORWARD_DECLARATION_2(IVm, VM);
 FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 
 
@@ -30,10 +30,10 @@ private:
     SDL_Texture* m_pUaeScrTexture = nullptr;
     qd::QImGuiContext* m_pImGui = nullptr;
     bool m_bShowImgui = false;
-    ref_ptr<AbsVM::VM> m_pVm;
+    ref_ptr<IVm::VM> m_pVm;
 
 public:
-    UaeClientAppPart(AbsVM::VM* _vm);
+    UaeClientAppPart(IVm::VM* _vm);
     virtual ~UaeClientAppPart();
 
     virtual void onPartCreate(qd::AppPart::OnCreate_t& prm) override;
@@ -58,12 +58,16 @@ public:
     void setShowImgui(bool ShowImgui) {
         m_bShowImgui = ShowImgui;
     }
+    QuasarApp* getApp() const {
+        QuasarApp* pApp = (QuasarApp*)TSuper::getApp();
+        return pApp;
+    }
 
     UaeServerThread* getUaeThread() const;
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
     virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
-    AbsVM::VM* getVm() const;
+    IVm::VM* getVm() const;
 
 private:
     void _drawGuiMenus();

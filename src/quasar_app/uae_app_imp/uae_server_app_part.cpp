@@ -33,7 +33,7 @@ void UaeServerAppPart::destroyImp() {
 }
 
 
-AbsVM::VM* UaeServerAppPart::getVm() const {
+IVm::VM* UaeServerAppPart::getVm() const {
     return m_pUaeThread->getVm();
 }
 

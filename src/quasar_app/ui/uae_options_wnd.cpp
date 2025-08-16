@@ -8,7 +8,7 @@
 // clang-format on
 #include "uae_options_wnd.h"
 #include <nfd.h>
-#include "amDebugger/vm/absVM.h"
+#include "amDebugger/vm/vmInterface.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 #include "qd/imGui/imGuiHelperClass.h"
@@ -22,15 +22,15 @@
 
 namespace qsr {
 
-void open_file_dlg_select_adf(AbsVM::Floppy& cfgFloppy) {
-    nfdu8char_t* outPath;
+void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy) {
     nfdu8filteritem_t filters[1] = {{"Amiga images", "adf,exe,dms,zip"}};
     nfdopendialogu8args_t args = {0};
     args.filterList = filters;
     args.filterCount = EAArrayCount(filters);
+    nfdu8char_t* outPath = nullptr;
     nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
     if (result == NFD_OKAY) {
-        //strcpy(cfgFloppy.df, outPath);
+        cfgFloppy.setAdfPath(outPath);
         NFD_FreePathU8(outPath);
     }
 }
@@ -39,11 +39,10 @@ void open_file_dlg_select_adf(AbsVM::Floppy& cfgFloppy) {
 void opt_floppy_draw(OptionDrawContext* ctx, int nFloppy) {
     qd::string strDF = qd::string_format("DF%i:", nFloppy);
 
-    //::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[nFloppy];
-    AbsVM::Floppy* pFloppyCfg = ctx->vm->floppySlots[nFloppy];
-    bool bEnabled = pFloppyCfg->active;
+    IVm::Floppy* pFloppyCfg = ctx->vm->floppies[nFloppy];
+    bool bEnabled = pFloppyCfg->getEnabled();
     if (ImGui::Checkbox(strDF.c_str(), &bEnabled))
-        pFloppyCfg->active = bEnabled;  // ? 0 : -1;
+        pFloppyCfg->setEnabled(bEnabled);  // ? 0 : -1;
 
     if (bEnabled) {
         ImGui::SameLine();
@@ -51,16 +50,18 @@ void opt_floppy_draw(OptionDrawContext* ctx, int nFloppy) {
             open_file_dlg_select_adf(*pFloppyCfg);
         }
         ImGui::SameLine();
-        bool wp = pFloppyCfg->writeProtect;
+        bool wp = pFloppyCfg->getWriteProtect();
         if (ImGui::Checkbox("Write-protected", &wp))
-            pFloppyCfg->writeProtect = wp;
+            pFloppyCfg->setWriteProtect(wp);
 
         ImGui::SameLine();
         if (ImGui::Button("Eject")) {
-            pFloppyCfg->active = false;
-            //cfgFloppy.df[0] = '\0';
+            pFloppyCfg->setEnabled(false);
+            pFloppyCfg->setAdfPath("");
         }
-        //ImGui::InputText("##Image file", cfgFloppy.df, sizeof(cfgFloppy.df), ImGuiInputTextFlags_EnterReturnsTrue);
+        qd::string adfPath = pFloppyCfg->getAdfPath();
+        if (ImGui::InputText("##Image file", &adfPath, ImGuiInputTextFlags_EnterReturnsTrue))
+            pFloppyCfg->setAdfPath(adfPath);
     }
 }
 

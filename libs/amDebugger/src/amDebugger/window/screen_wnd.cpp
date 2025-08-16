@@ -1,7 +1,7 @@
 #include "screen_wnd.h"
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/vm/absVM.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <qd/ImGui/imgui_eastl.h>
 #include "qd/imGui/imGuiHelperClass.h"
 //#include <quaesar.h>
@@ -11,7 +11,7 @@ namespace window {
 
 void ScreenWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->getVm();
+    IVm::VM* vm = dbg->getVm();
     //ImGuiIO& io = ImGui::GetIO();
 
     int amiga_width = vm->getScreenSizeX();

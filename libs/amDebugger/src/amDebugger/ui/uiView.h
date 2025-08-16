@@ -8,7 +8,7 @@
 #include "qd/qui/uiOperation.h"
 
 
-FORWARD_DECLARATION_2(AbsVM, VM);
+FORWARD_DECLARATION_2(IVm, VM);
 
 
 namespace amD {
@@ -65,7 +65,7 @@ public:
     DebuggerDesktop* getUi() {
         return ui;
     }
-    AbsVM::VM* getVm() const;
+    IVm::VM* getVm() const;
 
 }; // class AmDbgWindow
 //////////////////////////////////////////////////////////////////////////

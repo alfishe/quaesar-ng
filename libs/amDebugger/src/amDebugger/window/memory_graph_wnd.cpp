@@ -2,7 +2,7 @@
 #include <EASTL/span.h>
 #include <SDL.h>
 #include <amDebugger/debuggerApp.h>
-#include <amDebugger/vm/absVM.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <imgui/imgui_internal.h>
 #include <qd/ImGui/imgui_eastl.h>
 #include "qd/imGui/imGuiHelperClass.h"
@@ -15,7 +15,7 @@ namespace window {
 
 void MemoryGraphWnd::drawContentImp() {
     amD::Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->getVm();
+    IVm::VM* vm = dbg->getVm();
 
     mNewTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
 

@@ -20,7 +20,7 @@ class QuasarApp : public qd::Application {
     typedef qd::Application TSuper;
 
 public:
-    amD::DebuggerApp* m_pDebuggerPart = nullptr;
+    amD::DebuggerApp* m_pDebuggerApp = nullptr;
     qsr::UaeClientAppPart* m_pUaeClientAppPart = nullptr;
     qsr::UaeServerAppPart* m_pUaeServerAppPart = nullptr;
     class QuaesarServersMgr* m_pServersMgr = nullptr;
@@ -46,6 +46,13 @@ public:
 
     virtual void* getInterface(const qd::TypeInfo& p_interface) override;
 
+    amD::DebuggerApp* getDebuggerApp() const {
+        return m_pDebuggerApp;
+    }
+    qsr::UaeClientAppPart* getUaeClientAppPart() const {
+        return m_pUaeClientAppPart;
+    }
+
 };  // class App
 //////////////////////////////////////////////////////////////////////////
 
@@ -56,14 +63,16 @@ enum class EQuaServerId {
 };
 
 
+// Debugger Servers providers manager
+//
 class QuaesarServersMgr : public amD::IDbgConnectionManager {
     TS_REFLECT_CLASS(QuaesarServersMgr, amD::IDbgConnectionManager);
     QuasarApp* m_pApp;
-    struct Item {
+    struct ServerItem {
         EQuaServerId m_id;
         amD::IDebuggerServer* m_server;
     };
-    qd::vector<Item> m_pServers;
+    qd::vector<ServerItem> m_pServers;
 
 public:
     QuaesarServersMgr(QuasarApp* pApp);
@@ -71,7 +80,7 @@ public:
 
 public:
     virtual uint32_t getNumConnections() override;
-    virtual amD::IDbgConnection* getConnectionByNo(uint32_t idx) override;
+    virtual ref_ptr<amD::IDbgConnection> createConnectionByInd(uint32_t idx) override;
     void registerVmServer(EQuaServerId id, amD::IDebuggerServer* pServer);
 
     amD::IDebuggerServer* getServerById(EQuaServerId id) const;

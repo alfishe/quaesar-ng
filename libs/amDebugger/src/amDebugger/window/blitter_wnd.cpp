@@ -3,7 +3,7 @@
 #include <amDebugger/ui/uiView.h>
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/memory.h>
-#include <amDebugger/vm/absVM.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <EASTL/fixed_string.h>
 #include <EASTL/fixed_vector.h>
 #include "qd/imGui/imGuiHelperClass.h"
@@ -33,7 +33,7 @@ public:
 struct DeclareDmaSrcUiArgs {
     uint16_t bltCon0;
     uint16_t bltCon1;
-    AbsVM::CustomRegs* custRegs;
+    IVm::CustomRegs* custRegs;
     char dmaLetter;
     BC0F::Type srcEnFlag;
     CustReg bltXPtH;
@@ -109,9 +109,9 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi()
 void BlitterWnd::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->vm;
+    IVm::VM* vm = dbg->m_pVm;
 
-    AbsVM::CustomRegs* custRegs = vm->custom;
+    IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
 
 

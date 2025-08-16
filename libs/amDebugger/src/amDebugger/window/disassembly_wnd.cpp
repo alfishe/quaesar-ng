@@ -3,7 +3,7 @@
 #include <amDebugger/debuggerApp.h>
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/ui/uiStyle.h>
-#include <amDebugger/vm/absVM.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <capstone/capstone.h>
 #include <EASTL/fixed_string.h>
 #include <EASTL/string.h>
@@ -35,7 +35,7 @@ int find_disasm_addr_line_idx(const qd::vector<amD::cda::Item*> &disasm_lines, A
 void DisassemblyView::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    AbsVM::VM* vm = dbg->getVm();
+    IVm::VM* vm = dbg->getVm();
     ImGuiContext& g = *ImGui::GetCurrentContext();
 
     // btn: goto addr

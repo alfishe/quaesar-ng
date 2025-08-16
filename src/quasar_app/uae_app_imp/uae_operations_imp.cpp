@@ -71,7 +71,7 @@ qd::EFlow DebugWaitScanLines::applyOperationMsgProc(qd::IOperationEnvironment* e
     if (p_msg->cast_<qd::operation::args::DoOperation>() ||
         p_msg->cast_<amD::operation::args::DoDebugTraceContinue>()) {
         eastl::string cmd;
-        cmd.append_sprintf("fs %i", pDbg->getWaitScanLines());
+        cmd.sprintf("fs %i", pDbg->getWaitScanLines());
         pDbg->execConsoleCmd(eastl::move(cmd));
         return qd::EFlow::SUCCESS;
     } else

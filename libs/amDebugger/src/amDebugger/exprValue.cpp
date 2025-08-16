@@ -86,7 +86,7 @@ void ExprValStr::parse()
 }
 
 
-bool ExprValStr::evaluate(const AbsVM::VM* vm, qd::Var16& res)
+bool ExprValStr::evaluate(const IVm::VM* vm, qd::Var16& res)
 {
     if (!m_pParsedExpr)
         return false;
