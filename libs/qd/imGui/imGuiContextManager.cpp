@@ -87,6 +87,7 @@ qd::EFlow QImGuiContext::onSdlEventProc(SDL_Event& event)
 
 void QImGuiContext::newFrame()
 {
+    m_frameStarted = true;
     useCurrent();
     // Start the Dear ImGui frame
     ImGui_ImplSDLRenderer2_NewFrame();
@@ -98,6 +99,7 @@ void QImGuiContext::newFrame()
 void QImGuiContext::endFrame()
 {
     ImGui::EndFrame();
+    m_frameEnded = true;
 }
 
 

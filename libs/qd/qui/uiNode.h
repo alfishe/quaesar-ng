@@ -82,6 +82,7 @@ private:
 
 protected:
     bool m_bVisible = true;
+    bool m_bFocus = false;
 
 public:
     virtual void onNodeCreated(qd::UiNodeCreator* mk);
@@ -141,6 +142,10 @@ public:
     bool isVisible(bool bCheckParents = false) const;
     bool setVisible(bool bVisible);
     void destroyRecursive();
+
+    bool hasFocus() const {
+        return m_bFocus;
+    };
 
 public:
     // Components

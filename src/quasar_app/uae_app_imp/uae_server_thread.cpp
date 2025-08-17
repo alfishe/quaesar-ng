@@ -15,6 +15,7 @@
 #include "qd/thread/thread.h"
 #include "quasar_app/parse_options.h"
 #include "quasar_app/quaesar.h"
+#include "uae_server_app_part.h"
 #include "uae_vm_imp.h"
 
 
@@ -97,16 +98,15 @@ void* UaeServerThread::getOpEnvPtr(const qd::TypeInfo& classType) const {
 }
 
 
-qd::EFlow UaeServerThread::applyOperationMsg(qd::operation::args::Base* args) {
+qd::EFlow UaeServerThread::applyOperationMsgProc(qd::operation::args::Base* args) {
     assert(0);
     return qd::EFlow::STOP;
 }
 
 
-UaeServerThread::UaeServerThread() {
+UaeServerThread::UaeServerThread(qsr::UaeServerAppPart* pServerApp) : m_pServerApp(pServerApp) {
     m_pVm = new amD::vm::imp::UaeVmImp();
     m_pVm->setServerImp(this);
-    //m_pVm->init();
 
     assert(!g_pSingleton);
     g_pSingleton = this;
@@ -165,6 +165,8 @@ void UaeServerThread::initialize() {
     m_onUaeInitialized = new qd::ThreadEvent(true);
     m_uaeThread = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
     m_onUaeInitialized->wait();
+    // inite after UAE ready
+    m_pVm->init();
 }
 
 

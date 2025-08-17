@@ -38,7 +38,7 @@ public:
     virtual void init() override;
 
     //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
 
     struct Cpu : public IVm::Cpu {
         uint32_t getRegA(int i) const override {
@@ -138,6 +138,8 @@ public:
     class Emu final : public IVm::Emu {
     public:
         UaeVmImp* vm = nullptr;
+        virtual int getDebugDmaMode() override;
+        virtual void setDebugDmaMode(int p_mode) override;
         virtual void setDebugMode(amD::EDebuggerMode debug_mode) override;
         bool isDebugActivatedFull() const;
         bool isDebugActivated() const;

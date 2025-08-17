@@ -16,7 +16,7 @@ private:
 
 public:
     UaeServerAppPart();
-    virtual ~UaeServerAppPart();
+    virtual ~UaeServerAppPart() override;
 
     virtual void onPartCreate(qd::AppPart::OnCreate_t& prm) override;
     virtual void destroyImp() override;

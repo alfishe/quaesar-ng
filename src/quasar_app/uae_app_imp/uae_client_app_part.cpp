@@ -244,7 +244,7 @@ void* UaeClientAppPart::getOpEnvPtr(const qd::TypeInfo& classType) const {
 }
 
 
-qd::EFlow UaeClientAppPart::applyOperationMsg(qd::operation::args::Base* args) {
+qd::EFlow UaeClientAppPart::applyOperationMsgProc(qd::operation::args::Base* args) {
     if (auto p = args->cast_<qsr::operation::args::ShowDebuggerWnd>()) {
         amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();
         pDbg->setWndVisible(true);

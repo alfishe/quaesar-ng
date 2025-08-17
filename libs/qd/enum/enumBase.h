@@ -4,7 +4,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 // EnumNamespace = "Namespace::ToEnum::"
-
+// example: ENUM_DECLARE_BASE(app::shortcut::, EShortcutId, Type, UNDEF);
+//
 #define ENUM_DECLARE_BASE(EnumNamespace, EnumNameStruct, eEnumType, _DefaultValue)        \
 private:                                                                                  \
     typedef EnumNamespace EnumNameStruct EThis; /* CONCAT NAME */                         \

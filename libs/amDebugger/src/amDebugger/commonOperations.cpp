@@ -6,6 +6,7 @@
 namespace amD::operation {
 
 
+/*
 
 qd::EFlow UaeWndAlwaysOnTop::applyOperationMsgProc(qd::IOperationEnvironment* env, amD::operation::OperationArgs* p_msg)
 {
@@ -27,6 +28,7 @@ qd::EFlow UaeWndAlwaysOnTop::applyOperationMsgProc(qd::IOperationEnvironment* en
     else
         return Operation::applyOperationMsgProc(env, p_msg);
 }
+*/
 
 
 }; // namespace amD::operation

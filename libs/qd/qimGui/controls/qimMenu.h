@@ -3,11 +3,11 @@
 #include "qd/qimGui/qimGui.h"
 
 
-FORWARD_DECLARATION_2(qd, UiOperation);
+//FORWARD_DECLARATION_2(qd, UiOperation);
 
 
 namespace qim {
-class UiMenuBeh;
+//class UiMenuBeh;
 
 #if 0
 

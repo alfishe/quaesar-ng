@@ -1,9 +1,9 @@
 #pragma once
-#include <imgui/imgui.h>
 #include "qd/qui/shortcutHnd.h"
+#include "qd/qui/shortcutMgr.h"
 #include "qd/qui/uiOperation.h"
 #include "qd/typeSystem/typeRegistry.h"
-#include "qd/qui/shortcutMgr.h"
+#include <imgui/imgui.h>
 
 
 namespace qIm {
@@ -31,21 +31,19 @@ public:
             }
 
             // find operation instance by operation Type
-            if (qd::UiOperationMgr* pOpMgr = qd::UiOperationMgr::get())
+            qd::UiOperationMgr* pOpMgr = &qd::UiOperationMgr::get();
             {
                 qd::UiOperation* pOperation = pOpMgr->findOperationByType(*pOperationType);
                 assert(pOperation);
                 *pCachedOpInstance = pOperation; // save instance in ImGui cache storage
             }
-            else
-                assert(0 && "No operation manager");
         }
         qd::UiOperation* pOperation = reinterpret_cast<qd::UiOperation*>(*pCachedOpInstance);
         if (!pOperation)
             return;
 
         // print shortcut abbr
-        qd::ShortcutHnd* pShortcuts = pOperation->getShortcuts();
+        qd::ShortcutsHnd* pShortcuts = pOperation->getShortcuts();
         qd::string shortcutName;
         if (pShortcuts && pShortcuts->getNumShortcuts() > 0)
         {
@@ -59,7 +57,7 @@ public:
         {
             m_pOperation = pOperation;
             if (bDoOperation)
-                m_pOperation->doOperation(env);
+                pOperation->doOperation(env);
         }
     }
 
@@ -76,15 +74,33 @@ inline void menuItemOperation(qd::IOperationEnvironment* env, const char* pOpera
 }
 
 
-inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* p_arg, const char* gui_label)
+inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* p_arg,
+    const char* gui_label)
 {
-    const char* shortcutName = "";
     bool bChecked = false;
     bool bEnabled = true;
-    if (ImGui::MenuItem(gui_label, shortcutName, &bChecked, bEnabled))
+
+    qd::InlineString shortcutName;
+    qd::UiOperationMgr* pOpMgr = &qd::UiOperationMgr::get();
+    if (const qd::operation::args::OpDesc* pDesc = pOpMgr->findOpDesc(p_arg->getCid()))
     {
-        pEnv->applyOperationMsg(p_arg);
+        pDesc->getShortcutGuiStr(shortcutName);
+        if (!gui_label)
+            gui_label = pDesc->m_name.c_str();
     }
+
+    if (ImGui::MenuItem(gui_label, shortcutName.c_str(), &bChecked, bEnabled))
+    {
+        pEnv->applyOperationMsgProc(p_arg);
+    }
+}
+
+
+template<class TOp>
+inline void menuItemOperationArgs_(qd::IOperationEnvironment* pEnv, const char* gui_label = nullptr)
+{
+    TOp pArg;
+    menuItemOperationArgs(pEnv, &pArg, gui_label);
 }
 
 

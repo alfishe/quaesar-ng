@@ -1,6 +1,5 @@
 #pragma once
 #include "qd/base/baseTypes.h"
-#include "qd/qui/uiOperationArgs.h"
 #include <amDebugger/shortcutsList.h>
 #include <amDebugger/vm/vmInterface.h>
 #include <amDebugger/vm/memory.h>
@@ -9,14 +8,10 @@
 FORWARD_DECLARATION_2(amD, Debugger);
 FORWARD_DECLARATION_2(amD, DebuggerDesktop);
 FORWARD_DECLARATION_3(amD, operation, Operation);
-
+FORWARD_DECLARATION_3S(amD, shortcut, EId);
 
 
 namespace amD {
-
-namespace shortcut {
-enum class EId;
-};
 
 namespace operation {
 using qd::operation::args::OpDesc;
@@ -63,14 +58,10 @@ class Operation : public qd::UiOperation
     TS_REFLECT_CLASS(amD::operation::Operation, qd::UiOperation);
 
 public:
-    // amD::DebuggerDesktop* m_pDbgGui = nullptr;
-    // amD::Debugger* m_pDbg = nullptr;
-
-public:
     virtual void onDebuggerOperationCreate(amD::operation::AmDebuggerOperationCreator* cp) {}
 
     // void doOperationBase(qd::IOperationEnvironment* env);
-    void addShortcut(shortcut::EId sid) { UiOperation::addShortcut((int)sid); }
+    void addShortcut(shortcut::EId sid);
     // amD::Debugger* getDbg() const;
 
     virtual qd::EFlow applyOperationMsgProc(qd::IOperationEnvironment* env, amD::operation::OperationArgs* p_msg)
@@ -83,6 +74,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////////
 namespace args {
 
 
@@ -91,7 +83,7 @@ struct UaeResetAmiga : public amD::operation::OperationArgs {
     static void setup(qd::operation::args::OpDesc& d)
     {
         d.m_id = "reset";
-        d.m_label = "Reset Amiga";
+        d.m_name = "Reset Amiga";
         d.addShortcut(amD::shortcut::EId::ResetAmigaEmu);
     }
 };
@@ -102,8 +94,23 @@ struct ExecConsoleCmd : public amD::operation::OperationArgs {
     static void setup(qd::operation::args::OpDesc& d)
     {
         d.m_id = "console";
-        d.m_label = "Console command";
+        d.m_name = "Console command";
     }
+};
+
+struct DebugDmaOption : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DebugDmaOption);
+    int dmaMode = 0;
+    static void setup(qd::operation::args::OpDesc& d)
+    { d.m_name = "Debug DMA"; }
+    inline static const char* dma_options = "off\0"
+                                            "mode 2\0"
+                                            "mode 3\0"
+                                            "mode 4\0"
+                                            "\0";
+
+    int getCurDebugDmaMode(qd::IOperationEnvironment* env);
+    void changeDebugDmaMode(qd::IOperationEnvironment* env, int nMode);
 };
 
 
@@ -116,19 +123,65 @@ struct MenuItemStateGet : public amD::operation::OperationArgs {
 
 
 
-struct DoDebugTraceContinue : public amD::operation::OperationArgs {
-    // TS_REFLECT_CLASS(DoDebugTraceContinue, amD::operation::OperationArgs);
-    // DECLARE_OPERATION(amD::operation::args::DoDebugTraceContinue, amD::operation::DebugTraceContinue);
-    DECLARE_OPERATION_1(amD::operation::args::DoDebugTraceContinue);
-    DoDebugTraceContinue() { BPT(); }
+struct DebugTraceContinue : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DebugTraceContinue);
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Continue";
+        d.addShortcut(amD::shortcut::EId::DebugTraceContinue);
+    }
     amD::EDebuggerMode debugMode = DebuggerMode_Live;
 };
 
 
+
+struct DisasmTraceStep : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DisasmTraceStep);
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Step Into";
+        d.addShortcut(amD::shortcut::EId::DebugTraceStepInto);
+    }
+};
+
+struct DebugTraceStart : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DebugTraceStart)
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Debug Trace Mode";
+        d.addShortcut(amD::shortcut::EId::DebugTraceStart);
+    }
+};
+
+
+struct DisasmTraceStepOut : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DisasmTraceStepOut)
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Step Out";
+        d.addShortcut(amD::shortcut::EId::DebugTraceStepOut);
+    }
+};
+//////////////////////////////////////////////////////////////////////////
+
+
+struct CopperTraceStep : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::CopperTraceStep)
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Copper Trace Step";
+        d.addShortcut(amD::shortcut::EId::CopperTraceStep);
+    }
+};
+
+
 struct DisasmToggleBreakpoint : public amD::operation::OperationArgs {
-    // TS_REFLECT_CLASS(amD::operation::args::DisasmToggleBreakpoint, amD::operation::OperationArgs);
-    // DECLARE_OPERATION(amD::operation::args::DisasmToggleBreakpoint, amD::operation::DisasmToggleBreakpoint);
     DECLARE_OPERATION_1(amD::operation::args::DisasmToggleBreakpoint);
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Disasm breakpoint";
+        d.addShortcut(amD::shortcut::EId::DisasmToggleBreakpoint);
+    }
     AddrRef address = {};
     EReg reg = EReg::PC;
     int setBreakpoint = -1;
@@ -137,18 +190,48 @@ struct DisasmToggleBreakpoint : public amD::operation::OperationArgs {
 
 
 struct CopperToggleBreakpoint : public amD::operation::OperationArgs {
-    // TS_REFLECT_CLASS(CopperToggleBreakpoint, amD::operation::OperationArgs);
-    // DECLARE_OPERATION(amD::operation::args::CopperToggleBreakpoint, amD::operation::CopperToggleBreakpoint);
     DECLARE_OPERATION_1(amD::operation::args::CopperToggleBreakpoint);
     AddrRef address = {};
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Copper breakpoint";
+        d.addShortcut(amD::shortcut::EId::CopperToggleBreakpoint);
+    }
 };
 
 
-struct CopperTraceStep : public amD::operation::OperationArgs {
-    // TS_REFLECT_CLASS(CopperTraceStep, amD::operation::OperationArgs);
-    // DECLARE_OPERATION(amD::operation::args::CopperTraceStep, amD::operation::CopperTraceStep);
-    DECLARE_OPERATION_1(amD::operation::args::CopperTraceStep);
+struct ToggleTurboEmulation : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::ToggleTurboEmulation);
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Turbo Emulation";
+        d.addShortcut(amD::shortcut::EId::ToggleTurboEmulation);
+    }
 };
+//////////////////////////////////////////////////////////////////////////
+
+struct DebugWaitScanLines : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DebugWaitScanLines);
+    int waitScanLines = 1;
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Wait N scanlines";
+        d.addShortcut(amD::shortcut::EId::DebugWaitScanLines);
+    }
+};
+//////////////////////////////////////////////////////////////////////////
+
+
+
+struct UaeWndAlwaysOnTop : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::UaeWndAlwaysOnTop);
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Always on Top";
+        d.addShortcut(amD::shortcut::EId::AlwaysOnTopEmu);
+    }
+};
+
 
 
 }; // namespace args

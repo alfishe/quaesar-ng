@@ -39,7 +39,9 @@ add_source_group("qimGui/controls")
 add_source_group("imGui")
 add_source_group("imGui/style")
 add_source_group("imGui/backends")
-
+if (MSVC)
+list(APPEND QDICE_SRC "qd.natvis")
+endif()
 
 add_library(qd ${QDICE_HDR} ${QDICE_SRC})
 

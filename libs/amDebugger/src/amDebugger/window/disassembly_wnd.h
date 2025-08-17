@@ -31,7 +31,11 @@ public:
         m_title = "Disassembly";
     }
 
+    AddrRef getCursorAddr() const;
+
     virtual void drawContentImp() override;
+
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
 
 };  // class DisassemblyView
 

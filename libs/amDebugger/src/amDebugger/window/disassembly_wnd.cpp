@@ -32,6 +32,13 @@ int find_disasm_addr_line_idx(const qd::vector<amD::cda::Item*> &disasm_lines, A
 }
 
 
+
+AddrRef DisassemblyView::getCursorAddr() const
+{
+    return m_prevRegPc; // FIXME
+}
+
+
 void DisassemblyView::drawContentImp()
 {
     Debugger* dbg = getDbg();
@@ -140,7 +147,7 @@ void DisassemblyView::drawContentImp()
                 operation::args::DisasmToggleBreakpoint p;
                 p.address = curAddr;
                 p.reg = EReg::PC;
-                dbg->applyOperationMsg(&p);
+                dbg->applyOperationMsgProc(&p);
             }
             ImGui::TableNextColumn();
 
@@ -217,6 +224,19 @@ void DisassemblyView::drawContentImp()
             m_addrExtraViewStart = m_disasmLines[nReqLine - g_extraScrollLines]->m_addr;
     }
 }
+
+
+qd::EFlow DisassemblyView::applyOperationMsgProc(qd::operation::args::Base* args)
+{
+    if (auto p = args->cast_<amD::operation::args::DisasmToggleBreakpoint>())
+    {
+        p->address = getCursorAddr();
+        p->reg = EReg::PC;
+        getDbg()->applyOperationMsgProc(p);
+    }
+    return EFlow::NO_RESULT;
+}
+
 
 }; // namespace window
 }; // namespace amD

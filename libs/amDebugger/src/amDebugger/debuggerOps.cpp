@@ -9,6 +9,12 @@ namespace amD {
 namespace operation {
 
 
+void Operation::addShortcut(shortcut::EId sid)
+{
+    UiOperation::addShortcut(sid);
+}
+
+
 // Debugger* Operation::getDbg() const
 // {
 //     return m_pDbgGui->getDbg();

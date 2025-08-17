@@ -24,6 +24,7 @@ class Emu;
 class Floppy;
 
 
+//////////////////////////////////////////////////////////////////////////
 class VM
     : public qd::RefCounted
     , qd::IOperationEnvironment
@@ -56,7 +57,7 @@ public:
     virtual ~VM();
 
     virtual void init() = 0;
-    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) { assert(0); return qd::EFlow::NO_RESULT; }
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) { assert(0); return qd::EFlow::NO_RESULT; }
 
     int getScreenSizeX() const { return amiga_width; }
     int getScreenSizeY() const { return amiga_height; }
@@ -95,12 +96,15 @@ class Emu
 {
 public:
     amD::EDebuggerMode m_debugMode = amD::DebuggerMode_Live;
+    virtual int getDebugDmaMode() { return 0; }
+    virtual void setDebugDmaMode(int p_mode) {}
     virtual void setDebugMode(amD::EDebuggerMode debug_mode) /*base*/ {}
     virtual void getScreenSize(int* out_w, int* out_h) const
     {
         *out_w = 754;
         *out_h = 576;
     }
+
 }; // class Emu
 //////////////////////////////////////////////////////////////////////////
 

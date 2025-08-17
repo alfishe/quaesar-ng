@@ -17,20 +17,20 @@ void MemoryGraphWnd::drawContentImp() {
     amD::Debugger* dbg = getDbg();
     IVm::VM* vm = dbg->getVm();
 
-    mNewTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
+    m_newTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
 
     float curTime = (float)ImGui::GetTime();
 
-    if (!mTextureId || mTextureSize != mNewTextureSize) {
+    if (!mTextureId || m_textureSize != m_newTextureSize) {
         if (mTextureId) {
             SDL_DestroyTexture((SDL_Texture*)mTextureId);
             mTextureId = 0;
         }
-        if (mNewTextureSize.y > 1 && mNewTextureSize.y > 0) {
-            mTextureSize = mNewTextureSize;
+        if (m_newTextureSize.y > 1 && m_newTextureSize.y > 0) {
+            m_textureSize = m_newTextureSize;
             SDL_Texture* scrTexture = nullptr;
             scrTexture = SDL_CreateTexture(dbg->getDbgApp()->getRenderer(), SDL_PIXELFORMAT_ARGB8888,
-                                           SDL_TEXTUREACCESS_STREAMING, mTextureSize.x, mTextureSize.y);
+                                           SDL_TEXTUREACCESS_STREAMING, m_textureSize.x, m_textureSize.y);
             if (scrTexture) {
                 mTextureId = (ImTextureID)(scrTexture);
                 SDL_SetTextureBlendMode(scrTexture, SDL_BLENDMODE_BLEND);
@@ -95,7 +95,7 @@ void MemoryGraphWnd::drawContentImp() {
                 int bpWidth = ((ddfstop - ddfstrt) + 8) * 2;
                 if (bpWidth > 320)
                     bpWidth -= ddfstrt;
-                mNewTextureSize.x = bpWidth;
+                m_newTextureSize.x = bpWidth;
             }
         }
         ImGui::EndCombo();
@@ -110,8 +110,8 @@ void MemoryGraphWnd::drawContentImp() {
 
             // Change pixels
             uint32_t* dest = ((uint32_t*)pixels);
-            const int rowBytes = mTextureSize.x / 8;
-            for (int y = 0; y < mTextureSize.y; y++) {
+            const int rowBytes = m_textureSize.x / 8;
+            for (int y = 0; y < m_textureSize.y; y++) {
                 if (memPtr + rowBytes < pCurBank->m_realAddr + pCurBank->m_size) {
                     for (int x = 0; x < rowBytes; x++) {
                         uint8_t sb = *memPtr;
@@ -137,17 +137,17 @@ void MemoryGraphWnd::drawContentImp() {
     // address slider
     {
         int addrPtr = pCurBank->m_size - mBankOffset;
-        if (ImGui::VSliderInt("##AddrSlider", ImVec2(32.0f, (float)mNewTextureSize.y), &addrPtr, 0, pCurBank->m_size,
+        if (ImGui::VSliderInt("##AddrSlider", ImVec2(32.0f, (float)m_newTextureSize.y), &addrPtr, 0, pCurBank->m_size,
                               "")) {
             mBankOffset = pCurBank->m_size - addrPtr;
         }
     }
     ImGui::SameLine();
 
-    ImVec2 scrollingChildSize = ImVec2(ImGui::GetContentRegionAvail().x - 00.f, mTextureSize.y + 32.f);
+    ImVec2 scrollingChildSize = ImVec2(ImGui::GetContentRegionAvail().x - 00.f, m_textureSize.y + 32.f);
     if (auto p = qIm::LockChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None, ImGuiWindowFlags_HorizontalScrollbar))
     {
-        ImGui::Image(mTextureId, ImVec2((float)mTextureSize.x, (float)mTextureSize.y), ImVec2(0.f, 0.f),
+        ImGui::Image(mTextureId, ImVec2((float)m_textureSize.x, (float)m_textureSize.y), ImVec2(0.f, 0.f),
             ImVec2(1.f, 1.f), ImVec4(1.f, 1.f, 1.f, 1.f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
         if (ImGui::IsItemHovered())
         {
@@ -158,7 +158,7 @@ void MemoryGraphWnd::drawContentImp() {
             if (ImGui::IsMouseDragging(0))
             {
                 ImVec2 dragDelta = ImGui::GetMouseDragDelta();
-                mBankOffset = mStartDragBankOffset - int(dragDelta.y / 8.f) * (mTextureSize.x + mTextureMod) -
+                mBankOffset = mStartDragBankOffset - int(dragDelta.y / 8.f) * (m_textureSize.x + mTextureMod) -
                               int(dragDelta.x / 8.f);
             }
         }
@@ -167,7 +167,7 @@ void MemoryGraphWnd::drawContentImp() {
 
     // texture width
     {
-        int& txSize = mNewTextureSize.x;
+        int& txSize = m_newTextureSize.x;
         if (ImGui::Button("<<"))
             txSize /= 2;
         ImGui::SameLine();
@@ -179,7 +179,7 @@ void MemoryGraphWnd::drawContentImp() {
         ImGui::SameLine();
         ImGui::SetNextItemWidth(ImGui::GetWindowWidth() * 0.5f);
         if (ImGui::DragInt("##Width", &txSize, 1.0f, 1, 320 * 8, "%d", ImGuiSliderFlags_None)) {
-            mNewTextureSize.x = txSize;
+            m_newTextureSize.x = txSize;
         }
         ImGui::SameLine();
         // ImGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);

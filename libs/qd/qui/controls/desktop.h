@@ -23,8 +23,23 @@ public:
     virtual ~UiDesktop();
 
     void destroy();
-    void addView(qd::UiNode* view);
+    void addWindowNode(qd::UiNode* view);
     void showModal(qd::UiWindow* pWnd);
+
+    template<class TWnd>
+    TWnd* findChildByType_() const
+    {
+        const qd::TypeInfo& wndType = qd::typeof_<TWnd>();
+        for (const ref_ptr<qd::UiNode>& pWnd : m_pWindows)
+        {
+            if (!pWnd)
+                continue;
+            const qd::TypeInfo& classType = pWnd->getTypeInfo();
+            if (classType.isDerivedFrom(wndType))
+                return static_cast<TWnd*>(pWnd.get());
+        }
+        return nullptr;
+    }
 
 }; // class UiDesktop
 

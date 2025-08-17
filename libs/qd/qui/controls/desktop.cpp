@@ -22,7 +22,7 @@ void qd::UiDesktop::destroy()
 }
 
 
-void qd::UiDesktop::addView(qd::UiNode* view)
+void qd::UiDesktop::addWindowNode(qd::UiNode* view)
 {
     addChild(view);
 

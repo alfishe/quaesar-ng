@@ -16,6 +16,7 @@ void UiWindow::drawImp()
     Tribool vis;
     if (m_bVisible)
     {
+        m_bFocus = ImGui::IsItemFocused();
         assert(!m_title.empty());
         if (m_size.isSizeValid())
         {

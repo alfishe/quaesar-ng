@@ -10,7 +10,7 @@ struct ShowDebuggerWnd : public amD::operation::OperationArgs {
     EQuaServerId dbgSource = EQuaServerId::S_UAE;
 
     static void setup(qd::operation::args::OpDesc& d) {
-        d.m_label = "Show debugger window";
+        d.m_name = "Show debugger window";
         d.addShortcut(amD::shortcut::EId::ShowDebuggerWnd);
     }
 };

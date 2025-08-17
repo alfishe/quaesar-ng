@@ -10,15 +10,15 @@ namespace qd {
 class Shortcut;
 
 
-class ShortcutHnd : public qd::RefCounted
+class ShortcutsHnd : public qd::RefCounted
 {
-    TS_REFLECT_CLASS(qd::ShortcutHnd, qd::RefCounted);
+    TS_REFLECT_CLASS(qd::ShortcutsHnd, qd::RefCounted);
 
 public:
     qd::fixed_vector<const Shortcut*, 2, false> m_pShortcuts;
 
 public:
-    virtual ~ShortcutHnd() {}
+    virtual ~ShortcutsHnd() {}
 
     eastl::span<const Shortcut* const> getShortcuts() const
     {
@@ -43,6 +43,6 @@ public:
     }
 
     int getNumShortcuts() const { return (int)m_pShortcuts.size(); }
-}; // class ShortcutHnd
+}; // class ShortcutsHnd
 
 }; // namespace qd

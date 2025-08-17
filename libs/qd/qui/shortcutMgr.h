@@ -31,26 +31,33 @@ public:
     {}
 
     constexpr ImGuiKey getKeyCode() const { return mKey; }
-    eastl::string toString() const { return ImGui::GetKeyName(mKey); }
+    qd::InlineString toString() const;
     bool operator< (const Key& rh) const { return mKey < rh.mKey; }
     bool operator== (ImGuiKey key) const { return mKey == key; }
 
 }; // class Key
 //////////////////////////////////////////////////////////////////////////
 
+using ShortcutId = uint32_t;
+
+
 
 class Shortcut
 {
 public:
-    int m_id = -1;
+    ShortcutId m_id = 0;
     typedef eastl::fixed_set<qd::Key, 4, false> Keys;
     Shortcut::Keys m_keys;
     bool m_bRepeat = false;
 
 public:
-    Shortcut() = default;
+    Shortcut(ShortcutId id)
+        : m_id(id)
+    {}
+    Shortcut(const Shortcut&) = delete;
+    Shortcut& operator= (const Shortcut&) = delete;
     ~Shortcut();
-    int getId() const { return m_id; }
+    ShortcutId getId() const { return m_id; }
     const Shortcut::Keys& getKeys() const { return m_keys; }
     ImGuiKeyChord getChord() const;
 
@@ -61,16 +68,19 @@ public:
         return *this;
     }
 
-    qd::string toString() const;
+    bool empty() const { return m_keys.empty(); }
+
+    qd::InlineString toString() const;
 
 }; // class Shortcut
 //////////////////////////////////////////////////////////////////////////
 
 
+
 class ShortcutsMgr : public qd::RefCounted
 {
     TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::RefCounted);
-    eastl::vector_map<int /*shortcut::ETypeId*/, Shortcut*> m_shortcuts;
+    eastl::vector_map<ShortcutId, Shortcut*> m_shortcuts;
 
 public:
     ShortcutsMgr() {}
@@ -81,9 +91,10 @@ public:
     void done();
     void update(qd::IOperationEnvironment* env, UiOperationMgr* pOpMgr);
 
-    const qd::Shortcut* getShortcut(uint32_t shortcut_id) const;
+    qd::Shortcut& getShortcut(qd::ShortcutId shortcut_id);
+
     template<typename T>
-    const Shortcut* getShortcut(T shortcut_id) const
+    qd::Shortcut& getShortcut(T shortcut_id)
     {
         return getShortcut((uint32_t)shortcut_id);
     }
@@ -99,7 +110,7 @@ public:
         return triggerShortcut(env, shortcut->getId());
     }
 
-    virtual ~ShortcutsMgr();
+    virtual ~ShortcutsMgr() override;
 
 }; // class ShortcutsMgr
 //////////////////////////////////////////////////////////////////////////

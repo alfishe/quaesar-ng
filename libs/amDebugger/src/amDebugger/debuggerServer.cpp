@@ -20,7 +20,7 @@ void* IDebuggerServer::getOpEnvPtr(const qd::TypeInfo& classType) const
 }
 
 
-qd::EFlow IDebuggerServer::applyOperationMsg(qd::operation::args::Base* args)
+qd::EFlow IDebuggerServer::applyOperationMsgProc(qd::operation::args::Base* args)
 {
     return qd::EFlow::DONE;
 }

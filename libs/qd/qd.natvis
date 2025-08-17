@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- natvis file for Visual Studio debugger (you can include this in a project file, or install in visual studio folder) -->
+
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+	<Type Name="qd::Point2">
+	  <DisplayString>{{x={x,g} y={y,g}}}</DisplayString>
+	</Type>
+
+	<Type Name="qd::TPoint2&lt;*&gt;">
+	  <DisplayString>{{x={x,g} y={y,g}}}</DisplayString>
+	</Type>
+
+
+	<Type Name="qd::TRect&lt;*&gt;">
+	  <DisplayString>{{Left={Left} Top={Top} Right={Right} Bottom={Bottom}}}</DisplayString>
+	  <Expand>
+		<Item Name="Left">Left</Item>
+		<Item Name="Top">Top</Item>
+		<Item Name="Right">Right</Item>
+		<Item Name="Bottom">Bottom</Item>
+		<Item Name="Width">Right - Left</Item>
+		<Item Name="Height">Bottom - Top</Item>
+	  </Expand>
+	</Type>
+
+
+	<Type Name="ref_ptr&lt;*&gt;">
+		<SmartPointer Usage="Minimal">_ptr</SmartPointer>
+		<DisplayString Condition="_ptr->_ref_ptr_RefCount.m_Value == 0">empty</DisplayString>
+		<DisplayString Condition="_ptr->_ref_ptr_RefCount.m_Value != 0">{_ptr} {*_ptr}</DisplayString>
+		<Expand>
+			<Item Name="[ptr]">_ptr</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="wref_ptr&lt;*&gt;">
+		<SmartPointer Usage="Minimal">_ptr</SmartPointer>
+		<DisplayString Condition="_ptr->_ref_ptr_WeakRefCount.m_Value == 0">empty</DisplayString>
+		<DisplayString Condition="_ptr->_ref_ptr_WeakRefCount.m_Value != 0">{_ptr} {*_ptr}</DisplayString>
+		<Expand>
+			<Item Name="[ptr]">_ptr</Item>
+		</Expand>
+	</Type>
+
+
+	<!-- CryEngine fixed point number types -->
+	<Type Name="qd::FixedPoint&lt;*,*&gt;">
+		<!-- See CFixed::ToDouble() -->
+		<DisplayString>{{ asFloat = {m_Val / (double)(1 &lt;&lt; FracBits),f} }}</DisplayString>
+		<!--<DisplayString>{{ as_double = {v / (double)integer_scale,f} }}</DisplayString>-->
+	</Type>
+
+</AutoVisualizer>

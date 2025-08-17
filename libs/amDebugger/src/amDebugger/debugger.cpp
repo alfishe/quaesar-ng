@@ -28,9 +28,9 @@ void* Debugger::getOpEnvPtr(const qd::TypeInfo& classType) const
 }
 
 
-qd::EFlow Debugger::applyOperationMsg(qd::operation::args::Base* args)
+qd::EFlow Debugger::applyOperationMsgProc(qd::operation::args::Base* args)
 {
-    qd::EFlow r = m_pVm->applyOperationMsg(args);
+    qd::EFlow r = m_pVm->applyOperationMsgProc(args);
     return r;
 }
 
@@ -39,7 +39,7 @@ void Debugger::execConsoleCmd(qd::string&& cmd)
 {
     amD::operation::args::ExecConsoleCmd exec;
     exec.cmd = std::move(cmd);
-    applyOperationMsg(&exec);
+    applyOperationMsgProc(&exec);
 }
 
 

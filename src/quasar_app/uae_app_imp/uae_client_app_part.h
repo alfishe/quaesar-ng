@@ -66,7 +66,7 @@ public:
     UaeServerThread* getUaeThread() const;
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
     IVm::VM* getVm() const;
 
 private:

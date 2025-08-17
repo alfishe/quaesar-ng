@@ -6,30 +6,35 @@
 
 namespace qd {
 
-void UiOperation::addShortcut(int sid)
+
+ UiOperation::~UiOperation()
+{
+    SAFE_DELETE(m_pShortcuts);
+}
+
+
+void UiOperation::addShortcut(qd::ShortcutId sid)
 {
     auto pActMgr = qd::ShortcutsMgr::get();
     ASSERT_AND_DO(pActMgr, return, "");
-    const Shortcut* pShortcut = pActMgr->getShortcut(sid);
-    assert(pShortcut);
+    const Shortcut& shortcut = pActMgr->getShortcut(sid);
 
     if (!m_pShortcuts)
-        m_pShortcuts = new qd::ShortcutHnd();
-    m_pShortcuts->addShortcut(pShortcut);
+        m_pShortcuts = new qd::ShortcutsHnd();
+    m_pShortcuts->addShortcut(&shortcut);
 }
 
 namespace operation::args {
 
-void OpDesc::addShortcut(int sid)
+void OpDesc::addShortcut(uint32_t sid)
 {
-    auto pActMgr = qd::ShortcutsMgr::get();
-    ASSERT_AND_DO(pActMgr, return, "");
-    const Shortcut* pShortcut = pActMgr->getShortcut(sid);
-    assert(pShortcut);
+    auto pShMgr = qd::ShortcutsMgr::get();
+    ASSERT_AND_DO(pShMgr, return, "");
+    const Shortcut& shortcut = pShMgr->getShortcut(sid);
 
     if (!m_pShortcuts)
-        m_pShortcuts = new qd::ShortcutHnd();
-    m_pShortcuts->addShortcut(pShortcut);
+        m_pShortcuts = new qd::ShortcutsHnd();
+    m_pShortcuts->addShortcut(&shortcut);
 }
 
 
@@ -50,4 +55,21 @@ bool OperationSupportedMsgVisitor::tryCast(const qd::TypeInfo& msg_type)
 
 
 }; // namespace operation::args
+//////////////////////////////////////////////////////////////////////////
+
+
+qd::EFlow IOperationEnvironment::applyOperationMsgProc(qd::operation::args::Base* args)
+{
+    IOperationEnvironment* pEnv = getOpEnvParent();
+    while (pEnv)
+    {
+        qd::EFlow f = pEnv->applyOperationMsgProc(args);
+        if (f.isDone())
+            return f;
+        pEnv = pEnv->getOpEnvParent();
+    }
+    return qd::EFlow::NO_RESULT;
+}
+
+
 }; // namespace qd

@@ -244,6 +244,10 @@ bool UiNode::setVisible(bool bVisible)
     t.m_pCtrl = this;
     t.m_bVisible = bVisible;
     onUiNodeMessageProc(&t);
+
+    if (!bVisible && m_bFocus)
+        m_bFocus = false;
+
     return bVisible;
 }
 

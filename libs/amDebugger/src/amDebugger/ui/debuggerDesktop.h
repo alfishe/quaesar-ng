@@ -49,6 +49,9 @@ public:
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
 
+    virtual IOperationEnvironment* getOpEnvParent() const override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
+
 private:
     void createAllUiWndows();
     void _drawMainMenuBar();

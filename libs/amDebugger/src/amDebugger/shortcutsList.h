@@ -1,6 +1,7 @@
 #pragma once
 #include "qd/base/base.h"
 #include "qd/qui/shortcutMgr.h"
+#include "qd/enum/enumBase.h"
 
 
 namespace amD {
@@ -30,15 +31,17 @@ namespace shortcut {
 //////////////////////////////////////////////////////////////////////////
 
 
-enum class EId {
-    UNDEF = -1,
+struct EId {
+    enum Type : uint32_t {
+        UNDEF = 0,
 #undef SHORTCUT
 #define SHORTCUT(name, setup_func) name,
-    SHORTCUT_LIST(SHORTCUT)
+        SHORTCUT_LIST(SHORTCUT)
 #undef SHORTCUT
-    MAX_COUNT
-}; // enum
-
+        MAX_COUNT
+    };
+    ENUM_DECLARE_BASE(amD::shortcut::, EId, Type, UNDEF);
+}; // struct
 
 inline static qd::ShortcutSetupFunc g_shortcuts_list[] = {
 #define SHORTCUT(name, setup_func) setup_func,

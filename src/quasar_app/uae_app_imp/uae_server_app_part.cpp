@@ -18,7 +18,7 @@ UaeServerAppPart::~UaeServerAppPart() {
 void UaeServerAppPart::onPartCreate(qd::AppPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
-    m_pUaeThread = new UaeServerThread();
+    m_pUaeThread = new UaeServerThread(this);
     m_pUaeThread->initialize();
 
     QuaesarServersMgr* pSvMgr = ((QuasarApp*)getApp())->m_pServersMgr;

@@ -3,7 +3,6 @@
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/base/base.h"
 #include "qd/thread/thread.h"
-#include "qd/qui/uiOperationArgs.h"
 #include "qd/qui/uiOperation.h"
 #include "qd/qui/comps/uiOperationMgrComp.h"
 
@@ -17,13 +16,15 @@ qd::Shortcut& Shortcut::addKey(ImGuiKey key) {
 }
 
 
-qd::string Shortcut::toString() const {
-    qd::string result;
+qd::InlineString Shortcut::toString() const {
+    if (m_keys.empty())
+        return {};
+    qd::InlineString result;
     for (auto it = m_keys.begin(); it != m_keys.end(); ++it) {
         const qd::Key& curKey = *it;
         if (it != m_keys.begin())
             result += '+';
-        result += curKey.toString();
+        result.append(curKey.toString());
     }
     return result;
 }
@@ -96,38 +97,14 @@ qd::ShortcutsMgr* ShortcutsMgr::get()
 
 
 void ShortcutsMgr::init(eastl::span<ShortcutSetupFunc> shortcuts_list) {
-    done();
     for (int id = 0; id < (int)shortcuts_list.size(); ++id) {
 
+        qd::Shortcut& curShortcut = getShortcut(id);
         ShortcutSetupFunc setupFunc = shortcuts_list[id];
-        qd::Shortcut* curShortcut = new qd::Shortcut();
-        curShortcut->m_id = id;
-        setupFunc(*curShortcut);
-
-        EASTL_ASSERT((int)curShortcut->m_id == id);
-        if (getShortcut(id)) {
-            ASSERT_F(0, "Shortcut ID:%i already registered", id);
+        if (!setupFunc)
             continue;
-        }
-        m_shortcuts[id] = curShortcut;
+        setupFunc(curShortcut);
     }
-
-#if 0
-    for (int id = 0; id < (int)shortcut::EId::MAX_COUNT; ++id)
-    {
-        Shortcut* curShortcut = shortcut::makeInstance((shortcut::EId)id);
-        if (!curShortcut)
-            continue;
-        EASTL_ASSERT((int)curShortcut->mId == id);
-        if (getShortcut((shortcut::EId)id))
-        {
-            ASSERT_F(0, "Shortcut ID:%i already registered", id);
-            continue;
-        }
-        mShortcuts[id] = curShortcut;
-    }
-#endif //
-
 }
 
 
@@ -145,7 +122,7 @@ void ShortcutsMgr::update(qd::IOperationEnvironment* env, UiOperationMgr* pOpera
     //IUiOperationsProvider* pOperationMgr = pOpMgr;
     assert(pOperationMgr);
     for (UiOperation* pCurOperation : pOperationMgr->getOperationsList()) {
-        ShortcutHnd* pShortcuts = pCurOperation->getShortcuts();
+        ShortcutsHnd* pShortcuts = pCurOperation->getShortcuts();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
@@ -157,20 +134,24 @@ void ShortcutsMgr::update(qd::IOperationEnvironment* env, UiOperationMgr* pOpera
 }
 
 
-const qd::Shortcut* ShortcutsMgr::getShortcut(uint32_t shortcut_id) const {
+qd::Shortcut& ShortcutsMgr::getShortcut(qd::ShortcutId shortcut_id) {
     auto it = m_shortcuts.find((int)shortcut_id);
     if (it == m_shortcuts.end())
-        return nullptr;
-    return it->second;
+    {
+        Shortcut* pShortcut = new Shortcut(shortcut_id);
+        m_shortcuts[shortcut_id] = pShortcut;
+        return *pShortcut;
+    }
+    return *it->second;
 }
 
 
 UiOperation* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut) const {
     //IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
-    UiOperationMgr* pOperationMgr = UiOperationMgr::get();
+    UiOperationMgr* pOperationMgr = &UiOperationMgr::get();
     assert(pOperationMgr);
     for (UiOperation* pCurOperation : pOperationMgr->getOperationsList()) {
-        ShortcutHnd* pShortcuts = pCurOperation->getShortcuts();
+        ShortcutsHnd* pShortcuts = pCurOperation->getShortcuts();
         if (!pShortcuts)
             continue;
         for (const Shortcut* curShortcut : pShortcuts->getShortcuts()) {
@@ -180,6 +161,12 @@ UiOperation* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut
         }
     }
     return nullptr;
+}
+
+
+qd::InlineString Key::toString() const
+{
+    return ImGui::GetKeyName(mKey);
 }
 
 

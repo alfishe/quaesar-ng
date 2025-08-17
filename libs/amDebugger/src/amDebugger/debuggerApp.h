@@ -42,7 +42,7 @@ class DebuggerApp : public qd::AppPart, public qd::IOperationEnvironment
 private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pWndRenderer = nullptr;
-    qd::QImGuiContext* m_pQimGui = nullptr;
+    qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     uint32_t m_nCurDbgClientIdx = 0;
     int m_init = false;
 
@@ -80,7 +80,7 @@ public:
         return m_pOperationMgr;
     }
 
-    qd::EFlow applyOperationMsg(qd::operation::args::Base* p_msg);
+    qd::EFlow applyOperationMsgProc(qd::operation::args::Base* p_msg) override;
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
 

@@ -13,6 +13,7 @@
 #include <drawing.h>
 #include <savestate.h>
 #include <debug.h>
+#include <uae.h>
 // clang-format on
 #include <SDL_log.h>
 #include "amDebugger/debuggerApp.h"
@@ -92,14 +93,76 @@ void UaeVmImp::init() {
 UaeVmImp::~UaeVmImp() {
 }
 
+//extern void uae_op_debug_trace_continue(qd::IOperationEnvironment* env, amD::operation::args::DebugTraceContinue* p);
 
-qd::EFlow UaeVmImp::applyOperationMsg(qd::operation::args::Base* args) {
+
+qd::EFlow UaeVmImp::applyOperationMsgProc(qd::operation::args::Base* args) {
+    UaeVmImp* vm = this;
+    UaeServerThread* pUae = m_pUaeThread;
     bool r = false;
-    if (auto p = args->cast_<amD::operation::args::DoDebugTraceContinue>()) {
+    if (c_def(0)) {
+    } else if (auto p = args->cast_<amD::operation::args::DebugTraceContinue>()) {
         r = true;
-        m_pUaeThread->execConsoleCmd("g");
-    }
+        pUae->execConsoleCmd("g");
 
+
+    } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStep>()) {
+        r = true;
+        vm->emu->setDebugMode(DebuggerMode_Break);
+        pUae->execConsoleCmd("t");
+
+    } else if (auto p = args->cast_<amD::operation::args::DebugTraceStart>()) {
+        r = true;
+        vm->emu->setDebugMode(DebuggerMode_Break);
+
+    } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepOut>()) {
+        r = true;
+        pUae->execConsoleCmd("z");
+
+    } else if (auto p = args->cast_<amD::operation::args::CopperTraceStep>()) {
+        r = true;
+        pUae->execConsoleCmd("ot");
+
+    } else if (auto p = args->cast_<amD::operation::args::DisasmToggleBreakpoint>()) {
+        eastl::string cmd;
+        cmd.sprintf("f %08x", (uint32_t)p->address);
+        if (p->nBreakpoint >= 0)
+            cmd.append_sprintf(" %i", p->nBreakpoint);
+        pUae->execConsoleCmd(eastl::move(cmd));
+        return qd::EFlow::SUCCESS;
+
+    } else if (auto p = args->cast_<amD::operation::args::ToggleTurboEmulation>()) {
+        r = true;
+        if (::currprefs.turbo_emulation != 0) {
+            ::warpmode(0);  // off
+        } else {
+            ::warpmode(2);  // on
+        }
+
+    } else if (auto p = args->cast_<amD::operation::args::UaeResetAmiga>()) {
+        r = true;
+        ::uae_reset(1, 1);
+
+    } else if (auto p = args->cast_<amD::operation::args::CopperToggleBreakpoint>()) {
+        r = true;
+        eastl::string cmd;
+        cmd.sprintf("ob %08x", (uint32_t)p->address);
+        pUae->execConsoleCmd(eastl::move(cmd));
+        return qd::EFlow::SUCCESS;
+
+    } else if (auto p = args->cast_<amD::operation::args::DebugWaitScanLines>()) {
+        eastl::string cmd;
+        cmd.sprintf("fs %i", p->waitScanLines);
+        pUae->execConsoleCmd(eastl::move(cmd));
+        return qd::EFlow::SUCCESS;
+    } else if (auto p = args->cast_<amD::operation::args::UaeWndAlwaysOnTop>()) {
+        r = true;
+        //         if (pUae->isWndAlwaysOnTop()) {
+        //             pUae->setWndAlwaysOnTop(false);
+        //         } else {
+        //             pUae->setWndAlwaysOnTop(true);
+        //         }
+    }
     return r ? EFlow::STOP : EFlow::NO_RESULT;
 }
 
@@ -149,6 +212,15 @@ amD::AddrRef UaeVmImp::Copper::getCopperAddr(amD::ECopperAddr_ copno) {
 void UaeVmImp::Copper::fetch() {
 }
 
+int UaeVmImp::Emu::getDebugDmaMode() {
+    return ::debug_dma;
+}
+
+
+void UaeVmImp::Emu::setDebugDmaMode(int p_mode) {
+    ::debug_dma = p_mode;
+}
+
 
 void UaeVmImp::Emu::setDebugMode(EDebuggerMode debug_mode) {
     if (debug_mode == DebuggerMode_Break) {
@@ -158,8 +230,8 @@ void UaeVmImp::Emu::setDebugMode(EDebuggerMode debug_mode) {
             ::activate_debugger_new();
         }
     } else if (debug_mode == DebuggerMode_Live) {
-        amD::operation::args::DoDebugTraceContinue m;
-        vm->applyOperationMsg(&m);
+        amD::operation::args::DebugTraceContinue m;
+        vm->applyOperationMsgProc(&m);
         ::debugger_active = 0;
     }
 }

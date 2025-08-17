@@ -55,7 +55,6 @@ void DebuggerApp::init() {
     m_pGui = mk.make_<amD::DebuggerDesktop>(m_pDebugger);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
-    assert(m_pOperationMgr->getNumOps());
 }
 
 
@@ -86,10 +85,10 @@ void DebuggerApp::createRenderWindow() {
 void DebuggerApp::initImGui() {
 
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
-    m_pQimGui = pImGuiMgr->createContextImGui(m_pWindow, m_pWndRenderer);
+    m_pQimGuiCtx = pImGuiMgr->createContextImGui(m_pWindow, m_pWndRenderer);
 
     // Setup Dear ImGui context
-    ImGuiIO& io = m_pQimGui->getIO();
+    ImGuiIO& io = m_pQimGuiCtx->getIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -104,9 +103,9 @@ DebuggerApp::~DebuggerApp() {
 }
 
 
-qd::EFlow DebuggerApp::applyOperationMsg(qd::operation::args::Base* p_msg)
+qd::EFlow DebuggerApp::applyOperationMsgProc(qd::operation::args::Base* p_msg)
 {
-    return m_pDebugger->applyOperationMsg(p_msg);
+    return m_pDebugger->applyOperationMsgProc(p_msg);
 }
 
 
@@ -154,16 +153,18 @@ void DebuggerApp::update(float dt, float time)
 {
     if (isWndVisible())
     {
-        m_pQimGui->newFrame();
+        m_pQimGuiCtx->newFrame();
         m_pGui->drawImGuiMainFrame();
-        m_pQimGui->endFrame();
+        m_pQimGuiCtx->endFrame();
     }
+    else
+        m_pQimGuiCtx->skipFrame();
 }
 
 
 void DebuggerApp::render() {
-    if (isWndVisible())
-        m_pQimGui->render(qd::Color(128,128,128));
+    if (isWndVisible() && m_pQimGuiCtx->m_frameStarted)
+        m_pQimGuiCtx->render(qd::Color(128,128,128));
 
 }
 
@@ -191,7 +192,7 @@ void DebuggerApp::setWndVisible(bool v) {
 
 
 qd::EFlow DebuggerApp::onSdlEventProc(SDL_Event& event) {
-    return m_pQimGui->onSdlEventProc(event);
+    return m_pQimGuiCtx->onSdlEventProc(event);
 }
 
 

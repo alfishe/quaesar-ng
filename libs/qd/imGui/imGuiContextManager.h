@@ -48,6 +48,8 @@ public:
     SDL_Renderer* m_pRenderer = nullptr;
     ImGuiContextManager* m_pParentModule = nullptr;
     uint32_t m_windowId = 0;
+    bool m_frameStarted = false;
+    bool m_frameEnded = false;
 
     static constexpr int NO_INT_VALUE = 0x71234567;
     int m_LastMouseZ = NO_INT_VALUE;
@@ -63,12 +65,16 @@ public:
     void endFrame();
 
     ImGuiIO& useCurrent() const;
-
     ImGuiIO& getIO() const;
 
     qd::ImGuiContextManager* getImGuiMod() const { return m_pParentModule; }
 
     void render(qd::Color clear_color = qd::Color(0u));
+
+    void skipFrame()
+    {
+        m_frameStarted = m_frameEnded = false;
+    }
 
     void destroy();
 

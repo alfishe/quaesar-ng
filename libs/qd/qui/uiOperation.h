@@ -4,12 +4,10 @@
 #include "qd/base/eFlow.h"
 #include "qd/base/baseTypes.h"
 #include "qd/debug/assert.h"
-#include "qd/qui/shortcutHnd.h"
-#include "qd/qui/uiOperationArgs.h"
 #include "qd/qui/uiOperationMgr.h"
 #include "qd/stl/fixed_vector.h"
-#include "qd/stl/string.h"
 #include "qd/typeSystem/typeDeclare.h"
+#include "qd/stl/ref_ptr.h"
 
 
 #define QD_REG_OPERATION(ClassName)                                              \
@@ -23,12 +21,21 @@
     inline static const qd::TypeInfo& s_OperationType = qd::typeof_by_name(#TOpClass);
 
 
+
+template<class TClass>
+struct AutoRegOpDesc_ {
+    AutoRegOpDesc_() { qd::UiOperationMgr::get().regOperationDesc_<TClass>(); }
+};
+
+
 #define DECLARE_OPERATION_1(TArgClass)                                                                 \
     TS_REFLECT_CLASS(TArgClass, qd::operation::args::Base);                                            \
     virtual qd::operation::args::Base* clone(qd::operation::args::IOpArgAllocator& allocator) override \
     {                                                                                                  \
         return qd::operation::args::clone_op_<TArgClass>(*this, allocator);                            \
-    }
+    }                                                                                                  \
+    inline static AutoRegOpDesc_<TArgClass> s_AutoRegOpDesc;\
+
 
 
 namespace qd {
@@ -73,18 +80,7 @@ class IOperationEnvironment
 public:
     virtual IOperationEnvironment* getOpEnvParent() const { return nullptr; }
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const { return nullptr; }
-    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args)
-    {
-        IOperationEnvironment* pEnv = getOpEnvParent();
-        while (pEnv)
-        {
-            qd::EFlow f = pEnv->applyOperationMsg(args);
-            if (f.isDone())
-                return f;
-            pEnv = pEnv->getOpEnvParent();
-        }
-        return qd::EFlow::NO_RESULT;
-    }
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args);
 
     template<class TPtr>
     TPtr* getPtr_() const
@@ -98,7 +94,7 @@ public:
     void doOperation_()
     {
         TOpClass opArgs;
-        applyOperationMsg(&opArgs);
+        applyOperationMsgProc(&opArgs);
     }
 
 }; // IOperationEnvironment
@@ -125,11 +121,11 @@ public:
     qd::string m_name;
     qd::string m_description;
     bool m_bActive = true;
-    ref_ptr<ShortcutHnd> m_pShortcuts;
+    ShortcutsHnd* m_pShortcuts;
 
 public:
     UiOperation() = default;
-    virtual ~UiOperation() = default;
+    ~UiOperation();
 
     virtual void onOperationCreate(qd::UiOperationCreator* cp) { /*onNodeCreated(cp);*/ }
     virtual void destroy() {}
@@ -149,14 +145,14 @@ public:
     //     virtual void undoOperation(IOperationEnvironment& history) {}
 
     virtual bool hasMtd(int id) const { return false; /*supportMtd[id];*/ }
-    void addShortcut(int sid);
+    void addShortcut(uint32_t sid);
 
     bool isActive() const { return m_bActive; }
     void setActive(bool Active) { m_bActive = Active; }
 
     const qd::string& getName() const { return m_name; }
 
-    qd::ShortcutHnd* getShortcuts() const { return m_pShortcuts; }
+    qd::ShortcutsHnd* getShortcuts() const { return m_pShortcuts; }
 
 
 }; // class UiOperation
@@ -167,22 +163,6 @@ public:
 
 namespace operation::args {
 
-
-class OpDesc
-{
-private:
-    ref_ptr<ShortcutHnd> m_pShortcuts;
-
-public:
-    qd::string m_id;
-    qd::string m_label;
-    void addShortcut(int sid);
-    template<typename TEnum>
-    void addShortcut(TEnum sid)
-    {
-        addShortcut((int)sid);
-    }
-}; // class OpDesc
 
 
 class IOpArgAllocator
@@ -203,11 +183,18 @@ TClass* clone_op_(const TClass& src, qd::operation::args::IOpArgAllocator& alloc
     return pInst;
 }
 
+struct OpReqMode {
+    enum Type {
+        OP_APPLY = 0,
+        OP_GET = 1,
+        OP_SET = 2,
+    };
+};
 
 
 struct Base {
     TS_REFLECT_CLASS(qd::operation::args::Base, void);
-
+    //int m_requestMode;
 public:
     inline Base() = default;
 
@@ -224,17 +211,19 @@ public:
 
     virtual bool tryCast(const qd::TypeInfo& msg_type);
     virtual Base* clone(qd::operation::args::IOpArgAllocator& allocator) { ASSERT_AND_DO(0, return nullptr, ); }
-    static void setup(qd::operation::args::OpDesc& d) {}
+
+    // Should be declared
+    //static void setup(qd::operation::args::OpDesc& d) {}
 
 }; // struct args::Base
 //////////////////////////////////////////////////////////////////////////
 
 
-
+// DEPRECATED
 struct DoOperation : public operation::args::Base {
     TS_REFLECT_CLASS(DoOperation, qd::operation::args::Base);
     // DECLARE_OPERATION(qd::operation::args::DoOperation, qd::operation::DoOperation);
-    qd::Var16 arg0;
+    //qd::Var16 arg0;
 
     DoOperation() = default;
 };

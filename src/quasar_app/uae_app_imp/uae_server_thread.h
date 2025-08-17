@@ -12,6 +12,7 @@
 
 FORWARD_DECLARATION_2(qd, ThreadEvent);
 FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
+FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,13 +33,14 @@ public:
     qd::ThreadEvent* m_onUaeInitialized = nullptr;  // event to wait for UAE initialization
     SDL_atomic_t m_scrFrameNo = {};
     ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;  // create shared VM
+    qsr::UaeServerAppPart* m_pServerApp = nullptr;
 
     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationMsg(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
 
 public:
-    UaeServerThread();
-    ~UaeServerThread();
+    UaeServerThread(qsr::UaeServerAppPart* pServerApp);
+    virtual ~UaeServerThread() override;
     void initialize();
     void destroy();
     void setUaeInitialized(bool);
