@@ -9,6 +9,8 @@
 #include <qd/typeSystem/typeDeclare.h>
 
 
+FORWARD_DECLARATION_4(qd, operation, args, OpDesc);
+
 
 namespace qd {
 
@@ -87,9 +89,9 @@ public:
 
     static ShortcutsMgr* get();
 
-    void init(eastl::span<ShortcutSetupFunc> shortcuts_list);
+    void createPredefinedShortcuts(eastl::span<ShortcutSetupFunc> shortcuts_list);
     void done();
-    void update(qd::IOperationEnvironment* env, UiOperationMgr* pOpMgr);
+    void update(qd::IOperationEnvironment* env, qd::UiOperationMgr* pOpMgr);
 
     qd::Shortcut& getShortcut(qd::ShortcutId shortcut_id);
 
@@ -99,7 +101,7 @@ public:
         return getShortcut((uint32_t)shortcut_id);
     }
 
-    qd::UiOperation* findOperationByShortcut(const Shortcut* pShortcut) const;
+    const qd::operation::args::OpDesc* findOperationByShortcut(const Shortcut* pShortcut) const;
 
     bool isShortcutTriggered(const qd::Shortcut* shortcut) const;
     bool triggerShortcut(qd::IOperationEnvironment* env, uint32_t id);

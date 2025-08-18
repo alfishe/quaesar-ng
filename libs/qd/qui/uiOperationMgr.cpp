@@ -63,11 +63,6 @@ void UiOperationMgr::createOperations(qd::UiOperationCreator* ca)
 void UiOperationMgr::destroy()
 {
     mInit = false;
-    while (!m_pOperations.empty())
-    {
-        delete m_pOperations.back();
-        m_pOperations.pop_back();
-    }
 }
 
 
@@ -100,9 +95,10 @@ void UiOperationMgr::destroy()
 
 void UiOperationMgr::addOperation(UiOperation* pNewOperation)
 {
-    m_pOperations.push_back(pNewOperation);
-    const qd::TypeInfo* curOperationType = &pNewOperation->getTypeInfo();
-    m_operationByOperationTypeMap[curOperationType] = pNewOperation;
+    assert(0);
+//     m_pOperations.push_back(pNewOperation);
+//     const qd::TypeInfo* curOperationType = &pNewOperation->getTypeInfo();
+//     m_operationByOperationTypeMap[curOperationType] = pNewOperation;
 
 //     OperationSupportedMsgVisitor visitor;
 //     pNewOperation->applyOperationMsgProc(env, &visitor);
@@ -118,12 +114,12 @@ void UiOperationMgr::addOperation(UiOperation* pNewOperation)
 
 qd::UiOperation* UiOperationMgr::findOperation(uint32_t class_id) const
 {
-    for (UiOperation* pCurOperation : m_pOperations)
-    {
-        if (!pCurOperation || pCurOperation->mClassId != class_id)
-            continue;
-        return pCurOperation;
-    }
+//     for (UiOperation* pCurOperation : m_pOperations)
+//     {
+//         if (!pCurOperation || pCurOperation->mClassId != class_id)
+//             continue;
+//         return pCurOperation;
+//     }
     return nullptr;
 }
 
@@ -139,10 +135,11 @@ qd::UiOperation* UiOperationMgr::findOperationByType(const qd::TypeInfo& type) c
 }
 
 
-eastl::span<UiOperation* const> UiOperationMgr::getOperationsList() const
+qd::span<qd::operation::args::OpDesc const> UiOperationMgr::getOperationsList() const
 {
-    return eastl::span<UiOperation* const>(reinterpret_cast<UiOperation* const*>(m_pOperations.data()),
-        m_pOperations.size());
+    return qd::span<qd::operation::args::OpDesc const>(m_OpDescList.data(),
+        //*reinterpret_cast<qd::operation::args::OpDesc* const*>(m_OpDescList.data()),
+        m_OpDescList.size());
 }
 
 
@@ -164,6 +161,7 @@ void UiOperationMgr::addOperationDesc(const qd::TypeInfo& ti, qd::operation::arg
  operation::args::OpDesc::~OpDesc()
 {
     SAFE_DELETE(m_pShortcuts);
+    SAFE_DELETE(m_pOpTemplate);
 }
 
 

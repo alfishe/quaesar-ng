@@ -48,7 +48,7 @@ private:
 
 public:
 
-    ref_ptr <amD::Debugger> m_pDebugger = nullptr; // current debugger client
+    ref_ptr<amD::Debugger> m_pDebugger = nullptr; // current debugger client
     amD::DebuggerDesktop* m_pGui = nullptr;
     qd::UiOperationMgr* m_pOperationMgr = nullptr;
 

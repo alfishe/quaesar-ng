@@ -1,12 +1,11 @@
 #pragma once
 //#include "qd/qui/uiOperation.h"
 #include "qd/debug/assert.h"
-//#include "qd/node/node.h"
-//#include "qd/stl/span.h"
 #include "qd/stl/string.h"
 #include "qd/stl/vector.h"
 #include "qd/stl/vector_map.h"
 #include "qd/qui/shortcutHnd.h"
+#include "qd/stl/span.h"
 
 
 namespace qd {
@@ -24,14 +23,17 @@ public:
     ShortcutsHnd* m_pShortcuts = nullptr;
     qd::string m_id;
     qd::string m_name;
+    qd::operation::args::Base* m_pOpTemplate = nullptr; // owner
 
     OpDesc() = default;
-    OpDesc(OpDesc&& other) noexcept
-        : m_pShortcuts(other.m_pShortcuts)
-        , m_id(std::move(other.m_id))
-        , m_name(std::move(other.m_name))
+    OpDesc(OpDesc&& rh) noexcept
+        : m_pShortcuts(rh.m_pShortcuts)
+        , m_id(std::move(rh.m_id))
+        , m_name(std::move(rh.m_name))
+        , m_pOpTemplate(rh.m_pOpTemplate)
     {
-        other.m_pShortcuts = nullptr;
+        rh.m_pShortcuts = nullptr;
+        rh.m_pOpTemplate = nullptr;
     }
 
     void addShortcut(uint32_t sid);
@@ -48,7 +50,7 @@ public:
 class UiOperationMgr : public qd::RefCounted
 {
     friend class OperationMgrOperationsListImp;
-    qd::vector<ref_ptr<UiOperation>> m_pOperations;
+    //qd::vector<ref_ptr<UiOperation>> m_pOperations;
     using TOpList = qd::vector<ref_ptr<UiOperation>>;
     qd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
     // qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
@@ -67,14 +69,12 @@ public:
     void createOperations(qd::UiOperationCreator* ca);
     virtual void destroy();
 
-    int getNumOps() const { return (int)m_pOperations.size(); }
-
     void addOperation(UiOperation* pNewOperation);
 
     UiOperation* findOperation(uint32_t class_id) const;
     UiOperation* findOperationByType(const qd::TypeInfo& type) const;
 
-    virtual eastl::span<UiOperation* const> getOperationsList() const;
+    qd::span<qd::operation::args::OpDesc const> getOperationsList() const;
 
     template<typename TClass>
     TClass* getOperation_() const
@@ -106,6 +106,7 @@ public:
     {
         const qd::TypeInfo& ti = TClass::getStaticTypeInfo();
         qd::operation::args::OpDesc desc;
+        desc.m_pOpTemplate = new TClass();
         TClass::setup(desc);
         addOperationDesc(ti, std::move(desc));
     }

@@ -39,6 +39,8 @@ qd::EFlow DebuggerDesktop::applyOperationMsgProc(qd::operation::args::Base* args
         if (auto pWnd = findChildByType_<amD::window::DisassemblyView>())
             return pWnd->applyOperationMsgProc(args);
     }
+    if (m_pDbg)
+        return m_pDbg->applyOperationMsgProc(args);
     return EFlow::NO_RESULT;
 }
 
@@ -115,7 +117,7 @@ void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
     m_pWindows.resize((size_t)WndId::MostCommonCount);
     m_pOperationMgr = &qd::UiOperationMgr::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
-    m_pShortcutMgr->init(eastl::span(&shortcut::g_shortcuts_list[0], (size_t)shortcut::EId::MAX_COUNT));
+    m_pShortcutMgr->createPredefinedShortcuts(eastl::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
 
     // create all m_pWindows
     createAllUiWndows();

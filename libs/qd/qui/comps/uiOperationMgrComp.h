@@ -32,11 +32,11 @@ public:
         return m_pOpMgr->findOperationByType(type);
     }
 
-    virtual eastl::span<UiOperation* const> getOperationsList() const override
-    {
-        auto refSpan = m_pOpMgr->getOperationsList();
-        return refSpan;
-    }
+//     virtual eastl::span<UiOperation* const> getOperationsList() const override
+//     {
+//         auto refSpan = m_pOpMgr->getOperationsList();
+//         return refSpan;
+//     }
 }; // class UiOperationMgrComp
 //////////////////////////////////////////////////////////////////////////
 

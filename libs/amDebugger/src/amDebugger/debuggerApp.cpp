@@ -45,8 +45,8 @@ void DebuggerApp::init() {
     ASSERT_AND_DO(pConnMgr, return);
     ref_ptr<IDbgConnection> pCurConnect = pConnMgr->createConnectionByInd(0);
     assert(pCurConnect);
-    
-    m_pDebugger = new Debugger(this, pCurConnect); // DummyClient
+
+    m_pDebugger = new Debugger(this, pCurConnect); // Debugger client
     m_pDebugger->init();
 
 
@@ -74,11 +74,10 @@ void DebuggerApp::createRenderWindow() {
     m_pWndRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (!m_pWndRenderer) {
         SDL_DestroyWindow(window);
-        SDL_Log("Error creating SDL_Renderer!");
+        SDL_LogCritical(0, "Error creating SDL_Renderer!");
         return;
     }
     m_pWindow = window;
-
 }
 
 
@@ -192,6 +191,7 @@ void DebuggerApp::setWndVisible(bool v) {
 
 
 qd::EFlow DebuggerApp::onSdlEventProc(SDL_Event& event) {
+    // send system events to current ImGui context
     return m_pQimGuiCtx->onSdlEventProc(event);
 }
 

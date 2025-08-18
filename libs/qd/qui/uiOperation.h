@@ -219,14 +219,6 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-// DEPRECATED
-struct DoOperation : public operation::args::Base {
-    TS_REFLECT_CLASS(DoOperation, qd::operation::args::Base);
-    // DECLARE_OPERATION(qd::operation::args::DoOperation, qd::operation::DoOperation);
-    //qd::Var16 arg0;
-
-    DoOperation() = default;
-};
 
 struct OperationSupportedMsgVisitor : public operation::args::Base {
     qd::vector<const qd::TypeInfo*> m_pSupportedMtd;
