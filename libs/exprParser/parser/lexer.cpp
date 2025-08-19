@@ -32,8 +32,8 @@ static bool isDigit(char ch)
     return false;
 }
 
-static bool isBinDigit(char ch)
-{
+
+static bool isBinDigit(char ch) {
     switch (ch) {
         case '0': case '1':
             return true;
@@ -41,8 +41,7 @@ static bool isBinDigit(char ch)
     return false;
 }
 
-static bool isOctDigit(char ch)
-{
+static bool isOctDigit(char ch) {
     switch (ch) {
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7':
@@ -51,8 +50,7 @@ static bool isOctDigit(char ch)
     return false;
 }
 
-static bool isHexDigit(char ch)
-{
+static bool isHexDigit(char ch) {
     switch (ch) {
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':
@@ -63,8 +61,7 @@ static bool isHexDigit(char ch)
     return false;
 }
 
-static bool isLetter(char ch)
-{
+static bool isLetter(char ch) {
     switch (ch) {
         case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j':
         case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't':
@@ -77,13 +74,18 @@ static bool isLetter(char ch)
     return false;
 }
 
-static bool isIdent(char ch)
-{
+
+static bool isIdent(char ch) {
     return isLetter(ch) || isDigit(ch) || ch == '_' || ch == '.';
 }
 
-static int hexValue(char ch)
-{
+
+static bool isWhiteSpace(char ch) {
+    return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+}
+
+
+static int hexValue(char ch) {
     switch (ch) {
         case '0': return 0;
         case '1': return 1;
@@ -105,7 +107,7 @@ static int hexValue(char ch)
     throw ExprError("internal error.");
 }
 
-static void emitToken(ExprTokenList* list, ExprTokenID id, ExprValue number = 0, const char* text = NULL)
+static void emitToken(ExprTokenList* list, ExprTokenID id, ExprValue number = 0, const char* text = nullptr)
 {
     ExprToken* token = new ExprToken;
     token->next = NULL;
@@ -120,11 +122,61 @@ static void emitToken(ExprTokenList* list, ExprTokenID id, ExprValue number = 0,
     list->last = token;
 }
 
+/*
+struct ContextStack
+{
+    struct Item
+    {
+        const char* input = nullptr;
+    };
+
+    std::vector<ContextStack::Item> stack;
+
+public:
+    void push(const char* inputStart)
+    {
+        Item item;
+        item.input = inputStart;
+        stack.push_back(item);
+    }
+
+    void pop()
+    {
+        if (!stack.empty())
+            stack.pop_back();
+    }
+
+    const char* top() const
+    {
+        if (stack.empty())
+            return nullptr;
+        return stack.back().input;
+    }
+};
+*/
+
+
+// test: 0A1h format
+bool check_hex_with_tail_h(const char *input) {
+    bool hasDigit = false;
+    do {
+        const char c = *input;
+        if (c == 'h')
+            return hasDigit;
+        if (!isHexDigit(c))
+            return false;
+        hasDigit = true;
+        ++input;
+    } while (*input);
+    return hasDigit;
+}
+
+
 ExprTokenList exprLexer(const char* input)
 {
     ExprTokenList list;
-    list.first = NULL;
-    list.last = NULL;
+    list.first = nullptr;
+    list.last = nullptr;
 
     for (;;) {
         switch (*input) {
@@ -288,22 +340,26 @@ ExprTokenList exprLexer(const char* input)
                 emitToken(&list, TOK_HASH);
                 continue;
 
-            case '0':
+            case '0': {
                 if (input[1] == 'x' || input[1] == 'X') {
                     input += 2;
                     if (!isHexDigit(*input))
                         throw ExprError("syntax error in hexadecimal number.");
-                  parseHex:
+                parseHex:
                     ExprValue value = 0;
                     do {
                         value = value << 4;
                         value += hexValue(*input++);
                     } while (isHexDigit(*input));
-                    if (isDigit(*input) || isLetter(*input) || *input == '_' || *input == '.')
+
+                    if (*input == 'h') {
+                        ++input;
+                    } else if (isDigit(*input) || isLetter(*input) || *input == '_' || *input == '.')
                         throw ExprError("syntax error in hexadecimal number.");
                     emitToken(&list, TOK_NUMBER, value);
                     continue;
                 }
+            //parseBin:
                 if (input[1] == 'b' || input[1] == 'B') {
                     input += 2;
                     if (!isBinDigit(*input))
@@ -316,8 +372,9 @@ ExprTokenList exprLexer(const char* input)
                     if (isDigit(*input) || isLetter(*input) || *input == '_' || *input == '.')
                         throw ExprError("syntax error in binary number.");
                     emitToken(&list, TOK_NUMBER, value);
-                    continue;
+                    break;
                 }
+            //parseOct:
                 if (input[1] == 'o' || input[1] == 'O') {
                     input += 2;
                     if (!isOctDigit(*input))
@@ -330,13 +387,18 @@ ExprTokenList exprLexer(const char* input)
                     if (isDigit(*input) || isLetter(*input) || *input == '_' || *input == '.')
                         throw ExprError("syntax error in octal number.");
                     emitToken(&list, TOK_NUMBER, value);
-                    continue;
+                    break;
                 }
-                if (isDigit(input[1]))
-                    throw ExprError("numbers starting with '0' are not supported, use '0o' prefix for octal numbers.");
-                // pass-through
+                //                 if (isDigit(input[1]))
+                //                     throw ExprError("numbers starting with '0' are not supported, use '0o' prefix for
+                //                     octal numbers.");
+            }
+            //[[fallthrough]]
             case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9': {
+                if (check_hex_with_tail_h(input))
+                    goto parseHex;
+                // decimal parse
                 ExprValue value = 0;
                 do {
                     value = value * 10;
@@ -345,7 +407,7 @@ ExprTokenList exprLexer(const char* input)
                 if (isLetter(*input) || *input == '_' || *input == '.')
                     throw ExprError("syntax error in number.");
                 emitToken(&list, TOK_NUMBER, value);
-                continue;
+                break;
             }
 
             case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j':
@@ -372,7 +434,7 @@ ExprTokenList exprLexer(const char* input)
                 memcpy(ident, buf, i);
                 ident[i] = 0;
                 emitToken(&list, TOK_IDENT, 0, ident);
-                continue;
+                break;
             }
 
             default:
