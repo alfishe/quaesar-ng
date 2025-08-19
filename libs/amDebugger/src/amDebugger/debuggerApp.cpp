@@ -52,7 +52,7 @@ void DebuggerApp::init() {
 
     assert(m_pDebugger);
     qd::UiNodeCreator mk;
-    m_pGui = mk.make_<amD::DebuggerDesktop>(m_pDebugger);
+    m_pGui = mk.make_<amD::DebuggerDesktop>(this, m_pDebugger);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
 }

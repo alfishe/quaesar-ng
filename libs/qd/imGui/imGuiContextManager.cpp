@@ -33,13 +33,14 @@ QImGuiContext* ImGuiContextManager::createContextImGui(SDL_Window* window, SDL_R
 
     ::ImGuiContext* pImCon = ImGui::CreateContext(pSharedFontAtlas);
 
-    QImGuiContext* pContext = new QImGuiContext(pImCon, this);
-    pContext->m_windowId = SDL_GetWindowID(window);
-    pContext->m_pRenderer = renderer;
+    QImGuiContext* pQContext = new QImGuiContext(pImCon, this);
+    pQContext->m_windowId = SDL_GetWindowID(window);
+    pQContext->m_pRenderer = renderer;
 
-    m_pImContexts.push_back(pContext);
+    m_pImContexts.push_back(pQContext);
 
-    ImGuiIO& io = pContext->useCurrent();
+    pQContext->useCurrent();
+    ImGuiIO& io = pQContext->getIO();
     if (!m_pSharedFontAtlas)
         m_pSharedFontAtlas = io.Fonts;
 
@@ -47,7 +48,7 @@ QImGuiContext* ImGuiContextManager::createContextImGui(SDL_Window* window, SDL_R
     ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer2_Init(renderer);
 
-    return pContext;
+    return pQContext;
 }
 
 
@@ -78,10 +79,11 @@ void ImGuiContextManager::destroyModule()
 
 qd::EFlow QImGuiContext::onSdlEventProc(SDL_Event& event)
 {
-    useCurrent();
-    if (ImGui_ImplSDL2_ProcessEvent(&event))
-        return qd::EFlow::DONE;
-    return qd::EFlow::CONTINUE;
+    ImGuiContext* pOldCtx = useCurrent();
+    qd::EFlow r;
+    r = ImGui_ImplSDL2_ProcessEvent(&event);
+    setImGuiContext(pOldCtx);
+    return r;
 }
 
 
@@ -103,13 +105,20 @@ void QImGuiContext::endFrame()
 }
 
 
-ImGuiIO& QImGuiContext::useCurrent() const
+ImGuiContext* QImGuiContext::useCurrent() const
 {
     assert(m_pImGuiContext);
+    ImGuiContext* pOldContext = ImGui::GetCurrentContext();
     ImGui::SetCurrentContext(m_pImGuiContext);
-    return getIO();
+    return pOldContext;
 }
 
+
+
+void QImGuiContext::setImGuiContext(ImGuiContext* pImGuiContext)
+{
+    ImGui::SetCurrentContext(pImGuiContext);
+}
 
 
 ImGuiIO& QImGuiContext::getIO() const

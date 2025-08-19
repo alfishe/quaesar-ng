@@ -64,7 +64,8 @@ public:
     void newFrame();
     void endFrame();
 
-    ImGuiIO& useCurrent() const;
+    ImGuiContext* useCurrent() const;
+    void setImGuiContext(ImGuiContext* pImGuiContext);
     ImGuiIO& getIO() const;
 
     qd::ImGuiContextManager* getImGuiMod() const { return m_pParentModule; }

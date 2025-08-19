@@ -84,8 +84,8 @@ public:
         return bp;
     }
 
-    bool isDebugActivated() const { return m_pVm->emu->m_debugMode == DebuggerMode_Break; }
-    void setDebugMode(EDebuggerMode debug_mode);
+    bool isDebugActivated() const;
+    void setDebugMode(EVmDebugMode debug_mode);
 
     //------------------------------------------------------------------------
     // Implement Operation Environment

@@ -103,17 +103,19 @@ qd::EFlow UaeVmImp::applyOperationMsgProc(qd::operation::args::Base* args) {
     if (c_def(0)) {
     } else if (auto p = args->cast_<amD::operation::args::DebugTraceContinue>()) {
         r = true;
-        pUae->execConsoleCmd("g");
-
+        vm->setVmDebugMode(EVmDebugMode::Live);
 
     } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStep>()) {
         r = true;
-        vm->emu->setDebugMode(DebuggerMode_Break);
+        vm->setVmDebugMode(EVmDebugMode::Break);
         pUae->execConsoleCmd("t");
 
     } else if (auto p = args->cast_<amD::operation::args::DebugTraceStart>()) {
         r = true;
-        vm->emu->setDebugMode(DebuggerMode_Break);
+        if (vm->getVmDebugMode() == EVmDebugMode::Live)
+            vm->setVmDebugMode(EVmDebugMode::Break);
+        else
+            vm->setVmDebugMode(EVmDebugMode::Live);
 
     } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepOut>()) {
         r = true;
@@ -222,16 +224,17 @@ void UaeVmImp::Emu::setDebugDmaMode(int p_mode) {
 }
 
 
-void UaeVmImp::Emu::setDebugMode(EDebuggerMode debug_mode) {
-    if (debug_mode == DebuggerMode_Break) {
-        while (!isDebugActivatedFull()) {
+void UaeVmImp::setVmDebugMode(EVmDebugMode debug_mode) {
+    TSuper::setVmDebugMode(debug_mode);
+    if (debug_mode == EVmDebugMode::Break) {
+        while (!instEmu.isDebugActivatedFull()) {
             ::debugger_active = 0;
             ::debugging = 0;
             ::activate_debugger_new();
         }
-    } else if (debug_mode == DebuggerMode_Live) {
-        amD::operation::args::DebugTraceContinue m;
-        vm->applyOperationMsgProc(&m);
+    } else if (debug_mode == EVmDebugMode::Live) {
+        if (m_pUaeThread)
+            m_pUaeThread->execConsoleCmd("g");
         ::debugger_active = 0;
     }
 }

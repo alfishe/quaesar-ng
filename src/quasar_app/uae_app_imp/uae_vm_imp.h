@@ -30,6 +30,9 @@ class UaeVmImp final : public IVm::VM {
     UaeServerThread* m_pUaeThread = nullptr;
 
 public:
+    UaeVmImp& instVm = *this;
+
+public:
     UaeVmImp();
     void setServerImp(UaeServerThread* pUaeThread) {
         m_pUaeThread = pUaeThread;
@@ -40,6 +43,13 @@ public:
     //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
     virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
 
+    virtual amD::EVmDebugMode getVmDebugMode() const override {
+        return TSuper::getVmDebugMode();
+    }
+    virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) override;
+
+
+    //------------------------------------------------------------------------
     struct Cpu : public IVm::Cpu {
         uint32_t getRegA(int i) const override {
             return m68k_areg(::regs, i);
@@ -74,7 +84,7 @@ public:
     Cpu instCpu;
 
 
-    ///
+    //------------------------------------------------------------------------
     struct Memory final : public IVm::Memory {
     public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override {
@@ -140,7 +150,6 @@ public:
         UaeVmImp* vm = nullptr;
         virtual int getDebugDmaMode() override;
         virtual void setDebugDmaMode(int p_mode) override;
-        virtual void setDebugMode(amD::EDebuggerMode debug_mode) override;
         bool isDebugActivatedFull() const;
         bool isDebugActivated() const;
         virtual void getScreenSize(int* out_w, int* out_h) const override {

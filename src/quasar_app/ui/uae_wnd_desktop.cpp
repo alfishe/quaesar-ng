@@ -52,9 +52,9 @@ void UaeGuiDesktop::drawContentImp() {
         }
 
         if (auto p2 = qIm::LockMenu("Emulator", true)) {
-            qIm::menuItemOperation(this, STRINGIFY(amD::operation::ToggleTurboEmulation));
-            qIm::menuItemOperation(this, STRINGIFY(amD::operation::UaeWndAlwaysOnTop));
-            qIm::menuItemOperation(this, STRINGIFY(amD::operation::UaeResetAmiga));
+            qIm::menuItemOperationArgs_<amD::operation::args::ToggleTurboEmulation>(this);
+            qIm::menuItemOperationArgs_<amD::operation::args::UaeWndAlwaysOnTop>(this);
+            qIm::menuItemOperationArgs_<amD::operation::args::UaeResetAmiga>(this);
         }
 
         if (auto p2 = qIm::LockMenu("Window", true)) {
@@ -65,8 +65,6 @@ void UaeGuiDesktop::drawContentImp() {
 
         ImGui::EndMainMenuBar();
     }
-
-
     return TSuper::drawContentImp();
 }
 

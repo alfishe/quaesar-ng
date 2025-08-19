@@ -8,6 +8,7 @@
 #include "qd/stl/fixed_vector.h"
 #include "qd/typeSystem/typeDeclare.h"
 #include "qd/stl/ref_ptr.h"
+#include "qd/typeSystem/typeInfo.h"
 
 
 #define QD_REG_OPERATION(ClassName)                                              \
@@ -111,60 +112,8 @@ static qd::UiOperation* createUiOperationCb_(const qd::TypeInfo& /*meta*/, qd::U
 }
 
 
-//////////////////////////////////////////////////////////////////////////
-class UiOperation : public qd::RefCounted
-{
-    TS_REFLECT_CLASS_BASE(200, qd::UiOperation, qd::RefCounted);
-
-public:
-    uint32_t mClassId = -1;
-    qd::string m_name;
-    qd::string m_description;
-    bool m_bActive = true;
-    ShortcutsHnd* m_pShortcuts;
-
-public:
-    UiOperation() = default;
-    ~UiOperation();
-
-    virtual void onOperationCreate(qd::UiOperationCreator* cp) { /*onNodeCreated(cp);*/ }
-    virtual void destroy() {}
-
-//     virtual qd::EFlow applyOperationMsgProc(qd::IOperationEnvironment* env, qd::operation::args::Base* p_msg)
-//     {
-//         return EFlow::NO_RESULT;
-//     }
-
-    // void doOperationBase();
-    virtual void doOperation(qd::IOperationEnvironment* env)
-    {
-        assert(0);
-        //         operation::args::DoOperation msg;
-        //         applyOperationMsgProc(env, &msg);
-    }
-    //     virtual void undoOperation(IOperationEnvironment& history) {}
-
-    virtual bool hasMtd(int id) const { return false; /*supportMtd[id];*/ }
-    void addShortcut(uint32_t sid);
-
-    bool isActive() const { return m_bActive; }
-    void setActive(bool Active) { m_bActive = Active; }
-
-    const qd::string& getName() const { return m_name; }
-
-    qd::ShortcutsHnd* getShortcuts() const { return m_pShortcuts; }
-
-
-}; // class UiOperation
-//////////////////////////////////////////////////////////////////////////
-
-
-
 
 namespace operation::args {
-
-
-
 class IOpArgAllocator
 {
 public:
@@ -183,20 +132,13 @@ TClass* clone_op_(const TClass& src, qd::operation::args::IOpArgAllocator& alloc
     return pInst;
 }
 
-struct OpReqMode {
-    enum Type {
-        OP_APPLY = 0,
-        OP_GET = 1,
-        OP_SET = 2,
-    };
-};
-
 
 struct Base {
     TS_REFLECT_CLASS(qd::operation::args::Base, void);
-    //int m_requestMode;
 public:
     inline Base() = default;
+
+    bool _tryCast(const qd::TypeInfo& msg_type);
 
     template<class T>
     T* cast_()
@@ -204,30 +146,25 @@ public:
         if (!c_def(this))
             return nullptr;
         const qd::TypeInfo& type = T::getStaticTypeInfo();
-        if (!tryCast(type))
+        if (!_tryCast(type))
             return nullptr;
         return static_cast<T*>(this);
     }
 
-    virtual bool tryCast(const qd::TypeInfo& msg_type);
     virtual Base* clone(qd::operation::args::IOpArgAllocator& allocator) { ASSERT_AND_DO(0, return nullptr, ); }
 
-    // Should be declared
+    // setup() should be declared
     //static void setup(qd::operation::args::OpDesc& d) {}
 
 }; // struct args::Base
 //////////////////////////////////////////////////////////////////////////
 
 
-
-struct OperationSupportedMsgVisitor : public operation::args::Base {
-    qd::vector<const qd::TypeInfo*> m_pSupportedMtd;
-
-public:
-    virtual bool tryCast(const qd::TypeInfo& msg_type) override;
-};
-//////////////////////////////////////////////////////////////////////////
-
+inline bool Base::_tryCast(const qd::TypeInfo& msg_type)
+{
+    const qd::TypeInfo& typeInfo = getTypeInfo();
+    return typeInfo.isDerivedFrom(msg_type);
+}
 
 
 }; // namespace operation::args

@@ -1,8 +1,10 @@
 #pragma once
+#include "qd/enum/enumBase.h"
+
 
 namespace amD {
 
-static constexpr int breakpoint_reg_end = 37;  // instead of #define BREAKPOINT_REG_END
+static constexpr int breakpoint_reg_end = 37; // instead of #define BREAKPOINT_REG_END
 
 enum ECopperAddr_ {
     CopperAddr_null = 0,
@@ -42,15 +44,22 @@ enum ECopperStates {
     COP_strobe_delay5,
     COP_strobe_delay1x,
     COP_strobe_delay2x,
-    COP_strobe_extra,  // just to skip current cycle when CPU wrote to COPJMP
+    COP_strobe_extra, // just to skip current cycle when CPU wrote to COPJMP
     COP_start_delay
 };
 
 
-enum EDebuggerMode {
-    DebuggerMode_Live,
-    DebuggerMode_Break,
+struct EVmDebugMode {
+    enum Type {
+        UNDEF,
+        Live,
+        Break,
+    };
+    ENUM_DECLARE_BASE(amD::, EVmDebugMode, Type, EVmDebugMode::Live);
+
+    bool isLive() const { return mV == Live; }
+    bool isBreak() const { return mV == Break; }
 };
 
 
-};  // namespace amD
+}; // namespace amD

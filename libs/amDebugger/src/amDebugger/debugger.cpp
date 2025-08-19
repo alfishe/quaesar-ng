@@ -43,9 +43,16 @@ void Debugger::execConsoleCmd(qd::string&& cmd)
 }
 
 
-void Debugger::setDebugMode(EDebuggerMode debug_mode)
+
+bool Debugger::isDebugActivated() const
 {
-    m_pVm->emu->setDebugMode(debug_mode);
+    return m_pVm->getVmDebugMode() == EVmDebugMode::Break;
+}
+
+
+void Debugger::setDebugMode(EVmDebugMode debug_mode)
+{
+    m_pVm->setVmDebugMode(debug_mode);
 }
 
 

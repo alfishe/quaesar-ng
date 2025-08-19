@@ -103,49 +103,48 @@ void UaeClientAppPart::render() {
     // render UAE texture screen
     UaeServerThread* pUae = getUaeThread();
     int curFrame = pUae->getScrFrameNo();
-    if (curFrame == m_renderedFrameNo) {
-        return;
-    }
-    m_renderedFrameNo = curFrame;
+    if (curFrame != m_renderedFrameNo) {
+        m_renderedFrameNo = curFrame;
 
-    int new_width = 0;
-    int new_height = 0;
-    int window_width, window_height;
-    SDL_GetWindowSize(m_pWindow, &window_width, &window_height);
+        int new_width = 0;
+        int new_height = 0;
+        int window_width, window_height;
+        SDL_GetWindowSize(m_pWindow, &window_width, &window_height);
 
-    if (pUae->m_UaeScrTextureMutex.tryLock()) {
-        int uaeWidth = pUae->m_scrWidth;
-        int uaeHeight = pUae->m_scrHeight;
-        if (!uaeWidth || !uaeHeight)
-            return;
+        if (pUae->m_UaeScrTextureMutex.tryLock()) {
+            int uaeWidth = pUae->m_scrWidth;
+            int uaeHeight = pUae->m_scrHeight;
+            if (!uaeWidth || !uaeHeight)
+                return;
 
-        // Maintain aspect ratio
-        float image_aspect = (float)uaeWidth / (float)uaeHeight;
-        float window_aspect = (float)window_width / (float)window_height;
+            // Maintain aspect ratio
+            float image_aspect = (float)uaeWidth / (float)uaeHeight;
+            float window_aspect = (float)window_width / (float)window_height;
 
-        if (window_aspect < image_aspect) {
-            new_width = window_width;
-            new_height = (int)(window_width / image_aspect);
-        } else {
-            new_height = window_height;
-            new_width = (int)(window_height * image_aspect);
-        }
-        SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
-        SDL_RenderClear(m_pUaeRenderer);
-
-        tryRecreateEmuScreenTexture(uaeWidth, uaeHeight);  // Recreate texture if needed
-        uint32_t* texture_pixels = nullptr;
-        int pitch = 0;
-        if (SDL_LockTexture(m_pUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
-            for (int y = 0; y < uaeHeight; y++) {
-                uint8_t* dest = (uint8_t*)&texture_pixels[y * uaeWidth];
-                memcpy(dest, &pUae->m_pAmigaBuffer[y * uaeWidth], uaeWidth * 4);
+            if (window_aspect < image_aspect) {
+                new_width = window_width;
+                new_height = (int)(window_width / image_aspect);
+            } else {
+                new_height = window_height;
+                new_width = (int)(window_height * image_aspect);
             }
-            SDL_UnlockTexture(m_pUaeScrTexture);
-        }
+            SDL_Rect rect = {(window_width - new_width) / 2, (window_height - new_height) / 2, new_width, new_height};
+            SDL_RenderClear(m_pUaeRenderer);
 
-        SDL_RenderCopy(m_pUaeRenderer, m_pUaeScrTexture, NULL, &rect);
-        pUae->m_UaeScrTextureMutex.unlock();
+            tryRecreateEmuScreenTexture(uaeWidth, uaeHeight);  // Recreate texture if needed
+            uint32_t* texture_pixels = nullptr;
+            int pitch = 0;
+            if (SDL_LockTexture(m_pUaeScrTexture, NULL, (void**)&texture_pixels, &pitch) == 0) {
+                for (int y = 0; y < uaeHeight; y++) {
+                    uint8_t* dest = (uint8_t*)&texture_pixels[y * uaeWidth];
+                    memcpy(dest, &pUae->m_pAmigaBuffer[y * uaeWidth], uaeWidth * 4);
+                }
+                SDL_UnlockTexture(m_pUaeScrTexture);
+            }
+
+            SDL_RenderCopy(m_pUaeRenderer, m_pUaeScrTexture, NULL, &rect);
+            pUae->m_UaeScrTextureMutex.unlock();
+        }
     }
 
     if (m_bShowImgui)
@@ -179,7 +178,7 @@ void UaeClientAppPart::destroyImp() {
 
     if (m_pUaeWndGui) {
         m_pUaeWndGui->destroy();
-        delete m_pUaeWndGui;
+        //delete m_pUaeWndGui;
         m_pUaeWndGui = nullptr;
     }
 }

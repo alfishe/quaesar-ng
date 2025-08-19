@@ -7,7 +7,7 @@
 #include <qd/base/baseTypes.h>
 
 
-enum EDebuggerMode;
+enum EVmDebugMode;
 
 //////////////////////////////////////////////////////////////////////////
 // It gonna be a snapshot of the machine at any given moment, just data.
@@ -47,6 +47,8 @@ protected:
     int amiga_width = (754 + 7) & ~7;
     int amiga_height = 576;
     bool mInit = false;
+    amD::EVmDebugMode m_debugMode = amD::EVmDebugMode::Live;
+
     static IVm::VM* staticVmInst;
     IVm::VM();
 
@@ -62,7 +64,8 @@ public:
     int getScreenSizeX() const { return amiga_width; }
     int getScreenSizeY() const { return amiga_height; }
 
-    // virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const = 0;
+    virtual amD::EVmDebugMode getVmDebugMode() const { return m_debugMode; }
+    virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) { m_debugMode = debug_mode; }; // base
 
     IVm::Memory* mem = nullptr;
     IVm::Cpu* cpu = nullptr;
@@ -94,11 +97,11 @@ public:
 
 class Emu
 {
+
 public:
-    amD::EDebuggerMode m_debugMode = amD::DebuggerMode_Live;
     virtual int getDebugDmaMode() { return 0; }
     virtual void setDebugDmaMode(int p_mode) {}
-    virtual void setDebugMode(amD::EDebuggerMode debug_mode) /*base*/ {}
+
     virtual void getScreenSize(int* out_w, int* out_h) const
     {
         *out_w = 754;

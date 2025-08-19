@@ -20,12 +20,13 @@ class DebuggerDesktop : public qd::UiDesktop, public qd::IOperationEnvironment
     TS_REFLECT_CLASS(amD::DebuggerDesktop, qd::UiDesktop);
 
 public:
+    amD::DebuggerApp* m_pDbgApp = nullptr;
     amD::Debugger* m_pDbg = nullptr;
     qd::UiOperationMgr* m_pOperationMgr = nullptr;
     qd::ShortcutsMgr* m_pShortcutMgr = nullptr;
 
 public:
-    DebuggerDesktop(Debugger* dbg);
+    DebuggerDesktop(amD::DebuggerApp* pDbgApp, Debugger* dbg);
     virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
 
     virtual ~DebuggerDesktop();

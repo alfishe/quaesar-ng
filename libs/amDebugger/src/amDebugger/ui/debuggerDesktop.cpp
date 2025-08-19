@@ -1,5 +1,7 @@
 #include "debuggerDesktop.h"
 #include "amDebugger/commonOperations.h"
+#include "amDebugger/debuggerOps.h"
+#include "amDebugger/window/disassembly_wnd.h"
 #include "EASTL/optional.h"
 #include "EASTL/span.h"
 #include "qd/imGui/imGuiHelperClass.h"
@@ -16,8 +18,6 @@
 #include <amDebugger/shortcutsList.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include "amDebugger/debuggerOps.h"
-#include "amDebugger/window/disassembly_wnd.h"
 
 
 
@@ -45,8 +45,9 @@ qd::EFlow DebuggerDesktop::applyOperationMsgProc(qd::operation::args::Base* args
 }
 
 
-DebuggerDesktop::DebuggerDesktop(Debugger* in_dbg)
-    : m_pDbg(in_dbg)
+DebuggerDesktop::DebuggerDesktop(amD::DebuggerApp* pDbgApp, Debugger* in_dbg)
+    : m_pDbgApp(pDbgApp)
+    , m_pDbg(in_dbg)
 {}
 
 
@@ -65,16 +66,17 @@ void DebuggerDesktop::_drawMainMenuBar()
         if (auto pm = qIm::LockMenu("Emulator"))
         {
             qIm::menuItemOperationArgs_< amD::operation::args::UaeWndAlwaysOnTop>(pDbg);
-            qIm::menuItemOperationArgs_ < amD::operation::args::UaeResetAmiga>(pDbg);
+            qIm::menuItemOperationArgs_< amD::operation::args::UaeResetAmiga>(pDbg);
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
-            qIm::menuItemOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg);
+            amD::EVmDebugMode debugMode = vm->getVmDebugMode();
+            qIm::menuItemOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false, debugMode.isBreak());
+            qIm::menuItemOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
             ImGui::Separator();
             qIm::menuItemOperationArgs_<amD::operation::args::DisasmTraceStep>(pDbg);
             qIm::menuItemOperationArgs_<amD::operation::args::DisasmTraceStepOut>(pDbg);
-            qIm::menuItemOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg);
             qIm::menuItemOperationArgs_<amD::operation::args::DisasmToggleBreakpoint>(this);
             ImGui::Separator();
             qIm::menuItemOperationArgs_<amD::operation::args::CopperTraceStep>(pDbg);
@@ -117,7 +119,8 @@ void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
     m_pWindows.resize((size_t)WndId::MostCommonCount);
     m_pOperationMgr = &qd::UiOperationMgr::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
-    m_pShortcutMgr->createPredefinedShortcuts(eastl::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
+    m_pShortcutMgr->createPredefinedShortcuts(
+        eastl::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
 
     // create all m_pWindows
     createAllUiWndows();
@@ -210,7 +213,7 @@ void DebuggerDesktop::_drawToolBar()
         bool isDbgMode = dbg->isDebugActivated();
         if (ImGui::Checkbox("Trace", &isDbgMode))
         {
-            dbg->setDebugMode(isDbgMode ? DebuggerMode_Break : DebuggerMode_Live);
+            dbg->setDebugMode(isDbgMode ? EVmDebugMode::Break : EVmDebugMode::Live);
         }
         //
         ImGui::Separator();

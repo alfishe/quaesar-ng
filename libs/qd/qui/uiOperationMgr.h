@@ -69,10 +69,6 @@ public:
     void createOperations(qd::UiOperationCreator* ca);
     virtual void destroy();
 
-    void addOperation(UiOperation* pNewOperation);
-
-    UiOperation* findOperation(uint32_t class_id) const;
-    UiOperation* findOperationByType(const qd::TypeInfo& type) const;
 
     qd::span<qd::operation::args::OpDesc const> getOperationsList() const;
 

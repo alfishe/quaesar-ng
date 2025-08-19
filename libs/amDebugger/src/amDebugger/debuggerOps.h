@@ -53,26 +53,6 @@ struct AmDebuggerOperationCreator : public qd::UiOperationCreator {
 //////////////////////////////////////////////////////////////////////////
 
 
-class Operation : public qd::UiOperation
-{
-    TS_REFLECT_CLASS(amD::operation::Operation, qd::UiOperation);
-
-public:
-    virtual void onDebuggerOperationCreate(amD::operation::AmDebuggerOperationCreator* cp) {}
-
-    // void doOperationBase(qd::IOperationEnvironment* env);
-    void addShortcut(shortcut::EId sid);
-    // amD::Debugger* getDbg() const;
-
-    virtual qd::EFlow applyOperationMsgProc(qd::IOperationEnvironment* env, amD::operation::OperationArgs* p_msg)
-    {
-        return qd::EFlow::NO_RESULT;
-    }
-    virtual void onOperationCreate(qd::UiOperationCreator* cp) override;
-
-}; // class Operation
-//////////////////////////////////////////////////////////////////////////
-
 
 //////////////////////////////////////////////////////////////////////////
 namespace args {
@@ -113,14 +93,14 @@ struct DebugDmaOption : public amD::operation::OperationArgs {
     void changeDebugDmaMode(qd::IOperationEnvironment* env, int nMode);
 };
 
-
-struct MenuItemStateGet : public amD::operation::OperationArgs {
-    // TS_REFLECT_CLASS(MenuItemStateGet, amD::operation::OperationArgs);
-    // DECLARE_OPERATION(amD::operation::args::MenuItemStateGet, amD::operation::UaeWndAlwaysOnTop);
-    DECLARE_OPERATION_1(amD::operation::args::MenuItemStateGet);
-    int checked = -1;
+struct DebugTraceStart : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DebugTraceStart)
+    static void setup(qd::operation::args::OpDesc& d)
+    {
+        d.m_name = "Debug Trace Mode";
+        d.addShortcut(amD::shortcut::EId::DebugTraceStart);
+    }
 };
-
 
 
 struct DebugTraceContinue : public amD::operation::OperationArgs {
@@ -130,7 +110,7 @@ struct DebugTraceContinue : public amD::operation::OperationArgs {
         d.m_name = "Continue";
         d.addShortcut(amD::shortcut::EId::DebugTraceContinue);
     }
-    amD::EDebuggerMode debugMode = DebuggerMode_Live;
+    amD::EVmDebugMode debugMode = EVmDebugMode::Live;
 };
 
 
@@ -144,14 +124,6 @@ struct DisasmTraceStep : public amD::operation::OperationArgs {
     }
 };
 
-struct DebugTraceStart : public amD::operation::OperationArgs {
-    DECLARE_OPERATION_1(amD::operation::args::DebugTraceStart)
-    static void setup(qd::operation::args::OpDesc& d)
-    {
-        d.m_name = "Debug Trace Mode";
-        d.addShortcut(amD::shortcut::EId::DebugTraceStart);
-    }
-};
 
 
 struct DisasmTraceStepOut : public amD::operation::OperationArgs {
@@ -162,7 +134,6 @@ struct DisasmTraceStepOut : public amD::operation::OperationArgs {
         d.addShortcut(amD::shortcut::EId::DebugTraceStepOut);
     }
 };
-//////////////////////////////////////////////////////////////////////////
 
 
 struct CopperTraceStep : public amD::operation::OperationArgs {
@@ -208,7 +179,7 @@ struct ToggleTurboEmulation : public amD::operation::OperationArgs {
         d.addShortcut(amD::shortcut::EId::ToggleTurboEmulation);
     }
 };
-//////////////////////////////////////////////////////////////////////////
+
 
 struct DebugWaitScanLines : public amD::operation::OperationArgs {
     DECLARE_OPERATION_1(amD::operation::args::DebugWaitScanLines);
@@ -219,7 +190,6 @@ struct DebugWaitScanLines : public amD::operation::OperationArgs {
         d.addShortcut(amD::shortcut::EId::DebugWaitScanLines);
     }
 };
-//////////////////////////////////////////////////////////////////////////
 
 
 

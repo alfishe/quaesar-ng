@@ -8,6 +8,7 @@
 
 namespace qIm {
 
+#if 0
 // ImGui's Operation menu control by operation's ClassName
 //
 struct MenuItemOperation {
@@ -72,24 +73,21 @@ inline void menuItemOperation(qd::IOperationEnvironment* env, const char* pOpera
 {
     qIm::MenuItemOperation menu(env, pOperationClass, bDoOperation);
 }
+#endif //
 
 
 inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* p_arg,
-    const char* gui_label)
+    const char* gui_label = nullptr, bool p_checked = false, bool p_enabled = true)
 {
-    bool bChecked = false;
-    bool bEnabled = true;
-
     qd::InlineString shortcutName;
     qd::UiOperationMgr* pOpMgr = &qd::UiOperationMgr::get();
     if (const qd::operation::args::OpDesc* pDesc = pOpMgr->findOpDesc(p_arg->getCid()))
     {
         pDesc->getShortcutGuiStr(shortcutName);
-        if (!gui_label)
+        if (!gui_label || !gui_label[0])
             gui_label = pDesc->m_name.c_str();
     }
-
-    if (ImGui::MenuItem(gui_label, shortcutName.c_str(), &bChecked, bEnabled))
+    if (ImGui::MenuItem(gui_label, shortcutName.c_str(), p_checked, p_enabled))
     {
         pEnv->applyOperationMsgProc(p_arg);
     }
@@ -97,10 +95,11 @@ inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation
 
 
 template<class TOp>
-inline void menuItemOperationArgs_(qd::IOperationEnvironment* pEnv, const char* gui_label = nullptr)
+inline void menuItemOperationArgs_(qd::IOperationEnvironment* pEnv, const char* gui_label = nullptr,
+    bool p_checked = false, bool p_enabled = true)
 {
     TOp pArg;
-    menuItemOperationArgs(pEnv, &pArg, gui_label);
+    menuItemOperationArgs(pEnv, &pArg, gui_label, p_checked, p_enabled);
 }
 
 
