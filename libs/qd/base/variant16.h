@@ -18,8 +18,7 @@ protected:
     static constexpr size_t g_headDataCapacity = 8 - 2;
     static constexpr size_t g_bodyDataCapacity = 8;
 
-    union
-    {
+    union {
         struct {
             uint8_t m_type;
             uint8_t m_dataSize; // strSize
@@ -28,13 +27,13 @@ protected:
         uint32_t _headData = 0;
     };
     union {
-        int m_Int32; // 32bit
-        uint32_t m_UInt32;
-        int m_Bool;
-        float m_Float;
-        double m_Double;
-        int64_t m_Int64;
-        uint64_t m_UInt64; // 8 byte
+        int m_i32; // 32bit
+        uint32_t m_u32;
+        int m_bool;
+        float m_f32;
+        double m_f64;
+        int64_t m_i64;
+        uint64_t m_u64; // 8 byte
         void* m_pPointer; // 8 byte
 
         uint64_t _bodyData = 0;
@@ -70,7 +69,6 @@ public:
 
 
 public:
-
     Var16() = default;
     ~Var16() = default;
 
@@ -84,33 +82,33 @@ public:
 public:
     Var16(int Value)
         : m_type(DATA_INT32)
-        , m_Int32(Value)
+        , m_i32(Value)
     {}
 
     Var16(bool bValue)
         : m_type(DATA_BOOL)
-        , m_Bool(bValue)
+        , m_bool(bValue)
     {}
 
 
     Var16(float Value)
         : m_type(DATA_FLOAT)
-        , m_Float(Value)
+        , m_f32(Value)
     {}
 
     Var16(uint32_t Value)
         : m_type(DATA_UINT32)
-        , m_UInt32(Value)
+        , m_u32(Value)
     {}
 
     Var16(int64_t Value)
         : m_type(DATA_INT64)
-        , m_Int64(Value)
+        , m_i64(Value)
     {}
 
     Var16(uint64_t Value)
         : m_type(DATA_UINT64)
-        , m_UInt64(Value)
+        , m_u64(Value)
     {}
 
     Var16(void* Value)
@@ -141,31 +139,31 @@ public:
     inline bool operator!= (const Var16& r) const { return !(*this == r); }
 
 public:
-    inline void setInt(int Value)
+    inline void setI32(int Value)
     {
         assert(m_type == DATA_INT32 || m_type == DATA_NONE);
-        m_Int32 = Value;
+        m_i32 = Value;
         m_type = DATA_INT32;
     }
 
     inline void setBool(bool Value)
     {
         assert(m_type == DATA_BOOL || m_type == DATA_NONE);
-        m_Bool = (int)Value;
+        m_bool = (int)Value;
         m_type = DATA_BOOL;
     }
 
-    inline void setFloat(float Value)
+    inline void setF32(float Value)
     {
         assert(m_type == DATA_FLOAT || m_type == DATA_NONE);
-        m_Float = Value;
+        m_f32 = Value;
         m_type = DATA_FLOAT;
     }
 
-    inline void setUInt32(uint32_t Value)
+    inline void setU32(uint32_t Value)
     {
         assert(m_type == DATA_UINT32 || m_type == DATA_NONE);
-        m_UInt32 = Value;
+        m_u32 = Value;
         m_type = DATA_UINT32;
     }
 
@@ -177,45 +175,45 @@ public:
     }
 
 
-    void setString(const qd::string_view& Value);
+    void setStr(const qd::string_view& Value);
 
 
-    inline uint32_t getUInt() const
+    inline uint32_t getU32() const
     {
         assert(m_type == DATA_INT32 || m_type == DATA_UINT32);
-        return m_UInt32;
+        return m_u32;
     }
-    inline bool getUInt(uint32_t& bVal) const
+    inline bool getU32(uint32_t& bVal) const
     {
         if (m_type != DATA_INT32 && m_type != DATA_UINT32)
             return false;
-        bVal = m_UInt32;
+        bVal = m_u32;
         return true;
     }
 
-    inline int getInt() const
+    inline int getI32() const
     {
         assert(m_type == DATA_INT32 || m_type == DATA_UINT32);
-        return m_Int32;
+        return m_i32;
     }
-    inline bool getInt(int& bVal) const
+    inline bool getI32(int& bVal) const
     {
         if (m_type != DATA_INT32 && m_type != DATA_UINT32)
             return false;
-        bVal = m_Int32;
+        bVal = m_i32;
         return true;
     }
 
     inline bool getBool() const
     {
         assert(m_type == DATA_BOOL);
-        return m_Bool != 0;
+        return m_bool != 0;
     }
     inline bool getBool(bool& bVal) const
     {
         if (m_type != DATA_BOOL)
             return false;
-        bVal = (m_Bool != 0);
+        bVal = (m_bool != 0);
         return true;
     }
 
@@ -227,37 +225,37 @@ public:
     }
 
 
-    const qd::string_view& getString() const;
+    const qd::string_view& getStr() const;
 
-    inline bool getString(qd::string_view& Out) const
+    inline bool getStr(qd::string_view& Out) const
     {
         if (m_type != DATA_STRING)
             return false;
-        Out = getString();
+        Out = getStr();
         return true;
     }
 
-    inline float getFloat() const
+    inline float getF32() const
     {
         assert(m_type == DATA_FLOAT);
-        return m_Float;
+        return m_f32;
     }
 
-    inline bool getFloat(float& Out) const
+    inline bool getF32(float& Out) const
     {
         if (m_type != DATA_FLOAT)
             return false;
-        Out = m_Float;
+        Out = m_f32;
         return true;
     }
 
     void set(void* Value) { setPtr(Value); }
     void set(bool Value) { setBool(Value); }
-    void set(int Value) { setInt(Value); }
-    void set(float Value) { setFloat(Value); }
-    void set(uint32_t Value) { setUInt32(Value); }
-    void set(const char* Value) { setString(qd::string_view(Value, strlen(Value))); }
-    void set(const qd::string_view& Value) { setString(Value); }
+    void set(int Value) { setI32(Value); }
+    void set(float Value) { setF32(Value); }
+    void set(uint32_t Value) { setU32(Value); }
+    void set(const char* Value) { setStr(qd::string_view(Value, strlen(Value))); }
+    void set(const qd::string_view& Value) { setStr(Value); }
 
 
     struct RetZero {
@@ -281,7 +279,7 @@ public:
 
     bool toInt32(int& val) const;
 
-    int toInt32Def(int def) const
+    int toI32(int def) const
     {
         int val;
         if (toInt32(val))

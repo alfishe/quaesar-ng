@@ -102,14 +102,15 @@ qd::ShortcutsMgr* ShortcutsMgr::get()
 }
 
 
-void ShortcutsMgr::createPredefinedShortcuts(eastl::span<ShortcutSetupFunc> shortcuts_list)
+void ShortcutsMgr::createPredefinedShortcuts(eastl::span<qd::ShortcutInitItem> shortcuts_list)
 {
-    for (int id = 0; id < (int)shortcuts_list.size(); ++id)
+    for (int i = 0; i < (int)shortcuts_list.size(); ++i)
     {
-        ShortcutSetupFunc setupFunc = shortcuts_list[id];
+        const qd::ShortcutInitItem &curItem = shortcuts_list[i];
+        ShortcutSetupFunc setupFunc = curItem.m_setupFunc;
         if (setupFunc)
         {
-            qd::Shortcut& curShortcut = getShortcut(id);
+            qd::Shortcut& curShortcut = getShortcut(curItem.m_shortcutId);
             setupFunc(curShortcut);
         }
     }
@@ -118,12 +119,7 @@ void ShortcutsMgr::createPredefinedShortcuts(eastl::span<ShortcutSetupFunc> shor
 
 void ShortcutsMgr::done()
 {
-    while (!m_shortcuts.empty())
-    {
-        auto& p = m_shortcuts.back();
-        delete p.second;
-        m_shortcuts.pop_back();
-    }
+    m_shortcuts.clear(); // SAFE DELETE
 }
 
 
@@ -151,8 +147,9 @@ qd::Shortcut& ShortcutsMgr::getShortcut(qd::ShortcutId shortcut_id)
     auto it = m_shortcuts.find((int)shortcut_id);
     if (it == m_shortcuts.end())
     {
-        Shortcut* pShortcut = new Shortcut(shortcut_id);
-        m_shortcuts[shortcut_id] = pShortcut;
+        // return reference for later binding
+        qd::Shortcut* pShortcut = new qd::Shortcut(shortcut_id);
+        m_shortcuts[shortcut_id] = qd::unique_ptr<qd::Shortcut>(pShortcut);
         return *pShortcut;
     }
     return *it->second;
@@ -181,7 +178,7 @@ const qd::operation::args::OpDesc* ShortcutsMgr::findOperationByShortcut(const q
 
 qd::InlineString Key::toString() const
 {
-    return ImGui::GetKeyName(mKey);
+    return ImGui::GetKeyName(m_keyId);
 }
 
 

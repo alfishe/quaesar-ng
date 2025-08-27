@@ -52,15 +52,15 @@ void UaeGuiDesktop::drawContentImp() {
         }
 
         if (auto p2 = qIm::LockMenu("Emulator", true)) {
-            qIm::menuItemOperationArgs_<amD::operation::args::ToggleTurboEmulation>(this);
-            qIm::menuItemOperationArgs_<amD::operation::args::UaeWndAlwaysOnTop>(this);
-            qIm::menuItemOperationArgs_<amD::operation::args::UaeResetAmiga>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::ToggleTurboEmulation>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::UaeWndAlwaysOnTop>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::UaeResetAmiga>(this);
         }
 
         if (auto p2 = qIm::LockMenu("Window", true)) {
             qsr::operation::args::ShowDebuggerWnd s1;
             s1.dbgSource = EQuaServerId::S_UAE;
-            qIm::menuItemOperationArgs(this, &s1, "Activate debugger");
+            qIm::menuItemFromOperationArgs(this, &s1, "Activate debugger");
         }
 
         ImGui::EndMainMenuBar();

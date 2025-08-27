@@ -6,9 +6,10 @@
 
 
 namespace amD {
-template<class TItem, int MAX_DEPTH = 16>
+template<class TItem, int TMAX_DEPTH = 16>
 class QuadTreeAddrMap
 {
+    constexpr static int MAX_DEPTH = TMAX_DEPTH;
 public:
     struct Node {
         Node* m_children[4] = {nullptr, nullptr, nullptr, nullptr};
@@ -138,7 +139,7 @@ public:
 
     inline static int getChildIndex(AddrRef addr)
     {
-        return addr >> 30u;
+        return addr >> 30u; // first 2 bits as quadrant index
     }
 };
 

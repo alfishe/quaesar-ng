@@ -76,7 +76,7 @@ inline void menuItemOperation(qd::IOperationEnvironment* env, const char* pOpera
 #endif //
 
 
-inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* p_arg,
+inline void menuItemFromOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* p_arg,
     const char* gui_label = nullptr, bool p_checked = false, bool p_enabled = true)
 {
     qd::InlineString shortcutName;
@@ -95,11 +95,11 @@ inline void menuItemOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation
 
 
 template<class TOp>
-inline void menuItemOperationArgs_(qd::IOperationEnvironment* pEnv, const char* gui_label = nullptr,
+inline void menuItemFromOperationArgs_(qd::IOperationEnvironment* pEnv, const char* gui_label = nullptr,
     bool p_checked = false, bool p_enabled = true)
 {
     TOp pArg;
-    menuItemOperationArgs(pEnv, &pArg, gui_label, p_checked, p_enabled);
+    menuItemFromOperationArgs(pEnv, &pArg, gui_label, p_checked, p_enabled);
 }
 
 

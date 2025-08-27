@@ -82,9 +82,7 @@ void operation::args::OpDesc::getShortcutGuiStr(qd::InlineString& out) const
         out = pSh->toString();
     }
     else
-    {
         out.clear();
-    }
 }
 
 

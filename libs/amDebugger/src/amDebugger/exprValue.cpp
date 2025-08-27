@@ -94,7 +94,7 @@ bool ExprValStr::evaluate(const IVm::VM* vm, qd::Var16& res)
     AmDbgEvaluator e;
     ExprValue result = m_pParsedExpr->evaluate(e);
 
-    res.setUInt32((uint32_t)result);
+    res.setU32((uint32_t)result);
     return true;
 }
 

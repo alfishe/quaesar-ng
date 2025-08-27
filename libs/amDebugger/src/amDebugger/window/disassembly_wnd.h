@@ -1,6 +1,6 @@
 #pragma once
-#include <EASTL/optional.h>
-#include <qd/stl/vector.h>
+#include "qd/stl/optional.h"
+#include "qd/stl/vector.h"
 #include "amDebugger/vm/memory.h"
 #include "amDebugger/ui/uiView.h"
 #include "amDebugger/exprValue.h"
@@ -14,14 +14,15 @@ class DisassemblyView : public amD::AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::Disassembly, amD::window::DisassemblyView, amD::AmDbgWindow);
 
     amD::ExprValStr m_addrInputStr;
-    eastl::optional<AddrRef> m_viewBaseAddr;
-    qd::vector<amD::cda::Item *> m_disasmLines;
-    bool m_snapViewPc = true;
-    AddrRef m_addrExtraViewStart = 0;
-    AddrRef m_reqViewAddr = 0;
-    int m_reqViewAddrDesiredLine = 0;
+    qd::optional<AddrRef> m_viewBaseAddr;
+    qd::vector<amD::cda::Item *> m_vDisasmLines;
+    AddrRef m_mustViewAddr = 0;
+    int m_nMustViewAddrDesiredLine = 0;
+    bool m_bSnapViewPc = true;
+    AddrRef m_addrViewExtraStart = 0;
     AddrRef m_addrViewEnd = 0;
     AddrRef m_prevRegPc = 0;
+    int m_nPrevLineCount = 0;
     constexpr static int g_extraScrollLines = 4;
 
 

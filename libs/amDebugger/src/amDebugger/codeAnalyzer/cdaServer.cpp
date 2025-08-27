@@ -10,7 +10,7 @@ namespace amD::cda {
 
 
 
-void CodeAnalyzerServer::init()
+void M68CodeDisassembler::init()
 {
     m_chunkUseHistory.clear();
     m_chunksQuadTree.clear();
@@ -72,13 +72,13 @@ public:
 
 
 
-struct CapstoneDisasm {
+struct CapstoneDisassemblerContext {
     csh* m_pCapstone = nullptr;
     cs_insn* m_pInstructions = nullptr;
     size_t m_nInstructions = 0;
 
 public:
-    CapstoneDisasm(csh* pCapstone)
+    CapstoneDisassemblerContext(csh* pCapstone)
         : m_pCapstone(pCapstone)
     {
         cs_option(*m_pCapstone, CS_OPT_SKIPDATA, CS_OPT_ON);
@@ -101,7 +101,7 @@ public:
             cs_disasm(*m_pCapstone, startDisasmDat, countBytes, begAddr, countBytes / 2, &m_pInstructions);
     }
 
-    bool hasInstructionAddr(AddrRef addr) const
+    bool hasM68InstructionAddr(AddrRef addr) const
     {
         for (int i = 0; i < m_nInstructions; ++i)
         {
@@ -111,9 +111,9 @@ public:
         return false;
     }
 
-    ~CapstoneDisasm() { reset(); }
+    ~CapstoneDisassemblerContext() { reset(); }
 
-}; // struct CapstoneDisasm
+}; // struct CapstoneDisassemblerContext
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -134,7 +134,6 @@ struct InstructionProcessor
         amD::cda::CodeItem *pCodeInfo = new amD::cda::CodeItem();
         pCodeInfo->m_addr = (AddrRef)insn.address;
         pCodeInfo->m_bytesCount = insn.size;
-
         pCodeInfo->m_text = insn.mnemonic;
         do
         {
@@ -153,41 +152,45 @@ struct InstructionProcessor
 };
 
 
-void CodeAnalyzerServer::requestAnalyzedBlock(IVm::VM* vm, AddrRef reqAddr, int nItems,
-    qd::vector<amD::cda::Item*>* outItems, const AddrRef* pAnchorAddr)
+void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, int nLines,
+    qd::vector<amD::cda::Item*>* outItems, const AddrRef* pProvedInstructionStart)
 {
     outItems->clear();
 
-    AddrRef begAddr = (reqAddr) & (~g_chunkMask) - g_chunkSize;
-    AddrRef endAddr = (reqAddr + nItems * 2 + (g_chunkSize - 1)) & (~g_chunkMask);
+    AddrRef begAddrPre = qd::clamp_max(startAddr - g_chunkSize, startAddr);
+    AddrRef begAddr = (begAddrPre & ~g_chunkMask);
+    AddrRef endAddr = (startAddr + nLines * 2 + (g_chunkSize - 1)) & (~g_chunkMask);
 
     constexpr uint32_t algn = g_chunkSize - 1;
     DisasmContext dc;
-    dc.setMinMaxAddr(reqAddr - algn, reqAddr + nItems * 2 + algn);
+    dc.setMinMaxAddr(qd::clamp_max(startAddr - algn, startAddr), startAddr + nLines * 2 + algn);
 
     eastl::optional<AddrRef> optAnchorAddr;
-    if (*pAnchorAddr && qd::is_in_10(*pAnchorAddr, begAddr, endAddr))
-        optAnchorAddr = *pAnchorAddr;
+    if (*pProvedInstructionStart && qd::is_in_10(*pProvedInstructionStart, begAddr, endAddr))
+        optAnchorAddr = *pProvedInstructionStart;
 
-    dc.m_pPrevChunk = &requestCodeChunk(vm, begAddr - g_chunkSize);
+    dc.m_pPrevChunk = &requestCodeChunk(vm, begAddrPre);
     dc.m_pCurrChunk = &requestCodeChunk(vm, begAddr);
     assert(dc.m_pCurrChunk);
 
     for (;;)
     {
-        if (!dc.m_pCurrChunk->m_codeValid)
+        if (!dc.m_pCurrChunk->m_bCodeValid)
         {
+            // disasm again changed code block
             AddrRef startFrom = dc.m_pPrevChunk->getDisasmCodeValidAddr(-1);
 
-            CapstoneDisasm cpd(m_pCapstone);
+            CapstoneDisassemblerContext cpd(m_pCapstone);
             bool hasValidAddr = false;
+
+            // try to find valid instruction start address
             for (int offset = 0; offset < 8; ++offset)
             {
                 cpd.disasm(vm, startFrom + offset, dc.m_pCurrChunk->m_addr + g_chunkSize + offset);
-                if (cpd.hasInstructionAddr(startFrom + offset))
+                if (cpd.hasM68InstructionAddr(startFrom + offset))
                     break;
             }
-            dc.m_pCurrChunk->m_codeValid = true;
+            dc.m_pCurrChunk->m_bCodeValid = true;
 
             // fill chunk pages with instructions
             InstructionProcessor proc;
@@ -203,35 +206,35 @@ void CodeAnalyzerServer::requestAnalyzedBlock(IVm::VM* vm, AddrRef reqAddr, int 
         // copy CodeItems to output
         for (CodeItem* curItem : dc.m_pCurrChunk->m_codeItems)
         {
-            if (!curItem || curItem->m_addr < reqAddr)
+            if (!curItem || curItem->m_addr < startAddr)
                 continue;
             outItems->push_back(curItem);
         }
-        if (outItems->size() >= nItems)
+        if (outItems->size() >= nLines)
             break;
 
         dc.m_pPrevChunk = dc.m_pCurrChunk;
         dc.m_pCurrChunk = &requestCodeChunk(vm, dc.m_pCurrChunk->m_addr + g_chunkSize);
     }
-
 }
 
 
-void CodeAnalyzerServer::destroy()
+void M68CodeDisassembler::destroy()
 {
     SAFE_DELETE(m_pCapstone);
 }
 
 
-CodeChunk& CodeAnalyzerServer::getOrCreateCodePage(AddrRef addr, bool* bOutPageWasFound)
+CodeChunk& M68CodeDisassembler::getOrCreateCodePage(AddrRef addr, bool* bOutPageWasFound)
 {
     bool bWasfound = true;
     uint16_t foundPageId = 0;
     addr = addr & (~g_chunkMask);
     if (!m_chunksQuadTree.querySingle(addr, &foundPageId))
     {
+        // get last unused chunk
         CodeChunk& curChunk = m_chunkUseHistory.back();
-        if (curChunk.m_addr)
+        if (curChunk.m_bAddrValid)
         {
             m_chunksQuadTree.remove(curChunk.m_addr, curChunk.m_idx);
             curChunk.reset(); // reuse old chunk
@@ -239,6 +242,7 @@ CodeChunk& CodeAnalyzerServer::getOrCreateCodePage(AddrRef addr, bool* bOutPageW
         assert(!curChunk.m_addr && curChunk.m_idx);
         assert(&m_disasmChunkStorage[curChunk.m_idx] == &curChunk && "not belongs to storage");
         curChunk.m_addr = addr;
+        curChunk.m_bAddrValid = true;
         m_chunksQuadTree.insert(curChunk.m_addr, curChunk.m_idx);
         assert(m_chunksQuadTree.querySingle(addr, &foundPageId) && foundPageId == curChunk.m_idx);
         foundPageId = curChunk.m_idx;
@@ -253,7 +257,7 @@ CodeChunk& CodeAnalyzerServer::getOrCreateCodePage(AddrRef addr, bool* bOutPageW
 }
 
 
-amD::cda::CodeChunk& CodeAnalyzerServer::requestCodeChunk(IVm::VM* vm, AddrRef addr)
+amD::cda::CodeChunk& M68CodeDisassembler::requestCodeChunk(IVm::VM* vm, AddrRef addr)
 {
     bool bExistChunk = false;
     CodeChunk& curCodeChunk = getOrCreateCodePage(addr, &bExistChunk);
@@ -262,8 +266,8 @@ amD::cda::CodeChunk& CodeAnalyzerServer::requestCodeChunk(IVm::VM* vm, AddrRef a
     const uint8_t* pRealMem = vm->mem->getRealAddr(curCodeChunk.m_addr);
     if (!pRealMem)
     {
-        curCodeChunk.m_codeValid = false;
-        curCodeChunk.m_bytesValid = false;
+        curCodeChunk.m_bCodeValid = false;
+        curCodeChunk.m_bBytesValid = false;
         return curCodeChunk;
     }
     if (!bExistChunk || memcmp(curCodeChunk.m_bytes.data(), pRealMem, g_chunkSize) != 0)
@@ -271,7 +275,7 @@ amD::cda::CodeChunk& CodeAnalyzerServer::requestCodeChunk(IVm::VM* vm, AddrRef a
         // has differences
         curCodeChunk.removeCodeItems();
         memcpy(curCodeChunk.m_bytes.data(), pRealMem, g_chunkSize);
-        curCodeChunk.m_bytesValid = true;
+        curCodeChunk.m_bBytesValid = true;
     }
     return curCodeChunk;
 }
@@ -281,13 +285,13 @@ void CodeChunk::removeCodeItems()
 {
     for (cda::CodeItem*& info : m_codeItems)
         SAFE_DELETE(info);
-    m_codeValid = false;
+    m_bCodeValid = false;
 }
 
 
 amD::AddrRef CodeChunk::getDisasmCodeValidAddr(int off /*= 0*/) const
 {
-    if (!m_codeValid)
+    if (!m_bCodeValid)
         return m_addr;
     if (off < 0)
     {

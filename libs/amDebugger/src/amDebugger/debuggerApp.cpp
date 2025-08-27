@@ -21,6 +21,9 @@
 
 namespace amD {
 
+constexpr uint32_t g_nDebuggerWndSizeX = 1368;
+constexpr uint32_t g_nDebuggerWndSizeY = 800;
+
 
 DebuggerApp::DebuggerApp()
 {
@@ -61,7 +64,7 @@ void DebuggerApp::init() {
 void DebuggerApp::createRenderWindow() {
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN;
     SDL_Window* window =
-        SDL_CreateWindow("Quaesar: DebuggerApp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+        SDL_CreateWindow("Quaesar: DebuggerApp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, g_nDebuggerWndSizeX, g_nDebuggerWndSizeY, window_flags);
 
     // From 2.0.18: Enable native IME.
 #ifdef SDL_HINT_IME_SHOW_UI

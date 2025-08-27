@@ -1,5 +1,6 @@
 #include "qd/stl/string.h"
 #include "qd/stl/fixed_vector.h"
+#include "qd/stl/optional.h"
 #include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/memory.h"
@@ -11,12 +12,26 @@
 #include "amDebugger/ui/debuggerDesktop.h"
 #include "amDebugger/shortcutsList.h"
 #include "qd/qui/shortcutMgr.h"
+#include "amDebugger/exprValue.h"
+#include "amDebugger/codeAnalyzer/copperDisasm.h"
 
 
 namespace amD {
 namespace window {
+
 class CopperDbgWnd : public amD::AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::CopperDbgWnd, amD::window::CopperDbgWnd, amD::AmDbgWindow);
+
+    amD::ExprValStr m_addrInputStr;
+    qd::optional<AddrRef> m_viewBaseAddr;
+    AddrRef m_mustViewAddr = 0;
+    int m_nMustViewAddrDesiredLine = 0;
+    bool m_bSnapViewPc = true;
+    AddrRef m_addrViewExtraStart = 0;
+    AddrRef m_addrViewEnd = 0;
+    AddrRef m_prevRegPc = 0;
+    int m_nPrevLineCount = 0;
+
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override {
@@ -29,125 +44,7 @@ public:
 }; // CopperDbgWnd
 //////////////////////////////////////////////////////////////////////////
 
-};  // namespace window
-//////////////////////////////////////////////////////////////////////////
 
-
-struct DecodedCopperList {
-    struct CopInst {
-        AddrRef addr = 0;
-        uint16_t w1 = -1;
-        uint16_t w2 = -1;
-    };
-
-    struct Entry : public CopInst {
-        int vpos = -1;
-        int hpos = -1;
-        eastl::fixed_string<char, 16, false> strInsn;
-        eastl::fixed_string<char, 128, false> comment;
-    };
-    eastl::vector<DecodedCopperList::Entry> decoded;
-
-public:
-    void decodeInstr(Entry& ent) {
-        uint32_t insn = ent.w1 << 16 | ent.w2;
-        uint32_t insn_type;
-        insn_type = insn & 0x00010001;
-
-        ent.comment.clear();
-        switch (insn_type) {
-            case 0x00010000: /* WAIT insn */
-                ent.strInsn = "WAIT";
-                disassembleWait(ent, insn);
-                if (insn == 0xfffffffe)
-                    ent.comment = "End of Copperlist";
-                break;
-
-            case 0x00010001: /* SKIP insn */
-                ent.strInsn = "SKIP";
-                disassembleWait(ent, insn);
-                break;
-
-            case 0x00000000:
-            case 0x00000001: /* MOVE insn */
-            {
-                ent.strInsn = "MOVE";
-                AddrRef addr = ((insn >> 16) & 0x1fe) + 0xdff000;
-                CustReg crg = CustReg::getRegByAddr(addr);
-                if (crg.isValid())
-                    ent.comment.sprintf("0x%04x -> %s", insn & 0xffff, crg.toStringC());
-                else
-                    ent.comment.sprintf("%04x := 0x%04x", addr, insn & 0xffff);
-            } break;
-
-            default:
-                ent.comment = ("bad copper command");
-                break;
-        }
-    }
-
-
-    void disassembleWait(Entry& out, uint32_t insn) {
-        int vp, hp, ve, he, bfd, v_mask, h_mask;
-        int doout = 0;
-
-        vp = (insn & 0xff000000) >> 24;
-        hp = (insn & 0x00fe0000) >> 16;
-        ve = (insn & 0x00007f00) >> 8;
-        he = (insn & 0x000000fe);
-        bfd = (insn & 0x00008000) >> 15;
-
-        /* bit15 can never be masked out*/
-        v_mask = vp & (ve | 0x80);
-        h_mask = hp & he;
-        if (v_mask > 0) {
-            doout = 1;
-            out.comment.append("vpos ");
-            if (ve != 0x7f) {
-                out.comment.append_sprintf("& 0x%02x ", ve);
-            }
-            out.comment.append_sprintf(">= 0x%02x", v_mask);
-        }
-        if (he > 0) {
-            if (v_mask > 0) {
-                out.comment.append(" and");
-            }
-            out.comment.append(" hpos ");
-            if (he != 0xfe) {
-                out.comment.append_sprintf("& 0x%02x ", he);
-            }
-            out.comment.append_sprintf(">= 0x%02x", h_mask);
-        } else {
-            if (doout)
-                out.comment.append(", ");
-            out.comment.append(", ignore horizontal");
-        }
-
-        out.comment.append_sprintf(", VP %02x, VE %02x; HP %02x, HE %02x; BFD %d", vp, ve, hp, he, bfd);
-    }
-
-
-    void decodeLines(IVm::VM* vm, AddrRef startAddr, int num_lines) {
-        decoded.clear();
-        AddrRef addr = startAddr;
-        decoded.reserve(num_lines);
-        for (int i = 0; i < num_lines; ++i) {
-            Entry& curEnt = decoded.push_back();
-            curEnt.addr = addr;
-            if (vm->mem->getU16(addr, &curEnt.w1) && vm->mem->getU16(addr + 2, &curEnt.w2)) {
-                decodeInstr(curEnt);
-            } else {
-                break;
-            }
-            addr += 4;
-        }
-    }
-};  // struct DecodedCopperList
-
-
-//
-//////////////////////////////////////////////////////////////////////////
-namespace window {
 
 
 void CopperDbgWnd::drawContentImp() {
@@ -156,6 +53,41 @@ void CopperDbgWnd::drawContentImp() {
 
     IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
+
+    // btn: goto addr
+    qd::InlineString addrStr(m_addrInputStr.getStrVal().begin(), m_addrInputStr.getStrVal().end());
+    if (ImGui::InputText("##disAddr", &addrStr,
+            ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_EnterReturnsTrue |
+                ImGuiInputTextFlags_AutoSelectAll))
+    {
+        m_addrInputStr.setStrVal(addrStr);
+        qd::Var16 val;
+        if (m_addrInputStr.evaluate(vm, val))
+        {
+            m_viewBaseAddr = static_cast<AddrRef>(val.getU32());
+            m_mustViewAddr = *m_viewBaseAddr;
+            m_bSnapViewPc = false;
+        }
+        else
+            m_viewBaseAddr.reset();
+    }
+    ImGui::SameLine();
+
+    AddrRef regPc = vm->copper->getCopperAddr(amD::CopperAddr_ip);
+    if (ImGui::Button("PC") || (m_prevRegPc != regPc))
+    {
+        m_viewBaseAddr.reset();
+        m_bSnapViewPc = true;
+
+        if (!qd::is_in_10(regPc, m_addrViewExtraStart, m_addrViewEnd))
+        {
+            m_mustViewAddr = regPc;
+            m_nMustViewAddrDesiredLine = (int)m_nPrevLineCount / 2; // center of disasm
+            m_addrViewExtraStart = m_mustViewAddr - m_nMustViewAddrDesiredLine * 8;
+        }
+    }
+    m_prevRegPc = regPc;
+
 
     QImPushFloatLock st;
     st.pushFloat(&ImGui::GetStyle().CellPadding.y, 2);
@@ -175,10 +107,9 @@ void CopperDbgWnd::drawContentImp() {
         getUi()->getShortcuts()->triggerShortcut(this, (int)amD::shortcut::EId::CopperToggleBreakpoint);
     }
 
-    AddrRef pcAddr = vm->copper->getCopperAddr(amD::CopperAddr_ip);
     AddrRef lc1 = vm->copper->getCopperAddr(amD::CopperAddr_cop1lc);
     AddrRef lc2 = vm->copper->getCopperAddr(amD::CopperAddr_cop2lc);
-    AddrRef startAddr = (pcAddr - lc1) < (pcAddr - lc2) ? lc1 : lc2;
+    AddrRef startAddr = m_viewBaseAddr ? *m_viewBaseAddr : (regPc - lc1) < (regPc - lc2) ? lc1 : lc2;
     DecodedCopperList copDec;
     copDec.decodeLines(vm, startAddr, 1024);
 
@@ -203,7 +134,7 @@ void CopperDbgWnd::drawContentImp() {
             ImGui::PushID(curAddr);
             ImGui::TableSetColumnIndex(0);
 
-            if (curAddr == pcAddr)
+            if (curAddr == regPc)
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, uiGetColorU(UiStyle::DisasmWnd_PcCursor));
 
             // col:breakpoint

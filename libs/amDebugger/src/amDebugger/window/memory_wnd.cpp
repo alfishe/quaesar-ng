@@ -531,7 +531,7 @@ void MemoryHexViewWnd::draw_options_line(const Sizes& s, void* mem_data, size_t 
         qd::Var16 val;
         if (m_exprAddr.evaluate(getDbg()->getVm(), val))
         {
-            size_t goto_addr = val.getUInt();
+            size_t goto_addr = val.getU32();
             goto_address = goto_addr - base_display_addr;
             //highlight_min = hightlight_max = (size_t)-1;
         }

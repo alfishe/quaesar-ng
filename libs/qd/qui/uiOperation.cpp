@@ -30,7 +30,7 @@ void OpDesc::addShortcut(uint32_t sid)
 {
     auto pShMgr = qd::ShortcutsMgr::get();
     ASSERT_AND_DO(pShMgr, return, "");
-    const Shortcut& shortcut = pShMgr->getShortcut(sid);
+    const qd::Shortcut& shortcut = pShMgr->getShortcut(sid);
 
     if (!m_pShortcuts)
         m_pShortcuts = new qd::ShortcutsHnd();

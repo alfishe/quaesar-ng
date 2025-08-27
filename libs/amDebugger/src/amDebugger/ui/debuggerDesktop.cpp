@@ -65,22 +65,22 @@ void DebuggerDesktop::_drawMainMenuBar()
 
         if (auto pm = qIm::LockMenu("Emulator"))
         {
-            qIm::menuItemOperationArgs_< amD::operation::args::UaeWndAlwaysOnTop>(pDbg);
-            qIm::menuItemOperationArgs_< amD::operation::args::UaeResetAmiga>(pDbg);
+            qIm::menuItemFromOperationArgs_< amD::operation::args::UaeWndAlwaysOnTop>(pDbg);
+            qIm::menuItemFromOperationArgs_< amD::operation::args::UaeResetAmiga>(pDbg);
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
             amD::EVmDebugMode debugMode = vm->getVmDebugMode();
-            qIm::menuItemOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false, debugMode.isBreak());
-            qIm::menuItemOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false, debugMode.isBreak());
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
             ImGui::Separator();
-            qIm::menuItemOperationArgs_<amD::operation::args::DisasmTraceStep>(pDbg);
-            qIm::menuItemOperationArgs_<amD::operation::args::DisasmTraceStepOut>(pDbg);
-            qIm::menuItemOperationArgs_<amD::operation::args::DisasmToggleBreakpoint>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStep>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStepOut>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmToggleBreakpoint>(this);
             ImGui::Separator();
-            qIm::menuItemOperationArgs_<amD::operation::args::CopperTraceStep>(pDbg);
-            qIm::menuItemOperationArgs_<amD::operation::args::CopperToggleBreakpoint>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::CopperTraceStep>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::CopperToggleBreakpoint>(this);
             ImGui::Separator();
 
             amD::operation::args::DebugDmaOption debugDmaOp;

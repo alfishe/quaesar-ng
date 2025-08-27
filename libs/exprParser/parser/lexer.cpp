@@ -122,41 +122,8 @@ static void emitToken(ExprTokenList* list, ExprTokenID id, ExprValue number = 0,
     list->last = token;
 }
 
-/*
-struct ContextStack
-{
-    struct Item
-    {
-        const char* input = nullptr;
-    };
 
-    std::vector<ContextStack::Item> stack;
-
-public:
-    void push(const char* inputStart)
-    {
-        Item item;
-        item.input = inputStart;
-        stack.push_back(item);
-    }
-
-    void pop()
-    {
-        if (!stack.empty())
-            stack.pop_back();
-    }
-
-    const char* top() const
-    {
-        if (stack.empty())
-            return nullptr;
-        return stack.back().input;
-    }
-};
-*/
-
-
-// test: 0A1h format
+// test for 00A1h format
 bool check_hex_with_tail_h(const char *input) {
     bool hasDigit = false;
     do {

@@ -55,34 +55,33 @@ void DisassemblyView::drawContentImp()
         qd::Var16 val;
         if (m_addrInputStr.evaluate(vm, val))
         {
-            m_viewBaseAddr = static_cast<AddrRef>(val.getUInt());
-            m_reqViewAddr = *m_viewBaseAddr;
-            m_snapViewPc = false;
+            m_viewBaseAddr = static_cast<AddrRef>(val.getU32());
+            m_mustViewAddr = *m_viewBaseAddr;
+            m_addrViewExtraStart = m_mustViewAddr;
+            m_nMustViewAddrDesiredLine = g_extraScrollLines;
+            m_bSnapViewPc = false;
         }
         else
             m_viewBaseAddr.reset();
     }
     ImGui::SameLine();
+    ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+    ImGui::SameLine();
 
     AddrRef regPc = vm->cpu->getPC();
-
     if (ImGui::Button("PC") || (m_prevRegPc != regPc))
     {
         m_viewBaseAddr.reset();
-        m_snapViewPc = true;
+        m_bSnapViewPc = true;
 
-        if (!qd::is_in_10(regPc, m_addrExtraViewStart, m_addrViewEnd))
+        if (!qd::is_in_10(regPc, m_addrViewExtraStart, m_addrViewEnd))
         {
-            m_reqViewAddrDesiredLine = (int)m_disasmLines.size() / 2; // center of disasm
-            m_addrExtraViewStart = regPc - m_reqViewAddrDesiredLine * 8;
-            m_reqViewAddr = regPc;
+            m_mustViewAddr = regPc;
+            m_nMustViewAddrDesiredLine = (int)m_nPrevLineCount / 2; // center of disasm
+            m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - m_nMustViewAddrDesiredLine * 8u, m_mustViewAddr);
         }
     }
     m_prevRegPc = regPc;
-
-    AddrRef pcAddr = regPc;
-    if (m_viewBaseAddr)
-        pcAddr = *m_viewBaseAddr;
 
     float disWndSizeY = ImGui::GetWindowHeight() - 64.f;
     float lineSizeY = ImGui::GetFrameHeightWithSpacing();
@@ -91,20 +90,16 @@ void DisassemblyView::drawContentImp()
 
     int nLinesReq = (int)ceilf(disWndSizeY / lineSizeY) + g_extraScrollLines * 2;
 
-    cda::CodeAnalyzerServer* pCodeServer = &cda::CodeAnalyzerServer::get();
-    pCodeServer->requestAnalyzedBlock(vm, m_addrExtraViewStart, nLinesReq, &m_disasmLines, &pcAddr);
-
-    int nReqLine = find_disasm_addr_line_idx(m_disasmLines, m_reqViewAddr);
-    //m_reqViewAddrDesiredLine = nReqLine;
-
-    const BreakpointsSortedList& bpList = dbg->getBreakpointsSorted();
-
-    uint32_t offset = 0;
-    uint32_t start_disasm = pcAddr - offset;
+    // request cached disasm lines
+    cda::M68CodeDisassembler* pCodeServer = &cda::M68CodeDisassembler::get();
+    AddrRef topViewAddr = m_viewBaseAddr ? *m_viewBaseAddr : regPc;
+    pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, &topViewAddr);
 
     static float row_min_height = 0.0f; // for auto height
     int flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable |
         ImGuiTableFlags_SizingFixedFit; // | ImGuiTableFlags_ScrollY;
+
+    int nReqLine = find_disasm_addr_line_idx(m_vDisasmLines, m_mustViewAddr);
 
     // Disasm Ctrl
     if (ImGui::BeginTable("##disassembly", 4, flags, ImVec2(0, disWndSizeY)))
@@ -118,9 +113,11 @@ void DisassemblyView::drawContentImp()
 
         eastl::fixed_string<char, 255, false> strAddr, strTmp;
 
-        for (size_t i = (size_t)nReqLine; i < m_disasmLines.size(); ++i)
+        const BreakpointsSortedList& bpList = dbg->getBreakpointsSorted();
+
+        for (size_t i = (size_t)nReqLine; i < m_vDisasmLines.size(); ++i)
         {
-            const cda::Item& entry = *m_disasmLines[i];
+            const cda::Item& entry = *m_vDisasmLines[i];
             ImGui::TableNextRow(ImGuiTableRowFlags_None, row_min_height);
 
             AddrRef curAddr = (uint32_t)entry.m_addr;
@@ -131,7 +128,7 @@ void DisassemblyView::drawContentImp()
             ImGui::PushID(curAddr);
             ImGui::TableSetColumnIndex(0);
 
-            if (curAddr == pcAddr)
+            if (curAddr == topViewAddr)
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, uiGetColorU(UiStyle::DisasmWnd_PcCursor));
 
             // col:breakpoint
@@ -184,45 +181,47 @@ void DisassemblyView::drawContentImp()
         const ImGuiKey wheel_key = ImGuiKey_MouseWheelY;
         if (wheel != 0.0f /*&& ImGui::TestKeyOwner(wheel_key, ImGui::GetItemID()) &&*/ )
         {
-            if (m_snapViewPc)
+            if (m_bSnapViewPc)
             {
-                if (qd::is_in_10(regPc, m_addrExtraViewStart, m_addrViewEnd))
-                    m_snapViewPc = false;
+                if (qd::is_in_10(regPc, m_addrViewExtraStart, m_addrViewEnd))
+                    m_bSnapViewPc = false;
             }
 
             if (wheel > 0)
             { // SCROLL DOWN (MWHEEL:FORWARD )
                 if (nReqLine > 1)
                 {
-                    m_addrExtraViewStart -= cda::g_m68MaxOpSize;
-                    m_reqViewAddrDesiredLine = nReqLine - 1;
-                    m_reqViewAddr = m_disasmLines[nReqLine - 1]->m_addr;
+                    m_addrViewExtraStart = qd::clamp_max(m_addrViewExtraStart - cda::g_maxOpSize, m_addrViewExtraStart);
+                    m_nMustViewAddrDesiredLine = nReqLine - 1;
+                    m_mustViewAddr = m_vDisasmLines[nReqLine - 1]->m_addr;
                 }
-                else
-                    assert(0);
+                //else //assert(0);
             }
             else
             { // SCROLL UP (MWHEEL: BACKWARD)
-                m_reqViewAddr = m_disasmLines[nReqLine + 1]->m_addr;
+                m_mustViewAddr = m_vDisasmLines[nReqLine + 1]->m_addr;
             }
             //qd::logDebug("Wheel:%f", wheel);
         }
         //ImGui::SetKeyOwner(wheel_key, ImGui::GetItemID());
     }
 
-    if (!m_disasmLines.empty())
+    if (!m_vDisasmLines.empty())
     {
         if (nReqLine < 0)
-            m_addrExtraViewStart = m_reqViewAddr - cda::g_m68MaxOpSize;
+            m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - cda::g_maxOpSize, m_mustViewAddr);
 
-        else if (m_reqViewAddrDesiredLine < g_extraScrollLines)
+        else if (m_nMustViewAddrDesiredLine < g_extraScrollLines)
         {
-            m_addrExtraViewStart -= cda::g_m68MaxOpSize; // request little more next time
-            m_reqViewAddrDesiredLine = g_extraScrollLines + 1;
+            // request little more next time
+            m_addrViewExtraStart = qd::clamp_max(m_addrViewExtraStart - cda::g_maxOpSize, m_addrViewExtraStart);
+            m_nMustViewAddrDesiredLine = g_extraScrollLines + 1;
         }
         else if (nReqLine > g_extraScrollLines)
-            m_addrExtraViewStart = m_disasmLines[nReqLine - g_extraScrollLines]->m_addr;
+            m_addrViewExtraStart = m_vDisasmLines[nReqLine - g_extraScrollLines]->m_addr;
     }
+    m_nPrevLineCount = (int)m_vDisasmLines.size();
+    m_vDisasmLines.clear();
 }
 
 

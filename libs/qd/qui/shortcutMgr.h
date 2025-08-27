@@ -1,12 +1,13 @@
 #pragma once
 #include <EASTL/fixed_function.h>
-#include <EASTL/fixed_set.h>
 #include <EASTL/span.h>
 #include <EASTL/string.h>
-#include <imgui/imgui.h>
-#include <qd/base/classInfoReg.h>
-#include <qd/node/node.h>
-#include <qd/typeSystem/typeDeclare.h>
+#include <EASTL/fixed_map.h>
+#include "qd/qui/shortcut.h"
+#include "qd/base/classInfoReg.h"
+#include "qd/node/node.h"
+#include "qd/typeSystem/typeDeclare.h"
+#include "qd/stl/unique_ptr.h"
 
 
 FORWARD_DECLARATION_4(qd, operation, args, OpDesc);
@@ -14,82 +15,25 @@ FORWARD_DECLARATION_4(qd, operation, args, OpDesc);
 
 namespace qd {
 
-class Shortcut;
-using ShortcutSetupFunc = void (*)(qd::Shortcut&);
 class UiOperation;
 class UiOperationMgr;
 class IOperationEnvironment;
 
-
-class Key
-{
-public:
-    ImGuiKey mKey = ImGuiKey_None;
-
-public:
-    constexpr Key() = default;
-    constexpr Key(ImGuiKey key)
-        : mKey(key)
-    {}
-
-    constexpr ImGuiKey getKeyCode() const { return mKey; }
-    qd::InlineString toString() const;
-    bool operator< (const Key& rh) const { return mKey < rh.mKey; }
-    bool operator== (ImGuiKey key) const { return mKey == key; }
-
-}; // class Key
-//////////////////////////////////////////////////////////////////////////
-
-using ShortcutId = uint32_t;
-
-
-
-class Shortcut
-{
-public:
-    ShortcutId m_id = 0;
-    typedef eastl::fixed_set<qd::Key, 4, false> Keys;
-    Shortcut::Keys m_keys;
-    bool m_bRepeat = false;
-
-public:
-    Shortcut(ShortcutId id)
-        : m_id(id)
-    {}
-    Shortcut(const Shortcut&) = delete;
-    Shortcut& operator= (const Shortcut&) = delete;
-    ~Shortcut();
-    ShortcutId getId() const { return m_id; }
-    const Shortcut::Keys& getKeys() const { return m_keys; }
-    ImGuiKeyChord getChord() const;
-
-    Shortcut& addKey(ImGuiKey key);
-    Shortcut& setRepeat(bool val = true)
-    {
-        m_bRepeat = val;
-        return *this;
-    }
-
-    bool empty() const { return m_keys.empty(); }
-
-    qd::InlineString toString() const;
-
-}; // class Shortcut
-//////////////////////////////////////////////////////////////////////////
 
 
 
 class ShortcutsMgr : public qd::RefCounted
 {
     TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::RefCounted);
-    eastl::vector_map<ShortcutId, Shortcut*> m_shortcuts;
+    constexpr static size_t MAX_SHORTCUTS = 512;
+    eastl::fixed_map<ShortcutId, qd::unique_ptr<qd::Shortcut>, MAX_SHORTCUTS, false> m_shortcuts;
 
 public:
     ShortcutsMgr() {}
 
     static ShortcutsMgr* get();
 
-    void createPredefinedShortcuts(eastl::span<ShortcutSetupFunc> shortcuts_list);
+    void createPredefinedShortcuts(eastl::span<qd::ShortcutInitItem> shortcuts_list);
     void done();
     void update(qd::IOperationEnvironment* env, qd::UiOperationMgr* pOpMgr);
 

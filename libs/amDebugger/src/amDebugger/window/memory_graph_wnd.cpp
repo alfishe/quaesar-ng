@@ -54,7 +54,7 @@ void MemoryGraphWnd::drawContentImp() {
         m_exprAddr.setStrVal(addrStr);
         qd::Var16 val;
         if (m_exprAddr.evaluate(vm, val))
-            mBankOffset = val.getUInt();
+            mBankOffset = val.getU32();
     }
 
     eastl::inline_string<255, false> selBankName = "null";

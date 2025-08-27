@@ -1,7 +1,8 @@
 #pragma once
 #include "qd/base/base.h"
-#include "qd/qui/shortcutMgr.h"
 #include "qd/enum/enumBase.h"
+#include "qd/qui/shortcut.h"
+#include <imgui/imgui.h>
 
 
 namespace amD {
@@ -43,8 +44,10 @@ struct EId {
     ENUM_DECLARE_BASE(amD::shortcut::, EId, Type, UNDEF);
 }; // struct
 
-inline static qd::ShortcutSetupFunc g_shortcuts_list[] = {
-#define SHORTCUT(name, setup_func) setup_func,
+
+// simple array with index
+inline static qd::ShortcutInitItem g_shortcuts_list[] = {
+#define SHORTCUT(name, setup_func) {EId::##name, setup_func},
     SHORTCUT_LIST(SHORTCUT)
 #undef SHORTCUT
 }; // ShortcutList
