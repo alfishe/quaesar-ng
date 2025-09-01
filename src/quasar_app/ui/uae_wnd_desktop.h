@@ -17,15 +17,16 @@ public:
 
     void init();
 
-    virtual void drawContentImp() override;
-
     virtual IOperationEnvironment* getOpEnvParent() const override;
-
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
 
     class UaeClientAppPart* getUaeClientApp() const {
         return m_pUaeClientApp;
     }
+
+protected:
+    virtual void drawContentImp() override;
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* args) const override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
 };  // class UaeGuiDesktop
 
 

@@ -2,17 +2,27 @@
 #include "amDebugger/debuggerOps.h"
 #include "quaesar_app.h"
 
-namespace qsr::operation::args {
+namespace qsr::operations {
 
 
 struct ShowDebuggerWnd : public amD::operation::OperationArgs {
-    DECLARE_OPERATION_1(qsr::operation::args::ShowDebuggerWnd);
-    EQuaServerId dbgSource = EQuaServerId::S_UAE;
+    DECLARE_OPERATION_1(qsr::operations::ShowDebuggerWnd);
+    EQuaServerId dbgSource = EQuaServerId::UNDEF;
 
     static void setup(qd::operation::args::OpDesc& d) {
-        d.m_name = "Show debugger window";
+        d.m_name = "Activate debugger";
         d.addShortcut(amD::shortcut::EId::ShowDebuggerWnd);
     }
 };
 
-};  //namespace qsr::operation::args
+struct ShowUaeOptionsWnd : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(qsr::operations::ShowUaeOptionsWnd);
+
+    static void setup(qd::operation::args::OpDesc& d) {
+        d.m_name = "Options...";
+        d.addShortcut(amD::shortcut::EId::ShowUaeOptionsWnd);
+    }
+};
+
+
+};  //namespace qsr::operations

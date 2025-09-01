@@ -15,7 +15,7 @@ union SDL_Event;
 
 FORWARD_DECLARATION_4S(qd, operation, args, Base);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
-FORWARD_DECLARATION_2(qd, UiOperationMgr);
+FORWARD_DECLARATION_2(qd, OperationsRegistry);
 FORWARD_DECLARATION_2(IVm, VM);
 
 
@@ -50,7 +50,7 @@ public:
 
     ref_ptr<amD::Debugger> m_pDebugger = nullptr; // current debugger client
     amD::DebuggerDesktop* m_pGui = nullptr;
-    qd::UiOperationMgr* m_pOperationMgr = nullptr;
+    qd::OperationsRegistry* m_pOperationMgr = nullptr;
 
 public:
     DebuggerApp();
@@ -76,13 +76,11 @@ public:
         return m_pDebugger;
     }
 
-    qd::UiOperationMgr* getOperations() const {
+    qd::OperationsRegistry* getOperations() const {
         return m_pOperationMgr;
     }
 
-    qd::EFlow applyOperationMsgProc(qd::operation::args::Base* p_msg) override;
-
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
+    qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* p_msg) override;
 
 private:
     void createRenderWindow();

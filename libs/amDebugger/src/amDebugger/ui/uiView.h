@@ -55,8 +55,6 @@ public:
         ui = cp->gui;
     }
 
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-
     virtual void drawImp() override
     {
         TSuper::drawImp();

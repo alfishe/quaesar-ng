@@ -36,7 +36,7 @@ public:
 
     virtual void drawContentImp() override;
 
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
 
 };  // class DisassemblyView
 

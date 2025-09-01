@@ -1,7 +1,7 @@
 #pragma once
 #include "qd/stl/span.h"
 #include "qd/qui/uiNode.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "qd/qui/shortcutMgr.h"
 #include "qd/typeSystem/typeDeclare.h"
 

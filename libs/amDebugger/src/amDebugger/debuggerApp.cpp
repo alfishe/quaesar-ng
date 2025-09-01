@@ -12,7 +12,7 @@
 #include "qd/thread/thread.h"
 #include "amDebugger/ui/debuggerDesktop.h"
 #include "amDebugger/ui/uiStyle.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/app/moduleManager.h"
 #include "dbgConnection.h"
@@ -105,17 +105,9 @@ DebuggerApp::~DebuggerApp() {
 }
 
 
-qd::EFlow DebuggerApp::applyOperationMsgProc(qd::operation::args::Base* p_msg)
+qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::args::Base* p_msg)
 {
-    return m_pDebugger->applyOperationMsgProc(p_msg);
-}
-
-
-void* DebuggerApp::getOpEnvPtr(const qd::TypeInfo& classType) const
-{
-    if (classType == this->getStaticTypeInfo())
-        return const_cast<void*>((const void*)this);
-    return nullptr;
+    return m_pDebugger->applyOperationMsgProcImp(p_msg);
 }
 
 

@@ -8,7 +8,7 @@
 
 FORWARD_DECLARATION_2(amD, UiView);
 FORWARD_DECLARATION_2(qd, ShortcutsMgr);
-FORWARD_DECLARATION_2(qd, UiOperationMgr);
+FORWARD_DECLARATION_2(qd, OperationsRegistry);
 FORWARD_DECLARATION_3(qd, operation, Operation);
 
 
@@ -22,7 +22,7 @@ class DebuggerDesktop : public qd::UiDesktop, public qd::IOperationEnvironment
 public:
     amD::DebuggerApp* m_pDbgApp = nullptr;
     amD::Debugger* m_pDbg = nullptr;
-    qd::UiOperationMgr* m_pOperationMgr = nullptr;
+    qd::OperationsRegistry* m_pOperationMgr = nullptr;
     qd::ShortcutsMgr* m_pShortcutMgr = nullptr;
 
 public:
@@ -45,13 +45,11 @@ public:
         return static_cast<T*>(curView);
     }
 
-    qd::UiOperationMgr* getOperationMgr() const { return m_pOperationMgr; }
+    qd::OperationsRegistry* getOperationMgr() const { return m_pOperationMgr; }
     qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-
     virtual IOperationEnvironment* getOpEnvParent() const override;
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
 
 private:
     void createAllUiWndows();

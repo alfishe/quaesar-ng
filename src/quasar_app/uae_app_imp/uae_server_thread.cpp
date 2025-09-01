@@ -21,10 +21,7 @@
 
 extern void real_main(int argc, TCHAR** argv);
 extern void qs_keyboard_set_translation();
-
-namespace amD {
-extern void quae_parse_cmdline(int argc, TCHAR** argv);
-};  //namespace amD
+extern void quae__parseCmdLine(int argc, TCHAR** argv);
 
 
 class ConsoleQueue {
@@ -85,20 +82,14 @@ int uae_thread_main_func(void*) {
         argv.push_back("-s");
         argv.push_back(s.c_str());
     }
-    amD::quae_parse_cmdline((int)argv.size(), const_cast<char**>(&argv[0]));
+    quae__parseCmdLine((int)argv.size(), const_cast<char**>(&argv[0]));
 
     ::real_main(0, nullptr);  // call main function of UAE emulator
     return 0;
 }
 
 
-void* UaeServerThread::getOpEnvPtr(const qd::TypeInfo& classType) const {
-    assert(0);
-    return nullptr;
-}
-
-
-qd::EFlow UaeServerThread::applyOperationMsgProc(qd::operation::args::Base* args) {
+qd::EFlow UaeServerThread::applyOperationMsgProcImp(qd::operation::args::Base* args) {
     assert(0);
     return qd::EFlow::STOP;
 }

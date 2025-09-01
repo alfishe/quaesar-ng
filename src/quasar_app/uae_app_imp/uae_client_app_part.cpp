@@ -43,7 +43,7 @@ void UaeClientAppPart::onPartCreate(qd::AppPart::OnCreate_t& prm) {
     setPartActive(true);
     setPartVisible(true);
 
-    // independent ImGui draw context
+    // independent ImGui draw context for UAE window
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
     m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
     m_pImGui->getIO().IniFilename = "";
@@ -212,7 +212,11 @@ qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
             if (event.key.windowID != uaeWndId)
                 return qd::EFlow::CONTINUE;
             if (event.key.keysym.sym == SDLK_F12) {
-                setShowImgui(!m_bShowImgui);
+                if (event.key.keysym.mod & KMOD_SHIFT) {
+                    // Handle shift + F12
+                    doOperationDefault_<qsr::operations::ShowDebuggerWnd>();
+                } else
+                    setShowImgui(!m_bShowImgui);
                 return qd::EFlow::STOP;
             }
             pUae->pushSdlEvent(event);
@@ -238,13 +242,8 @@ UaeServerThread* UaeClientAppPart::getUaeThread() const {
 }
 
 
-void* UaeClientAppPart::getOpEnvPtr(const qd::TypeInfo& classType) const {
-    return nullptr;
-}
-
-
-qd::EFlow UaeClientAppPart::applyOperationMsgProc(qd::operation::args::Base* args) {
-    if (auto p = args->cast_<qsr::operation::args::ShowDebuggerWnd>()) {
+qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::args::Base* args) {
+    if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
         amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();
         pDbg->setWndVisible(true);
         return qd::EFlow::STOP;

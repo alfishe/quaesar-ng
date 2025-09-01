@@ -46,6 +46,7 @@ public:
     typedef eastl::fixed_set<qd::Key, 4, false> Keys;
     Shortcut::Keys m_keys;
     bool m_bRepeat = false;
+    ImGuiKeyChord m_keyChord = 0;
 
 public:
     Shortcut(ShortcutId id)
@@ -56,7 +57,6 @@ public:
     ~Shortcut();
     ShortcutId getId() const { return m_id; }
     const Shortcut::Keys& getKeys() const { return m_keys; }
-    ImGuiKeyChord getChord() const;
 
     Shortcut& addKey(ImGuiKey key);
     Shortcut& setRepeat(bool val = true)
@@ -67,7 +67,7 @@ public:
 
     bool empty() const { return m_keys.empty(); }
 
-    qd::InlineString toString() const;
+    const char* toString() const;
 
 }; // class Shortcut
 //////////////////////////////////////////////////////////////////////////

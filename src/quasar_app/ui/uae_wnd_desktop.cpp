@@ -1,12 +1,3 @@
-// clang-format off
-// #include "sysconfig.h"
-// #include "sysdeps.h"
-// #include "uae/time.h"
-// #include "options.h"
-// #include "adf.h"
-// #include "uae.h"
-// clang-format on
-
 #include "uae_wnd_desktop.h"
 #include "amDebugger/commonOperations.h"
 #include "amDebugger/debuggerOps.h"
@@ -14,17 +5,25 @@
 #include "qd/app/application.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/imGui/imGuiHelperClass.h"
+#include "qd/imGui/style/style.h"
 #include "qd/qui/controls/menuItemOperation.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "quaesar_operations.h"
 #include "quasar_app/quaesar_app.h"
 #include "quasar_app/uae_app_imp/uae_client_app_part.h"
 #include "uae_options_wnd.h"
 
+#define DLG_TITLE_OPTIONS "Options"
+
+
 namespace qsr {
 
 void UaeGuiDesktop::init() {
-    auto pDlg = this->addChild_<qsr::UaeOptionsDlg>("options");
+    qd::imGuiApplyStyleDark();
+    ImVec4* colors = ImGui::GetStyle().Colors;
+    colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.5f);  // empty background
+
+    auto pDlg = this->addChild_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);
     pDlg->setVisible(false);
 }
 
@@ -32,20 +31,28 @@ void UaeGuiDesktop::init() {
 void UaeGuiDesktop::drawContentImp() {
     // Main TOOLBAR
     IVm::VM* vm = getUaeClientApp()->getVm();
+
+    qd::OperationsRegistry& pOpsReg = qd::OperationsRegistry::get();
+    pOpsReg.testOperationsShortcuts_<
+        // clang-format off
+        amD::operation::args::UaeResetAmiga
+        , amD::operation::args::ToggleTurboEmulation
+        , amD::operation::args::UaeWndAlwaysOnTop
+        , qsr::operations::ShowDebuggerWnd
+        , qsr::operations::ShowUaeOptionsWnd
+        // clang-format on
+        >(this);
+
     if (ImGui::BeginMainMenuBar()) {
         if (auto p1 = qIm::LockMenu("File")) {
             if (ImGui::MenuItem("Open DF0:")) {
                 IVm::Floppy* cfgFloppy = vm->floppies[0];
                 assert(cfgFloppy);
                 qsr::open_file_dlg_select_adf(*cfgFloppy);
-                doOperation_<amD::operation::args::UaeResetAmiga>();
+                vm->setVmDebugMode(amD::EVmDebugMode::Live);
+                doOperationDefault_<amD::operation::args::UaeResetAmiga>();
             }
-
-            if (ImGui::MenuItem("Settings")) {
-                qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>("options");
-                pOptionsDlg->setVm(vm);
-                this->showModal(pOptionsDlg);
-            }
+            qIm::menuItemFromOperationArgs_<qsr::operations::ShowUaeOptionsWnd>(this);
             if (ImGui::MenuItem("Exit")) {
                 g_pApp->requestAppToQuit();
             }
@@ -58,9 +65,7 @@ void UaeGuiDesktop::drawContentImp() {
         }
 
         if (auto p2 = qIm::LockMenu("Window", true)) {
-            qsr::operation::args::ShowDebuggerWnd s1;
-            s1.dbgSource = EQuaServerId::S_UAE;
-            qIm::menuItemFromOperationArgs(this, &s1, "Activate debugger");
+            qIm::menuItemFromOperationArgs_<qsr::operations::ShowDebuggerWnd>(this);
         }
 
         ImGui::EndMainMenuBar();
@@ -75,9 +80,24 @@ qd::IOperationEnvironment* UaeGuiDesktop::getOpEnvParent() const {
 }
 
 
-void* UaeGuiDesktop::getOpEnvPtr(const qd::TypeInfo& classType) const {
-    assert(0);
-    return nullptr;
+qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::args::Base* args) const {
+    if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
+        p->dbgSource = EQuaServerId::S_UAE;
+        return EFlow::DONE;
+    }
+    return EFlow::NO_RESULT;
+}
+
+
+qd::EFlow UaeGuiDesktop::applyOperationMsgProcImp(qd::operation::args::Base* args) {
+    if (auto p = args->cast_<qsr::operations::ShowUaeOptionsWnd>()) {
+        qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);
+        IVm::VM* vm = getUaeClientApp()->getVm();
+        pOptionsDlg->setVm(vm);
+        this->showModal(pOptionsDlg);
+        return EFlow::DONE;
+    }
+    return EFlow::NO_RESULT;
 }
 
 

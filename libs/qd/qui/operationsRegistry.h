@@ -37,7 +37,7 @@ public:
     }
 
     void addShortcut(uint32_t sid);
-    void getShortcutGuiStr(qd::InlineString& out) const;
+    const char* getShortcutGuiStr() const;
 
     ~OpDesc();
 
@@ -47,7 +47,7 @@ public:
 
 
 
-class UiOperationMgr : public qd::RefCounted
+class OperationsRegistry : public qd::RefCounted
 {
     friend class OperationMgrOperationsListImp;
     //qd::vector<ref_ptr<UiOperation>> m_pOperations;
@@ -61,10 +61,10 @@ class UiOperationMgr : public qd::RefCounted
     bool mInit = false;
 
 public:
-    UiOperationMgr();
-    virtual ~UiOperationMgr() override;
+    OperationsRegistry();
+    virtual ~OperationsRegistry() override;
 
-    static UiOperationMgr& get();
+    static OperationsRegistry& get();
 
     void createOperations(qd::UiOperationCreator* ca);
     virtual void destroy();
@@ -88,11 +88,11 @@ public:
         return &m_OpDescList[descIdx];
     }
 
-    template<typename TOp>
-    const qd::operation::args::OpDesc& getOpDesc_(TOp* = nullptr) const
+    template<typename TOpArg>
+    const qd::operation::args::OpDesc& getOpDesc_(TOpArg* = nullptr) const
     {
-        //const qd::TypeInfo& ti = TOp::getStaticTypeInfo();
-        const qd::operation::args::OpDesc* pDesc = findOpDesc(TOp::CID);
+        //const qd::TypeInfo& ti = TOpArg::getStaticTypeInfo();
+        const qd::operation::args::OpDesc* pDesc = findOpDesc(TOpArg::CID);
         assert(pDesc);
         return *pDesc;
     }
@@ -109,6 +109,16 @@ public:
 
     void addOperationDesc(const qd::TypeInfo& ti, qd::operation::args::OpDesc&& desc);
 
+    void testOperationsShortcuts(qd::IOperationEnvironment* pEnv, qd::span<qd::operation::args::OpDesc* const> opDescs);
+
+    template<typename ...TOpClass>
+    void testOperationsShortcuts_(qd::IOperationEnvironment* pEnv)
+    {
+        const qd::operation::args::OpDesc* opDescs[] = {(&getOpDesc_<TOpClass>())...};
+        qd::span<qd::operation::args::OpDesc* const> spanOpDescs((qd::operation::args::OpDesc**)opDescs,
+            EAArrayCount(opDescs));
+        testOperationsShortcuts(pEnv, spanOpDescs);
+    }
 
 }; ///////////////////////////////////////////////////////////////
 

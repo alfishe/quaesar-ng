@@ -60,6 +60,8 @@ public:
 enum class EQuaServerId {
     UNDEF = 0,
     S_UAE = _MAKE4C('_UAE'),
+    S_LOCAL_VAMIGA,
+    S_REMOTE_VAMIGA,
 };
 
 

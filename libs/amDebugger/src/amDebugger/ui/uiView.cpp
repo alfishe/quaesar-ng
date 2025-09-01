@@ -6,11 +6,6 @@
 namespace amD {
 
 
-void* AmDbgWindow::getOpEnvPtr(const qd::TypeInfo& classType) const
-{
-    return ui->getOpEnvPtr(classType);
-}
-
 
 Debugger* AmDbgWindow::getDbg() const
 {

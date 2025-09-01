@@ -43,6 +43,12 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+struct DbgProjOptinons
+{
+    int traceWaitScanLines = 1;
+};
+extern DbgProjOptinons g_opt;
+
 
 // Debugger client
 //
@@ -50,7 +56,6 @@ class Debugger
     : public qd::RefCounted
     , public qd::IOperationEnvironment
 {
-    int m_nTraceWaitScanLines = 1;
     DebuggerApp* m_pDbgApp = nullptr;
     ref_ptr<IDbgConnection> m_pConnection;
 
@@ -68,14 +73,10 @@ public:
 
     amD::IDbgConnection* getConnection() const { return m_pConnection.get(); }
 
-    void sendOperationServerOnly(qd::operation::args::Base* args) {}
-
-    void applyOperationLocal(qd::operation::args::Base* args) {}
-
     void execConsoleCmd(qd::string&& cmd);
 
-    int getWaitScanLines() const { return m_nTraceWaitScanLines; }
-    void setWaitScanLines(int waitScanLines) { m_nTraceWaitScanLines = waitScanLines; }
+    int getWaitScanLines() const { return g_opt.traceWaitScanLines; }
+    void setWaitScanLines(int waitScanLines) { g_opt.traceWaitScanLines = waitScanLines; }
 
     BreakpointsSortedList getBreakpointsSorted() const
     {
@@ -90,8 +91,8 @@ public:
     //------------------------------------------------------------------------
     // Implement Operation Environment
     virtual IOperationEnvironment* getOpEnvParent() const override { return nullptr; }
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* args) const override;
 
 
 }; // class Debugger

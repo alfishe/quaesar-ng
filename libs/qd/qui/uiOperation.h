@@ -4,7 +4,7 @@
 #include "qd/base/eFlow.h"
 #include "qd/base/baseTypes.h"
 #include "qd/debug/assert.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "qd/stl/fixed_vector.h"
 #include "qd/typeSystem/typeDeclare.h"
 #include "qd/stl/ref_ptr.h"
@@ -25,7 +25,7 @@
 
 template<class TClass>
 struct AutoRegOpDesc_ {
-    AutoRegOpDesc_() { qd::UiOperationMgr::get().regOperationDesc_<TClass>(); }
+    AutoRegOpDesc_() { qd::OperationsRegistry::get().regOperationDesc_<TClass>(); }
 };
 
 
@@ -42,7 +42,7 @@ struct AutoRegOpDesc_ {
 namespace qd {
 class DebuggerDesktop;
 class UiOperation;
-class UiOperationMgr;
+class OperationsRegistry;
 class IOperationEnvironment;
 FORWARD_DECLARATION_3S(operation, args, Base);
 
@@ -54,7 +54,7 @@ enum class EOperationCompsClassId {
 };
 
 struct UiOperationCreator {
-    UiOperationMgr* uiOpsMgr = nullptr;
+    OperationsRegistry* uiOpsMgr = nullptr;
     uint32_t id = 0;
 
     template<class TClass, typename... TArgs>
@@ -74,28 +74,27 @@ public:
 };
 
 
+// An interface that can perform operations based on their arguments, or send them to its parent if it cannot perform
+// them itself.
 class IOperationEnvironment
 {
     TS_REFLECT_CLASS(qd::IOperationEnvironment, void);
 
+protected:
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) { return EFlow::NO_RESULT; }
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* args) const { return EFlow::NO_RESULT; }
+
 public:
     virtual IOperationEnvironment* getOpEnvParent() const { return nullptr; }
-    virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const { return nullptr; }
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args);
-
-    template<class TPtr>
-    TPtr* getPtr_() const
-    {
-        const qd::TypeInfo& ptrType = qd::typeof_<TPtr>();
-        void* pPtr = getOpEnvPtr(ptrType);
-        return reinterpret_cast<TPtr*>(pPtr);
-    }
+    qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args);
+    qd::EFlow setupDefaultOperationArgs(qd::operation::args::Base* args) const;
 
     template<class TOpClass>
-    void doOperation_()
+    void doOperationDefault_()
     {
         TOpClass opArgs;
-        applyOperationMsgProc(&opArgs);
+        setupDefaultOperationArgs(&opArgs);
+        applyOperationMsgProcImp(&opArgs);
     }
 
 }; // IOperationEnvironment
@@ -137,7 +136,6 @@ struct Base {
     TS_REFLECT_CLASS(qd::operation::args::Base, void);
 public:
     inline Base() = default;
-
     bool _tryCast(const qd::TypeInfo& msg_type);
 
     template<class T>

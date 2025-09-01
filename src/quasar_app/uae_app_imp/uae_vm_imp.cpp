@@ -14,19 +14,21 @@
 #include <savestate.h>
 #include <debug.h>
 #include <uae.h>
+#include <events.h>
 // clang-format on
 #include <SDL_log.h>
 #include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "qd/base/endian.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "qd/thread/thread.h"
 #include "qd/typeSystem/typeInfo.h"
 #include "quasar_app/quaesar.h"
 #include "uae_server_thread.h"
 
 
+extern int vpos;
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
 extern uaecptr bplpt[MAX_PLANES], bplptx[MAX_PLANES];
 
@@ -96,16 +98,19 @@ UaeVmImp::~UaeVmImp() {
 //extern void uae_op_debug_trace_continue(qd::IOperationEnvironment* env, amD::operation::args::DebugTraceContinue* p);
 
 
-qd::EFlow UaeVmImp::applyOperationMsgProc(qd::operation::args::Base* args) {
+qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
     UaeVmImp* vm = this;
     UaeServerThread* pUae = m_pUaeThread;
     bool r = false;
     if (c_def(0)) {
     } else if (auto p = args->cast_<amD::operation::args::DebugTraceContinue>()) {
         r = true;
-        vm->setVmDebugMode(EVmDebugMode::Live);
+        if (vm->getVmDebugMode() == EVmDebugMode::Live)
+            vm->setVmDebugMode(EVmDebugMode::Break);
+        else
+            vm->setVmDebugMode(EVmDebugMode::Live);
 
-    } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStep>()) {
+    } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepInto>()) {
         r = true;
         vm->setVmDebugMode(EVmDebugMode::Break);
         pUae->execConsoleCmd("t");
@@ -238,6 +243,23 @@ void UaeVmImp::setVmDebugMode(EVmDebugMode debug_mode) {
         ::debugger_active = 0;
     }
 }
+
+
+int UaeVmImp::getVPos() {
+    return ::vpos;
+}
+
+
+int UaeVmImp::getHPos() {
+    return ::current_hpos_safe();  // ::current_hpos();
+}
+
+
+int UaeVmImp::getCurCycle() {
+    int c = (int)((::get_cycles() - ::vsync_cycles) / CYCLE_UNIT);
+    return c;
+}
+
 
 bool UaeVmImp::Emu::isDebugActivated() const {
     return ::debugging > 0 && (::debugger_active > 0);

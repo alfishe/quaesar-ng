@@ -13,17 +13,4 @@ void IDebuggerServer::init()
 }
 
 
-
-void* IDebuggerServer::getOpEnvPtr(const qd::TypeInfo& classType) const
-{
-    return nullptr;
-}
-
-
-qd::EFlow IDebuggerServer::applyOperationMsgProc(qd::operation::args::Base* args)
-{
-    return qd::EFlow::DONE;
-}
-
-
 }; // namespace amD

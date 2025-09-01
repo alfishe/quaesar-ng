@@ -12,7 +12,7 @@
 #include "qd/qui/controls/lambda.h"
 #include "qd/qui/controls/menuItemOperation.h"
 #include "qd/qui/shortcutMgr.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "qd/typeSystem/typeRegistry.h"
 #include <amDebugger/dbgOperation.h>
 #include <amDebugger/shortcutsList.h>
@@ -32,15 +32,15 @@ qd::IOperationEnvironment* DebuggerDesktop::getOpEnvParent() const
 }
 
 
-qd::EFlow DebuggerDesktop::applyOperationMsgProc(qd::operation::args::Base* args)
+qd::EFlow DebuggerDesktop::applyOperationMsgProcImp(qd::operation::args::Base* args)
 {
     if (args->cast_<amD::operation::args::DisasmToggleBreakpoint>())
     {
         if (auto pWnd = findChildByType_<amD::window::DisassemblyView>())
-            return pWnd->applyOperationMsgProc(args);
+            return pWnd->applyOperationMsgProcImp(args);
     }
     if (m_pDbg)
-        return m_pDbg->applyOperationMsgProc(args);
+        return m_pDbg->applyOperationMsgProcImp(args);
     return EFlow::NO_RESULT;
 }
 
@@ -75,7 +75,7 @@ void DebuggerDesktop::_drawMainMenuBar()
             qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false, debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStep>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStepInto>(pDbg);
             qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStepOut>(pDbg);
             qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmToggleBreakpoint>(this);
             ImGui::Separator();
@@ -85,7 +85,7 @@ void DebuggerDesktop::_drawMainMenuBar()
 
             amD::operation::args::DebugDmaOption debugDmaOp;
             {
-                qd::UiOperationMgr& opMgr = qd::UiOperationMgr::get();
+                qd::OperationsRegistry& opMgr = qd::OperationsRegistry::get();
                 const qd::operation::args::OpDesc& opDesc = opMgr.getOpDesc_(&debugDmaOp);
                 int dmaMode = vm->emu->getDebugDmaMode();
                 int n = dmaMode > 0 ? dmaMode - 1 : 0;
@@ -117,7 +117,7 @@ void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
     TSuper::onNodeCreated(mk);
 
     m_pWindows.resize((size_t)WndId::MostCommonCount);
-    m_pOperationMgr = &qd::UiOperationMgr::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
+    m_pOperationMgr = &qd::OperationsRegistry::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
     m_pShortcutMgr->createPredefinedShortcuts(
         eastl::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
@@ -163,8 +163,6 @@ DebuggerDesktop::~DebuggerDesktop()
 
 void DebuggerDesktop::drawImGuiMainFrame()
 {
-    getShortcuts()->update(this, m_pOperationMgr);
-
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -173,8 +171,6 @@ void DebuggerDesktop::drawImGuiMainFrame()
     wndFlags |= ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
     wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-    // qim::beginFrame();
 
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
@@ -185,10 +181,22 @@ void DebuggerDesktop::drawImGuiMainFrame()
 
         // draw static nodes
         this->drawContentImp();
+
+        qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
+        pOpMgr->testOperationsShortcuts_<
+            // clang-format off
+              amD::operation::args::DisasmTraceStepInto
+            , amD::operation::args::DebugWaitScanLines
+            , amD::operation::args::UaeWndAlwaysOnTop
+            , amD::operation::args::DebugTraceContinue
+            , amD::operation::args::DebugTraceStart
+            , amD::operation::args::DisasmToggleBreakpoint
+            , amD::operation::args::CopperTraceStep
+            , amD::operation::args::CopperToggleBreakpoint
+            // clang-format on
+            >(this);
     }
     ImGui::End();
-
-    // qim::endFrame();
 }
 
 
@@ -207,7 +215,6 @@ void DebuggerDesktop::_drawToolBar()
 
         Debugger* dbg = getDbg();
         qd::ShortcutsMgr* shMgr = getShortcuts();
-        const qd::Shortcut* pCurShortcut;
         eastl::string hint;
 
         bool isDbgMode = dbg->isDebugActivated();
@@ -226,38 +233,37 @@ void DebuggerDesktop::_drawToolBar()
         uv0 = ImVec2(0.0f, 0.0f); // TODO ICONS
         uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
 
-        pCurShortcut = &shMgr->getShortcut(shortcut::EId::DebugTraceStepInto);
-        if (!pCurShortcut->empty())
+        qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
+        const qd::operation::args::OpDesc* pOpDesc;
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::args::DisasmTraceStepInto::CID);
         {
             if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
             {
-                shMgr->triggerShortcut(env, pCurShortcut);
+                doOperationDefault_<amD::operation::args::DisasmTraceStepInto>();
             }
-            ImGui::SetItemTooltipV(pCurShortcut->toString().c_str(), nullptr);
+            ImGui::SetItemTooltipV(CC(pOpDesc->getShortcutGuiStr()), nullptr);
 
             //
             ImGui::Separator();
             //
 
             // wait scanlines
+            pOpDesc = pOpMgr->findOpDesc(amD::operation::args::DebugWaitScanLines::CID);
             int nScanLines = dbg->getWaitScanLines();
             ImGui::SetNextItemWidth(30);
             if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
             {
-                if (nScanLines < 0)
-                    nScanLines = 1;
+                qd::clamp_min_inplace(nScanLines, 1);
                 dbg->setWaitScanLines(nScanLines);
             }
-            if (pCurShortcut)
-                hint.sprintf("Scanlines number(%s)", pCurShortcut->toString().c_str());
+            hint.sprintf("Scanlines number(%s)", pOpDesc->getShortcutGuiStr());
             ImGui::SetItemTooltipV(hint.c_str(), nullptr);
         }
         // wait button
         ImGui::SameLine();
-        pCurShortcut = &shMgr->getShortcut(shortcut::EId::DebugWaitScanLines);
         if (ImGui::Button("Wait Scanlines"))
         {
-            shMgr->triggerShortcut(env, pCurShortcut);
+            doOperationDefault_<amD::operation::args::DebugWaitScanLines>();
         }
     }
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
@@ -268,16 +274,6 @@ void DebuggerDesktop::_drawToolBar()
 void DebuggerDesktop::destroy()
 {
     TSuper::destroy();
-}
-
-
-
-void* DebuggerDesktop::getOpEnvPtr(const qd::TypeInfo& classType) const
-{
-    if (classType == m_pDbg->getStaticTypeInfo())
-        return m_pDbg;
-    assert(0);
-    return nullptr;
 }
 
 

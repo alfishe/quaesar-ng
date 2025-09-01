@@ -41,13 +41,16 @@ public:
     virtual void init() override;
 
     //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
 
     virtual amD::EVmDebugMode getVmDebugMode() const override {
         return TSuper::getVmDebugMode();
     }
     virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) override;
 
+    virtual int getCurCycle() override;
+    virtual int getVPos() override;
+    virtual int getHPos() override;
 
     //------------------------------------------------------------------------
     struct Cpu : public IVm::Cpu {

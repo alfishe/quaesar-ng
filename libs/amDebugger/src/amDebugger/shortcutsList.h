@@ -15,8 +15,8 @@ namespace shortcut {
 // 'qd::shortcut::EId::DebugTraceStart'
 //
 #define SHORTCUT_LIST(SHORTCUT)                                                                                   \
-    SHORTCUT(DebugTraceStepInto, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F11).setRepeat(); })                     \
-    SHORTCUT(DebugTraceStepOut, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F10).setRepeat(); })                      \
+    SHORTCUT(DisasmTraceStepInto, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F11).setRepeat(); })                    \
+    SHORTCUT(DisasmTraceStepOut, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F10).setRepeat(); })                     \
     SHORTCUT(DebugTraceStart, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F12); })                                    \
     SHORTCUT(DebugTraceContinue, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F5); })                                  \
     SHORTCUT(DebugWaitScanLines, [](qd::Shortcut&) {})                                                            \
@@ -27,7 +27,8 @@ namespace shortcut {
     SHORTCUT(ToggleTurboEmulation, [](qd::Shortcut& s) { s.addKey(ImGuiKey_NumLock); })                           \
     SHORTCUT(ResetAmigaEmu, [](qd::Shortcut&) {})                                                                 \
     SHORTCUT(AlwaysOnTopEmu, [](qd::Shortcut& s) { s.addKey(ImGuiKey_T).addKey(ImGuiMod_Ctrl); })                 \
-    SHORTCUT(ShowDebuggerWnd, [](qd::Shortcut&) {})                                                               \
+    SHORTCUT(ShowDebuggerWnd, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F12).addKey(ImGuiMod_Shift); })             \
+    SHORTCUT(ShowUaeOptionsWnd, [](qd::Shortcut& s) { s.addKey(ImGuiKey_P).addKey(ImGuiMod_Ctrl); })              \
     /* END OF SHORTCUTS LIST */
 //////////////////////////////////////////////////////////////////////////
 

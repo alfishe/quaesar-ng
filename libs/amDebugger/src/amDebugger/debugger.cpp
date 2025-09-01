@@ -1,17 +1,18 @@
 #include "amDebugger/debugger.h"
-#include "amDebugger/vm/vmInterface.h"
 #include "amDebugger/debuggerOps.h"
+#include "amDebugger/vm/vmInterface.h"
 
 
-namespace amD
-{
+namespace amD {
+
+DbgProjOptinons g_opt = {};
 
 
 Debugger::Debugger(DebuggerApp* _app, ref_ptr<IDbgConnection> pCon)
     : m_pDbgApp(_app)
     , m_pConnection(pCon)
 {
-     assert(m_pConnection);
+    assert(m_pConnection);
 }
 
 
@@ -22,16 +23,28 @@ void Debugger::init()
 }
 
 
-void* Debugger::getOpEnvPtr(const qd::TypeInfo& classType) const
+qd::EFlow Debugger::applyOperationMsgProcImp(qd::operation::args::Base* args)
 {
-    return nullptr;
+    qd::EFlow r = m_pVm->applyOperationMsgProcImp(args);
+    return r;
 }
 
 
-qd::EFlow Debugger::applyOperationMsgProc(qd::operation::args::Base* args)
+qd::EFlow Debugger::setupDefaultOperationArgsImp(qd::operation::args::Base* args) const
 {
-    qd::EFlow r = m_pVm->applyOperationMsgProc(args);
-    return r;
+    switch (args->getCid())
+    {
+    case amD::operation::args::DebugWaitScanLines::CID:
+    {
+        auto* a = args->cast_<amD::operation::args::DebugWaitScanLines>();
+        a->waitScanLines = g_opt.traceWaitScanLines;
+        return EFlow::DONE;
+    }
+    break;
+    default:
+        break;
+    }
+    return qd::EFlow::NO_RESULT;
 }
 
 
@@ -39,7 +52,7 @@ void Debugger::execConsoleCmd(qd::string&& cmd)
 {
     amD::operation::args::ExecConsoleCmd exec;
     exec.cmd = std::move(cmd);
-    applyOperationMsgProc(&exec);
+    applyOperationMsgProcImp(&exec);
 }
 
 

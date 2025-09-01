@@ -3,8 +3,9 @@
 #include "qd/qui/comps/uiOperationMgrComp.h"
 #include "qd/qui/shortcutHnd.h"
 #include "qd/qui/uiOperation.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "qd/thread/thread.h"
+#include <imgui/imgui_internal.h>
 
 
 namespace qd {
@@ -17,29 +18,32 @@ qd::Shortcut& Shortcut::addKey(ImGuiKey key)
 }
 
 
-qd::InlineString Shortcut::toString() const
+const char* Shortcut::toString() const
 {
-    if (m_keys.empty())
-        return {};
-    qd::InlineString result;
-    for (auto it = m_keys.begin(); it != m_keys.end(); ++it)
-    {
-        const qd::Key& curKey = *it;
-        if (it != m_keys.begin())
-            result += '+';
-        result.append(curKey.toString());
-    }
-    return result;
+    if (!m_keyChord)
+        return "";
+    return ImGui::GetKeyChordName(m_keyChord);
+//     if (m_keys.empty())
+//         return {};
+//     qd::InlineString result;
+//     for (auto it = m_keys.begin(); it != m_keys.end(); ++it)
+//     {
+//         const qd::Key& curKey = *it;
+//         if (it != m_keys.begin())
+//             result += '+';
+//         result.append(curKey.toString());
+//     }
+//     return result;
 }
 
 
 Shortcut::~Shortcut() {}
 
 
-ImGuiKeyChord Shortcut::getChord() const
+ImGuiKeyChord shortcut_to_keychord(const Shortcut& sh)
 {
     ImGuiKeyChord nChord = 0;
-    const Shortcut::Keys& keysList = getKeys();
+    const Shortcut::Keys& keysList = sh.getKeys();
     for (const Key& curKey : keysList)
     {
         if ((curKey == ImGuiMod_Shift || curKey == ImGuiKey_LeftShift || curKey == ImGuiKey_RightShift))
@@ -55,11 +59,14 @@ ImGuiKeyChord Shortcut::getChord() const
 
 bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const
 {
-    if (!p_shortcut)
+    if (!p_shortcut || !p_shortcut->m_keyChord)
         return false;
-    const Shortcut::Keys& keysList = p_shortcut->getKeys();
-    if (keysList.empty())
-        return false;
+
+    if (ImGui::IsKeyChordPressed(p_shortcut->m_keyChord, (ImGuiInputFlags)p_shortcut->m_bRepeat, 0))
+        return true;
+    return false;
+
+#if 0
     const ImGuiIO& io = ImGui::GetIO();
     size_t nKeysMatch = 0;
     for (const Key& curKey : keysList)
@@ -74,6 +81,7 @@ bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const
     if (nKeysMatch >= keysList.size())
         return true;
     return false;
+#endif //
 }
 
 
@@ -82,7 +90,7 @@ bool ShortcutsMgr::triggerShortcut(qd::IOperationEnvironment* env, uint32_t id)
     //     const Shortcut* pShortcut = getShortcut(id);
     //     if (UiOperation* pOperation = findOperationByShortcut(pShortcut)) {
     //         operation::args::DoOperation t;
-    //         pOperation->applyOperationMsgProc(env, &t);
+    //         pOperation->applyOperationMsgProcImp(env, &t);
     //         return true;
     //     }
     return false;
@@ -111,7 +119,8 @@ void ShortcutsMgr::createPredefinedShortcuts(eastl::span<qd::ShortcutInitItem> s
         if (setupFunc)
         {
             qd::Shortcut& curShortcut = getShortcut(curItem.m_shortcutId);
-            setupFunc(curShortcut);
+            setupFunc(curShortcut); // init callback
+            curShortcut.m_keyChord = shortcut_to_keychord(curShortcut);
         }
     }
 }
@@ -122,24 +131,6 @@ void ShortcutsMgr::done()
     m_shortcuts.clear(); // SAFE DELETE
 }
 
-
-void ShortcutsMgr::update(qd::IOperationEnvironment* env, qd::UiOperationMgr* pOperationMgr)
-{
-    // IUiOperationsProvider* pOperationMgr = pOpMgr;
-    assert(pOperationMgr);
-    for (const qd::operation::args::OpDesc &pCurOperation : pOperationMgr->getOperationsList())
-    {
-        qd::ShortcutsHnd* pShortcuts = pCurOperation.m_pShortcuts;
-        if (!pShortcuts)
-            continue;
-        for (const qd::Shortcut* curShortcut : pShortcuts->getShortcuts())
-        {
-            if (!isShortcutTriggered(curShortcut))
-                continue;
-            env->applyOperationMsgProc(pCurOperation.m_pOpTemplate);
-        }
-    }
-}
 
 
 qd::Shortcut& ShortcutsMgr::getShortcut(qd::ShortcutId shortcut_id)
@@ -159,7 +150,7 @@ qd::Shortcut& ShortcutsMgr::getShortcut(qd::ShortcutId shortcut_id)
 const qd::operation::args::OpDesc* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut) const
 {
     // IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
-    UiOperationMgr* pOperationMgr = &UiOperationMgr::get();
+    OperationsRegistry* pOperationMgr = &OperationsRegistry::get();
     assert(pOperationMgr);
     for (const qd::operation::args::OpDesc& pCurOperation : pOperationMgr->getOperationsList())
     {

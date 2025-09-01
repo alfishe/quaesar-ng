@@ -59,10 +59,13 @@ public:
     virtual ~VM();
 
     virtual void init() = 0;
-    virtual qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args) { assert(0); return qd::EFlow::NO_RESULT; }
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) { assert(0); return qd::EFlow::NO_RESULT; }
 
     int getScreenSizeX() const { return amiga_width; }
     int getScreenSizeY() const { return amiga_height; }
+    virtual int getCurCycle() { return -1; }
+    virtual int getVPos() { return -1; }
+    virtual int getHPos() { return -1; }
 
     virtual amD::EVmDebugMode getVmDebugMode() const { return m_debugMode; }
     virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) { m_debugMode = debug_mode; }; // base

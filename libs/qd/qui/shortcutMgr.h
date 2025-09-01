@@ -16,7 +16,7 @@ FORWARD_DECLARATION_4(qd, operation, args, OpDesc);
 namespace qd {
 
 class UiOperation;
-class UiOperationMgr;
+class OperationsRegistry;
 class IOperationEnvironment;
 
 
@@ -35,7 +35,6 @@ public:
 
     void createPredefinedShortcuts(eastl::span<qd::ShortcutInitItem> shortcuts_list);
     void done();
-    void update(qd::IOperationEnvironment* env, qd::UiOperationMgr* pOpMgr);
 
     qd::Shortcut& getShortcut(qd::ShortcutId shortcut_id);
 

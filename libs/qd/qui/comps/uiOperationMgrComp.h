@@ -2,7 +2,7 @@
 #include "EASTL/span.h"
 #include "qd/qui/uiNode.h"
 #include "qd/typeSystem/typeDeclare.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 
 
 namespace qd {

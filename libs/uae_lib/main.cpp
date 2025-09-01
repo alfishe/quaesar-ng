@@ -519,7 +519,7 @@ void fixup_prefs (struct uae_prefs *p, bool userconfig)
 			}
 		}
 	}
-	
+
 	for (int i = 0; i < MAX_RAM_BOARDS; i++) {
 		if ((p->z3fastmem[i].size & (p->z3fastmem[i].size - 1)) != 0 || (p->z3fastmem[i].size != 0 && p->z3fastmem[i].size < 0x100000))
 		{
@@ -1310,11 +1310,7 @@ uae_u8 singlefile_data[1500000] = { "_DATA_STARTS_HERE" };
 #endif
 
 
-//////////////////////////////////////////////////////////////////////////
-namespace amD {
-void quae_parse_cmdline(int argc, TCHAR** argv)
+void quae__parseCmdLine(int argc, TCHAR** argv)
 {
     ::parse_cmdline(argc, argv);
 }
-};  // namespace amD
-//////////////////////////////////////////////////////////////////////////

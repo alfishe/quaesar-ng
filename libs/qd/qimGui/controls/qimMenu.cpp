@@ -2,7 +2,7 @@
 #include "qd/typeSystem/typeRegistry.h"
 #include "qd/qui/shortcutHnd.h"
 #include "qd/qui/shortcutMgr.h"
-#include "qd/qui/uiOperationMgr.h"
+#include "qd/qui/operationsRegistry.h"
 #include "imgui/imgui_internal.h"
 #include "SDL_log.h"
 #include "qd/qimGui/qimMessages.h"

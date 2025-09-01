@@ -7,20 +7,43 @@
 namespace qd {
 
 
- 
-
 qd::EFlow IOperationEnvironment::applyOperationMsgProc(qd::operation::args::Base* args)
 {
-    IOperationEnvironment* pEnv = getOpEnvParent();
-    while (pEnv)
+    qd::EFlow f;
+    f = applyOperationMsgProcImp(args);
+    if (f.isDone())
+        return f;
+
+    IOperationEnvironment* pParentEnd = getOpEnvParent();
+    while (pParentEnd)
     {
-        qd::EFlow f = pEnv->applyOperationMsgProc(args);
+        qd::EFlow f = pParentEnd->applyOperationMsgProcImp(args);
         if (f.isDone())
             return f;
-        pEnv = pEnv->getOpEnvParent();
+        pParentEnd = pParentEnd->getOpEnvParent();
     }
     return qd::EFlow::NO_RESULT;
 }
+
+
+qd::EFlow IOperationEnvironment::setupDefaultOperationArgs(qd::operation::args::Base* args) const
+{
+    qd::EFlow f;
+    f = setupDefaultOperationArgsImp(args);
+    if (f.isDone())
+        return f;
+
+    const IOperationEnvironment* pParentEnv = getOpEnvParent();
+    while (pParentEnv)
+    {
+        qd::EFlow f = pParentEnv->setupDefaultOperationArgsImp(args);
+        if (f.isDone())
+            return f;
+        pParentEnv = pParentEnv->getOpEnvParent();
+    }
+    return qd::EFlow::NO_RESULT;
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////

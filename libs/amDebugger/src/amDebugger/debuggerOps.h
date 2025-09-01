@@ -39,7 +39,7 @@ static amD::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, q
 
 
 #define QDB_REG_OPERATION(ClassName)                                         \
-    TS_BEGIN_REFLECT_CLASS(ClassName, amD::operation::Operation);            \
+    TS_BEGIN_REFLECT_CLASS(ClassName, amD::operations::Operation);            \
     TS_ATTRIBUTE(qd::tsAttr::CreateClassCb(&createOperationCb_<TRefClass>)); \
     TS_END();
 
@@ -115,12 +115,12 @@ struct DebugTraceContinue : public amD::operation::OperationArgs {
 
 
 
-struct DisasmTraceStep : public amD::operation::OperationArgs {
-    DECLARE_OPERATION_1(amD::operation::args::DisasmTraceStep);
+struct DisasmTraceStepInto : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::args::DisasmTraceStepInto);
     static void setup(qd::operation::args::OpDesc& d)
     {
         d.m_name = "Step Into";
-        d.addShortcut(amD::shortcut::EId::DebugTraceStepInto);
+        d.addShortcut(amD::shortcut::EId::DisasmTraceStepInto);
     }
 };
 
@@ -131,7 +131,7 @@ struct DisasmTraceStepOut : public amD::operation::OperationArgs {
     static void setup(qd::operation::args::OpDesc& d)
     {
         d.m_name = "Step Out";
-        d.addShortcut(amD::shortcut::EId::DebugTraceStepOut);
+        d.addShortcut(amD::shortcut::EId::DisasmTraceStepOut);
     }
 };
 
@@ -205,5 +205,5 @@ struct UaeWndAlwaysOnTop : public amD::operation::OperationArgs {
 
 
 }; // namespace args
-}; // namespace operation
+}; // namespace operations
 }; // namespace amD
