@@ -44,14 +44,16 @@ struct EId {
     };
     ENUM_DECLARE_BASE(amD::shortcut::, EId, Type, UNDEF);
 }; // struct
+//////////////////////////////////////////////////////////////////////////
 
 
 // simple array with index
 inline static qd::ShortcutInitItem g_shortcuts_list[] = {
-#define SHORTCUT(name, setup_func) {EId::##name, setup_func},
+#define SHORTCUT(name, setup_func) {EId::name, setup_func},
     SHORTCUT_LIST(SHORTCUT)
 #undef SHORTCUT
 }; // ShortcutList
+//////////////////////////////////////////////////////////////////////////
 
 
 // extern qd::Shortcut *makeInstance(qd::shortcut::EId id);

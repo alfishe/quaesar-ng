@@ -93,29 +93,29 @@ uint32_t MemFile::seek(uint32_t Position, EFileSeek Where /*= SEEK_SET*/)
 
 void MemData::expandBuffer(uint32_t nCapacity)
 {
-    mpMemBuf->expandBuffer(nCapacity);
+    m_pMemBuf->expandBuffer(nCapacity);
 }
 
 
 
 void MemData::write(const void* pSrc, uint32_t nBytes)
 {
-    uint32_t nOffset = mnUsedSize;
+    uint32_t nOffset = m_nUsedSize;
     uint32_t nNewSize = nOffset + nBytes;
     if (nNewSize > getCapacity())
     {
         expandBuffer(nNewSize);
     }
-    mpMemBuf->copyFrom(pSrc, nBytes, nOffset);
-    mnUsedSize = nNewSize;
+    m_pMemBuf->copyFrom(pSrc, nBytes, nOffset);
+    m_nUsedSize = nNewSize;
 }
 
 
 
 void MemBuf::copyFrom(const void* pSrc, uint32_t nBytes, uint32_t Offset /*= 0 */)
 {
-    ASSERT_F((Offset + nBytes) <= mCapacity, "MemBuf - Out of buffer!");
-    ASSERT_F(mpBuffer, "MemBuf - buffer is Null");
+    ASSERT_F((Offset + nBytes) <= m_nCapacity, "MemBuf - Out of buffer!");
+    ASSERT_F(m_pBuffer, "MemBuf - buffer is Null");
 
     _copyFrom(pSrc, nBytes, Offset);
 }

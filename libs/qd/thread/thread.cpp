@@ -1,7 +1,7 @@
 #include "thread.h"
+#include "qd/debug/exception.h"
 #include "qd/debug/exceptTryCatch.h"
 #include "qd/log/log.h"
-#include "qd/debug/exception.h"
 #include "SDL_thread.h"
 
 
@@ -12,7 +12,7 @@ namespace Details {
 class CThreadData
 {
 public:
-    //void (*m_pThreadProc)(void* pData) = nullptr;
+    // void (*m_pThreadProc)(void* pData) = nullptr;
     Thread::ThreadFunc m_pThreadProc;
     qd::Thread* m_pThread = nullptr; // backPtr
     bool m_bStarted = false;
@@ -22,9 +22,7 @@ public:
         : m_pThread(pThread)
     {}
 
-    ~CThreadData()
-    {
-    }
+    ~CThreadData() {}
 
     void setOnThreadDone()
     {
@@ -63,7 +61,7 @@ int _threadSDLProcStatic(void* _pData)
 //////////////////////////////////////////////////////////////////////////
 
 
- Thread::~Thread()
+Thread::~Thread()
 {
     if (m_pSDLThread)
     {
@@ -74,10 +72,10 @@ int _threadSDLProcStatic(void* _pData)
 }
 
 
- void Thread::create(void (*pThreadProc)(void*), void* pData, uint32_t nStackSize /*= 0*/)
- {
-     create([pThreadProc, pData]() { (*pThreadProc)(pData); }, nStackSize);
- }
+void Thread::create(void (*pThreadProc)(void*), void* pData, uint32_t nStackSize /*= 0*/)
+{
+    create([pThreadProc, pData]() { (*pThreadProc)(pData); }, nStackSize);
+}
 
 
 void Thread::create(Thread::ThreadFunc&& threadProc, uint32_t nStackSize /*= 0*/)
@@ -85,7 +83,7 @@ void Thread::create(Thread::ThreadFunc&& threadProc, uint32_t nStackSize /*= 0*/
     assert(!m_pThreadData);
     m_pThreadData = new Details::CThreadData(this);
     m_pThreadData->m_pThreadProc = std::move(threadProc);
-    //m_pThreadData->m_pData = pData;
+    // m_pThreadData->m_pData = pData;
 
     m_pSDLThread = SDL_CreateThread(Details::_threadSDLProcStatic, m_pThreadName.data(), m_pThreadData);
     if (!m_pSDLThread)
@@ -153,21 +151,22 @@ void Thread::setThreadName(const qd::string_view& pName)
 
 
 ThreadEvent::ThreadEvent(bool auto_reset_event)
-    : mbState(false)
-    , mbAutoReset(auto_reset_event)
-    , mpMutex(nullptr)
+    : m_pCondition(nullptr)
+    , m_pMutex(nullptr)
+    , m_bState(false)
+    , m_bAutoReset(auto_reset_event)
 {
-    mpCondition = SDL_CreateCond();
-    if (!mpCondition)
+    m_pCondition = SDL_CreateCond();
+    if (!m_pCondition)
     {
         SDL_Log("Thread::ThreadEvent::create() : FAILED");
         return;
     }
-    mpMutex = SDL_CreateMutex();
-    if (!mpMutex)
+    m_pMutex = SDL_CreateMutex();
+    if (!m_pMutex)
     {
-        SDL_DestroyCond(mpCondition);
-        mpCondition = nullptr;
+        SDL_DestroyCond(m_pCondition);
+        m_pCondition = nullptr;
         SDL_Log("Thread::ThreadEvent::create() (mutex)");
         return;
     }
@@ -176,89 +175,89 @@ ThreadEvent::ThreadEvent(bool auto_reset_event)
 
 void ThreadEvent::set()
 {
-    if (SDL_LockMutex(mpMutex))
+    if (SDL_LockMutex(m_pMutex))
     {
         SDL_Log("cannot signal event (lock)");
         return;
     }
-    mbState = true;
-    if (SDL_CondBroadcast(mpCondition) != 0)
+    m_bState = true;
+    if (SDL_CondBroadcast(m_pCondition) != 0)
     {
-        SDL_UnlockMutex(mpMutex);
+        SDL_UnlockMutex(m_pMutex);
         SDL_Log("cannot signal event");
         return;
     }
-    SDL_UnlockMutex(mpMutex);
-    SDL_CondSignal(mpCondition);
+    SDL_UnlockMutex(m_pMutex);
+    SDL_CondSignal(m_pCondition);
 }
 
 
 void ThreadEvent::wait()
 {
-    if (SDL_LockMutex(mpMutex) != 0)
+    if (SDL_LockMutex(m_pMutex) != 0)
     {
         SDL_Log("wait for event failed (lock)");
         return;
     }
-    while (!mbState)
+    while (!m_bState)
     {
-        if (SDL_CondWait(mpCondition, mpMutex) != 0)
+        if (SDL_CondWait(m_pCondition, m_pMutex) != 0)
         {
-            SDL_UnlockMutex(mpMutex);
+            SDL_UnlockMutex(m_pMutex);
             SDL_Log("wait for event failed");
             return;
         }
     }
-    if (mbAutoReset)
-        mbState = false;
-    SDL_UnlockMutex(mpMutex);
+    if (m_bAutoReset)
+        m_bState = false;
+    SDL_UnlockMutex(m_pMutex);
 }
 
 
 bool ThreadEvent::wait(uint32_t time_out_ms)
 {
-    if (SDL_LockMutex(mpMutex) != 0)
+    if (SDL_LockMutex(m_pMutex) != 0)
     {
         SDL_Log("wait for event failed (lock)");
         return false;
     }
 
     int rc = 0;
-    while (!mbState)
+    while (!m_bState)
     {
-        rc = SDL_CondWaitTimeout(mpCondition, mpMutex, time_out_ms);
+        rc = SDL_CondWaitTimeout(m_pCondition, m_pMutex, time_out_ms);
         if (rc != 0)
         {
             if (rc == SDL_MUTEX_TIMEDOUT)
                 break;
-            SDL_UnlockMutex(mpMutex);
+            SDL_UnlockMutex(m_pMutex);
             SDL_Log("cannot wait for event");
             return false;
         }
     }
-    if (rc == 0 && mbAutoReset)
-        mbState = false;
-    SDL_UnlockMutex(mpMutex);
+    if (rc == 0 && m_bAutoReset)
+        m_bState = false;
+    SDL_UnlockMutex(m_pMutex);
     return rc == 0;
 }
 
 
 void ThreadEvent::reset()
 {
-    if (SDL_LockMutex(mpMutex) != 0)
+    if (SDL_LockMutex(m_pMutex) != 0)
     {
         SDL_Log("Cannot reset event");
         return;
     }
-    mbState = false;
-    SDL_UnlockMutex(mpMutex);
+    m_bState = false;
+    SDL_UnlockMutex(m_pMutex);
 }
 
 
 ThreadEvent::~ThreadEvent()
 {
-    SDL_DestroyCond(mpCondition);
-    SDL_DestroyMutex(mpMutex);
+    SDL_DestroyCond(m_pCondition);
+    SDL_DestroyMutex(m_pMutex);
 }
 
 

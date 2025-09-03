@@ -1760,11 +1760,11 @@ static void heatmap_stats(TCHAR **c)
 			}
 			lastaddress--;
 
-			console_out_f(_T("%03d: %08x - %08x %08x (%d) %s\n"), 
+			console_out_f(_T("%03d: %08x - %08x %08x (%d) %s\n"),
 				lines,
 				firstaddress * HEATMAP_DIV, lastaddress * HEATMAP_DIV + HEATMAP_DIV - 1,
 				lastaddress * HEATMAP_DIV - firstaddress * HEATMAP_DIV + HEATMAP_DIV - 1,
-				lastaddress * HEATMAP_DIV - firstaddress * HEATMAP_DIV + HEATMAP_DIV - 1, 
+				lastaddress * HEATMAP_DIV - firstaddress * HEATMAP_DIV + HEATMAP_DIV - 1,
 				maskname);
 
 			firstaddress = lastaddress + 1;
@@ -2225,7 +2225,7 @@ void record_dma_read_value_pos(uae_u32 v, int hpos, int vpos)
 {
 	hpos += dma_record_hoffset;
 	if (hpos >= NR_DMA_REC_HPOS || vpos >= NR_DMA_REC_VPOS)
-		return;	
+		return;
 	struct dma_rec *dr = &dma_record[dma_record_toggle][vpos * NR_DMA_REC_HPOS + hpos];
 	last_dma_rec = dr;
 	record_dma_read_value(v);
@@ -3562,7 +3562,7 @@ static void smc_detector(uaecptr addr, int rwi, int size, uae_u32 *valp)
 				si->version = smc_version;
 				si->addr = 0xffffffff;
 				si->cnt = 0;
-			}	
+			}
 			if (si->cnt < SMC_MAXHITS) {
 				si->addr = m68k_getpc();
 			}
@@ -5509,7 +5509,7 @@ static void show_exec_lists (TCHAR *t)
 			console_out_f (_T("%08x %d %d %s\n"), node, (int)((v >> 8) & 0xff), (uae_s8)(v & 0xff), name);
 			xfree (name);
 			console_out_f (_T("Attributes %04x First %08x Lower %08x Upper %08x Free %d\n"),
-				get_word_debug (node + 14), get_long_debug (node + 16), get_long_debug (node + 20), 
+				get_word_debug (node + 14), get_long_debug (node + 16), get_long_debug (node + 20),
 				get_long_debug (node + 24), get_long_debug (node + 28));
 			uaecptr mc = get_long_debug (node + 16);
 			while (mc) {
@@ -6239,7 +6239,7 @@ static void debug_sprite (TCHAR **inptr)
 int debug_write_memory_16 (uaecptr addr, uae_u16 v)
 {
 	addrbank *ad;
-	
+
 	ad = &get_mem_bank (addr);
 	if (ad) {
 		ad->wput (addr, v);
@@ -6250,7 +6250,7 @@ int debug_write_memory_16 (uaecptr addr, uae_u16 v)
 int debug_write_memory_8 (uaecptr addr, uae_u8 v)
 {
 	addrbank *ad;
-	
+
 	ad = &get_mem_bank (addr);
 	if (ad) {
 		ad->bput (addr, v);
@@ -6261,7 +6261,7 @@ int debug_write_memory_8 (uaecptr addr, uae_u8 v)
 int debug_peek_memory_16 (uaecptr addr)
 {
 	addrbank *ad;
-	
+
 	ad = &get_mem_bank (addr);
 	if (ad->flags & (ABFLAG_RAM | ABFLAG_ROM | ABFLAG_ROMIN | ABFLAG_SAFE))
 		return ad->wget (addr);
@@ -6274,7 +6274,7 @@ int debug_peek_memory_16 (uaecptr addr)
 int debug_read_memory_16 (uaecptr addr)
 {
 	addrbank *ad;
-	
+
 	ad = &get_mem_bank (addr);
 	if (ad)
 		return ad->wget (addr);
@@ -6283,7 +6283,7 @@ int debug_read_memory_16 (uaecptr addr)
 int debug_read_memory_8 (uaecptr addr)
 {
 	addrbank *ad;
-	
+
 	ad = &get_mem_bank (addr);
 	if (ad)
 		return ad->bget (addr);

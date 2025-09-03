@@ -4,7 +4,7 @@
 #include <EASTL/fixed_set.h>
 
 typedef int ImGuiKeyChord;
-enum ImGuiKey;
+enum ImGuiKey : int;
 
 
 namespace qd {

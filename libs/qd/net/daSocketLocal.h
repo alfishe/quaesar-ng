@@ -15,7 +15,7 @@
 
 
 
-namespace FTCommands {
+namespace cmds {
 class CBaseComand : public qd::RefCounted
 {
     CBaseComand* m_pParent = nullptr;
@@ -28,8 +28,8 @@ public:
         if (pParent)
             SetParent(pParent);
     }
-    virtual void Initialize() {}
-    virtual EFlow Update(qd::Fixed32 Delta) { return EFlow::DONE; }
+    virtual void initialize() {}
+    virtual EFlow update(qd::Fixed32 Delta) { return EFlow::DONE; }
     virtual void done() {}
     virtual void destroy() {}
 
@@ -57,9 +57,9 @@ inline void InvokeCmdDone(CBaseComand* pCurCom)
 }
 
 //////////////////////////////////////////////////////////////////////////
-class CCommandList : public FTCommands::CBaseComand
+class CCommandList : public cmds::CBaseComand
 {
-    typedef FTCommands::CBaseComand TSuper;
+    typedef cmds::CBaseComand TSuper;
     typedef CCommandList TThis;
 
 protected:
@@ -69,57 +69,51 @@ protected:
 public:
     inline int getNumCommands() { return (int)m_pCommands.size(); }
 
-    inline CBaseComand* GetCommand(int Index)
+    inline CBaseComand* getCommand(int Index)
     {
         assert(Index >= 0 && Index < getNumCommands());
         return m_pCommands[Index];
     }
     template<class TPtr>
-    inline TPtr* GetCommand(int Index)
+    inline TPtr* getCommand(int ind)
     {
-        ptr<TPtr> pCmd = TThis::GetCommand(Index);
+        TPtr* pCmd = static_cast<TPtr*>(TThis::getCommand(ind));
         return pCmd;
     }
 
-    inline CBaseComand* GetLastCmd() { return m_pCommands.back(); }
+    inline CBaseComand* getLastCmd() { return m_pCommands.back(); }
 
-    CCommandList(FTCommands::CBaseComand* pParent = nullptr)
+    CCommandList(cmds::CBaseComand* pParent = nullptr)
         : TSuper(pParent)
     {}
 
-    virtual void Initialize() override
+    virtual void initialize() override
     {
-        for (CmdIter Iter = m_pCommands.begin(); Iter != m_pCommands.end(); ++Iter)
+        //for (CmdIter Iter = m_pCommands.begin(); Iter != m_pCommands.end(); ++Iter)
         {
-            CBaseComand* pChildCmd = *Iter;
+            //CBaseComand* pChildCmd = *Iter;
             // InvokeCmdInitialize(pChildCmd);
         }
     }
 
     // CONTINUE ???
-    EFlow Update(qd::Fixed32 Delta) override { return EFlow::UNDEF; }
+    EFlow update(qd::Fixed32 Delta) override { return EFlow::UNDEF; }
 
     virtual void done() override {}
 
     virtual void destroy() override {}
 
-    FTCommands::CBaseComand* AddCmd(const ref_ptr<FTCommands::CBaseComand>& pCommand)
-    {
-        assert(pCommand);
-        pCommand->SetParent(this);
-        m_pCommands.push_back(pCommand);
-        return pCommand;
-    }
+    cmds::CBaseComand* addCmd(const ref_ptr<cmds::CBaseComand>& pCommand);
 
     template<class TPattern>
-    TPattern* Add_()
+    TPattern* add_()
     {
         ref_ptr<TPattern> pPtr = new TPattern();
-        AddCmd(pPtr);
+        addCmd(pPtr);
         return pPtr;
     }
 
-    int FindCommandIndex(CBaseComand* pCommand)
+    int findCommandIndex(CBaseComand* pCommand)
     {
         for (CmdIter It = m_pCommands.begin(); It != m_pCommands.end(); ++It)
         {
@@ -131,7 +125,7 @@ public:
 
     virtual int removeCommand(CBaseComand* pCommand)
     {
-        int Ind = FindCommandIndex(pCommand);
+        int Ind = findCommandIndex(pCommand);
         if (Ind < 0)
         {
             assert(0 && "Command not found to Delete!");
@@ -148,12 +142,12 @@ public:
         return Ind;
     }
 
-    void RemoveOldCommands()
+    void removeOldCommands()
     {
         int numCommands = getNumCommands();
         for (int i = 0; i < numCommands;)
         {
-            CBaseComand* pCommand = GetCommand(i);
+            CBaseComand* pCommand = getCommand(i);
             if (!pCommand->IsDone())
             {
                 ++i;
@@ -170,9 +164,9 @@ public:
 
 
 
-class CCommandSequence : public FTCommands::CCommandList
+class CCommandSequence : public cmds::CCommandList
 {
-    typedef FTCommands::CCommandList TSuper;
+    typedef cmds::CCommandList TSuper;
 
 protected:
     int m_nCurIter;
@@ -207,40 +201,40 @@ public:
     }
 
 public:
-    CCommandSequence(FTCommands::CBaseComand* pParent = nullptr)
+    CCommandSequence(cmds::CBaseComand* pParent = nullptr)
         : TSuper(pParent)
         , m_nCurIter(0)
     {}
 
-    CCommandSequence(FTCommands::CBaseComand* pParent, CBaseComand* pCom1, CBaseComand* pCom2 = nullptr,
+    CCommandSequence(cmds::CBaseComand* pParent, CBaseComand* pCom1, CBaseComand* pCom2 = nullptr,
         CBaseComand* pCom3 = nullptr, CBaseComand* pCom4 = nullptr, CBaseComand* pCom5 = nullptr)
         : TSuper(pParent)
         , m_nCurIter(0)
     {
         if (pCom1)
-            AddCmd(pCom1);
+            addCmd(pCom1);
         if (pCom2)
-            AddCmd(pCom2);
+            addCmd(pCom2);
         if (pCom3)
-            AddCmd(pCom3);
+            addCmd(pCom3);
         if (pCom4)
-            AddCmd(pCom4);
+            addCmd(pCom4);
         if (pCom5)
-            AddCmd(pCom5);
+            addCmd(pCom5);
     }
 
 
-    virtual void Initialize() override
+    virtual void initialize() override
     {
         if (getNumCommands() > 0)
             SetCurIter(0);
     }
 
     // CONTINUE ???
-    EFlow Update(qd::Fixed32 Delta) override;
+    EFlow update(qd::Fixed32 Delta) override;
 
 
-    void InsertCmd(FTCommands::CBaseComand* pCommand, int Index)
+    void InsertCmd(cmds::CBaseComand* pCommand, int Index)
     {
         assert(pCommand);
         pCommand->SetParent(GetParent());
@@ -266,7 +260,7 @@ public:
 
 }; // class CCommandSequence
 
-}; // namespace FTCommands
+}; // namespace cmds
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -283,7 +277,7 @@ namespace LocalImp {
 	class CSocketServiceLocal;
 	class CSocketLocal;
 
-	void _CancelAsyncSocketCommands(FTCommands::CCommandList* pCmdList, qd::CFTSocket* pSocket);
+	void _CancelAsyncSocketCommands(cmds::CCommandList* pCmdList, qd::CFTSocket* pSocket);
 
 	struct HSocket : public qd::RefCounted
 	{
@@ -294,9 +288,9 @@ namespace LocalImp {
 
 		HSocket( uint32_t nIndex )
 			: m_Buffer( qd::MemAlloc::Kb(4) )
-			, m_Port(0)
 			, m_pLink(nullptr)
-		{
+            , m_Port(0)
+        {
 		}
 
 	}; // struct HSocket
@@ -360,8 +354,8 @@ namespace LocalImp {
 			typedef qd::vector< wref_ptr<CSocketLocal> > TCreatedSockets;
 
 			qd::Mutex m_CmdMutex;
-			FTCommands::CCommandList* m_pReadCommands = nullptr;
-            FTCommands::CCommandSequence* m_pSendCommands = nullptr;
+			cmds::CCommandList* m_pReadCommands = nullptr;
+            cmds::CCommandSequence* m_pSendCommands = nullptr;
 			qd::ThreadEvent m_SendCmdEvent = {/*bAutoReset:*/true};
 			volatile bool m_bThreadQuit = false;
 			qd::Thread* m_pThread = nullptr;
@@ -405,9 +399,9 @@ namespace LocalImp {
 
 			virtual void stopImp() override;
 
-			FTCommands::CBaseComand* AddReadCmd( Cmd::ReadSocketBuffer* pCmd );
+			cmds::CBaseComand* AddReadCmd( Cmd::ReadSocketBuffer* pCmd );
 
-			FTCommands::CBaseComand* AddSendCmd( Cmd::SendSocketBuffer* pCmd );
+			cmds::CBaseComand* AddSendCmd( Cmd::SendSocketBuffer* pCmd );
 
 			ref_ptr<Cmd::FlushSocketFuture_t> AddFlushCmd( CSocketLocal* pSocket );
 

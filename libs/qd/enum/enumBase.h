@@ -107,7 +107,7 @@ public:                                                                         
     template<typename V>                                            \
     inline constexpr EThis& operator&= (V Value)                    \
     {                                                               \
-        assert(Value);                                              \
+        /*assert(Value);*/                                          \
         mV = TEnum((uint32_t)mV & (uint32_t)Value);                 \
         return *this;                                               \
     }                                                               \

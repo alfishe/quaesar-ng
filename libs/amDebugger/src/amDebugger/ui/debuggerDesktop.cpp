@@ -1,21 +1,20 @@
 #include "debuggerDesktop.h"
-#include "amDebugger/commonOperations.h"
-#include "amDebugger/debuggerOps.h"
-#include "amDebugger/window/disassembly_wnd.h"
-#include "EASTL/optional.h"
-#include "EASTL/span.h"
 #include "qd/imGui/imGuiHelperClass.h"
 #include "qd/log/log.h"
-#include "qd/qimGui/controls/qimMenu.h"
 #include "qd/qui/comps/uiOperationMgrComp.h"
 #include "qd/qui/comps/uiShortcutMgrComp.h"
 #include "qd/qui/controls/lambda.h"
 #include "qd/qui/controls/menuItemOperation.h"
-#include "qd/qui/shortcutMgr.h"
 #include "qd/qui/operationsRegistry.h"
+#include "qd/qui/shortcutMgr.h"
 #include "qd/typeSystem/typeRegistry.h"
+#include <amDebugger/commonOperations.h>
 #include <amDebugger/dbgOperation.h>
+#include <amDebugger/debuggerOps.h>
 #include <amDebugger/shortcutsList.h>
+#include <amDebugger/window/disassembly_wnd.h>
+#include <EASTL/optional.h>
+#include <EASTL/span.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
@@ -55,7 +54,6 @@ void DebuggerDesktop::_drawMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        qd::IOperationEnvironment* env = this;
         Debugger* pDbg = m_pDbg;
         IVm::VM* vm = pDbg->getVm();
 
@@ -72,7 +70,8 @@ void DebuggerDesktop::_drawMainMenuBar()
         if (auto pm = qIm::LockMenu("Debug"))
         {
             amD::EVmDebugMode debugMode = vm->getVmDebugMode();
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false, debugMode.isBreak());
+            qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false,
+                debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
             ImGui::Separator();
             qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStepInto>(pDbg);
@@ -129,8 +128,6 @@ void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
     operationCreate.gui = this;
     operationCreate.dbg = m_pDbg;
     m_pOperationMgr->createOperations(&operationCreate);
-
-    qim::createContext();
 }
 
 
@@ -202,7 +199,6 @@ void DebuggerDesktop::drawImGuiMainFrame()
 
 void DebuggerDesktop::_drawToolBar()
 {
-    qd::IOperationEnvironment* env = this;
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
@@ -214,7 +210,6 @@ void DebuggerDesktop::_drawToolBar()
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;
 
         Debugger* dbg = getDbg();
-        qd::ShortcutsMgr* shMgr = getShortcuts();
         eastl::string hint;
 
         bool isDbgMode = dbg->isDebugActivated();

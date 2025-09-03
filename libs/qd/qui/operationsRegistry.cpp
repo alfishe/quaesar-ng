@@ -60,7 +60,9 @@ void OperationsRegistry::addOperationDesc(const qd::TypeInfo& ti, qd::operation:
     assert(ti.isDefined());
     THash32 cid = ti.getCid();
     if (findOpDesc(cid))
+    {
         ASSERT_AND_DO(0, return, "Operation args '%s' already registered", ti.getFullName().c_str());
+    }
     m_OpDescList.push_back(std::move(desc));
     uint32_t descIdx = (uint32_t)m_OpDescList.size() - 1;
     m_opsCidToDescIdx[cid] = descIdx;

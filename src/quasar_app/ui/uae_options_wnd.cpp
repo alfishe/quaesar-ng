@@ -13,8 +13,6 @@
 #include "imgui/imgui_internal.h"
 #include "qd/imGui/imGuiHelperClass.h"
 #include "qd/log/log.h"
-#include "qd/qimGui/controls/qimInputBox.h"
-#include "qd/qimGui/qimGui.h"
 #include "qd/qui/uiMessages.h"
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
@@ -81,13 +79,13 @@ void UaeOptionsDlg::onNodeCreated(qd::UiNodeCreator* mk) {
     setSize({600, 400});
 
     createCategory(EOptionCat::ROOT, EOptionCat::UNDEF);
-    UCategory* pCatQuick = createCategory(EOptionCat::ROOT, EOptionCat::QUICK_START);
-    UCategory* pCatHW = createCategory(EOptionCat::ROOT, EOptionCat::HARDWARE);
-    UCategory* pCatHost = createCategory(EOptionCat::ROOT, EOptionCat::HOST);
+    /*UCategory* pCatQuick =*/createCategory(EOptionCat::ROOT, EOptionCat::QUICK_START);
+    /*UCategory* pCatHW =*/createCategory(EOptionCat::ROOT, EOptionCat::HARDWARE);
+    /*UCategory* pCatHost =*/createCategory(EOptionCat::ROOT, EOptionCat::HOST);
 
-    UCategory* pCatCpu = createCategory(EOptionCat::HARDWARE, EOptionCat::CPU);
+    /*UCategory* pCatCpu =*/createCategory(EOptionCat::HARDWARE, EOptionCat::CPU);
+
     UCategory* pCatFloppy = createCategory(EOptionCat::HARDWARE, EOptionCat::FLOPPY);
-
     createOption(pCatFloppy, "Floppy 0")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 0); });
     createOption(pCatFloppy, "Floppy 1")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 1); });
     createOption(pCatFloppy, "Floppy 2")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 2); });
@@ -105,17 +103,16 @@ void UaeOptionsDlg::drawContentImp() {
     if (auto bc = qIm::LockChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None)) {
         int items_count = (int)m_pCategories.size();
 
-        const ImGuiContext& g = *ImGui::GetCurrentContext();
+        //const ImGuiContext& g = *ImGui::GetCurrentContext();
 
         // Calculate size from "height_in_items"
-        int height_in_items = ImMin(items_count, 7);
-        float height_in_items_f = height_in_items + 0.25f;
+        //int height_in_items = ImMin(items_count, 7);
+        //float height_in_items_f = height_in_items + 0.25f;
         ImVec2 size(-FLT_MIN, -FLT_MIN);
 
         if (ImGui::BeginListBox("##OPTIONS CAT", size)) {
             // Assume all items have even height (= 1 line of text). If you need items of different height,
             // you can create a custom version of ListBox() in your code without using the clipper.
-            bool value_changed = false;
             ImGuiListClipper clipper;
             clipper.Begin(
                 items_count,
@@ -144,7 +141,6 @@ void UaeOptionsDlg::drawContentImp() {
                     const bool bItemSelected = (pCurrCat == m_pSelectedCat);
                     if (ImGui::Selectable(itemName.c_str(), bItemSelected)) {
                         m_pSelectedCat = pCurrCat;
-                        value_changed = true;
                     }
                     if (bItemSelected)
                         ImGui::SetItemDefaultFocus();

@@ -3,6 +3,9 @@
 #include "sysdeps.h"
 #include "options.h"
 #include "inputdevice.h"
+#include <EABase/config/eacompilertraits.h>
+
+EA_DISABLE_CLANG_WARNING(-Wmissing-braces);
 // clang-format on
 
 #include <SDL_scancode.h>
@@ -209,11 +212,11 @@ int input_get_default_keyboard(int /*i*/) {
 }
 
 static TCHAR* get_kb_friendlyname(int /*device_id*/) {
-    return "Quaesar SDL keyboard";
+    return const_cast<TCHAR*>("Quaesar SDL keyboard");
 }
 
 static TCHAR* get_kb_uniquename(int /*device_id*/) {
-    return "Quaesar SDL keyboard";
+    return const_cast<TCHAR*>("Quaesar SDL keyboard");
 }
 
 // Dummy function to get the number of widgets (input elements) in an input device

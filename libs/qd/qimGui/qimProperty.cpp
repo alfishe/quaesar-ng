@@ -1,5 +1,0 @@
-
-namespace qim {
-
-
-}; // namespace qim

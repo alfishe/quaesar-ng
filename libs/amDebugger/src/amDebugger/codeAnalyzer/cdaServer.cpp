@@ -181,7 +181,6 @@ void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, 
             AddrRef startFrom = dc.m_pPrevChunk->getDisasmCodeValidAddr(-1);
 
             CapstoneDisassemblerContext cpd(m_pCapstone);
-            bool hasValidAddr = false;
 
             // try to find valid instruction start address
             for (int offset = 0; offset < 8; ++offset)

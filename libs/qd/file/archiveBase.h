@@ -391,7 +391,7 @@ class CArchive
     typedef CArchive TThis;
 
 protected:
-    uint32_t m_UserFileVer;
+    uint32_t m_UserFileVer = 0;
     qd::ESaveLoad m_StoreMode;
     qd::IArchiveFormat* m_pAr; // ARCHIVE FILE FORMAT
 public:
@@ -729,7 +729,7 @@ public:
         return Val;                                                                  \
     }                                                                                \
     template<typename TVal>                                                          \
-    inline TVal TName##Self(TVal& Val, qd::Tribool bStoring = qd::Tribool::Unknown)        \
+    inline TVal TName##Self(TVal& Val, qd::Tribool bStoring = qd::Tribool::Undef)    \
     {                                                                                \
         bool bbStoring = (bStoring.isUnknown()) ? isStoring() : (bStoring.isTrue()); \
         if (bbStoring)                                                               \
@@ -774,17 +774,12 @@ public:
     }
 
     template<typename TInt>
-    inline bool boolSelf(TInt& Val, qd::Tribool bStoring = qd::Tribool::Unknown)
+    inline bool boolSelf(TInt& Val, qd::Tribool bStoring = qd::Tribool::Undef)
     {
         bool bbStoring = (bStoring.isUnknown()) ? isStoring() : bStoring.getBool();
         if (bbStoring)
-        {
             return bool_S(Val);
-        }
-        else
-        {
-            return bool_L(Val);
-        }
+        return bool_L(Val);
     }
 
     inline void write(const void* pBuffer, uint32_t nBytes) { m_pAr->_arWrite_Buf(pBuffer, nBytes); }

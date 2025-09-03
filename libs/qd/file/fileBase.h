@@ -172,7 +172,8 @@ struct EFileSeek {
 	
 	
     typedef size_t HndFile;
-	
+
+
 	class StdFile : public qd::IFile
 	{
 		typedef StdFile TThis;
@@ -200,7 +201,7 @@ struct EFileSeek {
 			_setOpened(true);
 		}
 
-        virtual qd::string_view getFileName() const { return m_Name; }
+        virtual qd::string_view getFileName() const override { return m_Name; }
         void setFileName(const qd::string& Name) { m_Name = Name; }
 
 		// MODE can be: "rb", "wb", "rt", "wt"

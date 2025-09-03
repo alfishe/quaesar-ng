@@ -10,21 +10,16 @@
 namespace qd {
 
 
-
-
 CArchiveBin::CArchiveBin(qd::IBaseFileIO* pFile, qd::ESaveLoad bStoring /*= qd::ESaveLoad::Load*/)
-	: TSuper(pFile, bStoring)
-	, qd::CArchive(this, pFile, bStoring)
-	, m_ar(*this) {
-	TThis::_onConstruct(pFile, bStoring);
+    : CArchive(this, pFile, bStoring)
+    , IArchiveFormat(pFile, bStoring)
+    , m_ar(*this)
+{
+    TThis::_onConstruct(pFile, bStoring);
 }
 
 
-
-
 CArchiveBin::~CArchiveBin() {}
-
-
 
 
 void CArchiveBin::_onConstruct(qd::IBaseFileIO* pFile, qd::ESaveLoad bStoring) {

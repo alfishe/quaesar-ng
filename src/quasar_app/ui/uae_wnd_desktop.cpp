@@ -91,6 +91,7 @@ qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::args::Base*
 
 qd::EFlow UaeGuiDesktop::applyOperationMsgProcImp(qd::operation::args::Base* args) {
     if (auto p = args->cast_<qsr::operations::ShowUaeOptionsWnd>()) {
+        unused(p);
         qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);
         IVm::VM* vm = getUaeClientApp()->getVm();
         pOptionsDlg->setVm(vm);

@@ -178,7 +178,6 @@ void DisassemblyView::drawContentImp()
     if (ImGui::IsItemHovered(0))
     {
         const float wheel = g.IO.MouseWheel;
-        const ImGuiKey wheel_key = ImGuiKey_MouseWheelY;
         if (wheel != 0.0f /*&& ImGui::TestKeyOwner(wheel_key, ImGui::GetItemID()) &&*/ )
         {
             if (m_bSnapViewPc)

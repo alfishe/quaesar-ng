@@ -1,7 +1,6 @@
 #include "window.h"
 #include "imgui/imgui.h"
-#include "qd/qimGui/controls/qimWindow.h"
-#include "qd/qimGui/qimProperty.h"
+#include "qd/base/tribool.h"
 
 
 namespace qd {
@@ -27,10 +26,10 @@ void UiWindow::drawImp()
         if (bModal)
         {
             ImGui::OpenPopup(m_title.c_str());
-            vis = (qd::Tribool)ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+            vis = (Tribool)ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
         }
         else
-            vis = (qd::Tribool)ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+            vis = (Tribool)ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
 
         if (!m_bVisible)
             c_def(0);
@@ -56,33 +55,6 @@ void UiWindow::drawImp()
     else
         BPT();
 
-#if 0
-    // start draw QImGui window
-    QCTRL(qim::Window, pImWindow, m_title.c_str())
-    {
-        if (m_size.isValid())
-        {
-            Q_IF(qim::Window::Size, pSize)
-            pSize->set(m_size);
-        }
-
-        Q_IF(qim::Sect::ChildList, _)
-        {
-            pImWindow->setVisible(true);
-            pImWindow->setModal(isModal());
-
-            if (pImWindow->sectChildBegin())
-            {
-                // DRAW CHILD
-                drawContentImp();
-            }
-            pImWindow->sectChildEnd();
-
-            if (!pImWindow->isVisible())
-                setVisible(false);
-        }
-    }
-#endif //
 }
 
 }; // namespace qd

@@ -184,9 +184,7 @@ void UiNode::setId(uint32_t newId)
 
 qd::EFlow UiNode::onUiNodeMessageProc(qd::UiMessage* in_msg)
 {
-    if (auto p = in_msg->cast_<uiMsg::OnChildAdded>())
-    {
-    }
+    //if (auto p = in_msg->cast_<uiMsg::OnChildAdded>()) {}
     return qd::EFlow::SUCCESS;
 }
 
@@ -280,7 +278,7 @@ void UiNode::destroy()
 
 void UiNode::addComp(UiNodeComp* pNewComp)
 {
-    const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
+    //const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
     m_pComps.push_back(pNewComp);
 }
 

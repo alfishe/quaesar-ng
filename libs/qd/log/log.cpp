@@ -63,7 +63,7 @@ TermMsg log_info(const char* fmt, ...)
     TermMsg r(TermMsg::W_INFO);
     r.setMsgV(fmt, args);
     va_end(args);
-    return std::move(r);
+    return r; // std::move(r);
 }
 
 
@@ -74,7 +74,7 @@ TermMsg log_debug(const char* fmt, ...)
     TermMsg r(TermMsg::W_DEBUG);
     r.setMsgV(fmt, args);
     va_end(args);
-    return std::move(r);
+    return r; // std::move(r);
 }
 
 
@@ -85,7 +85,7 @@ TermMsg log_warn(const char* fmt, ...)
     TermMsg r(TermMsg::W_WARNING);
     r.setMsgV(fmt, args);
     va_end(args);
-    return std::move(r);
+    return r; // std::move(r);
 }
 
 TermMsg log_error(const char* fmt, ...)
@@ -95,7 +95,7 @@ TermMsg log_error(const char* fmt, ...)
     TermMsg r(TermMsg::W_ERROR);
     r.setMsgV(fmt, args);
     va_end(args);
-    return std::move(r);
+    return r; // std::move(r);
 }
 
 

@@ -105,6 +105,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
     if (c_def(0)) {
     } else if (auto p = args->cast_<amD::operation::args::DebugTraceContinue>()) {
         r = true;
+        unused(p);
         if (vm->getVmDebugMode() == EVmDebugMode::Live)
             vm->setVmDebugMode(EVmDebugMode::Break);
         else
@@ -112,11 +113,13 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
 
     } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepInto>()) {
         r = true;
+        unused(p);
         vm->setVmDebugMode(EVmDebugMode::Break);
         pUae->execConsoleCmd("t");
 
     } else if (auto p = args->cast_<amD::operation::args::DebugTraceStart>()) {
         r = true;
+        unused(p);
         if (vm->getVmDebugMode() == EVmDebugMode::Live)
             vm->setVmDebugMode(EVmDebugMode::Break);
         else
@@ -124,10 +127,12 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
 
     } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepOut>()) {
         r = true;
+        unused(p);
         pUae->execConsoleCmd("z");
 
     } else if (auto p = args->cast_<amD::operation::args::CopperTraceStep>()) {
         r = true;
+        unused(p);
         pUae->execConsoleCmd("ot");
 
     } else if (auto p = args->cast_<amD::operation::args::DisasmToggleBreakpoint>()) {
@@ -140,6 +145,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
 
     } else if (auto p = args->cast_<amD::operation::args::ToggleTurboEmulation>()) {
         r = true;
+        unused(p);
         if (::currprefs.turbo_emulation != 0) {
             ::warpmode(0);  // off
         } else {
@@ -148,6 +154,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
 
     } else if (auto p = args->cast_<amD::operation::args::UaeResetAmiga>()) {
         r = true;
+        unused(p);
         ::uae_reset(1, 1);
 
     } else if (auto p = args->cast_<amD::operation::args::CopperToggleBreakpoint>()) {
@@ -164,6 +171,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
         return qd::EFlow::SUCCESS;
     } else if (auto p = args->cast_<amD::operation::args::UaeWndAlwaysOnTop>()) {
         r = true;
+        unused(p);
         //         if (pUae->isWndAlwaysOnTop()) {
         //             pUae->setWndAlwaysOnTop(false);
         //         } else {

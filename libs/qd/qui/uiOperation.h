@@ -136,6 +136,7 @@ struct Base {
     TS_REFLECT_CLASS(qd::operation::args::Base, void);
 public:
     inline Base() = default;
+    virtual ~Base() = default;
     bool _tryCast(const qd::TypeInfo& msg_type);
 
     template<class T>

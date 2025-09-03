@@ -1,13 +1,12 @@
 #pragma once
-#include "qd/qui/uiOperation.h"
-#include "qd/typeSystem/typeDeclare.h"
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/emuDefs.h>
 #include <EASTL/span.h>
 #include <qd/base/baseTypes.h>
+#include <qd/qui/uiOperation.h>
+#include <qd/typeSystem/typeDeclare.h>
 
 
-enum EVmDebugMode;
 
 //////////////////////////////////////////////////////////////////////////
 // It gonna be a snapshot of the machine at any given moment, just data.
@@ -50,7 +49,7 @@ protected:
     amD::EVmDebugMode m_debugMode = amD::EVmDebugMode::Live;
 
     static IVm::VM* staticVmInst;
-    IVm::VM();
+    VM();
 
 public:
     static IVm::VM* get() { return IVm::VM::staticVmInst; }
@@ -59,7 +58,11 @@ public:
     virtual ~VM();
 
     virtual void init() = 0;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) { assert(0); return qd::EFlow::NO_RESULT; }
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args)
+    {
+        assert(0);
+        return qd::EFlow::NO_RESULT;
+    }
 
     int getScreenSizeX() const { return amiga_width; }
     int getScreenSizeY() const { return amiga_height; }

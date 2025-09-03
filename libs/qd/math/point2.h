@@ -93,7 +93,7 @@ class TSize : public TPoint2<TInt>
 
 public:
     using TPoint2<TInt>::TPoint2;
-    bool isSizeValid() const { return x > 0 && y > 0; }
+    bool isSizeValid() const { return this->x > 0 && this->y > 0; }
 }; // class Size
 
 

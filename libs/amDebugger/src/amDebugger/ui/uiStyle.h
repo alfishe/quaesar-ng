@@ -29,7 +29,7 @@ public:
     }; // enum
 #undef IT
 
-    void UiStyle::applyColors()
+    void applyColors()
     {
 #define IT(name, color) this->setColorU(name, color);
         UiColorsList(IT);
@@ -37,7 +37,7 @@ public:
     }
 
 public:
-    UiStyle::UiStyle() { applyColors(); }
+    UiStyle() { applyColors(); }
 
     static UiStyle& get()
     {

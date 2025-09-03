@@ -21,10 +21,10 @@ inline void sleep(float durationSec)
 
 class ThreadEvent
 {
-    SDL_cond* mpCondition;
-    SDL_mutex* mpMutex;
-    volatile bool mbState;
-    bool mbAutoReset;
+    SDL_cond* m_pCondition;
+    SDL_mutex* m_pMutex;
+    volatile bool m_bState;
+    bool m_bAutoReset;
 
 public:
     ThreadEvent(bool auto_reset_event = true);

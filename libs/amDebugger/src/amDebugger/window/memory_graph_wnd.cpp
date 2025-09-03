@@ -48,7 +48,7 @@ void MemoryGraphWnd::drawContentImp() {
         return;
     }
 
-    AddrRef addrPtr = mBankOffset + pCurBank->m_startAddr;
+    //AddrRef addrPtr = mBankOffset + pCurBank->m_startAddr;
     qd::InlineString addrStr(m_exprAddr.getStrVal().begin(), m_exprAddr.getStrVal().end());
     if (ImGui::InputText("Address", &addrStr)) {
         m_exprAddr.setStrVal(addrStr);

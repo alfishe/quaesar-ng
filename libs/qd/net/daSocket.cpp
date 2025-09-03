@@ -409,7 +409,7 @@ namespace qd
 				log_debug( "CFtTcpListner::OnServerConnectionAcceptedCallback() - Error occured code:%i socket:%X", (int)error, ptr2DW(pSocket) );
 		}
 
-		_OnStartConnectionWaiting();
+		_onStartConnectionWaiting();
 	}
 
 
@@ -426,23 +426,21 @@ namespace qd
 
 
 	CFtTcpListner::CFtTcpListner( CSocketService* pIOService, unsigned short nPort, const CFtTcpListner::TOnConnectCB& OnConnect, qd::string Name )
-		: m_pListnerImp( nullptr )
-		, m_OnConnectCB( OnConnect )
-		, m_pIOService( pIOService )
-		, m_bRun( false )
-		, m_nListenPort( nPort )
-		, m_Name(Name)
-	{
+        : m_pIOService(pIOService)
+        , m_OnConnectCB(OnConnect)
+        , m_Name(Name)
+        , m_nListenPort(nPort)
+    {
 		log_debug( "CFtTcpListner - starts listen port: %u Name:\"%s\"", (uint32_t)nPort, CC(m_Name) );
 		m_CreateDataProc = &DaSocket::MakeGameSlotProc;
 	}
 
 
 
-	void CFtTcpListner::StartAsync()
+	void CFtTcpListner::startAsync()
 	{
 		if ( vlog_socket >= 1 )
-			log_debug("CFtTcpListner::StartAsync() : Port: %i Name:\"%s\"", (int)m_nListenPort, CC(m_Name) );
+			log_debug("CFtTcpListner::startAsync() : Port: %i Name:\"%s\"", (int)m_nListenPort, CC(m_Name) );
 
 		// START TCP listener
 		if ( m_ListnerThread.isActive() ) {
@@ -454,7 +452,7 @@ namespace qd
 			throw Exception( "CFtTcpListner::Start - listner port == %u", (uint32_t)m_nListenPort );
 
 		m_ListnerThread.setThreadName(m_Name);
-        m_ListnerThread.create([this]() { this->_ListnerThreadProc(); });
+        m_ListnerThread.create([this]() { this->_listnerThreadProc(); });
 	}
 
 
@@ -488,7 +486,7 @@ namespace qd
 
 
 	// RUN IO SERVICE IN THREAD
-	void CFtTcpListner::_ListnerThreadProc()
+	void CFtTcpListner::_listnerThreadProc()
 	{
 		assert2( !m_pListnerImp, "CFtTcpListner::!m_pListnerImp", 0 );
 		if ( m_pListnerImp )
@@ -501,7 +499,7 @@ namespace qd
 		if ( vlog_socket >= 1 )
 			log_debug( "CFtTcpListner::_ListnerThreadProc() port:%i  Name:\"%s\" - START WAITING THREAD", (int)m_nListenPort, CC(m_Name) );
 
-		_OnStartConnectionWaiting();
+		_onStartConnectionWaiting();
 
 		m_bRun = true;
 
@@ -520,13 +518,13 @@ namespace qd
 	}
 
 
-	void CFtTcpListner::_OnStartConnectionWaiting()
+	void CFtTcpListner::_onStartConnectionWaiting()
 	{
 		if ( vlog_socket >= 1 )
-			log_debug( "CFtTcpListner::_OnStartConnectionWaiting() port:%i Name:\"%s\"", (int)m_nListenPort, CC(m_Name) );
+			log_debug( "CFtTcpListner::_onStartConnectionWaiting() port:%i Name:\"%s\"", (int)m_nListenPort, CC(m_Name) );
 
 		if (!m_pListnerImp) {
-			log_debug("ERROR - CFtTcpListner::_OnStartConnectionWaiting() m_pListnerImp is NULL (port:%i Name:\"%s\")", (int)m_nListenPort, CC(m_Name));
+			log_debug("ERROR - CFtTcpListner::_onStartConnectionWaiting() m_pListnerImp is NULL (port:%i Name:\"%s\")", (int)m_nListenPort, CC(m_Name));
 			return;
 		}
 
@@ -712,7 +710,7 @@ namespace qd
 	CListnerImpBase::CListnerImpBase( CSocketService* pIOService, CFtTcpListner* pTcpListner )
 		: m_pIOService(pIOService)
 		, m_pTcpListner(pTcpListner)
-		, m_nListenPort (pTcpListner->GetPort() )
+		, m_nListenPort (pTcpListner->getPort() )
 	{
 	}
 

@@ -15,7 +15,6 @@
 #include "qd/app/appMessages.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/imGui/imGuiHelperClass.h"
-#include "qd/qimGui/controls/qimMenu.h"
 #include "qd/qui/controls/menuItemOperation.h"
 #include "quaesar.h"
 #include "quaesar_app.h"
@@ -244,6 +243,7 @@ UaeServerThread* UaeClientAppPart::getUaeThread() const {
 
 qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::args::Base* args) {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
+        unused(p);
         amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();
         pDbg->setWndVisible(true);
         return qd::EFlow::STOP;

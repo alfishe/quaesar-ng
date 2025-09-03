@@ -305,7 +305,7 @@ class CFtTcpListner;
 
 		class CLotsPool : public qd::RefCounted
 		{
-			friend class CFTSocket;
+			friend class qd::CFTSocket;
 			qd::vector< ref_ptr<CBaseLot> > m_pLots;
 			typedef qd::vector< ref_ptr<CBaseLot> > TLotsList;
 			CFTSocket* m_pSocket;
@@ -472,7 +472,7 @@ class CFtTcpListner;
 		struct CGameSlotDataProc : public CBaseDataProc
 		{
 			typedef CBaseDataProc super;
-			friend class CFTSocket;
+			friend class qd::CFTSocket;
 			typedef CGameSlotDataProc TThis;
 		private:
 			ref_ptr<MemData> m_pCurChunkBuffer;
@@ -597,17 +597,13 @@ class CFtTcpListner;
 		qd::Mutex m_SocketMutex;
 
 	protected:
-		eastl::atomic<int> /*eConSt*/ m_ConnectState;
-		bool m_bInit;
+        DaSocket::CBaseDataProc* m_pDataProc;
+        eastl::atomic<int> /*eConSt*/ m_ConnectState;
 		qd::string m_ConnectName;
-
 		ref_ptr<SocketLots::CLotsPool> m_pLotsPool;
+        CInetAddr m_ConnectAddr;
+        bool m_bInit;
 
-
-	protected:
-
-		DaSocket::CBaseDataProc* m_pDataProc;
-		CInetAddr m_ConnectAddr;
 
 		void SetInit(volatile bool Init) {
 			m_bInit = Init;
@@ -820,9 +816,7 @@ class CFtTcpListner;
 	//////////////////////////////////////////////////////////////////////////
 
 
-
 	class CFTServerPart;
-
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -834,47 +828,43 @@ class CFtTcpListner;
         TOnConnectCB m_OnConnectCB;
         using TCreateDataProc = DaSocket::CBaseDataProc* (*)();
         TCreateDataProc m_CreateDataProc;
-		CListnerImpBase* m_pListnerImp;
+		CListnerImpBase* m_pListnerImp = nullptr;
 		qd::Thread m_ListnerThread;
 		qd::string m_Name;
 		unsigned short m_nListenPort;
-		volatile bool m_bRun;
+		volatile bool m_bRun = false;
 
 	public:
 
 		CFtTcpListner( CSocketService* pIOService, unsigned short nPort, const CFtTcpListner::TOnConnectCB& OnConnect, qd::string Name );
+        ~CFtTcpListner();
 
-		void SetSocketDataProcCallback(const CFtTcpListner::TCreateDataProc& CreateDataProc) {
+		void setSocketDataProcCallback(const CFtTcpListner::TCreateDataProc& CreateDataProc) {
 			m_CreateDataProc = CreateDataProc;
 		}
 
-		unsigned short GetPort() const {
+		unsigned short getPort() const {
 			return m_nListenPort;
 		}
-		void SetPort(unsigned short Port) { m_nListenPort = Port; }
+		void setPort(unsigned short Port) { m_nListenPort = Port; }
 
-		CSocketService* GetIOService() const {
+		CSocketService* getIOService() const {
 			return m_pIOService;
 		}
 
-		bool IsRun() const {
+		bool isRun() const {
 			return m_bRun;
 		}
 
 	public:
 
-		void StartAsync();
-
+		void startAsync();
 		void destroy();
-
 		void OnServerConnectionAcceptedCallback(ref_ptr<CFTSocket> pSocket, FTSocketErrorCode error);
 
-		~CFtTcpListner();
-
 	private:
-		void _OnStartConnectionWaiting();
-
-		void _ListnerThreadProc();
+		void _onStartConnectionWaiting();
+		void _listnerThreadProc();
 
 	}; // class CFTcpListner
 	//////////////////////////////////////////////////////////////////////////

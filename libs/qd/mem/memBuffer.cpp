@@ -7,42 +7,42 @@ namespace qd {
 void MemBuf::expandBuffer(uint32_t newSize)
 {
     assert((int)newSize >= 0 && "CMemBuf() has Size greater then INT, overflow maybe");
-    if (mpBuffer)
+    if (m_pBuffer)
     {
-        if (mCapacity >= newSize)
+        if (m_nCapacity >= newSize)
             return;
 
         // REDUCE BUFFER SIZE
-        void* pMovedBuffer = realloc(mpBuffer, newSize);
+        void* pMovedBuffer = realloc(m_pBuffer, newSize);
         if (!pMovedBuffer)
         {
             ASSERT_F(0, "MemBuf Can't realloc buffer size %u", newSize);
         }
         else
-            mpBuffer = (uint8_t*)pMovedBuffer;
+            m_pBuffer = (uint8_t*)pMovedBuffer;
 
-        assert(mpBuffer);
+        assert(m_pBuffer);
     }
     else
     {
         if (newSize)
         {
-            mpBuffer = (uint8_t*)malloc(newSize);
-            if (!mpBuffer)
+            m_pBuffer = (uint8_t*)malloc(newSize);
+            if (!m_pBuffer)
                 ASSERT_F(0, "CMemBuf - Out of memory size:%u", newSize);
         }
     }
-    mCapacity = newSize;
-    mbNeedFree = true;
+    m_nCapacity = newSize;
+    m_bNeedFree = true;
 }
 
 
 void MemBuf::memMove(uint32_t srcOffset, uint32_t destOffset, uint32_t nBytes)
 {
-    uint8_t* pSrcBuf = (uint8_t*)mpBuffer + srcOffset;
-    uint8_t* pDestBuf = (uint8_t*)mpBuffer + destOffset;
-    uint8_t* pEndBuf = (uint8_t*)mpBuffer + mCapacity;
-    if (srcOffset + nBytes > mCapacity)
+    uint8_t* pSrcBuf = (uint8_t*)m_pBuffer + srcOffset;
+    uint8_t* pDestBuf = (uint8_t*)m_pBuffer + destOffset;
+    uint8_t* pEndBuf = (uint8_t*)m_pBuffer + m_nCapacity;
+    if (srcOffset + nBytes > m_nCapacity)
         throw Exception(EException::OUT_OF_RANGE, "CMemBuf::MemMove - Buffer overflow");
     int err;
     err = memmove_s(pDestBuf, pEndBuf - pDestBuf, pSrcBuf, nBytes);
