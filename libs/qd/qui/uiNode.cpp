@@ -48,7 +48,6 @@ qd::UiNode* UiNode::findChildByType(const qd::TypeInfo& ti) const
             return item.get();
     }
     return nullptr;
-
 }
 
 
@@ -184,7 +183,7 @@ void UiNode::setId(uint32_t newId)
 
 qd::EFlow UiNode::onUiNodeMessageProc(qd::UiMessage* in_msg)
 {
-    //if (auto p = in_msg->cast_<uiMsg::OnChildAdded>()) {}
+    // if (auto p = in_msg->cast_<uiMsg::OnChildAdded>()) {}
     return qd::EFlow::SUCCESS;
 }
 
@@ -276,19 +275,20 @@ void UiNode::destroy()
 }
 
 
-void UiNode::addComp(UiNodeComp* pNewComp)
+void UiNode::addComp(qd::unique_ptr<qd::UiNodeComp> pNewComp)
 {
-    //const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
-    m_pComps.push_back(pNewComp);
+    // const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
+    m_pComps.push_back(std::move(pNewComp));
 }
 
 
 UiNodeComp* UiNode::findComp(const qd::TypeInfo& comp) const
 {
-    auto it = eastl::find_if(m_pComps.begin(), m_pComps.end(),
-        [comp](const UiNodeComp* pCurComp) { return pCurComp ? pCurComp->getTypeInfo().isDerivedFrom(comp) : false; });
+    auto it = eastl::find_if(m_pComps.begin(), m_pComps.end(), [comp](const qd::unique_ptr<qd::UiNodeComp>& pCurComp) {
+        return pCurComp ? pCurComp->getTypeInfo().isDerivedFrom(comp) : false;
+    });
     if (it != m_pComps.end())
-        return *it;
+        return (*it).get();
     return nullptr;
 }
 

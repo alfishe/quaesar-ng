@@ -9,11 +9,12 @@
 
 FORWARD_DECLARATION_2(IVm, VM);
 FORWARD_DECLARATION_2(IVm, Floppy);
-
+struct SDL_Window;
 
 namespace qsr {
 
 struct UCategory;
+class UaeOptionsDlg;
 
 struct EOptionCat {
 #define OPTIONS_LIST(IT)          \
@@ -41,6 +42,7 @@ struct EOptionCat {
 
 struct OptionDrawContext {
     IVm::VM* vm = nullptr;
+    UaeOptionsDlg* m_pDlg = nullptr;
 };
 
 struct UOption {
@@ -115,6 +117,6 @@ public:
 };  // class UaeOptionsDlg
 
 
-extern void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy);
+extern void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy, SDL_Window* pParentWnd = nullptr);
 
 };  // namespace qsr

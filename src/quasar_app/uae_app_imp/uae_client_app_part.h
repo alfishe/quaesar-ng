@@ -1,4 +1,4 @@
-#include "qd/app/appPart.h"
+#include "qd/app/applicationPart.h"
 //#include "uae_vm_imp.h"
 #include "ui/uae_wnd_desktop.h"
 
@@ -15,10 +15,10 @@ FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 
 namespace qsr {
 
-// AppPart that represents UAE-emulator window in main-thread
+// ApplicationPart that represents UAE-emulator window in main-thread
 //
-class UaeClientAppPart : public qd::AppPart, public qd::IOperationEnvironment {
-    TS_BEGIN_REFLECT_CLASS(UaeClientAppPart, qd::AppPart);
+class UaeClientAppPart : public qd::ApplicationPart, public qd::IOperationEnvironment {
+    TS_BEGIN_REFLECT_CLASS(UaeClientAppPart, qd::ApplicationPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("UAE Client"));
     TS_END();
 
@@ -36,7 +36,7 @@ public:
     UaeClientAppPart(IVm::VM* _vm);
     virtual ~UaeClientAppPart();
 
-    virtual void onPartCreate(qd::AppPart::OnCreate_t& prm) override;
+    virtual void onPartCreate(qd::ApplicationPart::OnCreate_t& prm) override;
 
     void _createUaeWindow();
     virtual void update(float dt, float time) override;

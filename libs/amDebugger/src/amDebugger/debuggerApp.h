@@ -3,7 +3,7 @@
 #include <EASTL/fixed_vector.h>
 #include <EASTL/string.h>
 #include "qd/base/base.h"
-#include "qd/app/appPart.h"
+#include "qd/app/applicationPart.h"
 #include "qd/base/classIdCC.h"
 #include "qd/qui/uiOperation.h"
 #include "amDebugger/debugger.h"
@@ -36,9 +36,9 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-class DebuggerApp : public qd::AppPart, public qd::IOperationEnvironment
+class DebuggerApp : public qd::ApplicationPart, public qd::IOperationEnvironment
 {
-    TS_REFLECT_CLASS(amD::DebuggerApp, qd::AppPart);
+    TS_REFLECT_CLASS(amD::DebuggerApp, qd::ApplicationPart);
 private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pWndRenderer = nullptr;
@@ -59,7 +59,7 @@ public:
     SDL_Renderer* getRenderer() const { return m_pWndRenderer; }
     uint32_t getCurDbgClientIdx() const { return m_nCurDbgClientIdx; }
 
-    virtual void onPartCreate(AppPart::OnCreate_t& prm) override;
+    virtual void onPartCreate(ApplicationPart::OnCreate_t& prm) override;
     void init();
     virtual void destroy() override;
     virtual void update(float dt, float time) override;

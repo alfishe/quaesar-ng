@@ -1,5 +1,5 @@
 #include "qd/app/application.h"
-#include "qd/app/appPart.h"
+#include "qd/app/applicationPart.h"
 #include "qd/app/appPartsMgr.h"
 #include "qd/app/appMessages.h"
 
@@ -7,13 +7,13 @@
 namespace qd {
 
 
- AppPart::~AppPart(void)
+ ApplicationPart::~ApplicationPart()
  {
-     c_def(this);
+     BPT();
  }
 
 
-void AppPart::onPartCreate(AppPart::OnCreate_t& prm)
+void ApplicationPart::onPartCreate(ApplicationPart::OnCreate_t& prm)
 {
     m_pApp = prm.app;
 
@@ -25,13 +25,13 @@ void AppPart::onPartCreate(AppPart::OnCreate_t& prm)
 }
 
 
-AppPartsManager* AppPart::getAppParts() const
+AppPartsManager* ApplicationPart::getAppParts() const
 {
     return m_pApp->getAppParts();
 }
 
 
-void AppPart::setZOrder(const float& zOrder)
+void ApplicationPart::setZOrder(const float& zOrder)
 {
     if (m_ZOrder == zOrder)
         return;
@@ -42,7 +42,7 @@ void AppPart::setZOrder(const float& zOrder)
 }
 
 
-bool AppPart::setPartActive(bool bActive)
+bool ApplicationPart::setPartActive(bool bActive)
 {
     if (isPartActive() == bActive)
         return bActive;
@@ -54,7 +54,7 @@ bool AppPart::setPartActive(bool bActive)
 }
 
 
-bool AppPart::setPartVisible(bool bPartVisisble)
+bool ApplicationPart::setPartVisible(bool bPartVisisble)
 {
     if (isPartVisible() == bPartVisisble)
         return bPartVisisble;
@@ -67,7 +67,7 @@ bool AppPart::setPartVisible(bool bPartVisisble)
 }
 
 
-qd::EFlow AppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
+qd::EFlow ApplicationPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
 {
     switch (in_msg.id)
     {
@@ -81,7 +81,7 @@ qd::EFlow AppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
 
 
 
-void AppPart::destroy()
+void ApplicationPart::destroy()
 {
     destroyImp();
 }

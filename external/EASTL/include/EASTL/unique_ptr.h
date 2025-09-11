@@ -558,12 +558,12 @@ namespace eastl
 	/// hash specialization for unique_ptr.
 	/// It simply returns eastl::hash(x.get()). If your unique_ptr pointer type (the return value of unique_ptr<T>::get) is
 	/// a custom type and not a built-in pointer type then you will need to independently define eastl::hash for that type.
-	template <typename T, typename D>
-	struct hash< unique_ptr<T, D> >
-	{
-		size_t operator()(const unique_ptr<T, D>& x) const EA_NOEXCEPT
-			{ return eastl::hash<typename unique_ptr<T, D>::pointer>()(x.get()); }
-	};
+        template <typename T, typename D>
+        struct hash<unique_ptr<T, D>> {
+          size_t operator()(const unique_ptr<T, D>& x) const EA_NOEXCEPT {
+            return eastl::hash<typename unique_ptr<T, D>::pointer>()(x.get());
+          }
+        };
 
 	/// swap
 	/// Exchanges the owned pointer beween two unique_ptr objects.

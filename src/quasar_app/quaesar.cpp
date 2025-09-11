@@ -5,8 +5,8 @@
 #include <qd/app/appPartsMgr.h>
 #include <qd/app/application.h>
 #include <qd/thread/thread.h>
-#include <stdarg.h>
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
 #include "cli11/CLI11.hpp"
 #include "parse_options.h"
 
@@ -38,24 +38,31 @@ int SDL_main(int argc, char* argv[]) {
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
     cliApp.parse(argc, argv);
 
-    // Create Quaesar APP
-    NFD_Init();  // init NativeFileDialog lib
-    g_pApp = new QuasarApp();
-    qd::CreateApplicationParams prm;
-    g_pApp->onConstruct(prm);
+    // create Quaesar app
+    {
+        g_pApp = new QuasarApp();
+        qd::CreateApplicationParams prm;
+        g_pApp->onConstruct(prm);
+    }
 
-    // Initialize SDL
+    // initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return 1;
     }
     atexit(&SDL_Quit);
 
+    // initialize NFD
+    if (NFD_Init() != NFD_OKAY) {
+        printf("NFD_Init failed: %s\n", NFD_GetError());
+        return 0;
+    }
 
-    // quaesar main loop
+    // app main loop
     ::g_pApp->initialize();
     ::g_pApp->doMainLoop();
 
+    // destroy app
     ::g_pApp->destroy();
     NFD_Quit();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);

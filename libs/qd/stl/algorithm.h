@@ -1,7 +1,7 @@
 #pragma once
 #include "qd/stl/forwardDecl.h"
 #include <EASTL/algorithm.h>
-#include "EASTL/functional.h"
+#include <EASTL/functional.h>
 
 namespace qd
 {

@@ -26,7 +26,7 @@ add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
 add_subdirectory(external/EASTL)
 add_subdirectory(external/capstone)
-add_subdirectory(external/nativefiledialog)
+add_subdirectory(external/nativefiledialog-extended) #nfd
 add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
 add_subdirectory(libs/exprParser)
@@ -41,28 +41,31 @@ file(GLOB_RECURSE QUAESAR_SOURCES "src/*.cpp")
 file(GLOB_RECURSE QUAESAR_HEADERS "src/*.h")
 
 #-------------------------------------------------------------------------------
-# Run simple cmake converter to put font files into the data segment
-# Glob up resource files
+# Run CMake converter to put images  into the data segment
 file(GLOB resources "${CMAKE_CURRENT_SOURCE_DIR}/resources/*.*")
-
 # Concatenate resource files into a comma separated string
 string (REGEX REPLACE "([^\\]|^);" "\\1," resources_string "${resources}")
 string (REGEX REPLACE "[\\](.)" "\\1" resources_string "${resources_string}")
-
 # Create command line for running bin2c cmake script
 set(bin2c_cmdline
-  -DOUTPUT_C=resources_inc.cpp
-  -DOUTPUT_H=resources_inc.h
+  -DOUTPUT_C=resources_inc.cpp -DOUTPUT_H=resources_inc.h
   "-DINPUT_FILES=${resources_string}"
   -P "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/bin2c.cmake")
 
-# Run bin2c on resource files
-add_custom_command(
-  OUTPUT resources_inc.cpp resources_inc.h
-  COMMAND ${CMAKE_COMMAND} ARGS ${bin2c_cmdline}
-  DEPENDS ${resources}
-  COMMENT "Running bin2c"
-  VERBATIM)
+# Run bin2c immediately at configure time
+message(STATUS "Running bin2c (configure-time)...('${CMAKE_COMMAND} ${bin2c_cmdline}')")
+execute_process(
+    COMMAND ${CMAKE_COMMAND} ${bin2c_cmdline}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    RESULT_VARIABLE bin2c_result
+    OUTPUT_VARIABLE bin2c_stdout
+    ERROR_VARIABLE bin2c_stderr
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+)
+if (NOT bin2c_result EQUAL 0)
+    message(FATAL_ERROR "bin2c failed (exit ${bin2c_result})\nstdout:\n${bin2c_stdout}\nstderr:\n${bin2c_stderr}")
+endif()
 
 # Create a custom target for nanogui_resources
 add_custom_target(incbin_resources DEPENDS resources_inc.cpp resources_inc.h)

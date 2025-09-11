@@ -35,7 +35,7 @@ UaeClientAppPart::UaeClientAppPart(IVm::VM* _vm) : m_pVm(_vm) {
 UaeClientAppPart::~UaeClientAppPart() {
 }
 
-void UaeClientAppPart::onPartCreate(qd::AppPart::OnCreate_t& prm) {
+void UaeClientAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
     _createUaeWindow();

@@ -34,7 +34,7 @@ DebuggerApp::DebuggerApp()
 }
 
 
-void DebuggerApp::onPartCreate(AppPart::OnCreate_t& prm)
+void DebuggerApp::onPartCreate(ApplicationPart::OnCreate_t& prm)
 {
     TSuper::onPartCreate(prm);
 }

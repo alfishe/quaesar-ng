@@ -15,7 +15,7 @@ UaeServerAppPart::~UaeServerAppPart() {
 }
 
 
-void UaeServerAppPart::onPartCreate(qd::AppPart::OnCreate_t& prm) {
+void UaeServerAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
     m_pUaeThread = new UaeServerThread(this);

@@ -16,13 +16,13 @@ class UiDesktop : public qd::UiNode
 
 protected:
     qd::vector<ref_ptr<qd::UiNode>> m_pWindows;
-    qd::Application* mApp = nullptr;
+    qd::Application* m_pApp = nullptr;
     qd::UiWindow* m_pModalDlg = nullptr;
 
 public:
-    virtual ~UiDesktop();
+    virtual ~UiDesktop() override;
 
-    void destroy();
+    virtual void destroy() override;
     void addWindowNode(qd::UiNode* view);
     void showModal(qd::UiWindow* pWnd);
 

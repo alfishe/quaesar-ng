@@ -49,7 +49,7 @@ public:
     inline uint32_t ToUint() const { return m_ID; }
     inline operator uint32_t () const { return m_ID; }
 
-    inline void Clear() { m_ID = 0; }
+    inline void clear() { m_ID = 0; }
 
     char const* c_str() const;
 
@@ -70,7 +70,7 @@ public:
     StaticStringID(char const* pStr);
 
     // Lazily construct the ID on first use
-    inline StringID const& GetID() const
+    inline StringID const& getId() const
     {
         if (!m_isCreated)
         {
@@ -81,9 +81,9 @@ public:
         return m_ID;
     }
 
-    inline operator StringID () const { return GetID(); }
-    inline bool operator== (StringID const& rhs) const { return GetID() == rhs; }
-    inline char const* c_str() const { return GetID().c_str(); }
+    inline operator StringID () const { return getId(); }
+    inline bool operator== (StringID const& rhs) const { return getId() == rhs; }
+    inline char const* c_str() const { return getId().c_str(); }
 
 private:
     StaticStringID() = delete;
@@ -98,6 +98,7 @@ private:
 
 //-------------------------------------------------------------------------
 
+#if 0
 namespace eastl {
 template<typename T>
 struct hash;
@@ -107,3 +108,4 @@ struct hash<qd::StringID> {
     size_t operator() (qd::StringID const& ID) const { return (uint64_t)ID; }
 };
 } // namespace eastl
+#endif 0

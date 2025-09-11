@@ -1,4 +1,4 @@
-#include "qd/app/appPart.h"
+#include "qd/app/applicationPart.h"
 #include "qd/qui/uiOperation.h"
 
 class UaeServerThread;
@@ -6,8 +6,8 @@ FORWARD_DECLARATION_2(IVm, VM);
 
 namespace qsr {
 
-class UaeServerAppPart : public qd::AppPart, public qd::IOperationEnvironment {
-    TS_BEGIN_REFLECT_CLASS(UaeServerAppPart, qd::AppPart);
+class UaeServerAppPart : public qd::ApplicationPart, public qd::IOperationEnvironment {
+    TS_BEGIN_REFLECT_CLASS(UaeServerAppPart, qd::ApplicationPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("UAE Server"));
     TS_END();
 
@@ -18,7 +18,7 @@ public:
     UaeServerAppPart();
     virtual ~UaeServerAppPart() override;
 
-    virtual void onPartCreate(qd::AppPart::OnCreate_t& prm) override;
+    virtual void onPartCreate(qd::ApplicationPart::OnCreate_t& prm) override;
     virtual void destroyImp() override;
 
     IVm::VM* getVm() const;

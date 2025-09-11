@@ -7,7 +7,9 @@
 #include "uae.h"
 // clang-format on
 #include "uae_options_wnd.h"
+#include <SDL_video.h>
 #include <nfd.h>
+#include <nfd_sdl2.h>
 #include "amDebugger/vm/vmInterface.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
@@ -20,13 +22,22 @@
 
 namespace qsr {
 
-void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy) {
-    nfdu8filteritem_t filters[1] = {{"Amiga images", "adf,exe,dms,zip"}};
-    nfdopendialogu8args_t args = {0};
+void set_native_window(SDL_Window* sdlWindow, ::nfdwindowhandle_t* nativeWindow) {
+    if (!NFD_GetNativeWindowFromSDLWindow(sdlWindow, nativeWindow)) {
+        printf("NFD_GetNativeWindowFromSDLWindow failed: %s\n", SDL_GetError());
+    }
+}
+
+
+/*extern*/ void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy, SDL_Window* pParentWnd) {
+    ::nfdu8filteritem_t filters[1] = {{"Amiga images", "adf,exe,dms,zip"}};
+    ::nfdopendialogu8args_t args = {0};
     args.filterList = filters;
     args.filterCount = EAArrayCount(filters);
-    nfdu8char_t* outPath = nullptr;
-    nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
+    if (pParentWnd)
+        set_native_window(pParentWnd, &args.parentWindow);
+    ::nfdu8char_t* outPath = nullptr;
+    ::nfdresult_t result = NFD_OpenDialogU8_With(&outPath, &args);
     if (result == NFD_OKAY) {
         cfgFloppy.setAdfPath(outPath);
         NFD_FreePathU8(outPath);
@@ -158,6 +169,7 @@ void UaeOptionsDlg::drawContentImp() {
                                  ImGuiWindowFlags_None)) {
         OptionDrawContext ctx;
         ctx.vm = m_pVm;
+        ctx.m_pDlg = this;
         UCategory* pSelCat = m_pSelectedCat;
         if (pSelCat) {
             switch (pSelCat->m_id) {

@@ -5,6 +5,7 @@
 #include "qd/typeSystem/typeInfo.h"
 #include "qd/base/eFlow.h"
 #include "EASTL/fixed_vector.h"
+#include "qd/stl/unique_ptr.h"
 
 
 namespace qd {
@@ -68,7 +69,7 @@ class UiNode : public qd::RefCounted
 
 private:
     uint32_t m_id = 0;
-    eastl::fixed_vector<qd::UiNodeComp*, 3, true> m_pComps;
+    eastl::fixed_vector<qd::unique_ptr<qd::UiNodeComp>, 4, true> m_pComps;
     UiNode* m_pParent = nullptr;
 
     struct ChildItem {
@@ -155,8 +156,8 @@ public:
     template<class TComp, typename... TArgs>
     TComp* createComp_(TArgs&&... args);
 
-    void addComp(UiNodeComp* newComp);
-    UiNodeComp* findComp(const qd::TypeInfo& id) const;
+    void addComp(qd::unique_ptr<qd::UiNodeComp> newComp);
+    qd::UiNodeComp* findComp(const qd::TypeInfo& id) const;
 
     template<class TComp>
     TComp* getComp_() const;

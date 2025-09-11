@@ -1,6 +1,6 @@
 #include "qd/app/moduleManager.h"
 #include <qd/stl/vector.h>
-#include <qd/app/appPart.h>
+#include <qd/app/applicationPart.h>
 #include <qd/base/base.h>
 #include <qd/stl/ref_ptr.h>
 #include <qd/base/baseTypes.h>
@@ -12,15 +12,15 @@ union SDL_Event;
 
 namespace qd {
 
-class AppPart;
+class ApplicationPart;
 
 
-class AppPartsManager : public IModuleInterface
+class AppPartsManager : public qd::IModuleInterface
 {
     TS_REFLECT_CLASS(qd::AppPartsManager, qd::IModuleInterface);
 
 private:
-    qd::vector<ref_ptr<AppPart>> m_pParts;
+    qd::vector<ref_ptr<ApplicationPart>> m_pParts;
     Application* m_pApp = nullptr;
     TTime64 m_timeNowFrame = 0;
 
@@ -41,12 +41,12 @@ public:
         const string& staticPartIDStr = TPartClass::StaticClassNameID();
         ptr<TPartClass> pPart = findPartByName(staticPartIDStr);
         if (!pPart)
-            throw Exception(EException::NOT_FOUND, "AppPart:'%s' not initialized yet!", CC(staticPartIDStr));
+            throw Exception(EException::NOT_FOUND, "ApplicationPart:'%s' not initialized yet!", CC(staticPartIDStr));
         return pPart;
     }
 
 
-    // TPartClass base of AppPart*
+    // TPartClass base of ApplicationPart*
     template<class TPartClass>
     inline TPartClass* findPart_() const
     {
@@ -56,16 +56,16 @@ public:
         return pExistPart;
     }
 
-    AppPart* getPartByInd(int Index) { return m_pParts[Index]; }
+    ApplicationPart* getPartByInd(int Index) { return m_pParts[Index]; }
 
 
 
-    // TPartClass base of AppPart*
+    // TPartClass base of ApplicationPart*
     template<class TPartClass, typename ...TArgs>
     inline TPartClass* createPart_(qd::string name, TArgs&&... args)
     {
         TPartClass* pPart = new TPartClass(args...);
-        qd::AppPart::OnCreate_t prm;
+        qd::ApplicationPart::OnCreate_t prm;
         prm.name = name;
         prm.typeInfo = &qd::typeof_<TPartClass>();
         prm.app = getApp();
@@ -74,13 +74,13 @@ public:
         return pPart;
     }
 
-    AppPart* findPartByName(const qd::string& strPartID) const;
+    ApplicationPart* findPartByName(const qd::string& strPartID) const;
 
 
-    int findPartIndex(AppPart* pPart) const;
-    bool addPartTry(ref_ptr<AppPart> pPart);
-    void addPart(ref_ptr<AppPart> p_part);
-    void addPart(ref_ptr<AppPart> p_part, const qd::string& part_name_id);
+    int findPartIndex(ApplicationPart* pPart) const;
+    bool addPartTry(ref_ptr<ApplicationPart> pPart);
+    void addPart(ref_ptr<ApplicationPart> p_part);
+    void addPart(ref_ptr<ApplicationPart> p_part, const qd::string& part_name_id);
 
     template<class TPart>
     void addPart_(TPart* pPart)
@@ -91,11 +91,11 @@ public:
     template<class TPartClass>
     void destroyPart_()
     {
-        ref_ptr<AppPart> pPart = findPart_<TPartClass>();
+        ref_ptr<ApplicationPart> pPart = findPart_<TPartClass>();
         destroyPart(pPart);
     }
 
-    void destroyPart(ref_ptr<AppPart> pPart);
+    void destroyPart(ref_ptr<ApplicationPart> pPart);
     void destroy();
     virtual ~AppPartsManager();
 
@@ -106,7 +106,7 @@ public:
     Application* getApp() const { return m_pApp; }
     void setApp(Application* pApplication) { m_pApp = pApplication; }
 
-    static inline bool _getZOrderSort(AppPart* pl, AppPart* pr)
+    static inline bool _getZOrderSort(ApplicationPart* pl, ApplicationPart* pr)
     {
         if (pl->getZOrder() < pr->getZOrder())
             return true;
