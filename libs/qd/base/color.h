@@ -59,6 +59,7 @@ public:
     };
 
 public:
+    EA_DISABLE_VC_WARNING(4201) // nameless struct/union
     union {
         struct {
             uint8_t r, g, b, a;
@@ -66,6 +67,7 @@ public:
         uint32_t mColor;
         Color::EColor mEColor;
     };
+    EA_RESTORE_VC_WARNING()
 
     inline Color()
         : mColor((uint32_t)Color::WHITE)

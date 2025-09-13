@@ -649,6 +649,7 @@ typedef long uae_atomic;
         exit(EXIT_FAILURE);                                                              \
     } while (0)
 
+
 // #define TRACE() do { printf("%s\n", __func__); } while (0)
 #define TRACE() \
     do {        \

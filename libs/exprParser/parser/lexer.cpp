@@ -80,9 +80,9 @@ static bool isIdent(char ch) {
 }
 
 
-static bool isWhiteSpace(char ch) {
-    return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
-}
+// static bool isWhiteSpace(char ch) {
+//     return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+// }
 
 
 static int hexValue(char ch) {

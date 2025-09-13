@@ -84,7 +84,7 @@ void UaeClientAppPart::_createUaeWindow() {
     }
 }
 
-void UaeClientAppPart::update(float Delta, float Time) {
+void UaeClientAppPart::update(float /*dt*/, float /*time*/) {
     _drawGuiMenus();
 }
 

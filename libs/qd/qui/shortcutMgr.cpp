@@ -85,7 +85,7 @@ bool ShortcutsMgr::isShortcutTriggered(const qd::Shortcut* p_shortcut) const
 }
 
 
-bool ShortcutsMgr::triggerShortcut(qd::IOperationEnvironment* env, uint32_t id)
+bool ShortcutsMgr::triggerShortcut(qd::IOperationEnvironment* /*env*/, uint32_t /*id*/)
 {
     //     const Shortcut* pShortcut = getShortcut(id);
     //     if (UiOperation* pOperation = findOperationByShortcut(pShortcut)) {

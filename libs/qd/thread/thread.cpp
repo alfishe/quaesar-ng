@@ -72,13 +72,13 @@ Thread::~Thread()
 }
 
 
-void Thread::create(void (*pThreadProc)(void*), void* pData, uint32_t nStackSize /*= 0*/)
+void Thread::create(void (*pThreadProc)(void*), void* pData)
 {
-    create([pThreadProc, pData]() { (*pThreadProc)(pData); }, nStackSize);
+    create([pThreadProc, pData]() { (*pThreadProc)(pData); });
 }
 
 
-void Thread::create(Thread::ThreadFunc&& threadProc, uint32_t nStackSize /*= 0*/)
+void Thread::create(Thread::ThreadFunc&& threadProc)
 {
     assert(!m_pThreadData);
     m_pThreadData = new Details::CThreadData(this);

@@ -8,12 +8,12 @@
 namespace qd {
 
 struct NodeMsgProcVisitor {
-    void reg(uint32_t msg_id, eastl::fixed_function<8, void(Node*, NodeMessage*)>) {}
+    void reg(uint32_t /*msg_id*/, eastl::fixed_function<8, void(Node*, NodeMessage*)>) {}
 };
 
 
 
-EFlow Node::onNodeMessageProc(NodeMessage* in_msg)
+EFlow Node::onNodeMessageProc(NodeMessage* /*in_msg*/)
 {
     return EFlow::NO_RESULT;
 }
@@ -79,7 +79,7 @@ void Node::setParent(qd::Node* Parent)
 
 void Node::destroy()
 {
-    for (int i = 0; i < m_pComps.size(); ++i)
+    for (size_t i = 0; i < m_pComps.size(); ++i)
     {
         Node* pCurComp = m_pComps[i];
         if (!pCurComp)

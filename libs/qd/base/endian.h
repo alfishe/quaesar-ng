@@ -21,11 +21,13 @@ inline void swapBytes_<1>(void*) {
 
 template <>
 inline void swapBytes_<2>(void* p) {
+    EA_DISABLE_VC_WARNING(4201) // nameless struct/union
     union TSwap {
         struct {
             uint8_t b0, b1;
         };
     };
+    EA_RESTORE_VC_WARNING()
     TSwap* c = reinterpret_cast<TSwap*>(p);
     eastl::swap(c->b0, c->b1);
 }

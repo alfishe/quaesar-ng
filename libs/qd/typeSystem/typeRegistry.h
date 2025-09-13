@@ -2,7 +2,7 @@
 #include <EASTL/span.h>
 #include <EASTL/vector_map.h>
 #include <qd/typeSystem/stdTypeId.h>
-#include <qd/typeSystem/TypeID.h>
+#include <qd/typeSystem/typeId.h>
 #include <qd/typeSystem/typeInfo.h>
 
 
@@ -83,7 +83,7 @@ public:
         const TypeInfo& attrType = typeof_<TAttr>();
         for (const TypeInfo* curType : *this)
         {
-            const TypeInfoAttribute* foundBaseAttr = curType->findCustomAttribute(attrType, inherit);
+            const TypeInfoAttribute* foundBaseAttr = curType->findAttribute(attrType, inherit);
             if (!foundBaseAttr)
                 continue;
             TAttr* foundAttr = static_cast<TAttr*>(foundBaseAttr);

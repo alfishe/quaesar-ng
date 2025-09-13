@@ -7,6 +7,7 @@
 #include "qd/mem/ptrMath.h"
 #include "qd/thread/mutex.h"
 #include "qd/thread/thread.h"
+#include "qd/stl/algorithm.h"
 
 
 
@@ -68,7 +69,7 @@ public:
     virtual void initialize() override {}
 
     // SEND
-    virtual EFlow update(qd::Fixed32 Delta) override
+    virtual EFlow update(qd::Fixed32 /*Delta*/) override
     {
         if (!m_pSocket->IsConnected())
         {
@@ -140,7 +141,7 @@ public:
 
 
     // READ BYTES
-    virtual EFlow update(qd::Fixed32 Delta) override
+    virtual EFlow update(qd::Fixed32 /*Delta*/) override
     {
         const ref_ptr<HSocket>& hSocket = m_pSocket->GetNative();
 
@@ -264,7 +265,7 @@ public:
         m_pFuture = new Cmd::FlushSocketFuture_t();
     }
 
-    virtual EFlow update(qd::Fixed32 Delta) override
+    virtual EFlow update(qd::Fixed32 /*Delta*/) override
     {
         log_debug("LocalSocket::Cmd::FlushSocketFuture - SUCCESS");
         m_pFuture->SetResult(ETrisult::SUCCESS);
@@ -330,7 +331,7 @@ void CNetLocal::SocketClose(const ref_ptr<HSocket>& pSocket)
         pLink->m_pLink = nullptr;
     }
 
-    TSockets::iterator It = std::find(m_pSockets.begin(), m_pSockets.end(), pSocket);
+    TSockets::iterator It = qd::find(m_pSockets.begin(), m_pSockets.end(), pSocket);
     m_pSockets.erase(It);
 }
 
@@ -449,7 +450,7 @@ void CNetLocal::UnBindListenPort(uint16_t Port)
 void CNetLocal::RegisterService(CSocketServiceLocal* pService)
 {
     qd::MutexLock ml(m_Mutex);
-    if (std::find(m_pServiceList.begin(), m_pServiceList.end(), pService) != m_pServiceList.end())
+    if (qd::find(m_pServiceList.begin(), m_pServiceList.end(), pService) != m_pServiceList.end())
         return;
     m_pServiceList.push_back(pService);
 }
@@ -458,7 +459,7 @@ void CNetLocal::RegisterService(CSocketServiceLocal* pService)
 void CNetLocal::UnregisterService(CSocketServiceLocal* pService)
 {
     qd::MutexLock ml(m_Mutex);
-    auto Iter = std::find(m_pServiceList.begin(), m_pServiceList.end(), pService);
+    auto Iter = qd::find(m_pServiceList.begin(), m_pServiceList.end(), pService);
     if (Iter == m_pServiceList.end())
         return;
     m_pServiceList.erase(Iter);
@@ -678,7 +679,7 @@ void CSocketServiceLocal::startSync()
 
 void CSocketServiceLocal::destroySocket(CFTSocket* pSocket)
 {
-    TCreatedSockets::iterator It = std::find(m_pCreatedSockets.begin(), m_pCreatedSockets.end(), pSocket);
+    TCreatedSockets::iterator It = qd::find(m_pCreatedSockets.begin(), m_pCreatedSockets.end(), pSocket);
     if (It != m_pCreatedSockets.end())
         m_pCreatedSockets.erase(It);
 
@@ -689,7 +690,7 @@ void CSocketServiceLocal::destroySocket(CFTSocket* pSocket)
 
 
 
-void CSocketLocalListner::_onClientConnected(HSocket* pDestSocket)
+void CSocketLocalListner::_onClientConnected(HSocket* /*pDestSocket*/)
 {
     ref_ptr<CSocketLocal> pSocket = m_pServerSocket;
     m_pServerSocket = nullptr;

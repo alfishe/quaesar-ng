@@ -243,6 +243,8 @@ RETCODE adfFileTruncateGetBlocksToRemove ( const struct AdfFile * const file,
                  blocksCount, blocksToRemove->len, dataBlocksCount );
         fflush ( stderr );
     }
+#else
+    (void)dataBlocksCount;
 #endif
     assert ( blocksCount == blocksToRemove->len );
     return RC_OK;
@@ -685,7 +687,7 @@ RETCODE adfFileSeek ( struct AdfFile * const file,
 /*
  * adfFileOpen
  *
- */ 
+ */
 struct AdfFile * adfFileOpen ( struct AdfVolume * const vol,
                                const char * const       name,
                                const AdfFileMode        mode )
@@ -848,10 +850,10 @@ void adfFileClose ( struct AdfFile * file )
 
     if (file->currentExt)
         free(file->currentExt);
-    
+
     if (file->currentData)
         free(file->currentData);
-    
+
     free(file->fileHdr);
     free(file);
 
@@ -1167,7 +1169,7 @@ RETCODE adfFileCreateNextBlock ( struct AdfFile * const file )
         nSect = adfGet1FreeBlock(file->volume);
         if ( nSect == -1 )
             return RC_VOLFULL;
-        
+
 /*printf("adfCreateNextFileBlock ext %ld\n",nSect);*/
 
         file->currentExt->dataBlocks[MAX_DATABLK-1-file->posInExtBlk] = nSect;
@@ -1198,7 +1200,7 @@ RETCODE adfFileCreateNextBlock ( struct AdfFile * const file )
 /*printf ("writedata=%d\n",file->curDataPtr);*/
             memset(file->currentData,0,512);
         }
-            
+
 /*printf("datablk=%d\n",nSect);*/
     file->curDataPtr = nSect;
     file->nDataBlock++;

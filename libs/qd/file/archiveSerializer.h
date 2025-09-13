@@ -123,7 +123,7 @@ protected:
 	public:
 
 		// grabs inner MemBuf - and read or save them
-		CMemoryArchiveBin( _Inout_ qd::MemData& memData, ESaveLoad bStore /*= ESaveLoad::Load*/ );
+		CMemoryArchiveBin(/*Inout*/ qd::MemData& memData, ESaveLoad bStore /*= ESaveLoad::Load*/ );
 
 		CMemoryArchiveBin( const ref_ptr<qd::MemData>& pMemData, ESaveLoad bStore /*= ESaveLoad::Load*/ );
 

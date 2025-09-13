@@ -92,9 +92,9 @@ public:
             m_pMutex->lock();
     }
     Locker_(Locker_&& rh) noexcept
-        : m_pMutex(rh.m_mutex)
+        : m_pMutex(rh.m_pMutex)
     {
-        rh.m_mutex = nullptr;
+        rh.m_pMutex = nullptr;
     }
 
     inline ~Locker_() { if (m_pMutex) m_pMutex->unlock(); }

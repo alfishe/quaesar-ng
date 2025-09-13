@@ -1,24 +1,23 @@
 #include "typeInfoBuilder.h"
-#include <qd/typeSystem/TypeRegistry.h>
-#include <qd/typeSystem/TypeInfo.h>
 #include "qd/mem/fnvHash.h"
+#include <qd/typeSystem/typeInfo.h>
+#include <qd/typeSystem/typeRegistry.h>
 
 
 namespace qd {
 
 
- TypeInfoBuilder::TypeInfoBuilder(const StdTypeId& type_info, TypeRegistry* p_registry)
+TypeInfoBuilder::TypeInfoBuilder(const StdTypeId& type_info, TypeRegistry* p_registry)
     : m_pRegistry(p_registry)
 {
-     if (!m_pRegistry)
-         m_pRegistry = TypeRegistry::get();
-     const TypeInfo& tp = m_pRegistry->get()->getTypeInfo(type_info);
-     m_pType = const_cast<TypeInfo*>(&tp);
+    if (!m_pRegistry)
+        m_pRegistry = TypeRegistry::get();
+    const TypeInfo& tp = m_pRegistry->get()->getTypeInfo(type_info);
+    m_pType = const_cast<TypeInfo*>(&tp);
 }
 
 
- void split_qualified_name(_In_ const string_view& full_name, _Out_ string_view& out_type_name,
-    _Out_ string_view& out_namespace)
+void split_qualified_name(const string_view& full_name, string_view& out_type_name, string_view& out_namespace)
 {
     int templ = 0;
     size_t lastSplitPoint = string::npos;
@@ -70,19 +69,16 @@ void TypeInfoBuilder::addBaseType(const StdTypeId& baseType)
 }
 
 
-void TypeInfoBuilder::markAsBase(int inherited_count) const
-{
-
-}
+void TypeInfoBuilder::markAsBase(int /*inherited_count*/) const {}
 
 
-void TypeInfoBuilder::markAsFinal(TypeInfo* pType) const
+void TypeInfoBuilder::markAsFinal(TypeInfo* /*pType*/) const
 {
     m_pType->m_bFinal = true;
 }
 
 
-void TypeInfoBuilder::setup(const TypeInfo* pType, const char* name)
+void TypeInfoBuilder::setup(const TypeInfo* /*pType*/, const char* /*name*/)
 {
     assert(0);
 }

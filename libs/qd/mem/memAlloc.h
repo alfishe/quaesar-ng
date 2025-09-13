@@ -38,7 +38,7 @@ public:
 		return this + 1;
 	}
 
-	static inline void alloc(_Inout_ CBlockNode_t*& pHead, uint32_t nAllocSize) {
+	static inline void alloc(/*Inout*/ CBlockNode_t*& pHead, uint32_t nAllocSize) {
 		uint32_t nBlockStructSize = (uint32_t)sizeof(CBlockNode_t);
 		CBlockNode_t* p = (CBlockNode_t*)malloc(size_t(nBlockStructSize + nAllocSize));
 		if (!p)
@@ -153,7 +153,7 @@ public:
 	}
 
 	void freeMem(void* p) {
-		qd::CLocker_<TMutex> ml(m_Mutex);
+		qd::Locker_<TMutex> ml(m_Mutex);
 		--m_UsedSectors;
 
 		if (p != nullptr) {

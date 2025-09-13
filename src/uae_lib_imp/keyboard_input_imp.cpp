@@ -6,6 +6,7 @@
 #include <EABase/config/eacompilertraits.h>
 
 EA_DISABLE_CLANG_WARNING(-Wmissing-braces);
+EA_DISABLE_CLANG_WARNING(-Wmissing-field-initializers);
 // clang-format on
 
 #include <SDL_scancode.h>
@@ -159,6 +160,9 @@ static struct uae_input_device_kbr_default keytrans_amiga[] = {
 
     {-1, 0}};
 
+EA_RESTORE_CLANG_WARNING()
+//////////////////////////////////////////////////////////////////////////
+
 
 static struct uae_input_device_kbr_default* keytrans[] = {
     keytrans_amiga,
@@ -224,7 +228,7 @@ static int get_kb_widget_num(int /*device_id*/) {
     return MAX_INPUT_DEVICE_EVENTS;  // Return the number of widgets
 }
 
-static int get_kb_widget_type(int kb, int num, TCHAR* /*widget_name*/, uae_u32* code) {
+static int get_kb_widget_type(int /*kb*/, int num, TCHAR* /*widget_name*/, uae_u32* code) {
     if (code)
         *code = num;  // di_keyboard[kb].buttonmappings[num];
     return IDEV_WIDGET_KEY;

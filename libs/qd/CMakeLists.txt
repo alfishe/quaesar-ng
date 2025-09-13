@@ -49,6 +49,10 @@ target_include_directories(qd PUBLIC ${QDICE_PARENT} ${SDL2_INCLUDE_DIRS})
 #dependencies
 target_link_libraries(qd PRIVATE imgui EASTL ${SDL2_LIBRARIES})
 
+# Compiler options
+if (MSVC)
+    target_compile_options(qd PRIVATE /W4 /permissive- /Zc:__cplusplus)
+endif()
 
 # Append content from the original va_stdafx.h file to the generated file
 file(READ "${QDICE_DIR}/va_stdafx.h" VA_STDAFX_CONTENT)

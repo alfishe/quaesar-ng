@@ -2,6 +2,7 @@
 #include "qd/app/appMessages.h"
 #include "qd/base/eFlow.h"
 #include "qd/stl/ref_ptr.h"
+#include "qd/typeSystem/typeInfoBuilder.h"
 
 
 FORWARD_DECLARATION_2(qd, AppPartsManager);
@@ -43,7 +44,7 @@ public:
     {
         return reinterpret_cast<T*>(getInterface(qd::typeof_<T>()));
     }
-    virtual void* getInterface(const qd::TypeInfo& p_interface) { return nullptr; }
+    virtual void* getInterface(const qd::TypeInfo& /*p_interface*/) { return nullptr; }
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg);
 
     void sendAppEventMsg(qd::appMsg::BaseMsg& in_msg);

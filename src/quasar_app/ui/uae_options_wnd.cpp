@@ -31,7 +31,7 @@ void set_native_window(SDL_Window* sdlWindow, ::nfdwindowhandle_t* nativeWindow)
 
 /*extern*/ void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy, SDL_Window* pParentWnd) {
     ::nfdu8filteritem_t filters[1] = {{"Amiga images", "adf,exe,dms,zip"}};
-    ::nfdopendialogu8args_t args = {0};
+    ::nfdopendialogu8args_t args = {};
     args.filterList = filters;
     args.filterCount = EAArrayCount(filters);
     if (pParentWnd)

@@ -22,7 +22,7 @@ public:
     const StdTypeId& getTypeId() const { return m_TypeId; }
     void setTypeId(const StdTypeId& TypeId) { m_TypeId = TypeId; }
 
-    virtual void onReflectionEventMsgProc(qd::TypeInfoMsgBase* in_msg) {}
+    virtual void onReflectionEventMsgProc(qd::TypeInfoMsgBase* /*in_msg*/) {}
 
 }; // class TypeInfoAttribute
 //////////////////////////////////////////////////////////////////////////

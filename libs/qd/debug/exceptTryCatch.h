@@ -28,7 +28,7 @@ namespace qd {
     {                                          \
         const auto& _tmp_ex_v = TException;    \
         EA_UNUSED(_tmp_ex_v);                  \
-        assert(0 && "EXCEPTION");              \
+        assert2(0, "EXCEPTION", 0);            \
         action;                                \
         __VA_ARGS__;                           \
     }

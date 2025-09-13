@@ -27,7 +27,7 @@ struct CSerializeContext {
 
 public:
     CSerializeContext() {}
-    CSerializeContext(qd::CArchive& ar) {}
+    CSerializeContext(qd::CArchive& /*ar*/) {}
 }; // struct CSerializeContext
 //////////////////////////////////////////////////////////////////////////
 
@@ -320,52 +320,52 @@ public:
 
     virtual qd::string_view _arGetFileName() { return "AR_UNKNOWN_FILE"; }
 
-    virtual bool _arLoadChunkTryTest(IFileChunk& FileChunk, uint32_t ChunkID = 0)
+    virtual bool _arLoadChunkTryTest(IFileChunk& /*FileChunk*/, uint32_t /*ChunkID*/ = 0)
     {
         _err_NotSupported();
         return false;
     }
 
-    virtual void _arSaveChunkBegin(const qd::IFileChunk& Chunk) { _err_NotSupported(); }
+    virtual void _arSaveChunkBegin(const qd::IFileChunk& /*Chunk*/) { _err_NotSupported(); }
     virtual void _arSaveChunkEnd() { _err_NotSupported(); }
 
-    virtual void _arLoadChunkBegin(const qd::IFileChunk& FileChunk, qd::IFileChunk* pOutChunk) { _err_NotSupported(); }
-    virtual bool _arLoadChunkEnd(const qd::IFileChunk* pChunk = nullptr)
+    virtual void _arLoadChunkBegin(const qd::IFileChunk& /*FileChunk*/, qd::IFileChunk* /*pOutChunk*/) { _err_NotSupported(); }
+    virtual bool _arLoadChunkEnd(const qd::IFileChunk* /*pChunk*/ = nullptr)
     {
         _err_NotSupported();
         return false;
     }
 
-    virtual void _arSkip(const IFileChunk& Chunk) { _err_NotSupported(); }
-    virtual void _arUndo(const IFileChunk& Chunk) { _err_NotSupported(); }
+    virtual void _arSkip(const IFileChunk& /*Chunk*/) { _err_NotSupported(); }
+    virtual void _arUndo(const IFileChunk& /*Chunk*/) { _err_NotSupported(); }
 
     virtual uint32_t _arGetFilePos()
     {
         _err_NotSupported();
         return 0;
     }
-    virtual void _arSetFilePos(uint32_t Pos) { _err_NotSupported(); };
+    virtual void _arSetFilePos(uint32_t /*Pos*/) { _err_NotSupported(); };
 
-    virtual void _arSkipBytes(uint32_t nBytes) { _err_NotSupported(); }
+    virtual void _arSkipBytes(uint32_t /*nBytes*/) { _err_NotSupported(); }
 
     // save raw buffer
-    virtual void _arRead_Buf(void* pDest, uint32_t nBytes) { _err_NotSupported(); }
-    virtual void _arWrite_Buf(const void* pSrc, uint32_t nBytes) { _err_NotSupported(); }
+    virtual void _arRead_Buf(void* /*pDest*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
+    virtual void _arWrite_Buf(const void* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
 
     // MAY BE SWAPPED DUE TO ENDIANS
-    virtual void _arRead_Int(void* pDest, uint32_t nBytes) { _err_NotSupported(); }
-    virtual void _arRead_UInt(void* pDest, uint32_t nBytes) { _err_NotSupported(); }
-    virtual void _arRead_Float(void* pDest, uint32_t nBytes) { _err_NotSupported(); }
+    virtual void _arRead_Int(void* /*pDest*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
+    virtual void _arRead_UInt(void* /*pDest*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
+    virtual void _arRead_Float(void* /*pDest*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
 
     // WRITERS FOR SWAP SRC DATA
-    virtual void _arWrite_Int(const void* pSrc, uint32_t nBytes) { _err_NotSupported(); }
-    virtual void _arWrite_UInt(const void* pSrc, uint32_t nBytes) { _err_NotSupported(); }
-    virtual void _arWrite_Float(const void* pSrc, uint32_t nBytes) { _err_NotSupported(); }
+    virtual void _arWrite_Int(const void* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
+    virtual void _arWrite_UInt(const void* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
+    virtual void _arWrite_Float(const void* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
 
     // strings
-    virtual void _arRead_String(qd::string& Dest) { _err_NotSupported(); }
-    virtual void _arWrite_String(const char* pSrc, uint32_t nBytes) { _err_NotSupported(); }
-    virtual void _arWrite_StringW(const wchar_t* pSrc) { _err_NotSupported(); }
+    virtual void _arRead_String(qd::string& /*Dest*/) { _err_NotSupported(); }
+    virtual void _arWrite_String(const char* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
+    virtual void _arWrite_StringW(const wchar_t* /*pSrc*/) { _err_NotSupported(); }
 
     virtual void _arFlush() {}
     virtual void _arReset() {}
@@ -434,7 +434,7 @@ public:
             m_pAr->_arLoadChunkBegin(inChunk, nullptr); // CONST CHUNK
     }
 
-    void beginChunk(_Inout_ qd::IFileChunk& inChunk);
+    void beginChunk(/*Inout*/ qd::IFileChunk& inChunk);
 
     bool endChunk(qd::IFileChunk& inChunk)
     { // RETURN FALSE IF IT WASN'T READED
@@ -475,7 +475,7 @@ public:
     }
 
 
-    bool loadChunk(_Inout_ IFileChunk& FileChunk, uint32_t checkChunkID = 0, bool bThrow = true);
+    bool loadChunk(/*Inout*/ IFileChunk& FileChunk, uint32_t checkChunkID = 0, bool bThrow = true);
 
     inline bool LoadChunk_(const IFileChunk& FileChunk, bool bThrow = true)
     {
@@ -731,7 +731,7 @@ public:
     template<typename TVal>                                                          \
     inline TVal TName##Self(TVal& Val, qd::Tribool bStoring = qd::Tribool::Undef)    \
     {                                                                                \
-        bool bbStoring = (bStoring.isUnknown()) ? isStoring() : (bStoring.isTrue()); \
+        bool bbStoring = (bStoring.isUndef()) ? isStoring() : (bStoring.isTrue());   \
         if (bbStoring)                                                               \
         {                                                                            \
             return TName##_S(Val);                                                   \
@@ -776,7 +776,7 @@ public:
     template<typename TInt>
     inline bool boolSelf(TInt& Val, qd::Tribool bStoring = qd::Tribool::Undef)
     {
-        bool bbStoring = (bStoring.isUnknown()) ? isStoring() : bStoring.getBool();
+        bool bbStoring = (bStoring.isUndef()) ? isStoring() : bStoring.getBool();
         if (bbStoring)
             return bool_S(Val);
         return bool_L(Val);

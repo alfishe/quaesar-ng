@@ -35,7 +35,7 @@ void TypeInfoBase::deleteCustomAttribute(const TypeInfoAttribute* pAttr)
 }
 
 
-const TypeInfoAttribute* TypeInfoBase::getAttribute(const StdTypeId& rfAttrType, bool find_in_inherit) const
+const TypeInfoAttribute* TypeInfoBase::findAttribute(const StdTypeId& rfAttrType, bool find_in_inherit) const
 {
     for (TAttrList::const_iterator It = m_pAttributes.begin(); It != m_pAttributes.end(); ++It)
     {
@@ -51,7 +51,7 @@ const TypeInfoAttribute* TypeInfoBase::getAttribute(const StdTypeId& rfAttrType,
         for (auto i = providers.begin(); i != providers.end(); ++i)
         {
             const TypeInfoBase* pProvider = *i;
-            const TypeInfoAttribute* ca = pProvider->getAttribute(rfAttrType, true);
+            const TypeInfoAttribute* ca = pProvider->findAttribute(rfAttrType, true);
             if (ca)
                 return ca;
         }
@@ -61,9 +61,9 @@ const TypeInfoAttribute* TypeInfoBase::getAttribute(const StdTypeId& rfAttrType,
 
 
 
-const qd::TypeInfoAttribute* TypeInfoBase::getAttribute(const TypeInfo& type, bool inherit) const
+const qd::TypeInfoAttribute* TypeInfoBase::findAttribute(const TypeInfo& type, bool inherit) const
 {
-    return getAttribute(type.getStdTypeId(), inherit);
+    return findAttribute(type.getStdTypeId(), inherit);
 }
 
 

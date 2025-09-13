@@ -18,6 +18,7 @@ protected:
     static constexpr size_t g_headDataCapacity = 8 - 2;
     static constexpr size_t g_bodyDataCapacity = 8;
 
+    EA_DISABLE_VC_WARNING(4201) // nameless struct/union
     union {
         struct {
             uint8_t m_type;
@@ -38,6 +39,7 @@ protected:
 
         uint64_t _bodyData = 0;
     };
+    EA_RESTORE_VC_WARNING()
 
 
 public:

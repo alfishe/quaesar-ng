@@ -237,10 +237,8 @@ public:
     /*virtual*/ ~MemBuf() { freeBuf(); }
 
 private:
-    MemBuf(const MemBuf& r)
-        : MemSpan()
-    {} // NO COPY
-    MemBuf& operator= (const MemBuf&) { return *this; }
+    MemBuf(const MemBuf&) = delete;
+    MemBuf& operator= (const MemBuf&) = delete;
 
 }; // class MemBuf
 //////////////////////////////////////////////////////////////////////////
@@ -339,7 +337,7 @@ public:
         uint32_t nCapacity = m_pMemBuf->getCapacity();
         if (m_nUsedSize > nCapacity)
         {
-            assert(0 && "Bad size");
+            assert2(0, "Bad size", 0);
             return 0;
         }
         return nCapacity - m_nUsedSize;

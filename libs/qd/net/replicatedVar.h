@@ -126,8 +126,8 @@ protected:
     static constexpr int SizeReflVarQuotaNumber = 64;
 
 public:
-    constexpr static uint32_t DANET_WATERMARK = _MAKE4C('DNET');
-    constexpr static uint32_t DANET_DEAD_WATERMARK = _MAKE4C('DEAD');
+    constexpr static uint32_t DANET_WATERMARK = _MAKE4C("DNET");
+    constexpr static uint32_t DANET_DEAD_WATERMARK = _MAKE4C("DEAD");
 
     enum Flags {
         /* free */
@@ -166,8 +166,8 @@ public:
     bool isRelfectionFlagSet(Flags flag) const { return (bool)(reflectionFlags & flag); }
     uint32_t getRelfectionFlags() const { return reflectionFlags; }
 
-    virtual Message* dispatchMpiMessage(MessageID mid) override { return nullptr; }
-    virtual void applyMpiMessage(const Message* m) override {}
+    virtual Message* dispatchMpiMessage(MessageID /*mid*/) override { return nullptr; }
+    virtual void applyMpiMessage(const Message* /*m*/) override {}
 
     int calcNumVars() const
     {
@@ -175,7 +175,7 @@ public:
         return (int)varList.size();
     }
 
-    void disableReflection(bool full)
+    void disableReflection(bool /*full*/)
     {
         checkWatermark();
 
@@ -377,6 +377,7 @@ struct ReflectionVarTypeDispatcher // default type
 template<typename T>
 int readwrite_var_raw(QDNET_ENCODER_SIGNATURE)
 {
+    G_UNUSED(ro, bs);
     if (op == QDNET_REFLECTION_OP_ENCODE)
     {
         //bs->Write(meta->getValue<T>());

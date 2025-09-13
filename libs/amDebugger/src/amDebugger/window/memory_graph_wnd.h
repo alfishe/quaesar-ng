@@ -11,13 +11,13 @@ namespace window {
 class MemoryGraphWnd : public AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::MemoryGraph, amD::window::MemoryGraphWnd, amD::AmDbgWindow);
 
-    ImTextureID mTextureId = 0;
+    ImTextureID m_textureId = 0;
     qd::Size m_textureSize = {-1, -1};
     qd::Size m_newTextureSize = {640, 320};
-    float mLastTextureCreateTime = FLT_MIN;
-    int mCurBank = MemBank::CHIP;
-    int mBankOffset = 0x0;
-    int mTextureMod = 0;
+    float m_lastTextureCreateTime = FLT_MIN;
+    int m_curBank = MemBank::CHIP;
+    int m_bankOffset = 0x0;
+    int m_textureMod = 0;
     int mStartDragBankOffset = 0;
     ExprValStr m_exprAddr;
 

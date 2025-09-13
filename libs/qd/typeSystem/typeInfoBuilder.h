@@ -30,11 +30,19 @@ inline const qd::TypeInfo& typeof_()
     return *staticType;
 }
 
+template<typename T>
+inline const qd::TypeInfo& typeof_(T)
+{
+    return qd::typeof_<T>();
+}
+
 
 template<typename T>
-inline const qd::TypeInfo& typeof(T pInst)
+inline const qd::TypeInfo& type_of(const T* pInst) // typeof is reserved for gcc extension
 {
-    return pInst.getTypeInfo();
+    if (pInst)
+        return pInst->getTypeInfo();
+    return qd::typeof_<void>();
 }
 
 extern const qd::TypeInfo& typeof_by_name(const char* pClass);
@@ -89,7 +97,7 @@ struct TypeInfoBuilder_ : public TypeInfoBuilder {
 public:
     using TRefType = T;
 
-    TypeInfoBuilder_(const char* fullName, bool bAbstract = false)
+    TypeInfoBuilder_(const char* fullName, bool /*bAbstract*/ = false)
         : TSuper(qd::makeStdTypeId_<T>())
     {
         declareType(fullName);
@@ -113,5 +121,15 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+
+template<typename T>
+const T* TypeInfoBase::getAttribute_(bool find_in_inherit /*= false*/) const
+{
+    const TypeInfoAttribute* pAttr = findAttribute(qd::typeof_<T>(), find_in_inherit);
+    if (!pAttr)
+        return nullptr;
+    assert(dynamic_cast<const T*>(pAttr) && "Attribute Type mismatch");
+    return static_cast<const T*>(pAttr);
+}
 
 }; // namespace qd

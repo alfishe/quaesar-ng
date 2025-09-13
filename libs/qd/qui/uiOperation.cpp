@@ -17,7 +17,7 @@ qd::EFlow IOperationEnvironment::applyOperationMsgProc(qd::operation::args::Base
     IOperationEnvironment* pParentEnd = getOpEnvParent();
     while (pParentEnd)
     {
-        qd::EFlow f = pParentEnd->applyOperationMsgProcImp(args);
+        f = pParentEnd->applyOperationMsgProcImp(args);
         if (f.isDone())
             return f;
         pParentEnd = pParentEnd->getOpEnvParent();
@@ -36,7 +36,7 @@ qd::EFlow IOperationEnvironment::setupDefaultOperationArgs(qd::operation::args::
     const IOperationEnvironment* pParentEnv = getOpEnvParent();
     while (pParentEnv)
     {
-        qd::EFlow f = pParentEnv->setupDefaultOperationArgsImp(args);
+        f = pParentEnv->setupDefaultOperationArgsImp(args);
         if (f.isDone())
             return f;
         pParentEnv = pParentEnv->getOpEnvParent();

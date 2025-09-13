@@ -3,8 +3,11 @@
 
 namespace qd {
 
+#undef Undef
+#undef False
+#undef True
 
-EA_DISABLE_VC_WARNING(26813)
+EA_DISABLE_VC_WARNING(26813) // Use 'bitwise and' to check if a flag is set
 class Tribool
 {
 public:

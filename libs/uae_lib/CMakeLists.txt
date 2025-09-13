@@ -185,6 +185,11 @@ if (MSVC)
 target_compile_options(uae_lib PRIVATE "/MP") # Enable multi-threaded compilation
 endif()
 
+#defines
+if (APPLE OR LINUX OR UNIX)
+	target_compile_options(uae_lib PRIVATE -DUAE=1 -D_cdecl= -DOS_NAME=\"linux\")
+    target_compile_definitions(uae_lib PRIVATE FSUAE)
+endif()
 
 target_link_libraries(uae_lib zlibstatic)
 

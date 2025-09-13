@@ -35,7 +35,7 @@ public:
     CustReg(TInt v) : mV((Type)v) {
     }
     operator uint16_t() const {
-        return mV;
+        return (uint16_t)mV;
     }
     const eastl::string_view& toString() const {
         return CustReg::cust_reg_data[mV].name;

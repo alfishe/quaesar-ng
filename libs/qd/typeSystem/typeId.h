@@ -43,7 +43,6 @@ public:
 
 //-------------------------------------------------------------------------
 
-#if 0
 namespace eastl {
 template<typename T>
 struct hash;
@@ -53,4 +52,3 @@ struct hash<qd::TypeId> {
     size_t operator() (qd::TypeId const& ID) const { return ID.ToUint(); }
 };
 } // namespace eastl
-#endif

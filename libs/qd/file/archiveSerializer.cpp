@@ -94,7 +94,7 @@ namespace qd
 
 
 
-	CBase64Archive::CBase64Archive(uint32_t Buffer /*= 256 */, ESaveLoad bStore /*= ESaveLoad::Save*/)
+	CBase64Archive::CBase64Archive(uint32_t Buffer /*= 256 */, ESaveLoad /*bStore*/ /*= ESaveLoad::Save*/)
 		: TSuper( Buffer, ESaveLoad::Save )
 	{
 	}

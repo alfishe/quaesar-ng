@@ -1,6 +1,6 @@
 #pragma once
-#include <qd/typeSystem/typeInfoBase.h>
 #include <qd/typeSystem/typeInfoAttrBase.h>
+#include "qd/typeSystem/typeInfo.h"
 
 
 namespace qd::tsAttr {
@@ -79,20 +79,18 @@ using ClassID32 = GUID32;
 class CreateClassCb : public qd::TypeInfoAttribute
 {
     TS_REFLECT_CLASS(qd::tsAttr::CreateClassCb, qd::TypeInfoAttribute);
-    using BaseClass = void;
-    using TBaseCreateFunc = BaseClass* (*)(const qd::TypeInfo&);
-    TBaseCreateFunc m_pCreateCallback;
+    void *m_pCreateCallback;
 
 public:
     template<typename TCreateFunc>
     explicit CreateClassCb(TCreateFunc createCallback)
-        : m_pCreateCallback(reinterpret_cast<TBaseCreateFunc>(createCallback))
+        : m_pCreateCallback(reinterpret_cast<void *>(createCallback))
     {}
 
     template<class TBaseClass, typename... TArgs>
     TBaseClass* makeInstance_(TArgs... args) const
     {
-        const qd::TypeInfo& class_info = static_cast<const qd::TypeInfo&>(*m_pParent);
+        const qd::TypeInfo& class_info = *(static_cast<const qd::TypeInfo*>(m_pParent));
         using TCreateInstanceFunc = TBaseClass* (*)(const qd::TypeInfo&, TArgs...);
         auto makeInstFn = reinterpret_cast<TCreateInstanceFunc>(m_pCreateCallback);
         return makeInstFn(class_info, args...); // Fixed: Simplified return statement

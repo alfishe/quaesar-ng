@@ -108,7 +108,7 @@ qd::TermMsg::TThis* TermMsg::setMsgV(const char* pFormat, va_list arguments)
 
 void TermMsg::_flushLogMsg()
 {
-    SDL_LogMessage(0, (SDL_LogPriority)m_nMsgType, m_logStr.c_str());
+    SDL_LogMessage(0, (SDL_LogPriority)m_nMsgType, "%s", m_logStr.c_str());
 }
 
 

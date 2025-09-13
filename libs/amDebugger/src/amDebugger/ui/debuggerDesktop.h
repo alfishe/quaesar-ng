@@ -37,14 +37,6 @@ public:
 
     Debugger* getDbg() const { return m_pDbg; }
 
-    template<class T>
-    inline T* getWnd_() const
-    {
-        const uint32_t idx = T::CLASS_ID;
-        UiView* curView = m_pWindows[idx];
-        return static_cast<T*>(curView);
-    }
-
     qd::OperationsRegistry* getOperationMgr() const { return m_pOperationMgr; }
     qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 

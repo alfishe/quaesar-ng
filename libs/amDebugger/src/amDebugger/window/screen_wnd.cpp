@@ -2,7 +2,7 @@
 #include "qd/imGui/imGuiHelperClass.h"
 #include <amDebugger/debuggerApp.h>
 #include <amDebugger/vm/vmInterface.h>
-#include <qd/ImGui/imgui_eastl.h>
+#include <qd/imGui/imgui_eastl.h>
 #include <SDL.h>
 
 namespace amD {

@@ -41,6 +41,15 @@ public:
         return nullptr;
     }
 
+    template<class T>
+    inline T* getWnd_() const
+    {
+        const uint32_t idx = T::CLASS_ID;
+        qd::UiNode* curView = m_pWindows[idx];
+        return static_cast<T*>(curView);
+    }
+
+
 }; // class UiDesktop
 
 

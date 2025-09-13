@@ -3,7 +3,7 @@
 #include <amDebugger/debuggerApp.h>
 #include <amDebugger/vm/vmInterface.h>
 #include <qd/base/color.h>
-#include <qd/ImGui/imgui_eastl.h>
+#include <qd/imGui/imgui_eastl.h>
 
 namespace amD {
 namespace window {

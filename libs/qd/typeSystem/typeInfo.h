@@ -1,6 +1,6 @@
 #pragma once
 #include "qd/stl/vector.h"
-//#include <qd/base/stringId.h>
+// #include <qd/base/stringId.h>
 #include <qd/debug/assert.h>
 #include <qd/typeSystem/stdTypeId.h>
 #include <qd/typeSystem/typeInfoBase.h>
@@ -8,8 +8,11 @@
 
 namespace qd {
 
+template<typename T>
+const qd::TypeInfo& typeof_();
 
-class TypeInfo : public TypeInfoBase
+
+class TypeInfo : public qd::TypeInfoBase
 {
     StdTypeId m_stdTypeId;
 
@@ -65,7 +68,7 @@ public:
         : m_stdTypeId(typeInfo)
     {}
 
-    virtual ~TypeInfo() = default;
+    virtual ~TypeInfo() override = default;
     TypeInfo& operator= (TypeInfo const& rhs) = default;
 
     bool checkDefined() const;
@@ -77,7 +80,7 @@ public:
 protected:
     void onTypeCreated();
 
-    virtual void getInheritedProviders(_Out_ qd::vector<const TypeInfoBase* >& out_list) const override;
+    virtual void getInheritedProviders(/*Out*/ qd::vector<const TypeInfoBase* >& out_list) const override;
 
 }; // class TypeInfo
 //////////////////////////////////////////////////////////////////////////

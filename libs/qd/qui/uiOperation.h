@@ -81,8 +81,8 @@ class IOperationEnvironment
     TS_REFLECT_CLASS(qd::IOperationEnvironment, void);
 
 protected:
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) { return EFlow::NO_RESULT; }
-    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* args) const { return EFlow::NO_RESULT; }
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* /*args*/) { return EFlow::NO_RESULT; }
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* /*args*/) const { return EFlow::NO_RESULT; }
 
 public:
     virtual IOperationEnvironment* getOpEnvParent() const { return nullptr; }
@@ -150,7 +150,7 @@ public:
         return static_cast<T*>(this);
     }
 
-    virtual Base* clone(qd::operation::args::IOpArgAllocator& allocator) { ASSERT_AND_DO(0, return nullptr, ); }
+    virtual Base* clone(qd::operation::args::IOpArgAllocator& /*allocator*/) { ASSERT_AND_DO(0, return nullptr, ); }
 
     // setup() should be declared
     //static void setup(qd::operation::args::OpDesc& d) {}

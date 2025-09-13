@@ -44,7 +44,7 @@ qd::TypeRegistry* TypeRegistry::get()
 }
 
 
-const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti, bool bReplaceIfDefined /*= false*/) const
+const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti, bool /*bReplaceIfDefined*/ /*= false*/) const
 {
     const TypeInfoMap& typeMap = getSharedData()->m_TypeMap;
     const std::type_info* typePtr = ti.getTypePtr();

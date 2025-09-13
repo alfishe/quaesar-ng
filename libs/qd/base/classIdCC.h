@@ -21,10 +21,6 @@ public:
         return classNameHash == rh.classNameHash;
     }
 
-    template <typename TClassInd>
-    static constexpr ClassIdCC makeByCC(TClassInd classInd) {
-        return ClassIdCC(indToPrime(static_cast<uint32_t>(classInd)));
-    }
 
     static constexpr ClassIdCC makeByInd(const char* class_name) {
         return {class_name, qd::fnv1aHash(class_name)};

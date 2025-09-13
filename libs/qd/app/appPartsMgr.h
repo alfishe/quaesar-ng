@@ -4,6 +4,7 @@
 #include <qd/base/base.h>
 #include <qd/stl/ref_ptr.h>
 #include <qd/base/baseTypes.h>
+#include "qd/debug/exception.h"
 
 
 FORWARD_DECLARATION_3(qd, ImAPI, CImGuiBase);
@@ -35,29 +36,41 @@ public:
     void sendAppEventMsg(qd::appMsg::BaseMsg& in_msg);
 
 
+#if 0
     template<class TPartClass>
     inline TPartClass* getPart_()
     {
-        const string& staticPartIDStr = TPartClass::StaticClassNameID();
+        const string& staticPartIDStr = TPartClass::getStaticTypeInfo();
         ptr<TPartClass> pPart = findPartByName(staticPartIDStr);
         if (!pPart)
             throw Exception(EException::NOT_FOUND, "ApplicationPart:'%s' not initialized yet!", CC(staticPartIDStr));
         return pPart;
     }
 
-
     // TPartClass base of ApplicationPart*
     template<class TPartClass>
     inline TPartClass* findPart_() const
     {
-        const string& staticPartIDStr = TPartClass::StaticClassNameID();
+        const string& staticPartIDStr = TPartClass::getStaticTypeInfo();
         assert(staticPartIDStr);
         ptr<TPartClass> pExistPart = findPartByName(staticPartIDStr);
         return pExistPart;
     }
+    template<class TPart>
+    void addPart_(TPart* pPart)
+    {
+        addPart(pPart, pPart->StaticClassNameID());
+    }
+
+    template<class TPartClass>
+    void destroyPart_()
+    {
+        ref_ptr<ApplicationPart> pPart = findPart_<TPartClass>();
+        destroyPart(pPart);
+    }
+#endif //
 
     ApplicationPart* getPartByInd(int Index) { return m_pParts[Index]; }
-
 
 
     // TPartClass base of ApplicationPart*
@@ -82,22 +95,9 @@ public:
     void addPart(ref_ptr<ApplicationPart> p_part);
     void addPart(ref_ptr<ApplicationPart> p_part, const qd::string& part_name_id);
 
-    template<class TPart>
-    void addPart_(TPart* pPart)
-    {
-        addPart(pPart, pPart->StaticClassNameID());
-    }
-
-    template<class TPartClass>
-    void destroyPart_()
-    {
-        ref_ptr<ApplicationPart> pPart = findPart_<TPartClass>();
-        destroyPart(pPart);
-    }
-
     void destroyPart(ref_ptr<ApplicationPart> pPart);
     void destroy();
-    virtual ~AppPartsManager();
+    virtual ~AppPartsManager() override;
 
     void update(float dt, float time);
     void render();

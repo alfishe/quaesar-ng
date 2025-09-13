@@ -52,7 +52,7 @@ EA_NODISCARD constexpr inline void* DW2Ptr(const T& pPtr)
 template<typename TClass, typename TMember>
 int getOffsetOf(TMember TClass::*pMember)
 {
-    return (uint8_t*)&(((TClass*)nullptr)->*pMember) - (uint8_t*)nullptr;
+    return (int)((uint8_t*)&(((TClass*)nullptr)->*pMember) /*- (uint8_t*)nullptr*/);
 
     // union Cast {
     // 	TMember TClass::*pMember;

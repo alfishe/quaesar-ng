@@ -34,7 +34,7 @@ class NumberExpr : public Expr
 public:
     explicit NumberExpr(ExprValue number) : m_number(number) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& /*e*/) const
     {
         return m_number;
     }
@@ -48,7 +48,7 @@ class CallbackValueExpr : public Expr
 public:
     explicit CallbackValueExpr(ExprValuePtr ptr) : m_ptr(ptr) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& /*e*/) const
     {
         return m_ptr.readValue();
     }
@@ -62,7 +62,7 @@ class ByteValueExpr : public Expr
 public:
     explicit ByteValueExpr(ExprValuePtr ptr) : m_ptr(ptr) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    virtual ExprValue evaluate(ExprEvaluator& /*e*/) const override
     {
         return *(uint8_t*)m_ptr.ptr;
     }
@@ -76,7 +76,7 @@ class WordValueExpr : public Expr
 public:
     explicit WordValueExpr(ExprValuePtr ptr) : m_ptr(ptr) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& /*e*/) const override
     {
         return *(uint16_t*)m_ptr.ptr;
     }
@@ -90,7 +90,7 @@ class U24ValueExpr : public Expr
 public:
     explicit U24ValueExpr(ExprValuePtr ptr) : m_ptr(ptr) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& /*e*/) const override
     {
         uint16_t w = *(uint16_t*)m_ptr.ptr;
         uint8_t b = *((uint8_t*)m_ptr.ptr + 2);
@@ -106,7 +106,7 @@ class DwordValueExpr : public Expr
 public:
     explicit DwordValueExpr(ExprValuePtr ptr) : m_ptr(ptr) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& /*e*/) const override
     {
         return *(uint32_t*)m_ptr.ptr;
     }
@@ -120,7 +120,7 @@ class Func0Expr : public Expr
 public:
     explicit Func0Expr(ExprCallback0 cb) : m_callback(cb) {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& /*e*/) const override
     {
         return m_callback();
     }
@@ -135,7 +135,7 @@ public:
     Func1Expr(ExprCallback1 cb, Expr* arg1) : m_callback(cb), m_arg1(arg1) {}
     ~Func1Expr() { delete m_arg1; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_callback(m_arg1->evaluate(e));
     }
@@ -151,7 +151,7 @@ public:
     Func2Expr(ExprCallback2 cb, Expr* arg1, Expr* arg2) : m_callback(cb), m_arg1(arg1), m_arg2(arg2) {}
     ~Func2Expr() { delete m_arg1; delete m_arg2; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_callback(m_arg1->evaluate(e), m_arg2->evaluate(e));
     }
@@ -168,7 +168,7 @@ public:
     Func3Expr(ExprCallback3 cb, Expr* arg1, Expr* arg2, Expr* arg3) : m_callback(cb), m_arg1(arg1), m_arg2(arg2), m_arg3(arg3) {}
     ~Func3Expr() { delete m_arg1; delete m_arg2; delete m_arg3; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_callback(m_arg1->evaluate(e), m_arg2->evaluate(e), m_arg3->evaluate(e));
     }
@@ -186,7 +186,7 @@ public:
     MemByteExpr(Expr* op) : m_op(op) {}
     ~MemByteExpr() { delete m_op; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return e.memByte(m_op->evaluate(e));
     }
@@ -201,7 +201,7 @@ public:
     MemWordExpr(Expr* op) : m_op(op) {}
     ~MemWordExpr() { delete m_op; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return e.memWord(m_op->evaluate(e));
     }
@@ -216,7 +216,7 @@ public:
     MemDwordExpr(Expr* op) : m_op(op) {}
     ~MemDwordExpr() { delete m_op; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return e.memDword(m_op->evaluate(e));
     }
@@ -230,7 +230,7 @@ class DollarExpr : public Expr
 public:
     DollarExpr() {}
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return e.pc();
     }
@@ -240,9 +240,9 @@ class ConditionalExpr : public Expr
 {
 public:
     ConditionalExpr(Expr* cond, Expr* t, Expr* f) : m_cond(cond), m_falseCase(f), m_trueCase(t) {}
-    ~ConditionalExpr() { delete m_cond; delete m_trueCase; delete m_falseCase; }
+    ~ConditionalExpr() override { delete m_cond; delete m_trueCase; delete m_falseCase; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         if (m_cond->evaluate(e))
             return m_trueCase->evaluate(e);
@@ -260,9 +260,9 @@ class LogicOrExpr : public Expr
 {
 public:
     LogicOrExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~LogicOrExpr() { delete m_left; delete m_right; }
+    ~LogicOrExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) || m_right->evaluate(e);
     }
@@ -276,9 +276,9 @@ class LogicAndExpr : public Expr
 {
 public:
     LogicAndExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~LogicAndExpr() { delete m_left; delete m_right; }
+    ~LogicAndExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) && m_right->evaluate(e);
     }
@@ -292,9 +292,9 @@ class LogicNotExpr : public Expr
 {
 public:
     LogicNotExpr(Expr* op) : m_op(op) {}
-    ~LogicNotExpr() { delete m_op; }
+    ~LogicNotExpr() override { delete m_op; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return !m_op->evaluate(e);
     }
@@ -307,9 +307,9 @@ class OrExpr : public Expr
 {
 public:
     OrExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~OrExpr() { delete m_left; delete m_right; }
+    ~OrExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) | m_right->evaluate(e);
     }
@@ -323,9 +323,9 @@ class AndExpr : public Expr
 {
 public:
     AndExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~AndExpr() { delete m_left; delete m_right; }
+    ~AndExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) & m_right->evaluate(e);
     }
@@ -339,9 +339,9 @@ class XorExpr : public Expr
 {
 public:
     XorExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~XorExpr() { delete m_left; delete m_right; }
+    ~XorExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) ^ m_right->evaluate(e);
     }
@@ -355,9 +355,9 @@ class NotExpr : public Expr
 {
 public:
     NotExpr(Expr* op) : m_op(op) {}
-    ~NotExpr() { delete m_op; }
+    ~NotExpr() override { delete m_op; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return ~m_op->evaluate(e);
     }
@@ -370,9 +370,9 @@ class EqualityExpr : public Expr
 {
 public:
     EqualityExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~EqualityExpr() { delete m_left; delete m_right; }
+    ~EqualityExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) == m_right->evaluate(e);
     }
@@ -386,9 +386,9 @@ class InequalityExpr : public Expr
 {
 public:
     InequalityExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~InequalityExpr() { delete m_left; delete m_right; }
+    ~InequalityExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) != m_right->evaluate(e);
     }
@@ -402,9 +402,9 @@ class LessExpr : public Expr
 {
 public:
     LessExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~LessExpr() { delete m_left; delete m_right; }
+    ~LessExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) < m_right->evaluate(e);
     }
@@ -418,9 +418,9 @@ class LessEqualExpr : public Expr
 {
 public:
     LessEqualExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~LessEqualExpr() { delete m_left; delete m_right; }
+    ~LessEqualExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) <= m_right->evaluate(e);
     }
@@ -434,9 +434,9 @@ class GreaterExpr : public Expr
 {
 public:
     GreaterExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~GreaterExpr() { delete m_left; delete m_right; }
+    ~GreaterExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) > m_right->evaluate(e);
     }
@@ -450,9 +450,9 @@ class GreaterEqualExpr : public Expr
 {
 public:
     GreaterEqualExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~GreaterEqualExpr() { delete m_left; delete m_right; }
+    ~GreaterEqualExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) >= m_right->evaluate(e);
     }
@@ -466,9 +466,9 @@ class ShlExpr : public Expr
 {
 public:
     ShlExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~ShlExpr() { delete m_left; delete m_right; }
+    ~ShlExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) << m_right->evaluate(e);
     }
@@ -482,9 +482,9 @@ class ShrExpr : public Expr
 {
 public:
     ShrExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~ShrExpr() { delete m_left; delete m_right; }
+    ~ShrExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return (ExprValue)((ExprUValue)m_left->evaluate(e) >> (ExprUValue)m_right->evaluate(e));
     }
@@ -498,9 +498,9 @@ class PlusExpr : public Expr
 {
 public:
     PlusExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~PlusExpr() { delete m_left; delete m_right; }
+    ~PlusExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) + m_right->evaluate(e);
     }
@@ -514,9 +514,9 @@ class MinusExpr : public Expr
 {
 public:
     MinusExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~MinusExpr() { delete m_left; delete m_right; }
+    ~MinusExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) - m_right->evaluate(e);
     }
@@ -530,9 +530,9 @@ class NegateExpr : public Expr
 {
 public:
     NegateExpr(Expr* op) : m_op(op) {}
-    ~NegateExpr() { delete m_op; }
+    ~NegateExpr() override { delete m_op; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return -m_op->evaluate(e);
     }
@@ -545,9 +545,9 @@ class MultiplyExpr : public Expr
 {
 public:
     MultiplyExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~MultiplyExpr() { delete m_left; delete m_right; }
+    ~MultiplyExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         return m_left->evaluate(e) * m_right->evaluate(e);
     }
@@ -561,9 +561,9 @@ class DivideExpr : public Expr
 {
 public:
     DivideExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~DivideExpr() { delete m_left; delete m_right; }
+    ~DivideExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         int r = m_right->evaluate(e);
         if (r == 0)
@@ -580,9 +580,9 @@ class RemainderExpr : public Expr
 {
 public:
     RemainderExpr(Expr* left, Expr* right) : m_left(left), m_right(right) {}
-    ~RemainderExpr() { delete m_left; delete m_right; }
+    ~RemainderExpr() override { delete m_left; delete m_right; }
 
-    ExprValue evaluate(ExprEvaluator& e) const
+    ExprValue evaluate(ExprEvaluator& e) const override
     {
         int r = m_right->evaluate(e);
         if (r == 0)
@@ -682,7 +682,7 @@ static Expr* primaryExpression(Context* c)
                     expectedArgs = 2;
                 else if (cb3)
                     expectedArgs = 3;
-                Expr* args[EXPR_MAX_FUNC_ARGS] = {NULL};
+                Expr* args[EXPR_MAX_FUNC_ARGS] = {nullptr};
                 int numArgs = 0;
                 if (c->curToken->id != TOK_RPAREN) {
                     for (;;) {
@@ -720,19 +720,19 @@ static Expr* primaryExpression(Context* c)
             } else {
                 // Label, register, etc.
                 ExprValuePtr ptr;
-                ptr.readValue = NULL;
-                ptr.ptr = NULL;
+                ptr.readValue = nullptr;
+                ptr.ptr = nullptr;
                 ptr.sizeInBytes = 0;
                 if (!c->resolver->resolveVariable(c->curToken->text, ptr))
                     throw ExprError("unknown identifier '%s'.", c->curToken->text);
 
                 c->curToken = c->curToken->next;
                 if (ptr.readValue) {
-                    if (ptr.ptr != NULL)
+                    if (ptr.ptr != nullptr)
                         throw ExprError("internal error.");
                     return new CallbackValueExpr(ptr);
                 } else {
-                    if (ptr.ptr == NULL)
+                    if (ptr.ptr == nullptr)
                         throw ExprError("internal error.");
                     switch (ptr.sizeInBytes) {
                         case 1: return new ByteValueExpr(ptr);
@@ -981,7 +981,7 @@ Expr* Expr::parse(const char* input, ExprResolver& resolver)
 {
     ExprTokenList lexList = exprLexer(input);
 
-    Context c;
+    Context c = {};
     c.curToken = lexList.first;
     c.resolver = &resolver;
     Expr* result = expression(&c);

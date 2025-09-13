@@ -1,9 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "adf.h"
 #include <adflib.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 extern uint8_t s_bootblock[1024];
 

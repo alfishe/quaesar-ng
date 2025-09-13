@@ -12,8 +12,8 @@ struct equal_to;
 template<typename T>
 struct less;
 
-// template<typename T>
-// struct hash;
+template<typename T>
+struct hash;
 
 template<typename T, typename Allocator>
 class basic_string;
@@ -67,8 +67,8 @@ template<typename T, size_t S>
 using TInlineVector = eastl::fixed_vector<T, S, true, eastl::allocator>;
 
 
-// template<typename K, typename V>
-// using THashMap = eastl::hash_map<K, V, eastl::hash<K>, eastl::equal_to<K>, eastl::allocator, false>;
+template<typename K, typename V>
+using THashMap = eastl::hash_map<K, V, eastl::hash<K>, eastl::equal_to<K>, eastl::allocator, false>;
 
 
 template<typename K, typename V>

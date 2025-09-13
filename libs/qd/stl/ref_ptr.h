@@ -71,7 +71,7 @@ inline static T* get_ptr(const int& pPtr)
 }
 
 template<class T>
-inline static T* get_ptr_null(const ref_ptr<T>& pPtr)
+inline static T* get_ptr_null(const ref_ptr<T>&)
 {
     return (T*)(nullptr);
 }
@@ -97,7 +97,7 @@ struct InnerType {
 template<class T, bool isPod = std::is_polymorphic<T>::value >
 struct assert_cast {
     template<class T2>
-    static void test(T2* pPtr)
+    static void test(T2*)
     {
         c_def(0);
     };
@@ -174,13 +174,13 @@ public:
         , _ref_ptr_WeakRefCount(0)
     {}
 
-    inline RefCounted(const RefCounted& r)
+    inline RefCounted(const RefCounted&)
         : _ref_ptr_RefCount(0)
         , _ref_ptr_WeakRefCount(0)
     {}
 
     // DEEP COPY SHOULD NO COPY REF_COUNTERS
-    inline void operator= (const RefCounted& r) {}
+    inline void operator= (const RefCounted&) {}
 
 
     // STATIC_CAST TO ANY DERIVED
@@ -554,7 +554,7 @@ public:
     inline T* getsafe() const
     {
         if (!TSuper::valid())
-            throw std::invalid_argument("ref_ptr is nullptr");
+            assert(0 && "ref_ptr is nullptr");
         return TSuper::_ptr;
     }
 
@@ -590,9 +590,9 @@ public:
         return (get() != (T*)get_ptr(p));
     }
 
-    inline bool operator== (const std::nullptr_t p) const { return !(this->operator bool ()); }
+    inline bool operator== (const std::nullptr_t /*p*/) const { return !(this->operator bool ()); }
 
-    inline bool operator!= (const std::nullptr_t p) const { return this->operator bool (); }
+    inline bool operator!= (const std::nullptr_t /*p*/) const { return this->operator bool (); }
 
     inline bool operator< (const ref_ptr_base2& rp) const { return (get() < rp.get()); }
 

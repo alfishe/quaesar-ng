@@ -13,13 +13,14 @@
 #include <SDL_log.h>
 #include <SDL_rwops.h>
 #include <quasar_app/quaesar_debug.h>
-#include <stdio.h>
 #include <sys/stat.h>
+#include <cstdio>
 #include <cstring>  // For strcpy, strcat, etc.
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
+#include "qd/base/base.h"
 
 #if defined(_WIN32)
 #include <Shlwapi.h>
@@ -38,6 +39,9 @@
 #elif defined(__linux__)
 #include <sys/statvfs.h>
 #endif
+
+EA_DISABLE_VC_WARNING(4702) /*unreachable code*/
+
 
 #define FILE_ATTRIBUTE_READONLY 0x00000001
 #define FILE_ATTRIBUTE_HIDDEN 0x00000002
@@ -220,7 +224,7 @@ int my_unlink(const char* name, bool /*dontrecycle*/) {
 }
 
 
-int get_fs_usage(const TCHAR* path, const TCHAR* disk, struct fs_usage* fsp) {
+int get_fs_usage(const TCHAR* path, const TCHAR* /*disk*/, struct fs_usage* fsp) {
     try {
         std::filesystem::space_info spaceInfo = std::filesystem::space(path);
         fsp->total = spaceInfo.capacity;
@@ -245,19 +249,19 @@ int isprinter() {
 
 void to_lower(TCHAR* s, int len) {
     for (int i = 0; i < len && s[i]; i++) {  // Added s[i] check for safety
-        s[i] = tolower(s[i]);
+        s[i] = (char)tolower(s[i]);
     }
 }
 
 TCHAR* utf8u(const char* s) {
-    if (s == NULL)
-        return NULL;
+    if (s == nullptr)
+        return nullptr;
     return ua(s);  // Assuming ua handles char* to TCHAR* (potentially wchar_t*)
 }
 
 char* uutf8(const TCHAR* s) {
-    if (s == NULL)
-        return NULL;
+    if (s == nullptr)
+        return nullptr;
     return ua(s);  // Assuming ua handles TCHAR* (potentially wchar_t*) to char*
 }
 
@@ -286,6 +290,7 @@ TCHAR* au_fs(const char* src) {
 
 
 char* ua_fs(const TCHAR* s, int defchar) {
+    G_UNUSED(defchar);
 #ifdef NO_TRANSLATION
     if (s == NULL)
         return NULL;
@@ -341,6 +346,7 @@ TCHAR* au_fs_copy(TCHAR* dst, int maxlen, const char* src) {
 
 
 char* ua_fs_copy(char* dst, int maxlen, const TCHAR* src, int defchar) {
+    G_UNUSED(defchar);
 #ifdef NO_TRANSLATION
     if (!dst || maxlen <= 0)
         return NULL;
@@ -507,7 +513,7 @@ void my_closedir(struct my_opendir_s* mod) {
 }
 
 
-int hdf_write_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int len, uint32_t* error) {
+int hdf_write_target(struct hardfiledata* /*hfd*/, void* /*buffer*/, uae_u64 /*offset*/, int /*len*/, uint32_t* error) {
     UNIMPLEMENTED();
     if (error)
         *error = 1;
@@ -553,14 +559,14 @@ static std::string make_uaefsdbpath(const char* dir, const char* name = nullptr)
 
 DWORD GetFileAttributesSafe(const char* name) {
     if (!name) {
-        return -1;  // INVALID_FILE_ATTRIBUTES
+        return ~0u;  // INVALID_FILE_ATTRIBUTES
     }
     namespace fs = std::filesystem;
 
     fs::path filePath(name);
     try {
         if (!fs::exists(filePath)) {
-            return -1;  // INVALID_FILE_ATTRIBUTES
+            return ~0u;  // INVALID_FILE_ATTRIBUTES
         }
 
         DWORD attributes = 0;
@@ -583,7 +589,7 @@ DWORD GetFileAttributesSafe(const char* name) {
         return attributes;
     } catch (const std::filesystem::filesystem_error& e) {
         SDL_Log("GetFileAttributesSafe: Error accessing %s: %s", name, e.what());
-        return -1;  // INVALID_FILE_ATTRIBUTES
+        return ~0u;  // INVALID_FILE_ATTRIBUTES
     }
 }
 
@@ -700,7 +706,7 @@ void fetch_nvrampath(TCHAR* out, int size) {
         out[0] = '\0';
 }
 
-void fetch_configurationpath(TCHAR* out, int size) {
+void fetch_configurationpath(TCHAR* out, int /*size*/) {
     debug("out:'%s'", out);
     out[0] = _T('/');
     out[1] = _T('.');

@@ -29,7 +29,7 @@ public:
     };
 
 public:
-    QuadTreeAddrMap(AddrRef startAddr, AddrRef endAddr) { m_root = allocateNode(); }
+    QuadTreeAddrMap(AddrRef /*startAddr*/, AddrRef /*endAddr*/) { m_root = allocateNode(); }
 
     ~QuadTreeAddrMap() = default;
 

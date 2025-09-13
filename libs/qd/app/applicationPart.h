@@ -10,11 +10,13 @@
 #include <qd/typeSystem/reflectedType.h>
 
 
-FORWARD_DECLARATION_3S(qd, appMsg, BaseMsg);
 union SDL_Event;
 
+
 namespace qd {
+FORWARD_DECLARATION_2S(appMsg, BaseMsg);
 class Application;
+class AppPartsManager;
 
 
 struct EAppPartMtd {
@@ -91,15 +93,15 @@ public:
     void setApp(qd::Application* pApp) { m_pApp = pApp; }
 
 
-    virtual void update(float dt, float time) {}
+    virtual void update(float /*dt*/, float /*time*/) {}
     virtual void render() {}
 
-    virtual qd::EFlow onSdlEventProc(SDL_Event& event) { return qd::EFlow::UNDEF; }
+    virtual qd::EFlow onSdlEventProc(SDL_Event& /*event*/) { return qd::EFlow::UNDEF; }
 
     virtual void postRender() {}
 
     virtual void destroyImp() {}
-    void destroy();
+    virtual void destroy() override;
 
     AppPartsManager* getAppParts() const;
 

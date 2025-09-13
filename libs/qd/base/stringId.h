@@ -35,7 +35,7 @@ public:
 
 public:
     StringID() = default;
-    explicit StringID(nullptr_t)
+    explicit StringID(std::nullptr_t)
         : m_ID(0)
     {}
     explicit StringID(char const* pStr);
@@ -98,7 +98,6 @@ private:
 
 //-------------------------------------------------------------------------
 
-#if 0
 namespace eastl {
 template<typename T>
 struct hash;
@@ -108,4 +107,3 @@ struct hash<qd::StringID> {
     size_t operator() (qd::StringID const& ID) const { return (uint64_t)ID; }
 };
 } // namespace eastl
-#endif 0

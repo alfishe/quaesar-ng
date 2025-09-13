@@ -55,8 +55,8 @@ public:
     Thread() = default;
     ~Thread();
 
-    void create(ThreadFunc&& threadProc, uint32_t nStackSize = 0);
-    void create(void (*pThreadProc)(void* pData), void* pData, uint32_t nStackSize = 0);
+    void create(ThreadFunc&& threadProc);
+    void create(void (*pThreadProc)(void* pData), void* pData);
 
     void kill();
     void join();

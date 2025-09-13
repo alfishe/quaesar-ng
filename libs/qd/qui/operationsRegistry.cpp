@@ -36,7 +36,7 @@ qd::OperationsRegistry& OperationsRegistry::get()
 //////////////////////////////////////////////////////////////////////////
 
 
-void OperationsRegistry::createOperations(qd::UiOperationCreator* ca)
+void OperationsRegistry::createOperations(qd::UiOperationCreator* /*ca*/)
 {
     mInit = true;
 }

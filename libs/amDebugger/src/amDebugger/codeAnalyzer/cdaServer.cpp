@@ -103,7 +103,7 @@ public:
 
     bool hasM68InstructionAddr(AddrRef addr) const
     {
-        for (int i = 0; i < m_nInstructions; ++i)
+        for (size_t i = 0; i < m_nInstructions; ++i)
         {
             if (m_pInstructions[i].address == addr)
                 return true;
@@ -209,7 +209,7 @@ void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, 
                 continue;
             outItems->push_back(curItem);
         }
-        if (outItems->size() >= nLines)
+        if ((int)outItems->size() >= nLines)
             break;
 
         dc.m_pPrevChunk = dc.m_pCurrChunk;

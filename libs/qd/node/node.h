@@ -99,6 +99,23 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+
+struct NodeCreator {
+    Node* parent = nullptr;
+    uint32_t id = 0;
+
+    template<class TClass, typename... TArgs>
+    TClass* make_(TArgs&&... args)
+    {
+        TClass* pNode = new TClass(args...);
+        pNode->onNodeCreated(this);
+        return pNode;
+    } // make_
+
+}; // struct NodeCreator
+
+
+
 template<class TComp, typename ...TArgs>
 TComp* Node::createComp_(TArgs&&... args)
 {
@@ -186,10 +203,10 @@ public:
     // clang-format off
     virtual void onNodeCreated(qd::NodeCreator* mk) { TSuper::onNodeCreated(mk); }
     virtual int getNumChild() { return 0; }
-    virtual Node* getChild(int idx) { return nullptr; }
-    virtual bool beginIter(NodeIterator& buf) { return false; }
-    virtual bool addChild(Node* child) { assert(0); return false; }
-    virtual bool removeChild(Node* child) { return false; }
+    virtual Node* getChild(int /*idx*/) { return nullptr; }
+    virtual bool beginIter(NodeIterator& /*buf*/) { return false; }
+    virtual bool addChild(Node* /*child*/) { assert(0); return false; }
+    virtual bool removeChild(Node* /*child*/) { return false; }
     // clang-format on
 };
 
@@ -215,22 +232,6 @@ public:
 
 }; // class NodesChildList
 //////////////////////////////////////////////////////////////////////////
-
-
-
-struct NodeCreator {
-    Node* parent = nullptr;
-    uint32_t id = 0;
-
-    template<class TClass, typename... TArgs>
-    TClass* make_(TArgs&&... args)
-    {
-        TClass* pNode = new TClass(args...);
-        pNode->onNodeCreated(this);
-        return pNode;
-    } // make_
-
-}; // struct NodeCreator
 
 
 

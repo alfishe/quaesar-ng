@@ -105,7 +105,7 @@ qd::IModuleInterface* ModuleManager::loadModule(const qd::TypeInfo& moduleId, qd
 }
 
 
-void ModuleManager::unloadModule(const qd::TypeInfo& ModuleId, bool bIsShutdown)
+void ModuleManager::unloadModule(const qd::TypeInfo& ModuleId, bool /*bIsShutdown*/)
 {
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
@@ -285,7 +285,7 @@ void ModuleInfo::setInstance(IModuleInterface* pInstance)
     // 		}
     if (m_pInstance)
     {
-        assert(0 && "Instance already Set");
+        assert2(0, "Instance already Set", 0);
         return;
     }
     // 		++ m_nInstanceRef; // REGISTER

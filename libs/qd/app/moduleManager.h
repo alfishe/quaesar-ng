@@ -88,7 +88,6 @@ struct ModuleRegistratorNoCreate_ {
 class ModuleManager
 {
     typedef ModuleManager TThis;
-    // static constexpr uint32_t g_nMAX_MODULES = ECgModuleID::_FAST_ACCESS_ + 16;
 
     struct InfoItem {
         const qd::TypeInfo* m_pType = nullptr;
@@ -98,8 +97,6 @@ class ModuleManager
 
 public:
     typedef qd::vector<ModuleManager::InfoItem> TModuleInfoMap;
-
-    // eastl::fixed_vector< ModuleInfo*, ECgModuleID::_FAST_ACCESS_, false > m_pFastModules;
 
 private:
     static TThis* m_pSingleInstance;
@@ -148,8 +145,8 @@ public:
     template<class TModuleClass>
     inline void setModuleInstance_(TModuleClass* pInstance)
     {
-        ECgModuleID ModuleId = &TModuleClass::getStaticTypeInfo();
-        setModuleInstance(ModuleId, pInstance);
+        const qd::TypeInfo& moduleId = &TModuleClass::getStaticTypeInfo();
+        setModuleInstance(moduleId, pInstance);
     }
 
 
@@ -163,8 +160,8 @@ public:
     template<class TModuleClass>
     inline ref_ptr<TModuleClass> makeInstance_(qd::ModuleCreateParams* mc = nullptr)
     {
-        ECgModuleID ModuleId = &TModuleClass::getStaticTypeInfo();
-        qd::ref_ptr<TModuleClass> pInstance = createModuleInstance(ModuleId, /*regInstance:*/ false, mc);
+        const qd::TypeInfo& moduleId = &TModuleClass::getStaticTypeInfo();
+        ref_ptr<TModuleClass> pInstance = createModuleInstance(moduleId, /*regInstance:*/ false, mc);
         return pInstance;
     }
 
@@ -314,16 +311,16 @@ inline TModule* getModuleInst_()
 template<class TModuleClass>
 inline ModuleInfo* ModuleManager::overrideModule_(const ModuleInfo::TCreateFunc& pCreateFunc /*= CCallbackNull() */)
 {
-    ECgModuleID ModuleId = TModuleClass::getModuleTypeId();
+    const qd::TypeInfo& moduleId = TModuleClass::getModuleTypeId();
     if (pCreateFunc)
     {
         // CUSTOM CREATE FUNC
-        return overrideModule(ModuleId, pCreateFunc);
+        return overrideModule(moduleId, pCreateFunc);
     }
     else
     {
         // DEFAULT CREATE FUNC
-        return overrideModule(ModuleId, BIND_FREE_CB(&ModuleRegistrator_<TModuleClass>::createModuleFunc));
+        return overrideModule(moduleId, BIND_FREE_CB(&ModuleRegistrator_<TModuleClass>::createModuleFunc));
     }
 }
 

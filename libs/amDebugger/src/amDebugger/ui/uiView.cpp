@@ -24,7 +24,7 @@ void window::ImGuiDemoWindow::drawImp() {
 }
 
 
-void _onUiWindowCreated(const qd::TypeInfo &meta, UiViewCreateCtx *cp, amD::AmDbgWindow * newInst)
+void _onUiWindowCreated(const qd::TypeInfo &/*meta*/, UiViewCreateCtx *cp, amD::AmDbgWindow * newInst)
 {
 //     if (auto typeIdAttr = meta.getAttribute_<qd::tsAttr::CustomClassId32>())
 //         newInst->mClassId = typeIdAttr->getId32();

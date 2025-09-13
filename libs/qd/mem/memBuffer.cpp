@@ -41,12 +41,9 @@ void MemBuf::memMove(uint32_t srcOffset, uint32_t destOffset, uint32_t nBytes)
 {
     uint8_t* pSrcBuf = (uint8_t*)m_pBuffer + srcOffset;
     uint8_t* pDestBuf = (uint8_t*)m_pBuffer + destOffset;
-    uint8_t* pEndBuf = (uint8_t*)m_pBuffer + m_nCapacity;
     if (srcOffset + nBytes > m_nCapacity)
         throw Exception(EException::OUT_OF_RANGE, "CMemBuf::MemMove - Buffer overflow");
-    int err;
-    err = memmove_s(pDestBuf, pEndBuf - pDestBuf, pSrcBuf, nBytes);
-    assert(!err);
+    memmove(pDestBuf, pSrcBuf, nBytes);
 }
 
 

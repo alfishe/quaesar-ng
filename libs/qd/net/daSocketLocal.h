@@ -29,7 +29,7 @@ public:
             SetParent(pParent);
     }
     virtual void initialize() {}
-    virtual EFlow update(qd::Fixed32 Delta) { return EFlow::DONE; }
+    virtual EFlow update(qd::Fixed32 /*Delta*/) { return EFlow::DONE; }
     virtual void done() {}
     virtual void destroy() {}
 
@@ -97,7 +97,7 @@ public:
     }
 
     // CONTINUE ???
-    EFlow update(qd::Fixed32 Delta) override { return EFlow::UNDEF; }
+    EFlow update(qd::Fixed32 /*Delta*/) override { return EFlow::UNDEF; }
 
     virtual void done() override {}
 
@@ -231,7 +231,7 @@ public:
     }
 
     // CONTINUE ???
-    EFlow update(qd::Fixed32 Delta) override;
+    EFlow update(qd::Fixed32 /*Delta*/) override;
 
 
     void InsertCmd(cmds::CBaseComand* pCommand, int Index)
@@ -286,7 +286,7 @@ namespace LocalImp {
 		ref_ptr<HSocket> m_pLink;
 		uint16_t m_Port;
 
-		HSocket( uint32_t nIndex )
+		HSocket( uint32_t /*nIndex*/ )
 			: m_Buffer( qd::MemAlloc::Kb(4) )
 			, m_pLink(nullptr)
             , m_Port(0)

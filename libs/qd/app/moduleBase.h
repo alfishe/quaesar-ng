@@ -61,7 +61,7 @@ public:
     IModuleInterface(const qd::ModuleCreateParams& /*mc*/) {}
 
     // Called right after the module DLL has been loaded and the module object has been created
-    virtual void onModuleStartup(const qd::ModuleCreateParams& mc)
+    virtual void onModuleStartup(const qd::ModuleCreateParams& /*mc*/)
     {}
 
     // Called before the module has been unloaded
@@ -80,6 +80,7 @@ public:
 
 
 private:
+    EA_DISABLE_VC_WARNING(4201) // nameless struct/union
     struct t_StateFlags {
         union {
             struct {
@@ -93,6 +94,7 @@ private:
             : m_Flag(0)
         {}
     }; // struct CLevelFlags
+    EA_RESTORE_VC_WARNING()
 
     t_StateFlags m_ModuleState;
 

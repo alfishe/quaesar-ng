@@ -19,32 +19,32 @@ public:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Resolver
 
-ExprCallback0 AmDbgResolver::resolveFunc0(const char* name)
+ExprCallback0 AmDbgResolver::resolveFunc0(const char* /*name*/)
 {
     //     if (!strcmp(name, "fn0"))
     //         return fn0;
-    return NULL;
+    return nullptr;
 }
 
-ExprCallback1 AmDbgResolver::resolveFunc1(const char* name)
+ExprCallback1 AmDbgResolver::resolveFunc1(const char* /*name*/)
 {
     //     if (!strcmp(name, "fn1"))
     //         return fn1;
-    return NULL;
+    return nullptr;
 }
 
-ExprCallback2 AmDbgResolver::resolveFunc2(const char* name)
+ExprCallback2 AmDbgResolver::resolveFunc2(const char* /*name*/)
 {
     //     if (!strcmp(name, "fn2"))
     //         return fn2;
-    return NULL;
+    return nullptr;
 }
 
-ExprCallback3 AmDbgResolver::resolveFunc3(const char* name)
+ExprCallback3 AmDbgResolver::resolveFunc3(const char* /*name*/)
 {
     //     if (!strcmp(name, "fn3"))
     //         return fn3;
-    return NULL;
+    return nullptr;
 }
 
 bool AmDbgResolver::resolveVariable(const char* name, ExprValuePtr& result)
@@ -86,7 +86,7 @@ void ExprValStr::parse()
 }
 
 
-bool ExprValStr::evaluate(const IVm::VM* vm, qd::Var16& res)
+bool ExprValStr::evaluate(const IVm::VM* /*vm*/, qd::Var16& res)
 {
     if (!m_pParsedExpr)
         return false;

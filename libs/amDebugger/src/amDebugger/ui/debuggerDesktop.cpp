@@ -135,7 +135,7 @@ void DebuggerDesktop::createAllUiWndows()
 {
     qd::TypeRegistry* tpr = qd::TypeRegistry::get();
     qd::TypeInfoSpan windowTypes = tpr->findAllDerivedFromTypesCached_<amD::AmDbgWindow>(false);
-    for (int i = 0; i < windowTypes.size(); ++i)
+    for (size_t i = 0; i < windowTypes.size(); ++i)
     {
         const qd::TypeInfo* pCurWindowType = windowTypes[i];
         auto* pCreateAttr = pCurWindowType->getAttribute_<qd::tsAttr::CreateClassCb>();

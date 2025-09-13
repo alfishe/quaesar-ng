@@ -14,8 +14,8 @@
 #include <amDebugger/vm/emuDefs.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vmInterface.h>
-#include <qd/Base/baseTypes.h>
-#include <qd/Base/color.h>
+#include <qd/base/baseTypes.h>
+#include <qd/base/color.h>
 #include "SDL_stdinc.h"  // strlcpy
 #include "qd/typeSystem/typeDeclare.h"
 

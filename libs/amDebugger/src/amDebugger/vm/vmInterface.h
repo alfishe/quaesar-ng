@@ -58,7 +58,7 @@ public:
     virtual ~VM();
 
     virtual void init() = 0;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args)
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* /*args*/)
     {
         assert(0);
         return qd::EFlow::NO_RESULT;
@@ -106,7 +106,7 @@ class Emu
 
 public:
     virtual int getDebugDmaMode() { return 0; }
-    virtual void setDebugDmaMode(int p_mode) {}
+    virtual void setDebugDmaMode(int /*p_mode*/) {}
 
     virtual void getScreenSize(int* out_w, int* out_h) const
     {

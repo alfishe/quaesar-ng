@@ -2,7 +2,7 @@
 #include "amDebugger/ui/uiDefs.h"
 #include "qd/base/classInfoReg.h"
 #include "qd/base/color.h"
-#include "qd/ImGui/imgui_eastl.h"
+#include "qd/imGui/imgui_eastl.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/qui/controls/window.h"
 #include "qd/qui/uiOperation.h"
@@ -70,18 +70,17 @@ public:
 
 
 
-#define QDB_WINDOW_REGISTER(enumId, ClassName, BaseClass)                \
-    TS_BEGIN_REFLECT_CLASS(ClassName, BaseClass);                        \
-    TS_ATTRIBUTE(qd::tsAttr::CustomClassId32(enumId));                   \
-    TS_ATTRIBUTE(qd::tsAttr::CreateClassCb(&createWindowCb_<ClassName>)); \
+#define QDB_WINDOW_REGISTER(enumId, ClassName, BaseClass)                      \
+    TS_BEGIN_REFLECT_CLASS(ClassName, BaseClass);                              \
+    TS_ATTRIBUTE(qd::tsAttr::CustomClassId32(enumId));                         \
+    TS_ATTRIBUTE(qd::tsAttr::CreateClassCb(&amD::createWindowCb_<ClassName>)); \
     TS_END()
-
 
 
 void _onUiWindowCreated(const qd::TypeInfo& meta, UiViewCreateCtx* cp, AmDbgWindow* newInst);
 
 template<class TClass>
-static amD::AmDbgWindow* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
+amD::AmDbgWindow* createWindowCb_(const qd::TypeInfo& meta, UiViewCreateCtx* cp)
 {
     TClass* pNewInst = new TClass();
     _onUiWindowCreated(meta, cp, pNewInst);

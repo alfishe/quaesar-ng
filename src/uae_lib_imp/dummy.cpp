@@ -62,6 +62,8 @@
 #include <filesystem>
 #include "qsrimp_proxy.h"
 
+EA_DISABLE_VC_WARNING(4702) /*unreachable code*/
+
 
 int avioutput_enabled = 0;
 bool beamracer_debug = false;
@@ -1389,7 +1391,7 @@ void toggle_mousegrab() {
 
 void to_upper(char* s, int len) {
     for (int i = 0; i < len; i++) {
-        s[i] = toupper(s[i]);
+        s[i] = (char)toupper(s[i]);
     }
 }
 

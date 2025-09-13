@@ -249,7 +249,7 @@ T* UiNode::findParentComp_() const
 template<class TComp>
 TComp* UiNode::getCompI_() const
 {
-    NodeComp* pComp = findComp(TComp::getStaticTypeInfo());
+    UiNodeComp* pComp = findComp(TComp::getStaticTypeInfo());
     return dynamic_cast<TComp*>(pComp);
 }
 

@@ -36,15 +36,33 @@ using THash32 = uint32_t;
 
 template<typename T> T c_def(T v) { return v; }
 template<typename T> constexpr inline T c_expr(T value) { return value; }
+
+
+EA_DISABLE_VC_WARNING(4100) // unreferenced formal parameter
 template<typename... T> inline void unused(T&&... x) { (void(sizeof...(x))); }
 #define G_UNUSED(...) unused(__VA_ARGS__)
+EA_RESTORE_VC_WARNING()
+
 
 #define MAKE4C(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
-
-#define _MAKE4C(x) MAKE4C((int(x) >> 24) & 0xFF, (int(x) >> 16) & 0xFF, (int(x) >> 8) & 0xFF, int(x) & 0xFF)
+#define _MAKE4C(s) MAKE4C(s[0], s[1], s[2], s[3])
 
 namespace qd {
 	static constexpr uint32_t _noPos = UINT32_MAX; // ~0u
 }; // namespace qd
 
+
+//------------------------------------------------------------------------
+// COMPILER
+#ifdef _MSC_VER
+//#  pragma warning(disable :4100) // unreferenced formal parameter
+//#  pragma warning(disable :4512) // assignment operator could not be generated
+//#  pragma warning(disable :4201)  // nonstandard extension used : nameless struct/union
+//#  pragma warning(default :4263) // equivalent -Winconsistent-missing-override
+//#  pragma warning(default :4266)
+#endif // _MSC_VER
+
+
+
 // clang-format on
+//////////////////////////////////////////////////////////////////////////

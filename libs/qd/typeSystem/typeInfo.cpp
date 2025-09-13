@@ -39,7 +39,7 @@ void TypeInfo::onTypeCreated()
 }
 
 
-void TypeInfo::getInheritedProviders(_Out_ eastl::vector<const TypeInfoBase* >& out_list) const
+void TypeInfo::getInheritedProviders(/*_Out_*/ qd::vector<const TypeInfoBase* >& out_list) const
 {
     out_list.reserve(m_pBaseSuperTypes.size());
     for (TBaseSuperTypes::const_iterator i = m_pBaseSuperTypes.begin(); i != m_pBaseSuperTypes.end(); ++i)

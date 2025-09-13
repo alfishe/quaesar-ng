@@ -120,9 +120,9 @@ struct EFileSeek {
 	class IBaseFileIO : public qd::RefCounted
 	{
 	public:
-		virtual uint32_t read(void* pDest, uint32_t nBytes) { return 0; };
-		virtual uint32_t write(const void* pSrc, uint32_t nBytes) { return 0; };
-		virtual uint32_t seek(uint32_t Position, EFileSeek Where = EFileSeek::SET) { return 0; };
+		virtual uint32_t read(void* /*pDest*/, uint32_t /*nBytes*/) { return 0; };
+		virtual uint32_t write(const void* /*pSrc*/, uint32_t /*nBytes*/) { return 0; };
+		virtual uint32_t seek(uint32_t /*Position*/, EFileSeek /*Where*/ = EFileSeek::SET) { return 0; };
 		virtual uint32_t tell() { return 0; };
 		virtual void close(){};
 	
@@ -137,7 +137,7 @@ struct EFileSeek {
 
         virtual qd::string_view getFileName() const { return ""; }
         virtual int getNumChunks() const { return 0; }
-        virtual int addNumChunks(int add) { return 0; };
+        virtual int addNumChunks(int /*add*/) { return 0; };
 
 		inline uint32_t skip(uint32_t nBytes) { return seek(nBytes, EFileSeek::CUR); }
 	}; // class IBaseFileIO

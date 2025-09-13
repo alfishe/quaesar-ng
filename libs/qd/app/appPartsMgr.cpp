@@ -83,7 +83,7 @@ void AppPartsManager::addPart(ref_ptr<ApplicationPart> pPart)
     if (strPartName.empty())
         pPart->setPartName(pPart->getTypeInfo().getTypeName());
 
-    if (!addPartTry(std::move(pPart)))
+    if (!addPartTry(pPart))
     {
         G_THROW_OR_DO(Exception("AddPartError: Duplicate Part Found: \"%s\"", strPartName.c_str()), return);
     }
@@ -234,9 +234,9 @@ void AppPartsManager::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
 }
 
 
-void AppPartsManager::_onImGuiDebugControl(qd::ImAPI::CImGuiBase& im)
+void AppPartsManager::_onImGuiDebugControl(qd::ImAPI::CImGuiBase& /*im*/)
 {
-#ifdef CGMOD_IMGUI
+#ifdef QDMOD_IMGUI
     for (ApplicationPart* pCurPart : m_pParts)
     {
         if (!pCurPart)

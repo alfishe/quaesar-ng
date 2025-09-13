@@ -143,7 +143,7 @@ void DebuggerApp::destroy() {
 }
 
 
-void DebuggerApp::update(float dt, float time)
+void DebuggerApp::update(float /*dt*/, float /*time*/)
 {
     if (isWndVisible())
     {
@@ -193,7 +193,7 @@ qd::EFlow DebuggerApp::onSdlEventProc(SDL_Event& event) {
 
 
 
-const amD::Breakpoint* BreakpointsSortedList::getBpByAddr(AddrRef addr, EReg reg) const
+const amD::Breakpoint* BreakpointsSortedList::getBpByAddr(AddrRef addr, EReg /*reg*/) const
 {
     OneAddrBp lh;
     lh.addr = addr;

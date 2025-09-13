@@ -4,7 +4,10 @@
 
 
 #ifndef assert
-#define assert(condition) SDL_assert(condition)
+#define assert(condition)       \
+    EA_DISABLE_VC_WARNING(4127) \
+    SDL_assert(condition);      \
+    EA_RESTORE_VC_WARNING()
 #endif
 
 

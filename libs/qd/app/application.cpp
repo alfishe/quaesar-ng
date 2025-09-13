@@ -2,6 +2,7 @@
 #include "qd/app/appMessages.h"
 #include "qd/app/appPartsMgr.h"
 #include "SDL_events.h"
+#include "qd/typeSystem/typeInfoBuilder.h"
 
 
 namespace qd {
@@ -15,13 +16,13 @@ Application::Application()
 }
 
 
-void Application::onConstruct(qd::CreateApplicationParams& in) {}
+void Application::onConstruct(qd::CreateApplicationParams& /*in*/) {}
 
 
 Application::~Application()
 {
     //SAFE_DELETE(m_pAppParts);
-    m_pModuleManager->destroyModule(qd::typeof(*m_pAppParts));
+    m_pModuleManager->destroyModule(qd::typeof_(*m_pAppParts));
 }
 
 
@@ -59,7 +60,7 @@ bool Application::hasQuitRequest() const
 
 
 
-qd::EFlow Application::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg)
+qd::EFlow Application::onAppEventProcImp(qd::appMsg::BaseMsg& /*in_msg*/)
 {
     return EFlow::NO_RESULT;
 }

@@ -2,6 +2,8 @@
 #include "qd/typeSystem/typeInfoBuilder.h"
 #include "qd/mem/fnvHash.h"
 
+#if 0
+
 
 //-------------------------------------------------------------------------
 // Type Reflection
@@ -12,10 +14,6 @@ class TypeRegistry;
 class PropertyInfo;
 class TypeInfo;
 class TypeId;
-
-
-
-
 
 
 // Base type for reflection
@@ -45,39 +43,39 @@ public:
 //-------------------------------------------------------------------------
 
 template<typename T>
-bool IsOfType(IReflectedType const* pType)
+bool isOfType_(IReflectedType const* pType)
 {
     if (pType == nullptr)
     {
         return false;
     }
 
-    return pType->GetTypeInfo()->isDerivedFrom_(T::GetStaticTypeID());
+    return pType->getTypeInfo()->isDerivedFrom_(T::getStaticTypeId());
 }
 
 // This is a assumed safe cast, it will validate the cast only in dev builds. Doesnt accept null arguments
 template<typename T>
-T* Cast(IReflectedType* pType)
+T* cast_(IReflectedType* pType)
 {
     assert(pType != nullptr);
-    assert(pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
+    assert(pType->getTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
     return reinterpret_cast<T*>(pType);
 }
 
 // This is a assumed safe cast, it will validate the cast only in dev builds. Doesnt accept null arguments
 template<typename T>
-T const* Cast(IReflectedType const* pType)
+T const* cast_(IReflectedType const* pType)
 {
     assert(pType != nullptr);
-    assert(pType->GetTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
+    assert(pType->getTypeInfo()->IsDerivedFrom(T::GetStaticTypeID()));
     return reinterpret_cast<T const*>(pType);
 }
 
 // This will try to cast to the specified type but can fail. Also accepts null arguments
 template<typename T>
-T* TryCast(IReflectedType* pType)
+T* tryCast_(IReflectedType* pType)
 {
-    if (pType != nullptr && pType->GetTypeInfo()->isDerivedFrom_(T::GetStaticTypeID()))
+    if (pType != nullptr && pType->getTypeInfo()->isDerivedFrom_(T::GetStaticTypeID()))
     {
         return reinterpret_cast<T*>(pType);
     }
@@ -87,9 +85,9 @@ T* TryCast(IReflectedType* pType)
 
 // This will try to cast to the specified type but can fail. Also accepts null arguments
 template<typename T>
-T const* TryCast(IReflectedType const* pType)
+T const* tryCast_(IReflectedType const* pType)
 {
-    if (pType != nullptr && pType->GetTypeInfo()->isDerivedFrom_(T::GetStaticTypeID()))
+    if (pType != nullptr && pType->getTypeInfo()->isDerivedFrom_(T::GetStaticTypeID()))
     {
         return reinterpret_cast<T const*>(pType);
     }
@@ -97,7 +95,7 @@ T const* TryCast(IReflectedType const* pType)
     return nullptr;
 }
 
-
 }; // namespace qd
 //////////////////////////////////////////////////////////////////////////
 
+#endif //

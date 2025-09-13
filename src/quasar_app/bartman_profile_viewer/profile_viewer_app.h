@@ -10,7 +10,7 @@ class BarmanProfileViewerAppPart : public qd::ApplicationPart {
 
 public:
 public:
-    virtual void onPartCreate(ApplicationPart::OnCreate_t& prm) override {
+    virtual void onPartCreate(ApplicationPart::OnCreate_t& /*prm*/) override {
     }
 
 };  // BarmanProfileViewerAppPart

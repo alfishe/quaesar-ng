@@ -22,7 +22,7 @@ static constexpr size_t MAX_OP_SIZE = 192;
 class OperationArgs : public qd::operation::args::Base
 {
 public:
-    static void setup(amD::operation::OpDesc& d) {}
+    static void setup(amD::operation::OpDesc& /*d*/) {}
 };
 
 

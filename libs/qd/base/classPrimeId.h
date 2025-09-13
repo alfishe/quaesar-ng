@@ -101,11 +101,11 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-namespace std {
+namespace eastl {
     template<>
     struct hash<qd::ClassPrimeId> {
-        std::size_t operator()(const qd::ClassPrimeId& id) const noexcept {
-            return std::hash<uint64_t>()(id.m_primeId);
+        size_t operator()(const qd::ClassPrimeId& id) const noexcept {
+            return eastl::hash<uint64_t>()(id.m_primeId);
         }
     };
 }
