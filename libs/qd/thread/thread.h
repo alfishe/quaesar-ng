@@ -7,6 +7,7 @@
 
 
 namespace qd {
+FORWARD_DECLARATION_2(Details, CThreadData);
 
 inline void sleep_ms(uint32_t timeMs)
 {
@@ -37,8 +38,8 @@ public:
 }; // class thread::ThreadEvent
 //////////////////////////////////////////////////////////////////////////
 
-FORWARD_DECLARATION_2(Details, CThreadData);
 
+//------------------------------------------------------------------------
 class Thread
 {
     typedef Thread TThis;

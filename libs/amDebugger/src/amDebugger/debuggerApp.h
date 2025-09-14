@@ -49,7 +49,7 @@ private:
 public:
 
     ref_ptr<amD::Debugger> m_pDebugger = nullptr; // current debugger client
-    amD::DebuggerDesktop* m_pGui = nullptr;
+    ref_ptr<amD::DebuggerDesktop> m_pGui;
     qd::OperationsRegistry* m_pOperationMgr = nullptr;
 
 public:
@@ -85,7 +85,7 @@ public:
 private:
     void createRenderWindow();
     void initImGui();
-    ~DebuggerApp();
+    virtual ~DebuggerApp() override;
 
 };  // class DebuggerApp
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

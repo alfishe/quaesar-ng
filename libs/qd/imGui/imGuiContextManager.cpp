@@ -52,18 +52,29 @@ QImGuiContext* ImGuiContextManager::createContextImGui(SDL_Window* window, SDL_R
 }
 
 
-void ImGuiContextManager::destroyImContext(QImGuiContext* pGuiContext)
+void ImGuiContextManager::destroyImContext(QImGuiContext* pQContext)
 {
-    auto It = qd::find(m_pImContexts.begin(), m_pImContexts.end(), pGuiContext);
+    auto It = qd::find(m_pImContexts.begin(), m_pImContexts.end(), pQContext);
     if (It != m_pImContexts.end())
     {
-        pGuiContext->m_pParentModule = nullptr;
-        ImGui::DestroyContext(pGuiContext->m_pImGuiContext);
-        pGuiContext->m_pImGuiContext = nullptr;
+        pQContext->m_pParentModule = nullptr;
+        ImGuiContext* pPrevCtx = pQContext->useCurrent();
+        ImGui_ImplSDLRenderer2_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext(pQContext->m_pImGuiContext);
+        pQContext->m_pImGuiContext = nullptr;
         m_pImContexts.erase(It);
+
+        ImGui::SetCurrentContext(pPrevCtx);
     }
 }
 
+
+
+ ImGuiContextManager::~ImGuiContextManager()
+{
+    assert(m_pImContexts.empty());
+}
 
 
 void ImGuiContextManager::destroyModule()

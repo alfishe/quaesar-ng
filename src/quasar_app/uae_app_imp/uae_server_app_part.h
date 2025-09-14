@@ -12,7 +12,7 @@ class UaeServerAppPart : public qd::ApplicationPart, public qd::IOperationEnviro
     TS_END();
 
 private:
-    ref_ptr<UaeServerThread> m_pUaeThread;
+    UaeServerThread* m_pUaeThread;
 
 public:
     UaeServerAppPart();

@@ -149,6 +149,7 @@ void AppPartsManager::destroy()
         }
         c_def(0);
     }
+    m_pParts.clear();
 }
 
 

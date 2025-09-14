@@ -99,35 +99,34 @@ UaeVmImp::~UaeVmImp() {
 
 
 qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
-    EA_DISABLE_VC_WARNING(4456 4702);  // hide variable, unreachable code
     UaeVmImp* vm = this;
     UaeServerThread* pUae = m_pUaeThread;
     bool r = false;
     if (c_def(0)) {
-    } else if (auto p = args->cast_<amD::operation::args::DebugTraceContinue>()) {
+    } else if (args->cast_<amD::operation::args::DebugTraceContinue>()) {
         r = true;
         if (vm->getVmDebugMode() == EVmDebugMode::Live)
             vm->setVmDebugMode(EVmDebugMode::Break);
         else
             vm->setVmDebugMode(EVmDebugMode::Live);
 
-    } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepInto>()) {
+    } else if (args->cast_<amD::operation::args::DisasmTraceStepInto>()) {
         r = true;
         vm->setVmDebugMode(EVmDebugMode::Break);
         pUae->execConsoleCmd("t");
 
-    } else if (auto p = args->cast_<amD::operation::args::DebugTraceStart>()) {
+    } else if (args->cast_<amD::operation::args::DebugTraceStart>()) {
         r = true;
         if (vm->getVmDebugMode() == EVmDebugMode::Live)
             vm->setVmDebugMode(EVmDebugMode::Break);
         else
             vm->setVmDebugMode(EVmDebugMode::Live);
 
-    } else if (auto p = args->cast_<amD::operation::args::DisasmTraceStepOut>()) {
+    } else if (args->cast_<amD::operation::args::DisasmTraceStepOut>()) {
         r = true;
         pUae->execConsoleCmd("z");
 
-    } else if (auto p = args->cast_<amD::operation::args::CopperTraceStep>()) {
+    } else if (args->cast_<amD::operation::args::CopperTraceStep>()) {
         r = true;
         pUae->execConsoleCmd("ot");
 
@@ -139,7 +138,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
         pUae->execConsoleCmd(eastl::move(cmd));
         return qd::EFlow::SUCCESS;
 
-    } else if (auto p = args->cast_<amD::operation::args::ToggleTurboEmulation>()) {
+    } else if (args->cast_<amD::operation::args::ToggleTurboEmulation>()) {
         r = true;
         if (::currprefs.turbo_emulation != 0) {
             ::warpmode(0);  // off
@@ -147,7 +146,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
             ::warpmode(2);  // on
         }
 
-    } else if (auto p = args->cast_<amD::operation::args::UaeResetAmiga>()) {
+    } else if (args->cast_<amD::operation::args::UaeResetAmiga>()) {
         r = true;
         ::uae_reset(1, 1);
 
@@ -163,7 +162,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
         cmd.sprintf("fs %i", p->waitScanLines);
         pUae->execConsoleCmd(eastl::move(cmd));
         return qd::EFlow::SUCCESS;
-    } else if (auto p = args->cast_<amD::operation::args::UaeWndAlwaysOnTop>()) {
+    } else if (args->cast_<amD::operation::args::UaeWndAlwaysOnTop>()) {
         r = true;
         //         if (pUae->isWndAlwaysOnTop()) {
         //             pUae->setWndAlwaysOnTop(false);
@@ -172,7 +171,6 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::args::Base* args) {
         //         }
     }
     return r ? EFlow::STOP : EFlow::NO_RESULT;
-    EA_RESTORE_VC_WARNING();
 }
 
 

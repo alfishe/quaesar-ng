@@ -57,9 +57,12 @@ struct UiNodeCreator {
     } // make_
 
 }; // struct UiNodeCreator
+//////////////////////////////////////////////////////////////////////////
+
 
 
 //------------------------------------------------------------------------
+//
 class UiNode : public qd::RefCounted
 {
     TS_BEGIN_REFLECT_CLASS_BASE(50, qd::UiNode, void);
@@ -67,7 +70,7 @@ class UiNode : public qd::RefCounted
 
     static constexpr uint32_t UNDEF_ID = 0;
 
-private:
+protected:
     uint32_t m_id = 0;
     eastl::fixed_vector<qd::unique_ptr<qd::UiNodeComp>, 4, true> m_pComps;
     UiNode* m_pParent = nullptr;
@@ -78,6 +81,10 @@ private:
         const qd::TypeInfo* typeInfo = nullptr;
         uint32_t getId() const { return id; }
         UiNode* get() const { return this->ptr; }
+        const qd::TypeInfo& getTypeInfo() const {
+            assert(typeInfo);
+            return *typeInfo;
+        }
     };
     qd::vector<ChildItem> m_pChilds;
 
@@ -96,6 +103,23 @@ public:
 
     UiNode* findChildById(uint32_t id) const;
     UiNode* findChildByType(const qd::TypeInfo& ti) const;
+
+    template<class TWnd>
+    TWnd* findChildByType_() const
+    {
+        const qd::TypeInfo& wndType = qd::typeof_<TWnd>();
+        for (const ChildItem& pWnd : m_pChilds)
+        {
+            if (!pWnd.ptr)
+                continue;
+            const qd::TypeInfo& classType = pWnd.getTypeInfo();
+            if (classType.isDerivedFrom(wndType))
+                return static_cast<TWnd*>(pWnd.get());
+        }
+        return nullptr;
+    }
+
+
     int findChildIndex(UiNode* pChild) const;
 
     int getNumChild() const;
@@ -130,7 +154,7 @@ public:
     void setId(uint32_t newId);
     void setIdByName(const char* p_name) { setId(qd::fnv1aHash(p_name)); }
 
-    virtual qd::string getText() const { return qd::string(); }
+    virtual qd::string getText() const { return ""; }
 
     virtual EFlow onUiNodeMessageProc(qd::UiMessage* in_msg);
 

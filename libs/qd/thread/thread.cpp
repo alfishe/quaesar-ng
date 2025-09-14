@@ -74,7 +74,10 @@ Thread::~Thread()
 
 void Thread::create(void (*pThreadProc)(void*), void* pData)
 {
-    create([pThreadProc, pData]() { (*pThreadProc)(pData); });
+    auto threadLambda = [pThreadProc, pData]() {
+        (*pThreadProc)(pData);
+    };
+    create(std::move(threadLambda));
 }
 
 
@@ -83,7 +86,6 @@ void Thread::create(Thread::ThreadFunc&& threadProc)
     assert(!m_pThreadData);
     m_pThreadData = new Details::CThreadData(this);
     m_pThreadData->m_pThreadProc = std::move(threadProc);
-    // m_pThreadData->m_pData = pData;
 
     m_pSDLThread = SDL_CreateThread(Details::_threadSDLProcStatic, m_pThreadName.data(), m_pThreadData);
     if (!m_pSDLThread)

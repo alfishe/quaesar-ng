@@ -3,30 +3,21 @@
 
 qd::UiDesktop::~UiDesktop()
 {
-    assert(m_pWindows.empty());
+    assert(m_pChilds.empty());
 }
 
 
 void qd::UiDesktop::destroy()
 {
-    TSuper::destroy();
+    m_pModalDlg = nullptr;
 
-    while (!m_pWindows.empty())
-    {
-        ref_ptr<qd::UiNode> curWnd = m_pWindows.back();
-        m_pWindows.pop_back();
-        curWnd->destroy();
-        curWnd.reset();
-        // delete curWnd;
-    }
+    TSuper::destroy();
 }
 
 
 void qd::UiDesktop::addWindowNode(qd::UiNode* view)
 {
     addChild(view);
-
-    m_pWindows.push_back(view);
 }
 
 

@@ -96,8 +96,9 @@ void DebuggerDesktop::_drawMainMenuBar()
         // Windows
         if (auto pEm = qIm::LockMenu("Window"))
         {
-            for (qd::UiNode* pCurWnd : m_pWindows)
+            for (int i = 0; i < getNumChild(); ++i)
             {
+                qd::UiNode* pCurWnd = getChild(i);
                 if (!pCurWnd)
                     continue;
                 bool bVis = pCurWnd->isVisible();
@@ -115,13 +116,12 @@ void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
 {
     TSuper::onNodeCreated(mk);
 
-    m_pWindows.resize((size_t)WndId::MostCommonCount);
     m_pOperationMgr = &qd::OperationsRegistry::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
     m_pShortcutMgr->createPredefinedShortcuts(
         eastl::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
 
-    // create all m_pWindows
+    // create all m_pChilds
     createAllUiWndows();
 
     amD::operation::AmDebuggerOperationCreator operationCreate;
@@ -147,14 +147,18 @@ void DebuggerDesktop::createAllUiWndows()
         UiViewCreateCtx cv(this);
         amD::AmDbgWindow* pCurWnd = pCreateAttr->makeInstance_<amD::AmDbgWindow>(cv);
         assert(pCurWnd);
-        addWindowNode(pCurWnd);
+        addChild(pCurWnd);
     }
+}
+
+void DebuggerDesktop::destroy()
+{
+    TSuper::destroy();
 }
 
 
 DebuggerDesktop::~DebuggerDesktop()
 {
-    assert(m_pWindows.empty());
 }
 
 
@@ -265,11 +269,6 @@ void DebuggerDesktop::_drawToolBar()
 }
 
 
-
-void DebuggerDesktop::destroy()
-{
-    TSuper::destroy();
-}
 
 
 }; // namespace amD

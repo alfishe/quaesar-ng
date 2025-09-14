@@ -105,12 +105,9 @@ public:
 
     QImGuiContext* createContextImGui(SDL_Window* window, SDL_Renderer* renderer);
 
-    void destroyImContext(QImGuiContext* pGuiContext);
+    void destroyImContext(QImGuiContext* pQContext);
 
-    virtual ~ImGuiContextManager()
-    {
-        assert(m_pImContexts.empty());
-    }
+    virtual ~ImGuiContextManager() override;
 
 public:
     virtual void destroyModule() override;

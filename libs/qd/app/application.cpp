@@ -29,7 +29,7 @@ Application::~Application()
 void Application::destroy()
 {
     destroyImp();
-    m_pAppParts->destroy();
+    SAFE_DESTROY(m_pAppParts);
 }
 
 

@@ -85,8 +85,8 @@ amD::CustomFlagsDesc& CustomFlagsDesc::addBit(const char* p_name, uint8_t bits_c
     cb.name = p_name;
     cb.shiftL = shift_l;
     cb.mask = (1u << bits_count) - 1u;
-    cb.noBeg = nextNo;
-    cb.noEnd = nextNo + bits_count;
+    cb.noBeg = (uint8_t)nextNo;
+    cb.noEnd = (uint8_t)(nextNo + bits_count);
     cb.description = p_desc;
     return *this;
 }

@@ -27,8 +27,10 @@ void UaeServerAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
 
 
 void UaeServerAppPart::destroyImp() {
-    m_pUaeThread->destroy();
-    SAFE_DELETE(m_pUaeThread);
+    if (m_pUaeThread) {
+        m_pUaeThread->destroy();
+        SAFE_DELETE(m_pUaeThread);
+    }
     return TSuper::destroyImp();
 }
 

@@ -12,6 +12,7 @@
 #include <SDL.h>
 #include <queue>
 #include "qd/debug/assert.h"
+#include "qd/log/log.h"
 #include "qd/thread/thread.h"
 #include "quasar_app/parse_options.h"
 #include "quasar_app/quaesar.h"
@@ -45,13 +46,13 @@ public:
         m_pThreadEvent->set();
     }
 
-    bool waitConsoleCmd(eastl::string& out) {
+    bool waitConsoleCmd(eastl::string& out_cmd) {
         m_pThreadEvent->wait(100);
         qd::MutexLock ml(*m_pMutex);
         if (m_consoleCmdQueue.empty())
             return false;
         const eastl::string& cmd = m_consoleCmdQueue.front();
-        out = eastl::move(cmd);
+        out_cmd = eastl::move(cmd);
         m_consoleCmdQueue.pop();
         return true;
     }
@@ -133,9 +134,9 @@ void UaeServerThread::initialize() {
     }
 
     // Most compatible mode
-    currprefs.cpu_cycle_exact = 1;
-    currprefs.cpu_memory_cycle_exact = 1;
-    currprefs.blitter_cycle_exact = 1;
+    currprefs.cpu_cycle_exact = true;
+    currprefs.cpu_memory_cycle_exact = true;
+    currprefs.blitter_cycle_exact = true;
     currprefs.floppy_speed = 100;
     //    currprefs.turbo_emulation = 1; // it disables sound
     currprefs.sound_stereo_separation = 0;
@@ -144,7 +145,6 @@ void UaeServerThread::initialize() {
     currprefs.filesys_custom_uaefsdb = false;                 // hack to not implement 'custom_fsdb_*' funcs now
 
     strcpy(currprefs.romfile, options.kickstart.c_str());
-
 
     m_scrWidth = 754;
     m_scrHeight = 576;
@@ -156,22 +156,25 @@ void UaeServerThread::initialize() {
     m_onUaeInitialized = new qd::ThreadEvent(true);
     m_uaeThread = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
     m_onUaeInitialized->wait();
-    // inite after UAE ready
+    // initialize after UAE is ready
     m_pVm->init();
 }
 
 
 void UaeServerThread::destroy() {
-    SDL_Log("Waiting UAE thread over ...");
-    //g_pApp->m_pDebuggerPart->execConsoleCmd("q");
+    if (m_pConsoleQueue) {
+        qd::log_debug("Waiting UAE thread over ...");
+        execConsoleCmd("q");
+        // wait UAE done
+        SDL_WaitThread(m_uaeThread, nullptr);
 
-    if (m_pConsoleQueue)
-        m_pConsoleQueue->destroy();
-    SAFE_DELETE(m_pConsoleQueue);
+        if (m_pConsoleQueue)
+            m_pConsoleQueue->destroy();
+        SAFE_DELETE(m_pConsoleQueue);
 
-    // wait UAE done
-    SDL_WaitThread(m_uaeThread, nullptr);
-    SAFE_DELETE(m_onUaeInitialized);
+        SAFE_DELETE(m_onUaeInitialized);
+    }
+
     delete[] m_pAmigaBuffer;
     m_pAmigaBuffer = nullptr;
 }
@@ -216,7 +219,7 @@ int UaeServerThread::getScrFrameNo() {
 
 void UaeServerThread::pushSdlEvent(const SDL_Event& event) {
     qd::MutexLock ml(m_eventMutex);
-    m_eventQueue.push_back(std::move(event));
+    m_eventQueue.push_back(event);
 }
 
 

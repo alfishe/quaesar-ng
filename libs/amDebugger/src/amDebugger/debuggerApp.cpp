@@ -119,21 +119,17 @@ amD::DebuggerApp* DebuggerApp::get() {
 
 
 void DebuggerApp::destroy() {
-    if (m_pGui)
-        m_pGui->destroy();
     if (m_pOperationMgr)
         m_pOperationMgr->destroy();
     m_pOperationMgr = nullptr;
 
-    // Cleanup
-    ImGui_ImplSDLRenderer2_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
-
-    delete m_pGui;
+    if (m_pGui)
+        m_pGui->destroy();
     m_pGui = nullptr;
+
     IVm::VM::destrotVmInst();
 
+    SAFE_DESTROY(m_pQimGuiCtx);
     SDL_DestroyRenderer(m_pWndRenderer);
     m_pWndRenderer = nullptr;
     SDL_DestroyWindow(m_pWindow);

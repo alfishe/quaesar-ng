@@ -66,9 +66,9 @@ public:
         : ExprEvaluator(0)
     {}
 
-    uint8_t memByte(ExprValue address) const { return address + 0x10; }
-    uint16_t memWord(ExprValue address) const { return address - 0xb0; }
-    uint32_t memDword(ExprValue address) const { return address * 4; }
+    virtual uint8_t memByte(ExprValue address) const override { return uint8_t(address + 0x10); }
+    virtual uint16_t memWord(ExprValue address) const override { return uint16_t(address - 0xb0); }
+    virtual uint32_t memDword(ExprValue address) const override { return uint32_t(address * 4); }
 };
 
 void ExprValStr::parse()

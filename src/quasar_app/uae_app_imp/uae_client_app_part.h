@@ -28,7 +28,7 @@ private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pUaeRenderer = nullptr;
     SDL_Texture* m_pUaeScrTexture = nullptr;
-    qd::QImGuiContext* m_pImGui = nullptr;
+    qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     bool m_bShowImgui = false;
     ref_ptr<IVm::VM> m_pVm;
 

@@ -156,13 +156,11 @@ void UiNode::removeChild(ref_ptr<UiNode> pChild)
         {
             m_pChilds.erase(iter);
 
-            //                 ECompMtdX::ON_CHILD_DELETED_t p(pChild);
-            //                 getComps()->invokeCompMtd(ECompMtd::ON_CHILD_DELETED, &p);
+            //ECompMtdX::ON_CHILD_DELETED_t p(pChild);
+            //getComps()->invokeCompMtd(ECompMtd::ON_CHILD_DELETED, &p);
             return;
         }
     }
-
-    assert(0);
 }
 
 
@@ -256,15 +254,19 @@ void UiNode::destroyRecursive()
     while (!m_pChilds.empty())
     {
         ref_ptr<UiNode> pControl = m_pChilds.back().ptr;
-        pControl->destroy();
-        c_def(0);
+        m_pChilds.pop_back();
+        if (pControl)
+        {
+            pControl->destroy();
+            pControl = nullptr;
+        }
     }
 
-    ref_ptr<UiNode> pParent(getParent());
-    if (pParent)
+    if (m_pParent)
     {
-        pParent->removeChild(pThis);
-        pParent = nullptr;
+        ref_ptr<UiNode> pParent(m_pParent); // keep refs counter
+        m_pParent->removeChild(pThis);
+        m_pParent = nullptr;
     }
 }
 

@@ -44,8 +44,8 @@ void UaeClientAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
 
     // independent ImGui draw context for UAE window
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
-    m_pImGui = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
-    m_pImGui->getIO().IniFilename = "";
+    m_pQimGuiCtx = pImGuiMgr->createContextImGui(m_pWindow, m_pUaeRenderer);
+    m_pQimGuiCtx->getIO().IniFilename = "";
 
     // UAE's root ui-window
     qd::UiNodeCreator mk;
@@ -92,9 +92,9 @@ void UaeClientAppPart::update(float /*dt*/, float /*time*/) {
 void UaeClientAppPart::_drawGuiMenus() {
     if (!m_bShowImgui)
         return;
-    m_pImGui->newFrame();
+    m_pQimGuiCtx->newFrame();
     m_pUaeWndGui->draw();
-    m_pImGui->endFrame();
+    m_pQimGuiCtx->endFrame();
 }
 
 
@@ -147,7 +147,7 @@ void UaeClientAppPart::render() {
     }
 
     if (m_bShowImgui)
-        m_pImGui->render();
+        m_pQimGuiCtx->render();
 
     SDL_RenderPresent(m_pUaeRenderer);
 }
@@ -180,6 +180,8 @@ void UaeClientAppPart::destroyImp() {
         //delete m_pUaeWndGui;
         m_pUaeWndGui = nullptr;
     }
+
+    SAFE_DESTROY(m_pQimGuiCtx);
 }
 
 
@@ -230,7 +232,7 @@ qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
             break;
     }
     if (m_bShowImgui)
-        return m_pImGui->onSdlEventProc(event);
+        return m_pQimGuiCtx->onSdlEventProc(event);
 
     return qd::EFlow::CONTINUE;
 }
