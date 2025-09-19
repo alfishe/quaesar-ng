@@ -18,7 +18,7 @@
 
 
 #define DECLARE_OPERATION(TArgClass, TOpClass)              \
-    TS_REFLECT_CLASS(TArgClass, qd::operation::args::Base); \
+    TS_REFLECT_CLASS(TArgClass, qd::operation::BaseOpArgs); \
     inline static const qd::TypeInfo& s_OperationType = qd::typeof_by_name(#TOpClass);
 
 
@@ -30,10 +30,10 @@ struct AutoRegOpDesc_ {
 
 
 #define DECLARE_OPERATION_1(TArgClass)                                                                 \
-    TS_REFLECT_CLASS(TArgClass, qd::operation::args::Base);                                            \
-    virtual qd::operation::args::Base* clone(qd::operation::args::IOpArgAllocator& allocator) override \
+    TS_REFLECT_CLASS(TArgClass, qd::operation::BaseOpArgs);                                            \
+    virtual qd::operation::BaseOpArgs* clone(qd::operation::IOpArgAllocator& allocator) override       \
     {                                                                                                  \
-        return qd::operation::args::clone_op_<TArgClass>(*this, allocator);                            \
+        return qd::operation::clone_op_<TArgClass>(*this, allocator);                                  \
     }                                                                                                  \
     inline static AutoRegOpDesc_<TArgClass> s_AutoRegOpDesc;\
 
@@ -70,7 +70,6 @@ struct UiOperationCreator {
 
 class OperationHistory
 {
-public:
 };
 
 
@@ -81,13 +80,13 @@ class IOperationEnvironment
     TS_REFLECT_CLASS(qd::IOperationEnvironment, void);
 
 protected:
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* /*args*/) { return EFlow::NO_RESULT; }
-    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* /*args*/) const { return EFlow::NO_RESULT; }
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/) { return EFlow::NO_RESULT; }
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* /*args*/) const { return EFlow::NO_RESULT; }
 
 public:
     virtual IOperationEnvironment* getOpEnvParent() const { return nullptr; }
-    qd::EFlow applyOperationMsgProc(qd::operation::args::Base* args);
-    qd::EFlow setupDefaultOperationArgs(qd::operation::args::Base* args) const;
+    qd::EFlow applyOperationMsgProc(qd::operation::BaseOpArgs* args);
+    qd::EFlow setupDefaultOperationArgs(qd::operation::BaseOpArgs* args) const;
 
     template<class TOpClass>
     void doOperationDefault_()
@@ -111,8 +110,8 @@ static qd::UiOperation* createUiOperationCb_(const qd::TypeInfo& /*meta*/, qd::U
 }
 
 
-
-namespace operation::args {
+//////////////////////////////////////////////////////////////////////////
+namespace operation {
 class IOpArgAllocator
 {
 public:
@@ -122,7 +121,7 @@ public:
 
 
 template<class TClass>
-TClass* clone_op_(const TClass& src, qd::operation::args::IOpArgAllocator& allocator)
+TClass* clone_op_(const TClass& src, qd::operation::IOpArgAllocator& allocator)
 {
     size_t size = sizeof(TClass);
     void* pBuffer = allocator.alloc(size);
@@ -132,11 +131,11 @@ TClass* clone_op_(const TClass& src, qd::operation::args::IOpArgAllocator& alloc
 }
 
 
-struct Base {
-    TS_REFLECT_CLASS(qd::operation::args::Base, void);
+struct BaseOpArgs {
+    TS_REFLECT_CLASS(qd::operation::BaseOpArgs, void);
 public:
-    inline Base() = default;
-    virtual ~Base() = default;
+    inline BaseOpArgs() = default;
+    virtual ~BaseOpArgs() = default;
     bool _tryCast(const qd::TypeInfo& msg_type);
 
     template<class T>
@@ -150,21 +149,21 @@ public:
         return static_cast<T*>(this);
     }
 
-    virtual Base* clone(qd::operation::args::IOpArgAllocator& /*allocator*/) { ASSERT_AND_DO(0, return nullptr, ); }
+    virtual BaseOpArgs* clone(qd::operation::IOpArgAllocator& /*allocator*/) { ASSERT_AND_DO(0, return nullptr, ); }
 
-    // setup() should be declared
-    //static void setup(qd::operation::args::OpDesc& d) {}
+    //SHOULD BE DECLARED
+    //static void setup(qd::operation::OpDesc& d) {}
 
-}; // struct args::Base
+}; // struct BaseOpArgs
 //////////////////////////////////////////////////////////////////////////
 
 
-inline bool Base::_tryCast(const qd::TypeInfo& msg_type)
+inline bool BaseOpArgs::_tryCast(const qd::TypeInfo& msg_type)
 {
     const qd::TypeInfo& typeInfo = getTypeInfo();
     return typeInfo.isDerivedFrom(msg_type);
 }
 
 
-}; // namespace operation::args
+}; // namespace operation
 }; // namespace qd

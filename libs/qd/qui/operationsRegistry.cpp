@@ -15,8 +15,6 @@ namespace qd {
 
 OperationsRegistry::OperationsRegistry()
 {
-//     if (!g_pInstance)
-//         g_pInstance = this;
 }
 
 
@@ -49,13 +47,13 @@ void OperationsRegistry::destroy()
 
 
 
-qd::span<qd::operation::args::OpDesc const> OperationsRegistry::getOperationsList() const
+qd::span<qd::operation::OpDesc const> OperationsRegistry::getOperationsList() const
 {
     return {m_OpDescList.data(), m_OpDescList.size()};
 }
 
 
-void OperationsRegistry::addOperationDesc(const qd::TypeInfo& ti, qd::operation::args::OpDesc&& desc)
+void OperationsRegistry::addOperationDesc(const qd::TypeInfo& ti, qd::operation::OpDesc&& desc)
 {
     assert(ti.isDefined());
     THash32 cid = ti.getCid();
@@ -70,10 +68,10 @@ void OperationsRegistry::addOperationDesc(const qd::TypeInfo& ti, qd::operation:
 
 
 void OperationsRegistry::testOperationsShortcuts(qd::IOperationEnvironment* pEnv,
-    qd::span<qd::operation::args::OpDesc* const> opDescs)
+    qd::span<qd::operation::OpDesc* const> opDescs)
 {
     ShortcutsMgr* pShMgr = ShortcutsMgr::get();
-    for(const qd::operation::args::OpDesc* pCurOpDesc : opDescs)
+    for(const qd::operation::OpDesc* pCurOpDesc : opDescs)
     {
         if (!pCurOpDesc || !pCurOpDesc->m_pShortcuts)
             continue;
@@ -84,7 +82,7 @@ void OperationsRegistry::testOperationsShortcuts(qd::IOperationEnvironment* pEnv
             {
                 if (pEnv && pCurOpDesc->m_pOpTemplate)
                 {
-                    qd::operation::args::Base* pOpArgs = pCurOpDesc->m_pOpTemplate;
+                    qd::operation::BaseOpArgs* pOpArgs = pCurOpDesc->m_pOpTemplate;
                     if (pOpArgs)
                     {
                         pEnv->setupDefaultOperationArgs(pOpArgs);
@@ -98,14 +96,14 @@ void OperationsRegistry::testOperationsShortcuts(qd::IOperationEnvironment* pEnv
 }
 
 
-operation::args::OpDesc::~OpDesc()
+operation::OpDesc::~OpDesc()
 {
     SAFE_DELETE(m_pShortcuts);
     SAFE_DELETE(m_pOpTemplate);
 }
 
 
-const char* operation::args::OpDesc::getShortcutGuiStr() const
+const char* operation::OpDesc::getShortcutGuiStr() const
 {
     if (m_pShortcuts && m_pShortcuts->getNumShortcuts() > 0)
     {

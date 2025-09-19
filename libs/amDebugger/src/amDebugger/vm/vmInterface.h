@@ -58,7 +58,7 @@ public:
     virtual ~VM();
 
     virtual void init() = 0;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* /*args*/)
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/)
     {
         assert(0);
         return qd::EFlow::NO_RESULT;

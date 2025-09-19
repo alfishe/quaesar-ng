@@ -52,7 +52,7 @@ struct UiNodeCreator {
     TClass* make_(TArgs&&... args)
     {
         TClass* pNode = new TClass(args...);
-        pNode->onNodeCreated(this);
+        pNode->onUiNodeCreated(this);
         return pNode;
     } // make_
 
@@ -93,7 +93,7 @@ protected:
     bool m_bFocus = false;
 
 public:
-    virtual void onNodeCreated(qd::UiNodeCreator* mk);
+    virtual void onUiNodeCreated(qd::UiNodeCreator* mk);
     virtual void destroy();
 
     void init() {}
@@ -338,7 +338,7 @@ T* UiNode::addChild_(const char* p_name, TArgs&&... args)
     UiNodeCreator mk;
     mk.parent = this;
     mk.id = p_name ? qd::fnv1aHash(p_name) : 0;
-    pChild->onNodeCreated(&mk);
+    pChild->onUiNodeCreated(&mk);
     if (p_name)
         pChild->setText(p_name);
     pChild->init(std::forward<TArgs>(args)...);

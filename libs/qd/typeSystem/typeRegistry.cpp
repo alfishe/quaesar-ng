@@ -2,7 +2,6 @@
 #include "EASTL/fixed_vector.h"
 #include "EASTL/sort.h"
 #include "EASTL/vector.h"
-#include "reflectedType.h"
 #include "typeInfo.h"
 #include "qd/debug/assert.h"
 #include "qd/mem/fnvHash.h"

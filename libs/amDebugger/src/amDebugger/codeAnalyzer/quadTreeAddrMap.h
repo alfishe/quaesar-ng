@@ -14,7 +14,7 @@ public:
     struct Node {
         Node* m_children[4] = {nullptr, nullptr, nullptr, nullptr};
         TItem m_item = {};
-        uint16_t m_idx = ~0u;
+        uint16_t m_idx = UINT16_MAX;
     public:
         Node()
         {}

@@ -89,7 +89,7 @@ bool ShortcutsMgr::triggerShortcut(qd::IOperationEnvironment* /*env*/, uint32_t 
 {
     //     const Shortcut* pShortcut = getShortcut(id);
     //     if (UiOperation* pOperation = findOperationByShortcut(pShortcut)) {
-    //         operation::args::DoOperation t;
+    //         operation::DoOperation t;
     //         pOperation->applyOperationMsgProcImp(env, &t);
     //         return true;
     //     }
@@ -147,12 +147,12 @@ qd::Shortcut& ShortcutsMgr::getShortcut(qd::ShortcutId shortcut_id)
 }
 
 
-const qd::operation::args::OpDesc* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut) const
+const qd::operation::OpDesc* ShortcutsMgr::findOperationByShortcut(const qd::Shortcut* pShortcut) const
 {
     // IUiOperationsProvider* pOperationMgr = findParentCompI_<IUiOperationsProvider>();
     OperationsRegistry* pOperationMgr = &OperationsRegistry::get();
     assert(pOperationMgr);
-    for (const qd::operation::args::OpDesc& pCurOperation : pOperationMgr->getOperationsList())
+    for (const qd::operation::OpDesc& pCurOperation : pOperationMgr->getOperationsList())
     {
         ShortcutsHnd* pShortcuts = pCurOperation.m_pShortcuts;
         if (!pShortcuts)

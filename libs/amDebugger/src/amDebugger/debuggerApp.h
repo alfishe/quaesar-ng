@@ -7,7 +7,7 @@
 #include "qd/base/classIdCC.h"
 #include "qd/qui/uiOperation.h"
 #include "amDebugger/debugger.h"
-
+#include "amDebugger/debuggerConfig.h"
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -80,7 +80,7 @@ public:
         return m_pOperationMgr;
     }
 
-    qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* p_msg) override;
+    qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg) override;
 
 private:
     void createRenderWindow();

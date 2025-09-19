@@ -2,6 +2,7 @@
 #include "qd/math/point2.h"
 #include "qd/stl/vector.h"
 #include "qd/qui/uiNode.h"
+#include "imgui/imgui.h"
 
 
 
@@ -15,6 +16,7 @@ class UiWindow : public qd::UiNode
     qd::string m_title;
     qd::Size m_size = {-1, -1};
     bool m_bModal = false;
+    uint32_t m_windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
 public:
     UiWindow() = default;

@@ -31,9 +31,9 @@ qd::IOperationEnvironment* DebuggerDesktop::getOpEnvParent() const
 }
 
 
-qd::EFlow DebuggerDesktop::applyOperationMsgProcImp(qd::operation::args::Base* args)
+qd::EFlow DebuggerDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args)
 {
-    if (args->cast_<amD::operation::args::DisasmToggleBreakpoint>())
+    if (args->cast_<amD::operation::DisasmToggleBreakpoint>())
     {
         if (auto pWnd = findChildByType_<amD::window::DisassemblyView>())
             return pWnd->applyOperationMsgProcImp(args);
@@ -63,29 +63,29 @@ void DebuggerDesktop::_drawMainMenuBar()
 
         if (auto pm = qIm::LockMenu("Emulator"))
         {
-            qIm::menuItemFromOperationArgs_< amD::operation::args::UaeWndAlwaysOnTop>(pDbg);
-            qIm::menuItemFromOperationArgs_< amD::operation::args::UaeResetAmiga>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::UaeWndAlwaysOnTop>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::UaeResetAmiga>(pDbg);
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
             amD::EVmDebugMode debugMode = vm->getVmDebugMode();
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceContinue>(pDbg, "", false,
+            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(pDbg, "", false,
                 debugMode.isBreak());
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
+            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStepInto>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmTraceStepOut>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::args::DisasmToggleBreakpoint>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepInto>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepOut>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmToggleBreakpoint>(this);
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::args::CopperTraceStep>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::args::CopperToggleBreakpoint>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::CopperTraceStep>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::CopperToggleBreakpoint>(this);
             ImGui::Separator();
 
-            amD::operation::args::DebugDmaOption debugDmaOp;
+            amD::operation::DebugDmaOption debugDmaOp;
             {
                 qd::OperationsRegistry& opMgr = qd::OperationsRegistry::get();
-                const qd::operation::args::OpDesc& opDesc = opMgr.getOpDesc_(&debugDmaOp);
+                const qd::operation::OpDesc& opDesc = opMgr.getOpDesc_(&debugDmaOp);
                 int dmaMode = vm->emu->getDebugDmaMode();
                 int n = dmaMode > 0 ? dmaMode - 1 : 0;
                 if (ImGui::Combo(opDesc.m_name.c_str(), &n, debugDmaOp.dma_options))
@@ -112,9 +112,9 @@ void DebuggerDesktop::_drawMainMenuBar()
 }
 
 
-void DebuggerDesktop::onNodeCreated(qd::UiNodeCreator* mk)
+void DebuggerDesktop::onUiNodeCreated(qd::UiNodeCreator* mk)
 {
-    TSuper::onNodeCreated(mk);
+    TSuper::onUiNodeCreated(mk);
 
     m_pOperationMgr = &qd::OperationsRegistry::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
@@ -186,14 +186,14 @@ void DebuggerDesktop::drawImGuiMainFrame()
         qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
         pOpMgr->testOperationsShortcuts_<
             // clang-format off
-              amD::operation::args::DisasmTraceStepInto
-            , amD::operation::args::DebugWaitScanLines
-            , amD::operation::args::UaeWndAlwaysOnTop
-            , amD::operation::args::DebugTraceContinue
-            , amD::operation::args::DebugTraceStart
-            , amD::operation::args::DisasmToggleBreakpoint
-            , amD::operation::args::CopperTraceStep
-            , amD::operation::args::CopperToggleBreakpoint
+              amD::operation::DisasmTraceStepInto
+            , amD::operation::DebugWaitScanLines
+            , amD::operation::UaeWndAlwaysOnTop
+            , amD::operation::DebugTraceContinue
+            , amD::operation::DebugTraceStart
+            , amD::operation::DisasmToggleBreakpoint
+            , amD::operation::CopperTraceStep
+            , amD::operation::CopperToggleBreakpoint
             // clang-format on
             >(this);
     }
@@ -233,12 +233,12 @@ void DebuggerDesktop::_drawToolBar()
         uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
 
         qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
-        const qd::operation::args::OpDesc* pOpDesc;
-        pOpDesc = pOpMgr->findOpDesc(amD::operation::args::DisasmTraceStepInto::CID);
+        const qd::operation::OpDesc* pOpDesc;
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepInto::CID);
         {
             if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
             {
-                doOperationDefault_<amD::operation::args::DisasmTraceStepInto>();
+                doOperationDefault_<amD::operation::DisasmTraceStepInto>();
             }
             ImGui::SetItemTooltipV(CC(pOpDesc->getShortcutGuiStr()), nullptr);
 
@@ -247,7 +247,7 @@ void DebuggerDesktop::_drawToolBar()
             //
 
             // wait scanlines
-            pOpDesc = pOpMgr->findOpDesc(amD::operation::args::DebugWaitScanLines::CID);
+            pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugWaitScanLines::CID);
             int nScanLines = dbg->getWaitScanLines();
             ImGui::SetNextItemWidth(30);
             if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
@@ -262,7 +262,7 @@ void DebuggerDesktop::_drawToolBar()
         ImGui::SameLine();
         if (ImGui::Button("Wait Scanlines"))
         {
-            doOperationDefault_<amD::operation::args::DebugWaitScanLines>();
+            doOperationDefault_<amD::operation::DebugWaitScanLines>();
         }
     }
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);

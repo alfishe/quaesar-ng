@@ -9,12 +9,12 @@
 namespace qIm {
 
 
-inline void menuItemFromOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::args::Base* pOpArgs,
+inline void menuItemFromOperationArgs(qd::IOperationEnvironment* pEnv, qd::operation::BaseOpArgs* pOpArgs,
     const char* gui_label = nullptr, bool p_checked = false, bool p_enabled = true)
 {
     qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
     const char* shortcutsStr = nullptr;
-    if (const qd::operation::args::OpDesc* pDesc = pOpMgr->findOpDesc(pOpArgs->getCid()))
+    if (const qd::operation::OpDesc* pDesc = pOpMgr->findOpDesc(pOpArgs->getCid()))
     {
         shortcutsStr = pDesc->getShortcutGuiStr();
         if (!gui_label || !gui_label[0])

@@ -7,7 +7,7 @@
 namespace qd {
 
 
-qd::EFlow IOperationEnvironment::applyOperationMsgProc(qd::operation::args::Base* args)
+qd::EFlow IOperationEnvironment::applyOperationMsgProc(qd::operation::BaseOpArgs* args)
 {
     qd::EFlow f;
     f = applyOperationMsgProcImp(args);
@@ -26,7 +26,7 @@ qd::EFlow IOperationEnvironment::applyOperationMsgProc(qd::operation::args::Base
 }
 
 
-qd::EFlow IOperationEnvironment::setupDefaultOperationArgs(qd::operation::args::Base* args) const
+qd::EFlow IOperationEnvironment::setupDefaultOperationArgs(qd::operation::BaseOpArgs* args) const
 {
     qd::EFlow f;
     f = setupDefaultOperationArgsImp(args);
@@ -47,7 +47,7 @@ qd::EFlow IOperationEnvironment::setupDefaultOperationArgs(qd::operation::args::
 
 
 //////////////////////////////////////////////////////////////////////////
-namespace operation::args {
+namespace operation {
 
 void OpDesc::addShortcut(uint32_t sid)
 {
@@ -61,9 +61,7 @@ void OpDesc::addShortcut(uint32_t sid)
 }
 
 
-
-
-}; // namespace operation::args
+}; // namespace operation
 //////////////////////////////////////////////////////////////////////////
 
 }; // namespace qd

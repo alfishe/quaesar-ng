@@ -14,7 +14,7 @@ struct SDL_Window;
 namespace qsr {
 
 struct UCategory;
-class UaeOptionsDlg;
+class BaseOptionsDlg;
 
 struct EOptionCat {
 #define OPTIONS_LIST(IT)          \
@@ -40,45 +40,48 @@ struct EOptionCat {
 //////////////////////////////////////////////////////////////////////////
 
 
-struct OptionDrawContext {
+struct OptionDrawCtx {
     IVm::VM* vm = nullptr;
-    UaeOptionsDlg* m_pDlg = nullptr;
+    BaseOptionsDlg* m_pDlg = nullptr;
 };
+
 
 struct UOption {
 public:
-    qd::string m_title;
-    UCategory* m_pCategory = nullptr;
-    using TDrawOptionCb = eastl::fixed_function<2 * sizeof(void*), void(OptionDrawContext*)>;
-    TDrawOptionCb m_drawOptionCb;
+    qd::string title;
+    UCategory* parentCat = nullptr;
+    using TDrawOptionCb = eastl::fixed_function<2 * sizeof(void*), void(OptionDrawCtx*)>;
+    TDrawOptionCb drawOptionCb;
 
-    UOption(const char* title) : m_title(title) {
+    UOption(const char* title) : title(title) {
     }
 
-    UOption& setDrawCallback(UOption::TDrawOptionCb&& cb) {
-        m_drawOptionCb = std::move(cb);
+    UOption& setDrawCb(UOption::TDrawOptionCb&& cb) {
+        drawOptionCb = std::move(cb);
         return *this;
     }
-};
+};  // struct UOption
+//////////////////////////////////////////////////////////////////////////
 
 
 struct UCategory {
 public:
-    EOptionCat m_id;
-    EOptionCat m_parentId;
-    int m_ident = 0;
-    UCategory* m_pParentCat = nullptr;
-    qd::vector<UCategory*> m_pChildCat;
-    qd::vector<UOption*> m_pOptions;
+    EOptionCat id;
+    EOptionCat parentId;
+    qd::string title;
+    UCategory* parentCat = nullptr;
+    qd::vector<UCategory*> childCats;
+    qd::vector<UOption*> options;
+    int ident = 0;
 
-    UCategory(EOptionCat id, EOptionCat parent_id) : m_id(id), m_parentId(parent_id) {
+    UCategory(EOptionCat id, EOptionCat parent_id) : id(id), parentId(parent_id) {
     }
 };
 
 
 //////////////////////////////////////////////////////////////////////////
-class UaeOptionsDlg : public qd::UiDialog {
-    TS_REFLECT_CLASS(UaeOptionsDlg, qd::UiDialog);
+class BaseOptionsDlg : public qd::UiDialog {
+    TS_REFLECT_CLASS(BaseOptionsDlg, qd::UiDialog);
 
     qd::array<qd::unique_ptr<UCategory>, EOptionCat::MAX_COUNT> m_pCategories = {};
     qd::vector<qd::unique_ptr<UOption>> m_pOptions;
@@ -86,7 +89,9 @@ class UaeOptionsDlg : public qd::UiDialog {
     IVm::VM* m_pVm = nullptr;
 
 public:
-    virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
+    virtual void onUiNodeCreated(qd::UiNodeCreator* mk) override {
+        TSuper::onUiNodeCreated(mk);
+    }
     virtual void drawContentImp() override;
     virtual EFlow onUiNodeMessageProc(qd::UiMessage* in_msg) override;
 
@@ -94,19 +99,20 @@ public:
         return m_pCategories[nOpt].get();
     }
 
-    UCategory* createCategory(EOptionCat nParentCat, EOptionCat nOpt);
+    UCategory* createCategory(EOptionCat nOpt, EOptionCat nParentCat);
 
     template <typename... TArgs>
     UOption* createOption(UCategory* pCategory, TArgs&&... args) {
         assert(pCategory);
         UOption* pOpt = new UOption(args...);
         m_pOptions.push_back(qd::unique_ptr<UOption>(pOpt));
-        pOpt->m_pCategory = pCategory;
-        pCategory->m_pOptions.push_back(pOpt);
+        pOpt->parentCat = pCategory;
+        pCategory->options.push_back(pOpt);
         return pOpt;
     }
 
-    virtual ~UaeOptionsDlg();
+    virtual ~BaseOptionsDlg() override {
+    }
 
     IVm::VM* getVm() const {
         return m_pVm;
@@ -114,7 +120,20 @@ public:
     void setVm(IVm::VM* Vm) {
         m_pVm = Vm;
     }
-};  // class UaeOptionsDlg
+
+protected:
+    void drawOptionContent(OptionDrawCtx* ctx, UOption* pOption);
+
+};  // class BaseOptionsDlg
+//////////////////////////////////////////////////////////////////////////
+
+
+class UaeOptionsDlg : public qsr::BaseOptionsDlg {
+    TS_REFLECT_CLASS(UaeOptionsDlg, qsr::BaseOptionsDlg);
+
+public:
+    virtual void onUiNodeCreated(qd::UiNodeCreator* mk) override;
+};
 
 
 extern void open_file_dlg_select_adf(IVm::Floppy& cfgFloppy, SDL_Window* pParentWnd = nullptr);

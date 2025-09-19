@@ -23,20 +23,20 @@ void Debugger::init()
 }
 
 
-qd::EFlow Debugger::applyOperationMsgProcImp(qd::operation::args::Base* args)
+qd::EFlow Debugger::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args)
 {
     qd::EFlow r = m_pVm->applyOperationMsgProcImp(args);
     return r;
 }
 
 
-qd::EFlow Debugger::setupDefaultOperationArgsImp(qd::operation::args::Base* args) const
+qd::EFlow Debugger::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const
 {
     switch (args->getCid())
     {
-    case amD::operation::args::DebugWaitScanLines::CID:
+    case amD::operation::DebugWaitScanLines::CID:
     {
-        auto* a = args->cast_<amD::operation::args::DebugWaitScanLines>();
+        auto* a = args->cast_<amD::operation::DebugWaitScanLines>();
         a->waitScanLines = g_opt.traceWaitScanLines;
         return EFlow::DONE;
     }
@@ -50,7 +50,7 @@ qd::EFlow Debugger::setupDefaultOperationArgsImp(qd::operation::args::Base* args
 
 void Debugger::execConsoleCmd(qd::string&& cmd)
 {
-    amD::operation::args::ExecConsoleCmd exec;
+    amD::operation::ExecConsoleCmd exec;
     exec.cmd = std::move(cmd);
     applyOperationMsgProcImp(&exec);
 }

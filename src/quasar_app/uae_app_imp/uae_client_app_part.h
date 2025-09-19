@@ -65,7 +65,7 @@ public:
 
     UaeServerThread* getUaeThread() const;
 
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
     IVm::VM* getVm() const;
 
 private:

@@ -18,6 +18,11 @@ class TypeInfo;
 class INodesChildList;
 class NodeIterator;
 
+typedef uint32_t ObjectID;
+typedef uint32_t MessageID;
+constexpr static ObjectID INVALID_OBJECT_ID = ObjectID(-1);
+constexpr static MessageID INVALID_MESSAGE_ID = MessageID(-1);
+
 
 struct NodeMessage {
     TS_REFLECT_CLASS_BASE(400, qd::NodeMessage, void);
@@ -48,14 +53,17 @@ class Node : public qd::RefCounted
     TS_BEGIN_REFLECT_CLASS_BASE(200, qd::Node, void);
     TS_END();
 
+    ObjectID m_objectUID = qd::INVALID_OBJECT_ID;
  public:
-    Node* const m_pParent = nullptr;
+    qd::Node* const m_pParent = nullptr;
     INodesChildList* m_pChildList = nullptr;
     eastl::fixed_vector<qd::NodeComp*, 6, true> m_pComps;
 
 public:
-    Node() = default;
-    virtual ~Node();
+    Node(ObjectID _uid = qd::INVALID_OBJECT_ID)
+        : m_objectUID(_uid)
+    {}
+    virtual ~Node() override;
     virtual void destroy();
 
     virtual void onNodeCreated(qd::NodeCreator* mk);
@@ -185,7 +193,7 @@ T* Node::findParentNode_() const
 
 
 
-class NodeComp : public Node
+class NodeComp : public qd::Node
 {
     TS_REFLECT_CLASS(qd::NodeComp, qd::Node);
 
@@ -201,7 +209,7 @@ class INodesChildList : public qd::NodeComp
 
 public:
     // clang-format off
-    virtual void onNodeCreated(qd::NodeCreator* mk) { TSuper::onNodeCreated(mk); }
+    virtual void onNodeCreated(qd::NodeCreator* mk) override { TSuper::onNodeCreated(mk); }
     virtual int getNumChild() { return 0; }
     virtual Node* getChild(int /*idx*/) { return nullptr; }
     virtual bool beginIter(NodeIterator& /*buf*/) { return false; }
@@ -220,7 +228,7 @@ class NodesChildList : public qd::INodesChildList
     qd::vector<Node*> m_ChildNodes;
 
 public:
-    virtual ~NodesChildList();
+    virtual ~NodesChildList() override;
 
 public:
     virtual void onNodeCreated(qd::NodeCreator* mk) override { TSuper::onNodeCreated(mk); }

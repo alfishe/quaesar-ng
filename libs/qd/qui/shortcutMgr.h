@@ -10,7 +10,7 @@
 #include "qd/stl/unique_ptr.h"
 
 
-FORWARD_DECLARATION_4(qd, operation, args, OpDesc);
+FORWARD_DECLARATION_3(qd, operation, OpDesc);
 
 
 namespace qd {
@@ -44,7 +44,7 @@ public:
         return getShortcut((uint32_t)shortcut_id);
     }
 
-    const qd::operation::args::OpDesc* findOperationByShortcut(const Shortcut* pShortcut) const;
+    const qd::operation::OpDesc* findOperationByShortcut(const Shortcut* pShortcut) const;
 
     bool isShortcutTriggered(const qd::Shortcut* shortcut) const;
     bool triggerShortcut(qd::IOperationEnvironment* env, uint32_t id);

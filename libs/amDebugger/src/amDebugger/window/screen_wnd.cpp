@@ -4,6 +4,7 @@
 #include <amDebugger/vm/vmInterface.h>
 #include <qd/imGui/imgui_eastl.h>
 #include <SDL.h>
+#include "qd/qui/controls/menuItemOperation.h"
 
 namespace amD {
 namespace window {
@@ -12,6 +13,16 @@ void ScreenWnd::drawContentImp()
 {
     Debugger* dbg = getDbg();
     IVm::VM* vm = dbg->getVm();
+
+    m_windowFlags |= ImGuiWindowFlags_MenuBar;
+    if (ImGui::BeginMenuBar())
+    {
+        if (auto pm = qIm::LockMenu("View"))
+        {
+            ImGui::MenuItem("Show VPos/HPos", nullptr, &g_dbg_cfg->showVHPopsLines);
+        }
+        ImGui::EndMenuBar();
+    }
 
     grabScreenToTexture(dbg);
 
@@ -28,18 +39,20 @@ void ScreenWnd::drawContentImp()
 
         ImGui::Text("VPos:%i HPos:%i cycle:%i", vPos, hPos, cycle);
 
+        // screen texture
         ImVec2 p0 = ImGui::GetCursorScreenPos();
         ImVec2 p1(p0.x + scrSizeX, p0.y + scrSizeY);
         ImGui::Image(mTextureId, ImVec2((float)scrSizeX, (float)scrSizeY), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
             ImVec4(1.0f, 1.0f, 1.0f, 1.0f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
 
-        ImDrawList* dr = ImGui::GetWindowDrawList();
-
-        // VPOS
-        dr->AddLine({p0.x, p0.y + (float)vPos}, {p1.x, p0.y + (float)vPos}, qd::Color::MAGENTA75);
-
-        // HPOS
-        dr->AddLine({p0.x + (float)hPos, p0.y}, {p0.x + hPos, p1.y}, qd::Color::MAGENTA75);
+        if (g_dbg_cfg->showVHPopsLines)
+        {
+            ImDrawList* dr = ImGui::GetWindowDrawList();
+            // VPOS
+            dr->AddLine({p0.x, p0.y + (float)vPos}, {p1.x, p0.y + (float)vPos}, qd::Color::MAGENTA75);
+            // HPOS
+            dr->AddLine({p0.x + (float)hPos, p0.y}, {p0.x + hPos, p1.y}, qd::Color::MAGENTA75);
+        }
     }
 }
 

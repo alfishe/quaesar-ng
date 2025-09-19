@@ -7,7 +7,6 @@
 #include <qd/stl/ref_ptr.h>
 #include <qd/enum/enumBase.h>
 #include <qd/node/node.h>
-#include <qd/typeSystem/reflectedType.h>
 
 
 union SDL_Event;

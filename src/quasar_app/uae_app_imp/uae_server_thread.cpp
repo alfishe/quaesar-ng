@@ -90,7 +90,7 @@ int uae_thread_main_func(void*) {
 }
 
 
-qd::EFlow UaeServerThread::applyOperationMsgProcImp(qd::operation::args::Base* /*args*/) {
+qd::EFlow UaeServerThread::applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/) {
     assert(0);
     return qd::EFlow::STOP;
 }

@@ -35,9 +35,9 @@ void UaeGuiDesktop::drawContentImp() {
     qd::OperationsRegistry& pOpsReg = qd::OperationsRegistry::get();
     pOpsReg.testOperationsShortcuts_<
         // clang-format off
-        amD::operation::args::UaeResetAmiga
-        , amD::operation::args::ToggleTurboEmulation
-        , amD::operation::args::UaeWndAlwaysOnTop
+        amD::operation::UaeResetAmiga
+        , amD::operation::ToggleTurboEmulation
+        , amD::operation::UaeWndAlwaysOnTop
         , qsr::operations::ShowDebuggerWnd
         , qsr::operations::ShowUaeOptionsWnd
         // clang-format on
@@ -50,7 +50,7 @@ void UaeGuiDesktop::drawContentImp() {
                 assert(cfgFloppy);
                 qsr::open_file_dlg_select_adf(*cfgFloppy);
                 vm->setVmDebugMode(amD::EVmDebugMode::Live);
-                doOperationDefault_<amD::operation::args::UaeResetAmiga>();
+                doOperationDefault_<amD::operation::UaeResetAmiga>();
             }
             qIm::menuItemFromOperationArgs_<qsr::operations::ShowUaeOptionsWnd>(this);
             if (ImGui::MenuItem("Exit")) {
@@ -59,9 +59,9 @@ void UaeGuiDesktop::drawContentImp() {
         }
 
         if (auto p2 = qIm::LockMenu("Emulator", true)) {
-            qIm::menuItemFromOperationArgs_<amD::operation::args::ToggleTurboEmulation>(this);
-            qIm::menuItemFromOperationArgs_<amD::operation::args::UaeWndAlwaysOnTop>(this);
-            qIm::menuItemFromOperationArgs_<amD::operation::args::UaeResetAmiga>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::ToggleTurboEmulation>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::UaeWndAlwaysOnTop>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::UaeResetAmiga>(this);
         }
 
         if (auto p2 = qIm::LockMenu("Window", true)) {
@@ -80,7 +80,7 @@ qd::IOperationEnvironment* UaeGuiDesktop::getOpEnvParent() const {
 }
 
 
-qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::args::Base* args) const {
+qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
         p->dbgSource = EQuaServerId::S_UAE;
         return EFlow::DONE;
@@ -89,7 +89,7 @@ qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::args::Base*
 }
 
 
-qd::EFlow UaeGuiDesktop::applyOperationMsgProcImp(qd::operation::args::Base* args) {
+qd::EFlow UaeGuiDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowUaeOptionsWnd>()) {
         unused(p);
         qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);

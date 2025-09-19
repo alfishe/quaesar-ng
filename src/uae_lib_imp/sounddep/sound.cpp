@@ -307,8 +307,8 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
     SDL_AudioSpec want = {}, have;
     want.freq = freq;
     want.format = AUDIO_S16SYS;
-    want.channels = ch;
-    want.samples = s->framesperbuffer;
+    want.channels = (uint8_t)ch;
+    want.samples = (uint16_t)s->framesperbuffer;
 
     if (s->pullmode) {
         want.callback = sdl2_audio_callback;
@@ -597,7 +597,7 @@ static void send_sound(struct sound_data* sd, uae_u16* sndbuffer) {
     if (sd->softvolume >= 0) {
         uae_s16* p = reinterpret_cast<uae_s16*>(sndbuffer);
         for (int i = 0; i < sd->sndbufsize / 2; i++) {
-            p[i] = p[i] * sd->softvolume / 32768;
+            p[i] = uae_s16((p[i] * sd->softvolume) / 32768);
         }
     }
     if (type == SOUND_DEVICE_SDL2)
@@ -675,7 +675,7 @@ bool audio_finish_pull() {
 }
 
 static void handle_reset() {
-    if (sdp->resetframe == timeframes)
+    if ((uint32_t)sdp->resetframe == timeframes)
         return;
     sdp->resetframe = static_cast<int>(timeframes);
     sdp->resetframecnt--;

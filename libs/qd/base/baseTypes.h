@@ -30,4 +30,7 @@ public:                                    \
     }
 
 
+// FORWARD DECLARATIONS
+class Archive;
+
 }; // namespace qd

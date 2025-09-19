@@ -41,7 +41,7 @@ public:
     virtual void init() override;
 
     //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
     virtual amD::EVmDebugMode getVmDebugMode() const override {
         return TSuper::getVmDebugMode();

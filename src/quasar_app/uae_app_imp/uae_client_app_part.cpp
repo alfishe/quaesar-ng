@@ -243,7 +243,7 @@ UaeServerThread* UaeClientAppPart::getUaeThread() const {
 }
 
 
-qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::args::Base* args) {
+qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
         unused(p);
         amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();

@@ -141,7 +141,7 @@ void DisassemblyView::drawContentImp()
             }
             if (ImGui::Selectable(strTmp.c_str(), false, 0, ImVec2(0, row_min_height)))
             {
-                operation::args::DisasmToggleBreakpoint p;
+                operation::DisasmToggleBreakpoint p;
                 p.address = curAddr;
                 p.reg = EReg::PC;
                 dbg->applyOperationMsgProcImp(&p);
@@ -224,9 +224,9 @@ void DisassemblyView::drawContentImp()
 }
 
 
-qd::EFlow DisassemblyView::applyOperationMsgProcImp(qd::operation::args::Base* args)
+qd::EFlow DisassemblyView::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args)
 {
-    if (auto p = args->cast_<amD::operation::args::DisasmToggleBreakpoint>())
+    if (auto p = args->cast_<amD::operation::DisasmToggleBreakpoint>())
     {
         p->address = getCursorAddr();
         p->reg = EReg::PC;

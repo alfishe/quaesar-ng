@@ -9,10 +9,9 @@ namespace amD {
 struct DecodedCopperList {
     struct CopInst {
         AddrRef addr = 0;
-        uint16_t w1 = ~0u;
-        uint16_t w2 = ~0u;
+        uint16_t w1 = UINT16_MAX;
+        uint16_t w2 = UINT16_MAX;
     };
-
     struct Entry : public CopInst {
         int vpos = -1;
         int hpos = -1;

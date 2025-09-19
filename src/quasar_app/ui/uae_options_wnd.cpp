@@ -45,7 +45,7 @@ void set_native_window(SDL_Window* sdlWindow, ::nfdwindowhandle_t* nativeWindow)
 }
 
 
-void opt_floppy_draw(OptionDrawContext* ctx, int nFloppy) {
+static void draw_opt_floppy_cfg(OptionDrawCtx* ctx, int nFloppy) {
     qd::string strDF = qd::string_format("DF%i:", nFloppy);
 
     IVm::Floppy* pFloppyCfg = ctx->vm->floppies[nFloppy];
@@ -75,36 +75,7 @@ void opt_floppy_draw(OptionDrawContext* ctx, int nFloppy) {
 }
 
 
-void draw_option(OptionDrawContext* ctx, UOption* pOption) {
-    if (pOption->m_drawOptionCb) {
-        ImGui::PushID(pOption);
-        pOption->m_drawOptionCb(ctx);
-        ImGui::PopID();
-    }
-}
-
-
-void UaeOptionsDlg::onNodeCreated(qd::UiNodeCreator* mk) {
-    TSuper::onNodeCreated(mk);
-
-    setSize({600, 400});
-
-    createCategory(EOptionCat::ROOT, EOptionCat::UNDEF);
-    /*UCategory* pCatQuick =*/createCategory(EOptionCat::ROOT, EOptionCat::QUICK_START);
-    /*UCategory* pCatHW =*/createCategory(EOptionCat::ROOT, EOptionCat::HARDWARE);
-    /*UCategory* pCatHost =*/createCategory(EOptionCat::ROOT, EOptionCat::HOST);
-
-    /*UCategory* pCatCpu =*/createCategory(EOptionCat::HARDWARE, EOptionCat::CPU);
-
-    UCategory* pCatFloppy = createCategory(EOptionCat::HARDWARE, EOptionCat::FLOPPY);
-    createOption(pCatFloppy, "Floppy 0")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 0); });
-    createOption(pCatFloppy, "Floppy 1")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 1); });
-    createOption(pCatFloppy, "Floppy 2")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 2); });
-    createOption(pCatFloppy, "Floppy 3")->setDrawCallback([](OptionDrawContext* ctx) { opt_floppy_draw(ctx, 3); });
-}
-
-
-void UaeOptionsDlg::drawContentImp() {
+void BaseOptionsDlg::drawContentImp() {
     ImVec2 rgn = ImGui::GetContentRegionAvail();
     rgn.y -= 30;
     ImVec2 wndL = ImVec2(rgn.x * 0.25f, rgn.y);
@@ -114,11 +85,6 @@ void UaeOptionsDlg::drawContentImp() {
     if (auto bc = qIm::LockChild("##LEFT_COL", wndL, cldFlg, ImGuiWindowFlags_None)) {
         int items_count = (int)m_pCategories.size();
 
-        //const ImGuiContext& g = *ImGui::GetCurrentContext();
-
-        // Calculate size from "height_in_items"
-        //int height_in_items = ImMin(items_count, 7);
-        //float height_in_items_f = height_in_items + 0.25f;
         ImVec2 size(-FLT_MIN, -FLT_MIN);
 
         if (ImGui::BeginListBox("##OPTIONS CAT", size)) {
@@ -144,9 +110,9 @@ void UaeOptionsDlg::drawContentImp() {
                     if (!pCurrCat)
                         continue;
                     itemName.clear();
-                    for (int j = 0; j < pCurrCat->m_ident; ++j)
+                    for (int j = 0; j < pCurrCat->ident; ++j)
                         itemName.append("  ");  // indent
-                    const char* catName = EOptionCat::to_string(pCurrCat->m_id);
+                    const char* catName = EOptionCat::to_string(pCurrCat->id);
                     itemName.append(catName);
                     ImGui::PushID(i);
                     const bool bItemSelected = (pCurrCat == m_pSelectedCat);
@@ -163,37 +129,27 @@ void UaeOptionsDlg::drawContentImp() {
 
     ImGui::SameLine();
 
-    // right column
+    // right column, category's options content
     ImVec2 wndR = ImVec2(0, rgn.y);
     if (auto bc = qIm::LockChild("##RIGHT_COL", wndR, ImGuiChildFlags_None | ImGuiChildFlags_Borders,
                                  ImGuiWindowFlags_None)) {
-        OptionDrawContext ctx;
+        OptionDrawCtx ctx;
         ctx.vm = m_pVm;
         ctx.m_pDlg = this;
         UCategory* pSelCat = m_pSelectedCat;
         if (pSelCat) {
-            switch (pSelCat->m_id) {
-                case EOptionCat::QUICK_START: {
-                    ImGui::TextUnformatted("Quick Start Options");
-                } break;
-                case EOptionCat::FLOPPY: {
-                    ImGui::TextUnformatted("Floppy Drives Options");
-                    if (pSelCat->m_pOptions.empty()) {
-                        ImGui::TextUnformatted("No floppy drives configured.");
-                    } else {
-                        for (UOption* pOpt : pSelCat->m_pOptions) {
-                            if (!pOpt)
-                                continue;
-                            draw_option(&ctx, pOpt);
-                        }
-                    }
-                } break;
-                default:
-                    break;
+            if (!pSelCat->title.empty())
+                ImGui::TextUnformatted(pSelCat->title.c_str());
+
+            for (UOption* pOpt : pSelCat->options) {
+                if (!pOpt)
+                    continue;
+                drawOptionContent(&ctx, pOpt);
             }
         }
     }
 
+    // buttons
     ImGui::SetCursorPosX(rgn.x - 200);
     if (ImGui::Button("Ok", ImVec2(100, 0)))
         setVisible(false);
@@ -203,7 +159,7 @@ void UaeOptionsDlg::drawContentImp() {
 }
 
 
-EFlow UaeOptionsDlg::onUiNodeMessageProc(qd::UiMessage* in_msg) {
+EFlow BaseOptionsDlg::onUiNodeMessageProc(qd::UiMessage* in_msg) {
     if (auto p = in_msg->cast_<qd::uiMsg::OnVisibleChanged>()) {
         if (p->m_bVisible)
             BPT();
@@ -212,22 +168,53 @@ EFlow UaeOptionsDlg::onUiNodeMessageProc(qd::UiMessage* in_msg) {
 }
 
 
-UCategory* UaeOptionsDlg::createCategory(EOptionCat nParentCat, EOptionCat nOpt) {
+UCategory* BaseOptionsDlg::createCategory(EOptionCat nOpt, EOptionCat nParentCat) {
     assert(!getCategoryById(nOpt));
     qd::unique_ptr<UCategory> pCategory(new UCategory(nOpt, nParentCat));
     int nIdent = 0;
     UCategory* pParent = getCategoryById(nParentCat);
     if (pParent) {
-        nIdent = pParent->m_ident + 1;
-        pParent->m_pChildCat.push_back(pCategory.get());
+        nIdent = pParent->ident + 1;
+        pParent->childCats.push_back(pCategory.get());
     }
-    pCategory->m_ident = nIdent;
+    pCategory->ident = nIdent;
     m_pCategories[(size_t)nOpt] = std::move(pCategory);
     return m_pCategories[(size_t)nOpt].get();
 }
 
 
-UaeOptionsDlg::~UaeOptionsDlg() {
+void BaseOptionsDlg::drawOptionContent(OptionDrawCtx* ctx, UOption* pOption) {
+    if (pOption->drawOptionCb) {
+        ImGui::PushID(pOption);
+        pOption->drawOptionCb(ctx);
+        ImGui::PopID();
+    }
+}
+
+
+void UaeOptionsDlg::onUiNodeCreated(qd::UiNodeCreator* mk) {
+    TSuper::onUiNodeCreated(mk);
+
+    setSize({600, 400});
+
+    UCategory* pCat;
+
+    createCategory(EOptionCat::UNDEF, EOptionCat::ROOT);
+    if (pCat = createCategory(EOptionCat::QUICK_START, EOptionCat::ROOT)) {
+        pCat->title = "Quick Start Options";
+    }
+
+    //     /*UCategory* pCatHW =*/createCategory(EOptionCat::HARDWARE, EOptionCat::ROOT);
+    //     /*UCategory* pCatHost =*/createCategory(EOptionCat::HOST, EOptionCat::ROOT);
+    //     /*UCategory* pCatCpu =*/createCategory(EOptionCat::CPU, EOptionCat::HARDWARE);
+
+    if (UCategory* pCat = createCategory(EOptionCat::FLOPPY, EOptionCat::HARDWARE)) {
+        pCat->title = "Floppy Drives Options";
+        createOption(pCat, "Floppy 0")->setDrawCb([](OptionDrawCtx* ctx) { draw_opt_floppy_cfg(ctx, 0); });
+        createOption(pCat, "Floppy 1")->setDrawCb([](OptionDrawCtx* ctx) { draw_opt_floppy_cfg(ctx, 1); });
+        createOption(pCat, "Floppy 2")->setDrawCb([](OptionDrawCtx* ctx) { draw_opt_floppy_cfg(ctx, 2); });
+        createOption(pCat, "Floppy 3")->setDrawCb([](OptionDrawCtx* ctx) { draw_opt_floppy_cfg(ctx, 3); });
+    }
 }
 
 

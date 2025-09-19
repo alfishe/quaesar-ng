@@ -91,8 +91,8 @@ public:
     //------------------------------------------------------------------------
     // Implement Operation Environment
     virtual IOperationEnvironment* getOpEnvParent() const override { return nullptr; }
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
-    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* args) const override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const override;
 
 
 }; // class Debugger

@@ -19,7 +19,6 @@ public:
     }
 
     virtual void drawContentImp() override;
-
     void grabScreenToTexture(Debugger* dbg);
 }; // class
 

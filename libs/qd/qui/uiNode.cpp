@@ -7,7 +7,7 @@
 namespace qd {
 
 
-void UiNode::onNodeCreated(UiNodeCreator* mk)
+void UiNode::onUiNodeCreated(UiNodeCreator* mk)
 {
     m_pParent = mk->parent;
     if (m_pParent)

@@ -1,11 +1,14 @@
 // clang-format off
-#include "sysconfig.h"
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-
 // Order of these includes is important :(
+#include "sysconfig.h"
+#include "EABase/config/eacompilertraits.h"
+EA_DISABLE_VC_WARNING(4702 4244) /*unreachable code*/ /*conversion from 'uae_u32' to 'uae_u8', possible loss of data*/
+
+#include <cerrno>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+
 #include <sys/timeb.h>
 #include "sysdeps.h"
 #include "options.h"
@@ -50,6 +53,9 @@
 #include "custom.h"
 #include "drawing.h"
 #include <sounddep/sound.h>
+#undef byte
+#undef D
+#undef bug
 // clang-format on
 
 #include <EASTL/fixed_string.h>
@@ -61,8 +67,6 @@
 #include <quaesar_debug.h>
 #include <filesystem>
 #include "qsrimp_proxy.h"
-
-EA_DISABLE_VC_WARNING(4702) /*unreachable code*/
 
 
 int avioutput_enabled = 0;

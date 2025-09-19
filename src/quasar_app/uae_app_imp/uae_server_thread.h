@@ -35,7 +35,7 @@ public:
     ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;  // create shared VM
     qsr::UaeServerAppPart* m_pServerApp = nullptr;
 
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
 public:
     UaeServerThread(qsr::UaeServerAppPart* pServerApp);

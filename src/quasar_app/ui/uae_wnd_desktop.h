@@ -25,8 +25,8 @@ public:
 
 protected:
     virtual void drawContentImp() override;
-    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::args::Base* args) const override;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 };  // class UaeGuiDesktop
 
 

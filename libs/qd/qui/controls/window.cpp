@@ -8,8 +8,6 @@ namespace qd {
 void UiWindow::drawImp()
 {
     assert(!m_title.empty());
-
-    uint32_t flg = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
     const bool bModal = isModal();
 
     Tribool vis;
@@ -26,10 +24,10 @@ void UiWindow::drawImp()
         if (bModal)
         {
             ImGui::OpenPopup(m_title.c_str());
-            vis = (Tribool)ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, flg);
+            vis = (Tribool)ImGui::BeginPopupModal(m_title.c_str(), &m_bVisible, m_windowFlags);
         }
         else
-            vis = (Tribool)ImGui::Begin(m_title.c_str(), &m_bVisible, flg);
+            vis = (Tribool)ImGui::Begin(m_title.c_str(), &m_bVisible, m_windowFlags);
 
         if (!m_bVisible)
             c_def(0);

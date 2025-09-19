@@ -105,7 +105,7 @@ DebuggerApp::~DebuggerApp() {
 }
 
 
-qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::args::Base* p_msg)
+qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg)
 {
     return m_pDebugger->applyOperationMsgProcImp(p_msg);
 }

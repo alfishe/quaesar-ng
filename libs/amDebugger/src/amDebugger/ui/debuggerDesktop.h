@@ -27,7 +27,7 @@ public:
 
 public:
     DebuggerDesktop(amD::DebuggerApp* pDbgApp, Debugger* dbg);
-    virtual void onNodeCreated(qd::UiNodeCreator* mk) override;
+    virtual void onUiNodeCreated(qd::UiNodeCreator* mk) override;
 
     virtual ~DebuggerDesktop();
 
@@ -41,7 +41,7 @@ public:
     qd::ShortcutsMgr* getShortcuts() const { return m_pShortcutMgr; }
 
     virtual IOperationEnvironment* getOpEnvParent() const override;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::args::Base* args) override;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
 private:
     void createAllUiWndows();

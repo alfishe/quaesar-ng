@@ -1,5 +1,4 @@
 #pragma once
-//#include "qd/qui/uiOperation.h"
 #include "qd/debug/assert.h"
 #include "qd/stl/string.h"
 #include "qd/stl/vector.h"
@@ -12,10 +11,10 @@ namespace qd {
 class UiOperation;
 struct UiOperationCreator;
 class IOperationEnvironment;
-FORWARD_DECLARATION_3S(operation, args, Base);
+FORWARD_DECLARATION_2S(operation, BaseOpArgs);
 
 
-namespace operation::args {
+namespace operation {
 
 class OpDesc
 {
@@ -23,7 +22,7 @@ public:
     ShortcutsHnd* m_pShortcuts = nullptr;
     qd::string m_id;
     qd::string m_name;
-    qd::operation::args::Base* m_pOpTemplate = nullptr; // owner
+    qd::operation::BaseOpArgs* m_pOpTemplate = nullptr; // owner
 
     OpDesc() = default;
     OpDesc(OpDesc&& rh) noexcept
@@ -38,12 +37,11 @@ public:
 
     void addShortcut(uint32_t sid);
     const char* getShortcutGuiStr() const;
-
     ~OpDesc();
 
 }; // class OpDesc
 
-}; // namespace operation::args
+}; // namespace operation
 
 
 
@@ -55,7 +53,7 @@ class OperationsRegistry : public qd::RefCounted
     qd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
     // qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
 
-    qd::vector<qd::operation::args::OpDesc> m_OpDescList;
+    qd::vector<qd::operation::OpDesc> m_OpDescList;
     qd::vector_map<THash32, uint32_t /*OpDescIndex*/> m_opsCidToDescIdx;
 
     bool mInit = false;
@@ -70,7 +68,7 @@ public:
     virtual void destroy();
 
 
-    qd::span<qd::operation::args::OpDesc const> getOperationsList() const;
+    qd::span<qd::operation::OpDesc const> getOperationsList() const;
 
     template<typename TClass>
     TClass* getOperation_() const
@@ -79,7 +77,7 @@ public:
         return static_cast<TClass*>(pOp);
     }
 
-    const qd::operation::args::OpDesc* findOpDesc(THash32 cid) const
+    const qd::operation::OpDesc* findOpDesc(THash32 cid) const
     {
         auto it = m_opsCidToDescIdx.find(cid);
         if (it == m_opsCidToDescIdx.end())
@@ -89,10 +87,10 @@ public:
     }
 
     template<typename TOpArg>
-    const qd::operation::args::OpDesc& getOpDesc_(TOpArg* = nullptr) const
+    const qd::operation::OpDesc& getOpDesc_(TOpArg* = nullptr) const
     {
         //const qd::TypeInfo& ti = TOpArg::getStaticTypeInfo();
-        const qd::operation::args::OpDesc* pDesc = findOpDesc(TOpArg::CID);
+        const qd::operation::OpDesc* pDesc = findOpDesc(TOpArg::CID);
         assert(pDesc);
         return *pDesc;
     }
@@ -101,21 +99,21 @@ public:
     void regOperationDesc_()
     {
         const qd::TypeInfo& ti = TClass::getStaticTypeInfo();
-        qd::operation::args::OpDesc desc;
+        qd::operation::OpDesc desc;
         desc.m_pOpTemplate = new TClass();
         TClass::setup(desc);
         addOperationDesc(ti, std::move(desc));
     }
 
-    void addOperationDesc(const qd::TypeInfo& ti, qd::operation::args::OpDesc&& desc);
+    void addOperationDesc(const qd::TypeInfo& ti, qd::operation::OpDesc&& desc);
 
-    void testOperationsShortcuts(qd::IOperationEnvironment* pEnv, qd::span<qd::operation::args::OpDesc* const> opDescs);
+    void testOperationsShortcuts(qd::IOperationEnvironment* pEnv, qd::span<qd::operation::OpDesc* const> opDescs);
 
     template<typename ...TOpClass>
     void testOperationsShortcuts_(qd::IOperationEnvironment* pEnv)
     {
-        const qd::operation::args::OpDesc* opDescs[] = {(&getOpDesc_<TOpClass>())...};
-        qd::span<qd::operation::args::OpDesc* const> spanOpDescs((qd::operation::args::OpDesc**)opDescs,
+        const qd::operation::OpDesc* opDescs[] = {(&getOpDesc_<TOpClass>())...};
+        qd::span<qd::operation::OpDesc* const> spanOpDescs((qd::operation::OpDesc**)opDescs,
             EAArrayCount(opDescs));
         testOperationsShortcuts(pEnv, spanOpDescs);
     }

@@ -179,11 +179,23 @@ if (ENABLE_CODE_GENERATION)
     gen_blitter(../uae_src/blittable.cpp t)
 endif()
 
+target_link_libraries(uae_lib zlibstatic)
+
+
 #-------------------------------------------------------------------------------------------
-# Set the target name
+# Disable some compiler warnings
 if (MSVC)
-target_compile_options(uae_lib PRIVATE "/MP") # Enable multi-threaded compilation
+    target_compile_options(uae_lib PRIVATE "/MP") # Enable multi-threaded compilation
+    target_compile_options(uae_lib PRIVATE "/wd4244") #("conversion from 'type1' to 'type2', possible loss of data")
+    target_compile_options(uae_lib PRIVATE "/wd4309") #(truncation of constant value)
+    target_compile_options(uae_lib PRIVATE "/wd4101") #(unreferenced local variable)
+    target_compile_options(uae_lib PRIVATE "/wd4200") #(nonstandard extension used: zero-sized array in struct/union)
+else()
+    target_compile_options(uae_lib PRIVATE "-Wno-conversion" "-Wno-sign-conversion")
+    target_compile_options(uae_lib PRIVATE "-Wno-unused-variable" "-Wno-unused-but-set-variable")
 endif()
+#-------------------------------------------------------------------------------------------
+
 
 #defines
 if (APPLE OR LINUX OR UNIX)
@@ -191,7 +203,6 @@ if (APPLE OR LINUX OR UNIX)
     target_compile_definitions(uae_lib PRIVATE FSUAE)
 endif()
 
-target_link_libraries(uae_lib zlibstatic)
 
 #-------------------------------------------------------------------------------------------
 # Include dirs
