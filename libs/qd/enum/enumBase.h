@@ -80,13 +80,11 @@ public:                                                                         
 //////////////////////////////////////////////////////////////////////////
 
 
-// #define ENUM_DECLARE_BASE( EnumNamespace, EnumNameStruct, eEnumType, _DefaultValue ) \
-// 	_ENUM_DECLARE_BASE_0( CON(EnumNamespace,::), EnumNameStruct, eEnumType, _DefaultValue )\
 
 
 
 //////////////////////////////////////////////////////////////////////////
-#define ENUM_DECLARE_FLAGS                                          \
+#define ENUM_DECLARE_FLAGS()                                        \
     template<typename V>                                            \
     inline constexpr EThis& operator+= (V Value)                    \
     {                                                               \

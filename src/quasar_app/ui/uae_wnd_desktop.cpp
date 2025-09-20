@@ -18,7 +18,7 @@
 
 namespace qsr {
 
-void UaeGuiDesktop::init() {
+void UaeClientGuiDesktop::init() {
     qd::imGuiApplyStyleDark();
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.5f);  // empty background
@@ -28,7 +28,7 @@ void UaeGuiDesktop::init() {
 }
 
 
-void UaeGuiDesktop::drawContentImp() {
+void UaeClientGuiDesktop::drawContentImp() {
     // Main TOOLBAR
     IVm::VM* vm = getUaeClientApp()->getVm();
 
@@ -74,13 +74,13 @@ void UaeGuiDesktop::drawContentImp() {
 }
 
 
-qd::IOperationEnvironment* UaeGuiDesktop::getOpEnvParent() const {
+qd::IOperationEnvironment* UaeClientGuiDesktop::getOpEnvParent() const {
     assert(m_pUaeClientApp);
     return m_pUaeClientApp;
 }
 
 
-qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const {
+qd::EFlow UaeClientGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
         p->dbgSource = EQuaServerId::S_UAE;
         return EFlow::DONE;
@@ -89,7 +89,7 @@ qd::EFlow UaeGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs*
 }
 
 
-qd::EFlow UaeGuiDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
+qd::EFlow UaeClientGuiDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowUaeOptionsWnd>()) {
         unused(p);
         qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);

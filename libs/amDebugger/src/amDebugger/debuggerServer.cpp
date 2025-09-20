@@ -6,9 +6,9 @@ namespace amD
 {
 
 
-void IDebuggerServer::init()
+void IVmConnectionBuilder::init()
 {
-    vm = IVm::VM::setVmInst(IVm::createByFactory_<IVm::VM>());
+    vm = IVm::createByFactory_<IVm::VM>();
     vm->init();
 }
 

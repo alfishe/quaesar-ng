@@ -15,10 +15,11 @@ FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 
 
-//////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------
 // UAE's parent server-work-thread
 // (it works in the same thread as UAE)
-class UaeServerThread : public amD::IDebuggerServer {
+//
+class UaeServerThread {
     struct SDL_Thread* m_uaeThread = nullptr;  // start UAE in separate thread
     inline static UaeServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;
@@ -35,11 +36,9 @@ public:
     ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;  // create shared VM
     qsr::UaeServerAppPart* m_pServerApp = nullptr;
 
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
-
 public:
     UaeServerThread(qsr::UaeServerAppPart* pServerApp);
-    virtual ~UaeServerThread() override;
+    ~UaeServerThread();
     void initialize();
     void destroy();
     void setUaeInitialized(bool);
@@ -51,7 +50,6 @@ public:
     bool onUaeHandleEvents();
 
     IVm::VM* getVm() const;
-    virtual ref_ptr<amD::IDbgConnection> createConnection() const override;
 
     void execConsoleCmd(qd::string&& cmd);
     void applyImmediateConsoleCmd(qd::string&& cmd);

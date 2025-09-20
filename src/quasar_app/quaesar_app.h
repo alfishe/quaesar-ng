@@ -12,7 +12,7 @@ FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 FORWARD_DECLARATION_2(qd, ThreadEvent);
 FORWARD_DECLARATION_2(amD, DebuggerApp);
 FORWARD_DECLARATION_2(amD, Debugger);
-FORWARD_DECLARATION_2(amD, IDebuggerServer);
+FORWARD_DECLARATION_2(amD, IVmConnectionBuilder);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ public:
     amD::DebuggerApp* m_pDebuggerApp = nullptr;
     qsr::UaeClientAppPart* m_pUaeClientAppPart = nullptr;
     qsr::UaeServerAppPart* m_pUaeServerAppPart = nullptr;
-    class QuaesarServersMgr* m_pServersMgr = nullptr;
+    class QuaesarDebuggerServersMgr* m_pServersMgr = nullptr;
 
 public:
     QuasarApp();
@@ -59,35 +59,36 @@ public:
 
 enum class EQuaServerId {
     UNDEF = 0,
-    S_UAE = _MAKE4C("_UAE"),
-    S_LOCAL_VAMIGA,
-    S_REMOTE_VAMIGA,
+    S_UAE = _MAKE4C("QUAE"),
+    S_VAMIGA = _MAKE4C("VAMI"),
 };
 
 
+//------------------------------------------------------------------------
 // Debugger Servers providers manager
 //
-class QuaesarServersMgr : public amD::IDbgConnectionManager {
-    TS_REFLECT_CLASS(QuaesarServersMgr, amD::IDbgConnectionManager);
-    QuasarApp* m_pApp;
-    struct ServerItem {
+class QuaesarDebuggerServersMgr : public amD::IVmConnectionsManager {
+    TS_REFLECT_CLASS(QuaesarDebuggerServersMgr, amD::IVmConnectionsManager);
+    QuasarApp* m_pApp = nullptr;
+
+    struct VmServiceItem {
         EQuaServerId m_id;
-        amD::IDebuggerServer* m_server;
+        amD::IVmConnectionBuilder* m_pConnBuilder;
     };
-    qd::vector<ServerItem> m_pServers;
+    qd::vector<VmServiceItem> m_pVmServicesList;
 
 public:
-    QuaesarServersMgr(QuasarApp* pApp);
-    virtual ~QuaesarServersMgr();
+    QuaesarDebuggerServersMgr(QuasarApp* pApp);
+    virtual ~QuaesarDebuggerServersMgr();
 
 public:
     virtual uint32_t getNumConnections() override;
-    virtual ref_ptr<amD::IDbgConnection> createConnectionByInd(uint32_t idx) override;
-    void registerVmServer(EQuaServerId id, amD::IDebuggerServer* pServer);
+    virtual ref_ptr<amD::IVmServiceConnection> createVmConnectionByInd(uint32_t idx) override;
+    void registerVmServer(EQuaServerId id, amD::IVmConnectionBuilder* pBuilder);
 
-    amD::IDebuggerServer* getServerById(EQuaServerId id) const;
+    amD::IVmConnectionBuilder* getVmConnBuilderById(EQuaServerId id) const;
 
-};  // class QuasarServersMgr
+};  // class QuaesarDebuggerServersMgr
 //////////////////////////////////////////////////////////////////////////
 
 

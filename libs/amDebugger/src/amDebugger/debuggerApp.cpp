@@ -44,12 +44,12 @@ void DebuggerApp::init() {
     createRenderWindow();
     initImGui();
 
-    amD::IDbgConnectionManager* pConnMgr = m_pApp->getInterface_<IDbgConnectionManager>();
+    amD::IVmConnectionsManager* pConnMgr = m_pApp->getInterface_<amD::IVmConnectionsManager>();
     ASSERT_AND_DO(pConnMgr, return);
-    ref_ptr<IDbgConnection> pCurConnect = pConnMgr->createConnectionByInd(0);
+    ref_ptr<IVmServiceConnection> pCurConnect = pConnMgr->createVmConnectionByInd(0);
     assert(pCurConnect);
 
-    m_pDebugger = new Debugger(this, pCurConnect); // Debugger client
+    m_pDebugger = new amD::Debugger(this, pCurConnect); // Debugger client
     m_pDebugger->init();
 
 
@@ -126,8 +126,6 @@ void DebuggerApp::destroy() {
     if (m_pGui)
         m_pGui->destroy();
     m_pGui = nullptr;
-
-    IVm::VM::destrotVmInst();
 
     SAFE_DESTROY(m_pQimGuiCtx);
     SDL_DestroyRenderer(m_pWndRenderer);

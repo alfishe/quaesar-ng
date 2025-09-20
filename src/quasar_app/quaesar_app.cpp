@@ -30,7 +30,7 @@ void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
 
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
-    m_pServersMgr = new QuaesarServersMgr(this);
+    m_pServersMgr = new QuaesarDebuggerServersMgr(this);
 
     m_pDebuggerApp = getAppParts()->createPart_<amD::DebuggerApp>("Amiga Debugger");
 
@@ -60,7 +60,7 @@ void QuasarApp::onSdlEventProc(SDL_Event& event) {
 
     switch (event.type) {
         case SDL_WINDOWEVENT: {
-            Uint8 wndEvent = event.window.event;
+            uint8_t wndEvent = event.window.event;
             if (wndEvent == SDL_WINDOWEVENT_CLOSE) {
                 requestAppToQuit();
                 break;
@@ -79,49 +79,49 @@ amD::Debugger* QuasarApp::getDbg() const {
 
 
 void* QuasarApp::getInterface(const qd::TypeInfo& p_interface) {
-    if (QuaesarServersMgr::getStaticTypeInfo().isDerivedFrom(p_interface)) {
+    if (QuaesarDebuggerServersMgr::getStaticTypeInfo().isDerivedFrom(p_interface)) {
         return m_pServersMgr;
     }
     return TSuper::getInterface(p_interface);
 }
 
 
-QuaesarServersMgr::QuaesarServersMgr(QuasarApp* pApp) : m_pApp(pApp) {
+QuaesarDebuggerServersMgr::QuaesarDebuggerServersMgr(QuasarApp* pApp) : m_pApp(pApp) {
 }
 
 
-QuaesarServersMgr::~QuaesarServersMgr() {
-    m_pServers.clear();
+QuaesarDebuggerServersMgr::~QuaesarDebuggerServersMgr() {
+    m_pVmServicesList.clear();
 }
 
 
-uint32_t QuaesarServersMgr::getNumConnections() {
-    return static_cast<uint32_t>(m_pServers.size());
+uint32_t QuaesarDebuggerServersMgr::getNumConnections() {
+    return static_cast<uint32_t>(m_pVmServicesList.size());
 }
 
 
-ref_ptr<amD::IDbgConnection> QuaesarServersMgr::createConnectionByInd(uint32_t idx) {
-    if (idx >= m_pServers.size())
+ref_ptr<amD::IVmServiceConnection> QuaesarDebuggerServersMgr::createVmConnectionByInd(uint32_t idx) {
+    if (idx >= m_pVmServicesList.size())
         return nullptr;
-    amD::IDebuggerServer* pServer = m_pServers[idx].m_server;
+    amD::IVmConnectionBuilder* pServer = m_pVmServicesList[idx].m_pConnBuilder;
     if (!pServer)
         return nullptr;
     return pServer->createConnection();
 }
 
 
-void QuaesarServersMgr::registerVmServer(EQuaServerId id, amD::IDebuggerServer* pServer) {
-    if (!getServerById(id))
-        m_pServers.push_back({id, pServer});
+void QuaesarDebuggerServersMgr::registerVmServer(EQuaServerId id, amD::IVmConnectionBuilder* pBuilder) {
+    if (!getVmConnBuilderById(id))
+        m_pVmServicesList.push_back({id, pBuilder});
     else {
         assert(0 && "already registered");
     }
 }
 
 
-amD::IDebuggerServer* QuaesarServersMgr::getServerById(EQuaServerId id) const {
-    for (const auto& item : m_pServers)
+amD::IVmConnectionBuilder* QuaesarDebuggerServersMgr::getVmConnBuilderById(EQuaServerId id) const {
+    for (const QuaesarDebuggerServersMgr::VmServiceItem& item : m_pVmServicesList)
         if (item.m_id == id)
-            return item.m_server;
+            return item.m_pConnBuilder;
     return nullptr;
 }

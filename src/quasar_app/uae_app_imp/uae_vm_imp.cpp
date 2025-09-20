@@ -95,8 +95,6 @@ void UaeVmImp::init() {
 UaeVmImp::~UaeVmImp() {
 }
 
-//extern void uae_op_debug_trace_continue(qd::IOperationEnvironment* env, amD::operation::DebugTraceContinue* p);
-
 
 qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     UaeVmImp* vm = this;

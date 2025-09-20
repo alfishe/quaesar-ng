@@ -6,6 +6,7 @@
 #include <qd/qui/uiOperation.h>
 #include <qd/typeSystem/typeDeclare.h>
 
+struct CfgVmPrefs;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,7 @@ class Floppy;
 //////////////////////////////////////////////////////////////////////////
 class VM
     : public qd::RefCounted
-    , qd::IOperationEnvironment
+    , public qd::IOperationEnvironment
 {
     TS_REFLECT_CLASS(IVm::VM, qd::IOperationEnvironment);
 
@@ -47,22 +48,18 @@ protected:
     int amiga_height = 576;
     bool mInit = false;
     amD::EVmDebugMode m_debugMode = amD::EVmDebugMode::Live;
-
-    static IVm::VM* staticVmInst;
     VM();
 
 public:
-    static IVm::VM* get() { return IVm::VM::staticVmInst; }
-    static IVm::VM* setVmInst(IVm::VM* vm_inst);
-    static void destrotVmInst();
-    virtual ~VM();
+    //static IVm::VM* staticVmInst;
+    //static IVm::VM* get() { return IVm::VM::staticVmInst; }
+    //static IVm::VM* setVmInst(IVm::VM* vm_inst);
+    //static void destrotVmInst();
+    virtual ~VM() override;
 
     virtual void init() = 0;
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/)
-    {
-        assert(0);
-        return qd::EFlow::NO_RESULT;
-    }
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/) override;
+    virtual void applyVmConfig(CfgVmPrefs* prefs);
 
     int getScreenSizeX() const { return amiga_width; }
     int getScreenSizeY() const { return amiga_height; }
@@ -138,15 +135,7 @@ public:
     virtual uint32_t getU32(AddrRef addr) = 0;
     virtual void setU32(AddrRef addr, uint32_t v) = 0;
 
-    const amD::MemBank* findBankByAddr(AddrRef addr) const
-    {
-        for (const amD::MemBank& bank : banks)
-        {
-            if (addr >= bank.m_startAddr && addr < (bank.m_startAddr + bank.m_size))
-                return &bank;
-        }
-        return nullptr;
-    }
+    const amD::MemBank* findBankByAddr(AddrRef addr) const;
 }; // class Memory
 //////////////////////////////////////////////////////////////////////////
 

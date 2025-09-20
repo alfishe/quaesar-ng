@@ -97,7 +97,7 @@ struct EOpenMode {
 		ReadWrite = 0x03,
 	};
 	ENUM_DECLARE_BASE(qd::, EOpenMode, eType, 0);
-	ENUM_DECLARE_FLAGS;
+	ENUM_DECLARE_FLAGS();
 
 }; // enum EOpenMode
 //////////////////////////////////////////////////////////////////////////

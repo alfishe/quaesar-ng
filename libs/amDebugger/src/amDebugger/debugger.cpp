@@ -8,7 +8,7 @@ namespace amD {
 DbgProjOptinons g_opt = {};
 
 
-Debugger::Debugger(DebuggerApp* _app, ref_ptr<IDbgConnection> pCon)
+Debugger::Debugger(DebuggerApp* _app, ref_ptr<IVmServiceConnection> pCon)
     : m_pDbgApp(_app)
     , m_pConnection(pCon)
 {

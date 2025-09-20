@@ -90,12 +90,6 @@ int uae_thread_main_func(void*) {
 }
 
 
-qd::EFlow UaeServerThread::applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/) {
-    assert(0);
-    return qd::EFlow::STOP;
-}
-
-
 UaeServerThread::UaeServerThread(qsr::UaeServerAppPart* pServerApp) : m_pServerApp(pServerApp) {
     m_pVm = new amD::vm::imp::UaeVmImp();
     m_pVm->setServerImp(this);
@@ -236,40 +230,6 @@ bool UaeServerThread::onUaeHandleEvents() {
 
 IVm::VM* UaeServerThread::getVm() const {
     return m_pVm;
-}
-
-
-class UaeSharedConnectionImp : public amD::IDbgConnection {
-public:
-    amD::vm::imp::UaeVmImp* m_pUaeVm;
-
-    UaeSharedConnectionImp(amD::vm::imp::UaeVmImp* pUaeVm) : m_pUaeVm(pUaeVm) {
-    }
-
-    virtual void pushOperation(amD::operation::OperationArgs*) override {
-    }
-
-    virtual amD::operation::OperationArgs* getFrontOperation() override {
-        return nullptr;
-    }
-
-    virtual void popFrontOperation() override {
-    }
-
-    virtual ref_ptr<IVm::VM> getClientVm() override {
-        return m_pUaeVm;
-    }
-
-    virtual ref_ptr<IVm::VM> getServerVm() override {
-        return m_pUaeVm;
-    }
-};  // class UaeSharedConnectionImp
-//////////////////////////////////////////////////////////////////////////
-
-
-ref_ptr<amD::IDbgConnection> UaeServerThread::createConnection() const {
-    ref_ptr<UaeSharedConnectionImp> pInst = new UaeSharedConnectionImp(m_pVm);
-    return pInst;
 }
 
 

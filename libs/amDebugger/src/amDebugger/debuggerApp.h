@@ -23,16 +23,16 @@ FORWARD_DECLARATION_2(IVm, VM);
 namespace amD {
 
 class DebuggerDesktop;
-class IDbgConnection;
+class IVmServiceConnection;
 
 
-class IDbgConnectionManager
+class IVmConnectionsManager
 {
-    TS_REFLECT_CLASS(amD::IDbgConnectionManager, void);
+    TS_REFLECT_CLASS(amD::IVmConnectionsManager, void);
 public:
     virtual uint32_t getNumConnections() = 0;
-    virtual ref_ptr<amD::IDbgConnection> createConnectionByInd(uint32_t idx) = 0;
-}; // class IDbgConnectionManager
+    virtual ref_ptr<amD::IVmServiceConnection> createVmConnectionByInd(uint32_t idx) = 0;
+}; // class IVmConnectionsManager
 
 
 //////////////////////////////////////////////////////////////////////////

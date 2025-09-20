@@ -3,16 +3,22 @@
 
 class UaeServerThread;
 FORWARD_DECLARATION_2(IVm, VM);
+FORWARD_DECLARATION_2(amD, IVmConnectionBuilder);
 
 namespace qsr {
 
-class UaeServerAppPart : public qd::ApplicationPart, public qd::IOperationEnvironment {
+//------------------------------------------------------------------------
+// It's a server app-part that runs the UAE emulator in a separate thread
+// and can processes requests to it the Main thread.
+//
+class UaeServerAppPart : public qd::ApplicationPart {
     TS_BEGIN_REFLECT_CLASS(UaeServerAppPart, qd::ApplicationPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("UAE Server"));
     TS_END();
 
 private:
-    UaeServerThread* m_pUaeThread;
+    UaeServerThread* m_pUaeThread = nullptr;
+    ref_ptr<amD::IVmConnectionBuilder> m_pConnBuilder;
 
 public:
     UaeServerAppPart();
@@ -24,6 +30,7 @@ public:
     IVm::VM* getVm() const;
 
     UaeServerThread* getUaeThread() const;
+
 };  // class UaeServerAppPart
 
 

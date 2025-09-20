@@ -8,7 +8,7 @@ struct SDL_Texture;
 struct SDL_Renderer;
 FORWARD_DECLARATION_1(UaeServerThread);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
-FORWARD_DECLARATION_2(qsr, UaeGuiDesktop);
+FORWARD_DECLARATION_2(qsr, UaeClientGuiDesktop);
 FORWARD_DECLARATION_2(IVm, VM);
 FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 
@@ -23,18 +23,18 @@ class UaeClientAppPart : public qd::ApplicationPart, public qd::IOperationEnviro
     TS_END();
 
 private:
-    qsr::UaeGuiDesktop* m_pUaeWndGui = nullptr;
+    qsr::UaeClientGuiDesktop* m_pUaeWndGui = nullptr;
     int m_renderedFrameNo = -1;
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_pUaeRenderer = nullptr;
     SDL_Texture* m_pUaeScrTexture = nullptr;
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     bool m_bShowImgui = false;
-    ref_ptr<IVm::VM> m_pVm;
+    ref_ptr<IVm::VM> m_pClientVm;
 
 public:
     UaeClientAppPart(IVm::VM* _vm);
-    virtual ~UaeClientAppPart();
+    virtual ~UaeClientAppPart() override;
 
     virtual void onPartCreate(qd::ApplicationPart::OnCreate_t& prm) override;
 
@@ -49,6 +49,8 @@ public:
     }
     void bringWndToFront();
 
+    IVm::VM* getVm() const;
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) override;
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
@@ -64,9 +66,6 @@ public:
     }
 
     UaeServerThread* getUaeThread() const;
-
-    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
-    IVm::VM* getVm() const;
 
 private:
     void _drawGuiMenus();

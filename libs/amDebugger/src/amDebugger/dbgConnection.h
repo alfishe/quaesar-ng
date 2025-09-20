@@ -4,28 +4,24 @@
 
 
 namespace amD {
-class UaeSharedConnectionImp;
+class UaeSharedConnectionImpl;
 
 
-class IDbgConnection : public qd::RefCounted
+class IVmServiceConnection : public qd::RefCounted
 {
 public:
     qd::string m_name;
 
 public:
-    virtual void pushOperation(amD::operation::OperationArgs*) = 0;
-    virtual amD::operation::OperationArgs* getFrontOperation() = 0;
-    virtual void popFrontOperation() {}
-
     virtual ref_ptr<IVm::VM> getClientVm() = 0;
     virtual ref_ptr<IVm::VM> getServerVm() = 0;
 
-}; // IDbgConnection
+}; // IVmServiceConnection
 //////////////////////////////////////////////////////////////////////////
 
 
-ref_ptr<IDbgConnection> create_dummy_connection();
-ref_ptr<IDbgConnection> create_uae_shared_connection(const char* name);
+ref_ptr<IVmServiceConnection> create_dummy_connection();
+ref_ptr<IVmServiceConnection> create_uae_shared_connection(const char* name);
 
 
 }; // namespace amD

@@ -907,7 +907,6 @@ bool render_screen(int /*monid*/, int, bool) {
 
 
 void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
-    // copy UAE screen to texture buf
     struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
     struct vidbuffer* vb = avidinfo->outbuffer;
 
@@ -917,6 +916,7 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     const int imgSizeX = vb->outwidth;
     const int imgSizeY = vb->outheight;
     uint8_t* sptr = vb->bufmem;
+    // copy UAE screen to texture buf
     if (uint32_t* pDestTxBuf = qsrimp_lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
         for (int y = 0; y < imgSizeY; y++) {
             uint8_t* dest = (uint8_t*)&pDestTxBuf[y * imgSizeX];

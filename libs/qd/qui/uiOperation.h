@@ -96,6 +96,8 @@ public:
         applyOperationMsgProcImp(&opArgs);
     }
 
+    virtual ~IOperationEnvironment() = default;
+
 }; // IOperationEnvironment
 //////////////////////////////////////////////////////////////////////////
 

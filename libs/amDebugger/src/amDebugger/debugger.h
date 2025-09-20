@@ -9,7 +9,7 @@
 namespace amD {
 
 class DebuggerApp;
-class IDbgConnection;
+class IVmServiceConnection;
 
 constexpr static int BREAKPOINTS_MAX = 20;
 
@@ -57,13 +57,13 @@ class Debugger
     , public qd::IOperationEnvironment
 {
     DebuggerApp* m_pDbgApp = nullptr;
-    ref_ptr<IDbgConnection> m_pConnection;
+    ref_ptr<IVmServiceConnection> m_pConnection;
 
 public:
     ref_ptr<IVm::VM> m_pVm = nullptr;
 
 public:
-    Debugger(DebuggerApp* _app, ref_ptr<IDbgConnection> pCon);
+    Debugger(DebuggerApp* _app, ref_ptr<IVmServiceConnection> pCon);
     virtual ~Debugger() override = default;
 
     void init();
@@ -71,7 +71,7 @@ public:
     amD::DebuggerApp* getDbgApp() const { return m_pDbgApp; }
 
 
-    amD::IDbgConnection* getConnection() const { return m_pConnection.get(); }
+    amD::IVmServiceConnection* getConnection() const { return m_pConnection.get(); }
 
     void execConsoleCmd(qd::string&& cmd);
 

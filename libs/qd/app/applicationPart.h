@@ -26,7 +26,7 @@ struct EAppPartMtd {
         UPDATE_WHILE_LOADING = (1 << 2),
     };
     ENUM_DECLARE_BASE(qd::, EAppPartMtd, Type, 0);
-    ENUM_DECLARE_FLAGS;
+    ENUM_DECLARE_FLAGS();
 }; // enum EPartMtd
 
 

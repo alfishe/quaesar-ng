@@ -18,6 +18,7 @@
 #include "qd/qui/controls/menuItemOperation.h"
 #include "quaesar.h"
 #include "quaesar_app.h"
+#include "quaesar_config.h"
 #include "quaesar_operations.h"
 #include "uae_app_imp/uae_server_thread.h"
 #include "uae_app_imp/uae_vm_imp.h"
@@ -29,7 +30,7 @@
 namespace qsr {
 
 
-UaeClientAppPart::UaeClientAppPart(IVm::VM* _vm) : m_pVm(_vm) {
+UaeClientAppPart::UaeClientAppPart(IVm::VM* _vm) : m_pClientVm(_vm) {
 }
 
 UaeClientAppPart::~UaeClientAppPart() {
@@ -49,14 +50,14 @@ void UaeClientAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
 
     // UAE's root ui-window
     qd::UiNodeCreator mk;
-    m_pUaeWndGui = mk.make_<qsr::UaeGuiDesktop>(this);
+    m_pUaeWndGui = mk.make_<qsr::UaeClientGuiDesktop>(this);
     m_pUaeWndGui->init();
 }
 
 
 void UaeClientAppPart::_createUaeWindow() {
     int wndWidth, wndHeight;
-    m_pVm->emu->getScreenSize(&wndWidth, &wndHeight);
+    m_pClientVm->emu->getScreenSize(&wndWidth, &wndHeight);
 
     // Create a window
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
@@ -212,13 +213,20 @@ qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
         case SDL_KEYDOWN: {
             if (event.key.windowID != uaeWndId)
                 return qd::EFlow::CONTINUE;
-            if (event.key.keysym.sym == SDLK_F12) {
-                if (event.key.keysym.mod & KMOD_SHIFT) {
+
+            SDL_Keysym sym = event.key.keysym;
+            if (sym.sym == SDLK_F12) {
+                if (sym.mod & KMOD_SHIFT) {
                     // Handle shift + F12
                     doOperationDefault_<qsr::operations::ShowDebuggerWnd>();
                 } else
                     setShowImgui(!m_bShowImgui);
                 return qd::EFlow::STOP;
+            } else if (sym.sym == SDLK_ESCAPE) {
+                if (g_cfg_main->quitByEsc) {
+                    getApp()->requestAppToQuit();
+                    return qd::EFlow::STOP;
+                }
             }
             pUae->pushSdlEvent(event);
             return qd::EFlow::STOP;
@@ -250,12 +258,13 @@ qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::BaseOpArgs* 
         pDbg->setWndVisible(true);
         return qd::EFlow::STOP;
     }
+    m_pClientVm->applyOperationMsgProc(args);
     return qd::EFlow::STOP;
 }
 
 
 IVm::VM* UaeClientAppPart::getVm() const {
-    return m_pVm.get();
+    return m_pClientVm.get();
 }
 
 
