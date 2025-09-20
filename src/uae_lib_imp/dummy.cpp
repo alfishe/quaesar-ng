@@ -60,12 +60,12 @@ EA_DISABLE_VC_WARNING(4702 4244) /*unreachable code*/ /*conversion from 'uae_u32
 
 #include <EASTL/fixed_string.h>
 #include <SDL.h>
-#include <amDebugger/debuggerApp.h>
 #include <qd/log/log.h>
 #include <qd/thread/thread.h>
 #include <quaesar.h>
 #include <quaesar_debug.h>
 #include <filesystem>
+#include "amDebugger/debuggerWndApp.h"
 #include "qsrimp_proxy.h"
 
 
@@ -1735,9 +1735,7 @@ bool target_graphics_buffer_update(int monid, bool /*force*/) {
         old_h = vb->outheight;
         return true;
     }
-
     TRACE();
-
     return false;
 }
 

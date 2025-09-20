@@ -25,14 +25,14 @@ extern void qs_keyboard_set_translation();
 extern void quae__parseCmdLine(int argc, TCHAR** argv);
 
 
-class ConsoleQueue {
+class UaeConsoleQueue {
 public:
     std::queue<qd::string> m_consoleCmdQueue;
     qd::ThreadEvent* m_pThreadEvent;
     qd::Mutex* m_pMutex;
 
 public:
-    ConsoleQueue() {
+    UaeConsoleQueue() {
         m_pThreadEvent = new qd::ThreadEvent(true);
         m_pMutex = new qd::Mutex();
     }
@@ -46,7 +46,7 @@ public:
         m_pThreadEvent->set();
     }
 
-    bool waitConsoleCmd(eastl::string& out_cmd) {
+    bool popConsoleCmdWait(eastl::string& out_cmd) {
         m_pThreadEvent->wait(100);
         qd::MutexLock ml(*m_pMutex);
         if (m_consoleCmdQueue.empty())
@@ -66,11 +66,11 @@ public:
         SAFE_DELETE(m_pMutex);
     }
 
-    ~ConsoleQueue() {
+    ~UaeConsoleQueue() {
         destroy();
     }
 
-};  // class ConsoleQueue
+};  // class UaeConsoleQueue
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -96,7 +96,7 @@ UaeServerThread::UaeServerThread(qsr::UaeServerAppPart* pServerApp) : m_pServerA
 
     assert(!g_pSingleton);
     g_pSingleton = this;
-    m_pConsoleQueue = new ConsoleQueue();
+    m_pConsoleQueue = new UaeConsoleQueue();
 }
 
 
@@ -146,10 +146,13 @@ void UaeServerThread::initialize() {
     m_pAmigaBuffer = new uint32_t[m_scrWidth * m_scrHeight];
     SDL_AtomicSet(&m_scrFrameNo, 0);
 
-    // wait UAE initialization
+    // start UAE Thread
     m_onUaeInitialized = new qd::ThreadEvent(true);
     m_uaeThread = SDL_CreateThread(&uae_thread_main_func, "UAE emulator", nullptr);
+
+    // wait UAE initialization
     m_onUaeInitialized->wait();
+
     // initialize after UAE is ready
     m_pVm->init();
 }
@@ -165,10 +168,8 @@ void UaeServerThread::destroy() {
         if (m_pConsoleQueue)
             m_pConsoleQueue->destroy();
         SAFE_DELETE(m_pConsoleQueue);
-
         SAFE_DELETE(m_onUaeInitialized);
     }
-
     delete[] m_pAmigaBuffer;
     m_pAmigaBuffer = nullptr;
 }
@@ -213,18 +214,30 @@ int UaeServerThread::getScrFrameNo() {
 
 void UaeServerThread::pushSdlEvent(const SDL_Event& event) {
     qd::MutexLock ml(m_eventMutex);
-    m_eventQueue.push_back(event);
+    m_sdlEventsQueue.push_back(event);
+}
+
+
+void UaeServerThread::pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args) {
+    qd::MutexLock ml(m_eventMutex);
+    m_pClientOpsStack.push_back(std::move(args));
 }
 
 
 bool UaeServerThread::onUaeHandleEvents() {
     qd::MutexLock ml(m_eventMutex);
-    if (m_eventQueue.empty())
-        return false;
-    const SDL_Event& event = m_eventQueue.front();
-    onSdlEventProc(event);
-    m_eventQueue.pop_front();
-    return true;
+    while (!m_sdlEventsQueue.empty()) {
+        const SDL_Event& event = m_sdlEventsQueue.front();
+        applySdlEventProc(event);
+        m_sdlEventsQueue.pop_front();
+    }
+
+    while (!m_pClientOpsStack.empty()) {
+        qd::operation::BaseOpArgs* pCurOpMsg = m_pClientOpsStack.front().get();
+        m_pVm->applyOperationMsgProc(pCurOpMsg);
+        m_pClientOpsStack.pop_front();
+    }
+    return false;
 }
 
 
@@ -233,7 +246,7 @@ IVm::VM* UaeServerThread::getVm() const {
 }
 
 
-void UaeServerThread::onSdlEventProc(const SDL_Event& event) {
+void UaeServerThread::applySdlEventProc(const SDL_Event& event) {
     switch (event.type) {
         case SDL_KEYDOWN: {
             const SDL_Keycode scancode = event.key.keysym.scancode;
@@ -265,9 +278,9 @@ void UaeServerThread::execConsoleCmd(qd::string&& cmd) {
 }
 
 
-int UaeServerThread::waitConsoleCmd(char* out, int maxlen) {
+int UaeServerThread::uaeWaitConsoleCmdImpl(char* out, int maxlen) {
     eastl::string cmd;
-    if (!m_pConsoleQueue->waitConsoleCmd(cmd))
+    if (!m_pConsoleQueue->popConsoleCmdWait(cmd))
         return -1;
 
     const int len = (int)cmd.size();

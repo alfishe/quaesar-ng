@@ -1,12 +1,12 @@
 #include "quaesar.h"
 #include <SDL.h>
-#include <amDebugger/debuggerApp.h>
 #include <nfd.h>
 #include <qd/app/appPartsMgr.h>
 #include <qd/app/application.h>
 #include <qd/thread/thread.h>
 #include <cstdarg>
 #include <cstdio>
+#include "amDebugger/debuggerWndApp.h"
 #include "cli11/CLI11.hpp"
 #include "parse_options.h"
 
@@ -38,19 +38,19 @@ int SDL_main(int argc, char* argv[]) {
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
     cliApp.parse(argc, argv);
 
-    // create Quaesar app
-    {
-        g_pApp = new QuasarApp();
-        qd::CreateApplicationParams prm;
-        g_pApp->onConstruct(prm);
-    }
-
     // initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return 1;
     }
     atexit(&SDL_Quit);
+
+    // create Quaesar app
+    {
+        g_pApp = new QuasarApp();
+        qd::CreateApplicationParams prm;
+        g_pApp->onConstruct(prm);
+    }
 
     // initialize NFD
     if (NFD_Init() != NFD_OKAY) {

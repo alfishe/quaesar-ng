@@ -6,8 +6,8 @@
 #include "qd/base/base.h"
 #include "qd/qui/uiOperation.h"
 #include "qd/stl/string.h"
+#include "qd/stl/unique_ptr.h"
 #include "qd/thread/mutex.h"
-//#include "uae_vm_imp.h"
 
 
 FORWARD_DECLARATION_2(qd, ThreadEvent);
@@ -23,8 +23,10 @@ class UaeServerThread {
     struct SDL_Thread* m_uaeThread = nullptr;  // start UAE in separate thread
     inline static UaeServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;
-    std::deque<SDL_Event> m_eventQueue;
-    class ConsoleQueue* m_pConsoleQueue = nullptr;
+    std::deque<SDL_Event> m_sdlEventsQueue;
+    class UaeConsoleQueue* m_pConsoleQueue = nullptr;
+    std::deque<qd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
+
 
 public:
     int m_scrWidth = 754;
@@ -45,15 +47,17 @@ public:
 
     uint32_t* lockUaeScreenTexBuf(int amiga_width, int amiga_height);
     void unlockUaeScreenTexBuf();
+
     int getScrFrameNo();
     void pushSdlEvent(const SDL_Event& event);
+    void pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args);
+
     bool onUaeHandleEvents();
 
     IVm::VM* getVm() const;
 
     void execConsoleCmd(qd::string&& cmd);
-    void applyImmediateConsoleCmd(qd::string&& cmd);
-    int waitConsoleCmd(char* out, int maxlen);
+    int uaeWaitConsoleCmdImpl(char* out, int maxlen);
 
 public:
     static UaeServerThread* get() {
@@ -61,7 +65,8 @@ public:
     }
 
 protected:
-    void onSdlEventProc(const SDL_Event& event);
+    void applySdlEventProc(const SDL_Event& event);
+    void applyImmediateConsoleCmd(qd::string&& cmd);
 
 };  // class UaeServerThread
 //////////////////////////////////////////////////////////////////////////

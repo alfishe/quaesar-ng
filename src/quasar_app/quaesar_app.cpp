@@ -1,8 +1,8 @@
 #include "quaesar_app.h"
 #include "SDL.h"
 #include "amDebugger/dbgConnection.h"
-#include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerServer.h"
+#include "amDebugger/debuggerWndApp.h"
 #include "qd/app/appPartsMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "quasar_app/uae_app_imp/uae_client_app_part.h"
@@ -57,19 +57,6 @@ void QuasarApp::destroyImp() {
 
 void QuasarApp::onSdlEventProc(SDL_Event& event) {
     TSuper::onSdlEventProc(event);
-
-    switch (event.type) {
-        case SDL_WINDOWEVENT: {
-            uint8_t wndEvent = event.window.event;
-            if (wndEvent == SDL_WINDOWEVENT_CLOSE) {
-                requestAppToQuit();
-                break;
-            }
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 

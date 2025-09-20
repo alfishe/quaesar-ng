@@ -1,7 +1,7 @@
 #include "memory_graph_wnd.h"
 #include <EASTL/span.h>
 #include <SDL.h>
-#include <amDebugger/debuggerApp.h>
+#include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/vm/vmInterface.h>
 #include <imgui/imgui_internal.h>
 #include <qd/imGui/imgui_eastl.h>

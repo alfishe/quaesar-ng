@@ -1,6 +1,6 @@
 #include "disassembly_wnd.h"
 #include "qd/imGui/imGuiHelperClass.h"
-#include <amDebugger/debuggerApp.h>
+#include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/ui/uiStyle.h>
 #include <amDebugger/vm/vmInterface.h>
@@ -13,6 +13,7 @@
 #include "amDebugger/codeAnalyzer/cdaServer.h"
 #include "amDebugger/codeAnalyzer/cdaTypes.h"
 #include "qd/log/log.h"
+
 
 namespace amD {
 namespace window {

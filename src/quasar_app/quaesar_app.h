@@ -1,5 +1,5 @@
 #pragma once
-#include "amDebugger/debuggerApp.h"
+#include "amDebugger/debuggerWndApp.h"
 #include "qd/app/application.h"
 #include "qd/typeSystem/typeDeclare.h"
 

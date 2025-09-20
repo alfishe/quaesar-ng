@@ -54,7 +54,7 @@
 // - Using InputText() is awkward and maybe overkill here, consider implementing something custom.
 
 #include "memory_wnd.h"
-#include <amDebugger/debuggerApp.h>
+#include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/vm/vmInterface.h>
 #include "qd/imGui/imGuiHelperClass.h"
 

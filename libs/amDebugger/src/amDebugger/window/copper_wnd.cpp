@@ -1,7 +1,7 @@
+#include "amDebugger/debuggerWndApp.h"
 #include "qd/stl/string.h"
 #include "qd/stl/fixed_vector.h"
 #include "qd/stl/optional.h"
-#include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/memory.h"
 #include "amDebugger/vm/vmInterface.h"

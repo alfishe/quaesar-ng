@@ -30,17 +30,13 @@ class UaeVmImp final : public IVm::VM {
     UaeServerThread* m_pUaeThread = nullptr;
 
 public:
-    UaeVmImp& instVm = *this;
-
-public:
     UaeVmImp();
     void setServerImp(UaeServerThread* pUaeThread) {
         m_pUaeThread = pUaeThread;
     }
-    virtual ~UaeVmImp();
+    virtual ~UaeVmImp() override;
     virtual void init() override;
 
-    //     virtual void* getOpEnvPtr(const qd::TypeInfo& classType) const override;
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
     virtual amD::EVmDebugMode getVmDebugMode() const override {
@@ -51,6 +47,7 @@ public:
     virtual int getCurCycle() override;
     virtual int getVPos() override;
     virtual int getHPos() override;
+
 
     //------------------------------------------------------------------------
     struct Cpu : public IVm::Cpu {
@@ -64,22 +61,7 @@ public:
             return m68k_getpc();
         }
 
-        virtual bool getFlg(ECpuFlg_ f) const override {
-            switch (f) {
-                case amD::CpuFlg_Z:
-                    return GET_ZFLG();
-                case amD::CpuFlg_C:
-                    return GET_CFLG();
-                case amD::CpuFlg_V:
-                    return GET_VFLG();
-                case amD::CpuFlg_N:
-                    return GET_NFLG();
-                case amD::CpuFlg_X:
-                    return GET_XFLG();
-                default:
-                    return false;
-            }
-        }
+        virtual bool getFlg(ECpuFlg_ f) const override;
         virtual int getIntMask() const override {
             return regs.intmask;
         }
@@ -113,7 +95,7 @@ public:
     Memory instMemory;
 
 
-    //
+    //------------------------------------------------------------------------
     struct Blitter final : public IVm::Blitter {
     public:
         virtual bool isBlitterActive() const override;
@@ -121,7 +103,7 @@ public:
     } instBlitter;
 
 
-    //
+    //------------------------------------------------------------------------
     class CustomRegs final : public IVm::CustomRegs {
         static constexpr size_t data_offset = 2;
         eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
@@ -140,6 +122,7 @@ public:
     CustomRegs instCustomRegs;
 
 
+    //------------------------------------------------------------------------
     class Copper final : public IVm::Copper {
     public:
         virtual void fetch() override;
@@ -148,6 +131,7 @@ public:
     Copper instCopper;
 
 
+    //------------------------------------------------------------------------
     class Emu final : public IVm::Emu {
     public:
         UaeVmImp* vm = nullptr;
@@ -163,6 +147,7 @@ public:
     Emu instEmu;
 
 
+    //------------------------------------------------------------------------
     class Floppy : public IVm::Floppy {
     public:
         virtual bool getEnabled() override;

@@ -28,5 +28,5 @@ bool qsrimp_onUaeHandleEvents() {
 int qsrimp_waitConsoleCmd(char* out, int maxlen) {
     if (!g_pUaeThread)
         return -1;
-    return g_pUaeThread->waitConsoleCmd(out, maxlen);
+    return g_pUaeThread->uaeWaitConsoleCmdImpl(out, maxlen);
 }

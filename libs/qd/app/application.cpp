@@ -96,7 +96,9 @@ void Application::doMainLoop()
 
 void Application::onSdlEventProc(SDL_Event& event)
 {
-    m_pAppParts->onSdlEventProc(event);
+    qd::EFlow f = m_pAppParts->onSdlEventProc(event);
+    if (f.isStop())
+        return;
 
     switch (event.type)
     {
@@ -107,12 +109,8 @@ void Application::onSdlEventProc(SDL_Event& event)
     }
     case SDL_WINDOWEVENT:
     {
-        Uint8 wndEvent = event.window.event;
-        if (wndEvent == SDL_WINDOWEVENT_CLOSE)
-        {
+        if (event.window.event == SDL_WINDOWEVENT_CLOSE)
             requestAppToQuit();
-            break;
-        }
         break;
     }
     default:

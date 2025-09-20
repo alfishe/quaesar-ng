@@ -31,9 +31,9 @@ struct AutoRegOpDesc_ {
 
 #define DECLARE_OPERATION_1(TArgClass)                                                                 \
     TS_REFLECT_CLASS(TArgClass, qd::operation::BaseOpArgs);                                            \
-    virtual qd::operation::BaseOpArgs* clone(qd::operation::IOpArgAllocator& allocator) override       \
+    virtual qd::operation::BaseOpArgs* clone() override                                                \
     {                                                                                                  \
-        return qd::operation::clone_op_<TArgClass>(*this, allocator);                                  \
+        return qd::operation::clone_op_<TArgClass>(*this);                                             \
     }                                                                                                  \
     inline static AutoRegOpDesc_<TArgClass> s_AutoRegOpDesc;\
 
@@ -114,21 +114,13 @@ static qd::UiOperation* createUiOperationCb_(const qd::TypeInfo& /*meta*/, qd::U
 
 //////////////////////////////////////////////////////////////////////////
 namespace operation {
-class IOpArgAllocator
-{
-public:
-    virtual void* alloc(size_t mem_size) = 0;
-    virtual void dealloc(void* pPtr) = 0;
-};
 
 
 template<class TClass>
-TClass* clone_op_(const TClass& src, qd::operation::IOpArgAllocator& allocator)
+TClass* clone_op_(const TClass& src)
 {
-    size_t size = sizeof(TClass);
-    void* pBuffer = allocator.alloc(size);
-    TClass* pInst = new (pBuffer) TClass();
-    *pInst = src; // deep copy
+    TClass* pInst = new TClass();
+    *pInst = src;
     return pInst;
 }
 
@@ -151,7 +143,7 @@ public:
         return static_cast<T*>(this);
     }
 
-    virtual BaseOpArgs* clone(qd::operation::IOpArgAllocator& /*allocator*/) { ASSERT_AND_DO(0, return nullptr, ); }
+    virtual BaseOpArgs* clone() { ASSERT_AND_DO(0, return nullptr, ); }
 
     //SHOULD BE DECLARED
     //static void setup(qd::operation::OpDesc& d) {}

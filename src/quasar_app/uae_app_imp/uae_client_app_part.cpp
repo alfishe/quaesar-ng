@@ -231,11 +231,23 @@ qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
             pUae->pushSdlEvent(event);
             return qd::EFlow::STOP;
         } break;
+
         case SDL_KEYUP: {
             if (event.key.keysym.sym == SDLK_F12)
                 return qd::EFlow::STOP;
             pUae->pushSdlEvent(event);
         } break;
+
+        case SDL_WINDOWEVENT: {
+            if (event.window.windowID != uaeWndId)
+                return qd::EFlow::CONTINUE;
+            uint8_t wndEvent = event.window.event;
+            if (wndEvent == SDL_WINDOWEVENT_CLOSE) {
+                getApp()->requestAppToQuit();
+            }
+            break;
+        }
+
         default:
             break;
     }
@@ -258,7 +270,11 @@ qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::BaseOpArgs* 
         pDbg->setWndVisible(true);
         return qd::EFlow::STOP;
     }
-    m_pClientVm->applyOperationMsgProc(args);
+    // send operation to UAE thread
+    if (UaeServerThread* pUaeThread = getUaeThread()) {
+        qd::operation::BaseOpArgs* pClonedArgs = args->clone();
+        pUaeThread->pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs>(pClonedArgs));
+    }
     return qd::EFlow::STOP;
 }
 

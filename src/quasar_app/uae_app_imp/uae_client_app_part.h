@@ -1,5 +1,4 @@
 #include "qd/app/applicationPart.h"
-//#include "uae_vm_imp.h"
 #include "ui/uae_wnd_desktop.h"
 
 

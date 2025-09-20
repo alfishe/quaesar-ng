@@ -15,10 +15,13 @@
 #include <debug.h>
 #include <uae.h>
 #include <events.h>
+#undef byte
+#undef D
+#undef bug
 // clang-format on
 #include <SDL_log.h>
-#include "amDebugger/debuggerApp.h"
 #include "amDebugger/debuggerOps.h"
+#include "amDebugger/debuggerWndApp.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "qd/base/endian.h"
 #include "qd/qui/operationsRegistry.h"
@@ -277,6 +280,24 @@ bool UaeVmImp::Floppy::getEnabled() {
 void UaeVmImp::Floppy::setEnabled(bool v) {
     ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
     cfgFloppy.dfxtype = v ? 0 : -1;
+}
+
+
+bool UaeVmImp::Cpu::getFlg(ECpuFlg_ f) const {
+    switch (f) {
+        case amD::CpuFlg_Z:
+            return GET_ZFLG();
+        case amD::CpuFlg_C:
+            return GET_CFLG();
+        case amD::CpuFlg_V:
+            return GET_VFLG();
+        case amD::CpuFlg_N:
+            return GET_NFLG();
+        case amD::CpuFlg_X:
+            return GET_XFLG();
+        default:
+            return false;
+    }
 }
 
 

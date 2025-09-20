@@ -1,4 +1,4 @@
-#include <amDebugger/debuggerApp.h>
+#include <amDebugger/debuggerWndApp.h>
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/ui/uiView.h>
 #include <amDebugger/vm/customRegs.h>
