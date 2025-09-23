@@ -167,13 +167,8 @@ bool DebuggerApp::isWndVisible() const
 {
     uint32_t window_flags = SDL_GetWindowFlags(m_pWindow);
     if (window_flags & (SDL_WINDOW_HIDDEN | SDL_WINDOW_MINIMIZED))
-    {
         return false;
-    }
-    else
-    {
-        return true;
-    }
+    return true;
 }
 
 

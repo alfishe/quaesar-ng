@@ -48,13 +48,11 @@ struct OptionDrawCtx {
 
 struct UOption {
 public:
-    qd::string title;
     UCategory* parentCat = nullptr;
     using TDrawOptionCb = eastl::fixed_function<2 * sizeof(void*), void(OptionDrawCtx*)>;
     TDrawOptionCb drawOptionCb;
 
-    UOption(const char* title) : title(title) {
-    }
+    UOption() = default;
 
     UOption& setDrawCb(UOption::TDrawOptionCb&& cb) {
         drawOptionCb = std::move(cb);
