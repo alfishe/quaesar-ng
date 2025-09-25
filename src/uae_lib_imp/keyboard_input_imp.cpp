@@ -10,7 +10,7 @@ EA_DISABLE_CLANG_WARNING(-Wmissing-field-initializers);
 // clang-format on
 
 #include <SDL_scancode.h>
-#include <quasar_app/quaesar_debug.h>
+#include <quasar_app/qsr_debug.h>
 
 // static struct uae_input_device_kbr_default keytrans_amiga[] = {
 //     {INPUTEVENT_KEY_CAPS_LOCK, {{INPUTEVENT_KEY_CAPS_LOCK, ID_FLAG_TOGGLE}}}, {-1, {{0}}}};

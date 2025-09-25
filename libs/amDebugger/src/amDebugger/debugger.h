@@ -27,6 +27,7 @@ public:
 
 class BreakpointsSortedList
 {
+public:
     eastl::fixed_vector<Breakpoint, amD::BREAKPOINTS_MAX, false> mBreakpoints;
 
     struct OneAddrBp {
@@ -37,7 +38,7 @@ class BreakpointsSortedList
     eastl::fixed_set<OneAddrBp, amD::BREAKPOINTS_MAX, false> mOneAddrBps;
 
 public:
-    void init();
+    void init(IVm::VM* vm);
     const amD::Breakpoint* getBpByAddr(AddrRef addr, EReg reg) const;
 }; // BreakpointsSortedList
 //////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,7 @@ public:
     BreakpointsSortedList getBreakpointsSorted() const
     {
         BreakpointsSortedList bp;
-        bp.init();
+        bp.init(m_pVm);
         return bp;
     }
 

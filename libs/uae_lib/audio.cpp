@@ -826,7 +826,7 @@ static void sample16i_sinc_handler (void)
 	samplexx_sinc_handler (datas, 0, AUDIO_CHANNELS_PAULA);
 	data1 = datas[0] + datas[3] + datas[1] + datas[2];
 	data1 = FINISH_DATA (data1, 18, 0);
-	
+
 	do_filter(&data1, 0);
 
 	get_extra_channels_sample2(&data1, NULL, 2);
@@ -1949,7 +1949,7 @@ static bool audio_state_channel2 (int nr, bool perfin)
 #if DEBUG_AUDIO > 0
 				if (debugchannel (nr))
 					write_log(_T("%d: IDLE\n"), nr);
-#endif			
+#endif
 				zerostate(nr);
 				return true;
 			}

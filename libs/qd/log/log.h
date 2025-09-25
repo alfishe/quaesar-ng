@@ -58,6 +58,11 @@ public:
 public:
     void logV(LogEntry::ELevel level, const char* message, va_list arguments);
 
+#undef debug
+#undef info
+#undef warn
+#undef error
+
     void debug(const char* message, ...) {
         va_list args;
         va_start(args, message);

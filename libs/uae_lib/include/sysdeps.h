@@ -42,7 +42,7 @@ using namespace std;
 #define UAE
 #endif
 
-#if defined(_M_ARM64) || defined(_M_ARM64EC) 
+#if defined(_M_ARM64) || defined(_M_ARM64EC)
 #define CPU_arm 1
 #define ARM_ASSEMBLY 1
 #define CPU_64_BIT 1
@@ -222,7 +222,7 @@ typedef uae_u32 uaecptr;
 #define UVAL64(a) (a)
 #elif SIZEOF_LONG == 8
 #define uae_s64 int64_t
-#define uae_u64 uint64_t 
+#define uae_u64 uint64_t
 #define VAL64(a) (a ## l)
 #define UVAL64(a) (a ## ul)
 #endif
@@ -310,6 +310,8 @@ extern int uaetcslen(const TCHAR*);
 
 #elif defined _MSC_VER
 
+#pragma warning(disable : 5105)  // Fix compile error in WinBase.h
+#pragma warning(disable : 4244)  //  'initializing': conversion from 'uae_u32' to 'uae_u8', possible loss of data
 #ifdef HAVE_GETTIMEOFDAY
 #include <winsock.h> // for 'struct timeval' definition
 extern void gettimeofday( struct timeval *tv, void *blah );
@@ -332,8 +334,8 @@ extern void gettimeofday( struct timeval *tv, void *blah );
 #define O_RDWR   _O_RDWR
 #define O_CREAT  _O_CREAT
 #define O_TRUNC  _O_TRUNC
-#define strcasecmp _tcsicmp 
-#define strncasecmp _tcsncicmp 
+#define strcasecmp _tcsicmp
+#define strncasecmp _tcsncicmp
 #define W_OK 0x2
 #define R_OK 0x4
 #define STAT struct stat

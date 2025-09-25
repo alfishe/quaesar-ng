@@ -60,6 +60,7 @@ static void virtualfreewithlock (LPVOID addr, SIZE_T size, DWORD freetype)
 	VirtualFree(addr, size, freetype);
 }
 
+#if 0
 static uae_u32 lowmem (void)
 {
 	uae_u32 change = 0;
@@ -95,6 +96,7 @@ static uae_u32 lowmem (void)
 #endif
 	return change;
 }
+#endif
 
 int mman_GetWriteWatch (PVOID lpBaseAddress, SIZE_T dwRegionSize, PVOID *lpAddresses, PULONG_PTR lpdwCount, PULONG lpdwGranularity)
 {
@@ -305,6 +307,7 @@ static void resetmem (bool decommit)
 	}
 }
 
+#if 0
 static uae_u8 *va (uae_u32 offset, uae_u32 len, DWORD alloc, DWORD protect)
 {
 	uae_u8 *addr;
@@ -319,6 +322,7 @@ static uae_u8 *va (uae_u32 offset, uae_u32 len, DWORD alloc, DWORD protect)
 		natmem_offset + offset, natmem_offset + offset + len, len >> 20, (alloc & MEM_WRITE_WATCH) ? _T("WATCH") : _T("RESERVED"), GetLastError ());
 	return NULL;
 }
+#endif
 
 static int doinit_shm (void)
 {
@@ -326,7 +330,7 @@ static int doinit_shm (void)
 	uae_u32 align;
 	uae_u32 z3rtgmem_size;
 	struct rtgboardconfig *rbc = &changed_prefs.rtgboards[0];
-	struct rtgboardconfig *crbc = &currprefs.rtgboards[0];
+	//struct rtgboardconfig *crbc = &currprefs.rtgboards[0];
 	uae_u32 extra = 65536;
 	struct uae_prefs *p = &changed_prefs;
 
@@ -622,7 +626,7 @@ void free_shm (void)
 void mapped_free (addrbank *ab)
 {
 	shmpiece *x = shm_start;
-	bool rtgmem = (ab->flags & ABFLAG_RTG) != 0;
+	//bool rtgmem = (ab->flags & ABFLAG_RTG) != 0;
 
 	ab->flags &= ~ABFLAG_MAPPED;
 	if (ab->baseaddr == NULL)
@@ -709,7 +713,7 @@ bool uae_mman_info(addrbank *ab, struct uae_mman_data *md)
 	bool got = false;
 	bool readonly = false, maprom = false;
 	bool directsupport = true;
-	uaecptr start;
+	uaecptr start = 0;
 	uae_u32 size = ab->reserved_size;
 	uae_u32 readonlysize = size;
 	bool barrier = false;

@@ -1,6 +1,11 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 project(amDebugger LANGUAGES CXX)
+
+# Specify the C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS False)
 
 get_filename_component(AM_DIR ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
 get_filename_component(AM_SRC_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src ABSOLUTE)

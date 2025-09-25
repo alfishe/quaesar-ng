@@ -1,13 +1,13 @@
 #pragma once
 #include "qd/base/base.h"
+#include "qd/base/baseTypes.h"
 #include "qd/base/classInfoReg.h"
 #include "qd/base/eFlow.h"
-#include "qd/base/baseTypes.h"
 #include "qd/debug/assert.h"
 #include "qd/qui/operationsRegistry.h"
 #include "qd/stl/fixed_vector.h"
-#include "qd/typeSystem/typeDeclare.h"
 #include "qd/stl/ref_ptr.h"
+#include "qd/typeSystem/typeDeclare.h"
 #include "qd/typeSystem/typeInfo.h"
 
 
@@ -29,16 +29,16 @@ struct AutoRegOpDesc_ {
 };
 
 
-#define DECLARE_OPERATION_1(TArgClass)                                                                 \
-    TS_REFLECT_CLASS(TArgClass, qd::operation::BaseOpArgs);                                            \
-    virtual qd::operation::BaseOpArgs* clone() override                                                \
-    {                                                                                                  \
-        return qd::operation::clone_op_<TArgClass>(*this);                                             \
-    }                                                                                                  \
-    inline static AutoRegOpDesc_<TArgClass> s_AutoRegOpDesc;\
+#define DECLARE_OPERATION_1(TArgClass)                      \
+    TS_REFLECT_CLASS(TArgClass, qd::operation::BaseOpArgs); \
+    virtual qd::operation::BaseOpArgs* clone() override     \
+    {                                                       \
+        return qd::operation::clone_op_<TArgClass>(*this);  \
+    }                                                       \
+    inline static AutoRegOpDesc_<TArgClass> s_AutoRegOpDesc;
 
 
-
+//------------------------------------------------------------------------
 namespace qd {
 class DebuggerDesktop;
 class UiOperation;
@@ -68,11 +68,7 @@ struct UiOperationCreator {
 //////////////////////////////////////////////////////////////////////////
 
 
-class OperationHistory
-{
-};
-
-
+//------------------------------------------------------------------------
 // An interface that can perform operations based on their arguments, or send them to its parent if it cannot perform
 // them itself.
 class IOperationEnvironment
@@ -81,7 +77,10 @@ class IOperationEnvironment
 
 protected:
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/) { return EFlow::NO_RESULT; }
-    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* /*args*/) const { return EFlow::NO_RESULT; }
+    virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* /*args*/) const
+    {
+        return EFlow::NO_RESULT;
+    }
 
 public:
     virtual IOperationEnvironment* getOpEnvParent() const { return nullptr; }
@@ -89,7 +88,7 @@ public:
     qd::EFlow setupDefaultOperationArgs(qd::operation::BaseOpArgs* args) const;
 
     template<class TOpClass>
-    void doOperationDefault_()
+    void doOperation_()
     {
         TOpClass opArgs;
         setupDefaultOperationArgs(&opArgs);
@@ -125,8 +124,10 @@ TClass* clone_op_(const TClass& src)
 }
 
 
-struct BaseOpArgs {
+class BaseOpArgs
+{
     TS_REFLECT_CLASS(qd::operation::BaseOpArgs, void);
+
 public:
     inline BaseOpArgs() = default;
     virtual ~BaseOpArgs() = default;
@@ -145,10 +146,10 @@ public:
 
     virtual BaseOpArgs* clone() { ASSERT_AND_DO(0, return nullptr, ); }
 
-    //SHOULD BE DECLARED
-    //static void setup(qd::operation::OpDesc& d) {}
+    // SHOULD BE DECLARED
+    // static void setup(qd::operation::OpDesc& d) {}
 
-}; // struct BaseOpArgs
+}; // class BaseOpArgs
 //////////////////////////////////////////////////////////////////////////
 
 

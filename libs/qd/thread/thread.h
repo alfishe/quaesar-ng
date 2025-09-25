@@ -9,17 +9,7 @@
 namespace qd {
 FORWARD_DECLARATION_2(Details, CThreadData);
 
-inline void sleep_ms(uint32_t timeMs)
-{
-    SDL_Delay(timeMs);
-}
-
-inline void sleep(float durationSec)
-{
-    qd::sleep_ms((uint32_t)(durationSec * 1000.0f));
-}
-
-
+//------------------------------------------------------------------------
 class ThreadEvent
 {
     SDL_cond* m_pCondition;
@@ -74,5 +64,18 @@ inline bool is_main_thread()
 {
     return SDL_ThreadID() == SDL_GetThreadID(nullptr);
 }
+
+
+inline void sleep_ms(uint32_t timeMs)
+{
+    SDL_Delay(timeMs);
+}
+
+
+inline void sleep(float duration_sec)
+{
+    qd::sleep_ms((uint32_t)(duration_sec * 1000.0f));
+}
+
 
 }; // namespace qd

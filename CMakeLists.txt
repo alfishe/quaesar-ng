@@ -1,5 +1,5 @@
 # Minimum CMake version requirement
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 #set(CMAKE_GENERATOR_TOOLSET "ClangCl") # test compilation on clang-c
 
@@ -8,9 +8,10 @@ option(ENABLE_CODE_GENERATION "Enable code generation" OFF)
 # Project name and languages used
 project(quaesar LANGUAGES CXX)
 
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Specify the C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS False)
 
 # Zlib and disable examples
 
@@ -21,6 +22,7 @@ include(scripts/cmake/format_sources.cmake)
 include(scripts/cmake/compile_options.cmake)
 include(external/sdl2/sdl2.cmake)
 
+# Libraries
 add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
@@ -28,11 +30,10 @@ add_subdirectory(external/EASTL)
 add_subdirectory(external/capstone)
 add_subdirectory(external/nativefiledialog-extended) #nfd
 add_subdirectory(libs/qd)
+add_subdirectory(libs/vAmiga)
 add_subdirectory(libs/amDebugger)
 add_subdirectory(libs/exprParser)
 
-
-# Define a global variable
 set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_lib_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
 add_subdirectory(libs/uae_lib)
 
@@ -78,7 +79,7 @@ list(APPEND QUAESAR_SOURCES resources_inc.cpp)
 list(APPEND QUAESAR_HEADERS resources_inc.h)
 #-------------------------------------------------------------------------------------------
 
-# Create the source groups for source tree with root at CMAKE_CURRENT_SOURCE_DIR.
+# Create VisualStudio groups tree in solution with root at CMAKE_CURRENT_SOURCE_DIR.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${QUAESAR_HEADERS} ${QUAESAR_SOURCES})
 
@@ -96,6 +97,7 @@ if (WIN32)
     set_target_properties(quaesar PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     )
+    target_compile_definitions(quaesar PUBLIC MICROSOFT_WINDOWS_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS=0)
 endif()
 
 
@@ -140,14 +142,15 @@ target_include_directories(quaesar PRIVATE
 
 target_link_libraries(quaesar PRIVATE
     adf
-    uae_lib
     zlibstatic
     ${SDL2_LIBRARIES}
-    imgui
     EASTL
-    qd
-    amDebugger
+    imgui
     nfd
+    qd
+    uae_lib
+    amDebugger
+    VACore
 )
 
 
@@ -159,6 +162,7 @@ target_link_libraries(quaesar PRIVATE
 add_option_edit_and_continue(quaesar)
 add_option_edit_and_continue(qd)
 add_option_edit_and_continue(amDebugger)
+add_option_edit_and_continue(VACore)
 
 
 if (WIN32)

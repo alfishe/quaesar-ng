@@ -69,4 +69,12 @@ void Debugger::setDebugMode(EVmDebugMode debug_mode)
 }
 
 
+
+void BreakpointsSortedList::init(IVm::VM* vm)
+{
+    mBreakpoints.clear();
+    vm->emu->initBreakPoints(*this);
+}
+
+
 }; // namespace amD

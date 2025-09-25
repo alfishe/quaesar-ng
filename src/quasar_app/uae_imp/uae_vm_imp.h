@@ -1,0 +1,144 @@
+#pragma once
+// clang-format off
+// #include <sysconfig.h>
+// #include <uae_lib/include/sysdeps.h>
+// #include <uae_lib/include/options.h>
+// #include <uae_lib/include/newcpu.h>
+// clang-format on
+#include <EASTL/array.h>
+#include <EASTL/fixed_vector.h>
+#include <EASTL/span.h>
+#include <EASTL/vector.h>
+#include <amDebugger/vm/customRegs.h>
+#include <amDebugger/vm/emuDefs.h>
+#include <amDebugger/vm/memory.h>
+#include <amDebugger/vm/vmInterface.h>
+#include <qd/base/baseTypes.h>
+#include <qd/base/color.h>
+#include "qd/typeSystem/typeDeclare.h"
+
+
+FORWARD_DECLARATION_1(UaeServerThread);
+
+
+namespace amD::vm::imp {
+
+class UaeVmImp final : public IVm::VM {
+    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, IVm::VM);
+    UaeServerThread* m_pUaeThread = nullptr;
+
+public:
+    UaeVmImp();
+    void setServerImp(UaeServerThread* pUaeThread) {
+        m_pUaeThread = pUaeThread;
+    }
+    virtual ~UaeVmImp() override;
+    virtual void init() override;
+
+    virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
+
+    virtual amD::EVmDebugMode getVmDebugMode() const override {
+        return TSuper::getVmDebugMode();
+    }
+    virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) override;
+
+    virtual int getCurCycle() override;
+    virtual int getVPos() override;
+    virtual int getHPos() override;
+
+
+    //------------------------------------------------------------------------
+    struct Cpu : public IVm::Cpu {
+        uint32_t getRegA(int i) const override;
+        uint32_t getRegD(int i) const override;
+        AddrRef getPC() const override;
+
+        virtual bool getFlg(ECpuFlg_ f) const override;
+        virtual int getIntMask() const override;
+    };  // struct Cpu
+    Cpu instCpu;
+
+
+    //------------------------------------------------------------------------
+    struct Memory final : public IVm::Memory {
+    public:
+        virtual uint8_t* getRealAddr(AddrRef ptr) override;
+        virtual bool getU16(AddrRef addr, uint16_t* out) override;
+        virtual uint16_t getU16(AddrRef addr) override;
+        virtual void setU16(AddrRef addr, uint16_t v) override;
+        virtual uint32_t getU32(AddrRef addr) override;
+        virtual void setU32(AddrRef addr, uint32_t v) override;
+    };  // struct Memory
+    Memory instMemory;
+
+
+    //------------------------------------------------------------------------
+    struct Blitter final : public IVm::Blitter {
+    public:
+        virtual bool isBlitterActive() const override;
+        virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
+    } instBlitter;
+
+
+    //------------------------------------------------------------------------
+    class CustomRegs final : public IVm::CustomRegs {
+        static constexpr size_t data_offset = 2;
+        eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
+
+    public:
+        void fetch() override;
+        void commit() override;
+
+        uint16_t getRegVal(CustReg reg) override {
+            return regsData[(size_t)reg + data_offset];
+        }
+        void setRegVal(CustReg reg, uint16_t new_val) override {
+            regsData[(size_t)reg + data_offset] = new_val;
+        }
+    };  // class CustomRegs
+    CustomRegs instCustomRegs;
+
+
+    //------------------------------------------------------------------------
+    class Copper final : public IVm::Copper {
+    public:
+        virtual void fetch() override;
+        virtual AddrRef getCopperAddr(amD::ECopperAddr_ copno) override;
+    };  // class Copper
+    Copper instCopper;
+
+
+    //------------------------------------------------------------------------
+    class Emu final : public IVm::Emu {
+    public:
+        UaeVmImp* vm = nullptr;
+        virtual int getDebugDmaMode() override;
+        virtual void setDebugDmaMode(int p_mode) override;
+        bool isDebugActivatedFull() const;
+        bool isDebugActivated() const;
+        virtual void getScreenSize(int* out_w, int* out_h) const override {
+            *out_w = 754;
+            *out_h = 576;
+        }
+        virtual void initBreakPoints(BreakpointsSortedList& bpList) override;
+    };  // class Emu
+    Emu instEmu;
+
+
+    //------------------------------------------------------------------------
+    class Floppy : public IVm::Floppy {
+    public:
+        virtual bool getEnabled() override;
+        virtual void setEnabled(bool v) override;
+        virtual bool getWriteProtect() override;
+        virtual void setWriteProtect(bool v) override;
+        virtual qd::string getAdfPath() override;
+        virtual void setAdfPath(const qd::string& v) override;
+    };
+    qd::array<Floppy, IVm::MAX_FLOPPIES> instFloppies = {};
+
+};  // class UaeVmImp
+//////////////////////////////////////////////////////////////////////////
+
+
+};  //namespace amD::vm::imp

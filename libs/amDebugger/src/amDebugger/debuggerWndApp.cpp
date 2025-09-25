@@ -1,5 +1,4 @@
 #include "debuggerWndApp.h"
-#include "amDebugger/dbgOperation.h"
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/ui/debuggerDesktop.h"
 #include "amDebugger/ui/uiStyle.h"

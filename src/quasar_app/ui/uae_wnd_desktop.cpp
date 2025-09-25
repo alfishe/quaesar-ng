@@ -1,5 +1,4 @@
 #include "uae_wnd_desktop.h"
-#include "amDebugger/commonOperations.h"
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "qd/app/application.h"
@@ -8,9 +7,9 @@
 #include "qd/imGui/style/style.h"
 #include "qd/qui/controls/menuItemOperation.h"
 #include "qd/qui/operationsRegistry.h"
-#include "quaesar_operations.h"
-#include "quasar_app/quaesar_app.h"
-#include "quasar_app/uae_app_imp/uae_client_app_part.h"
+#include "qsr_application.h"
+#include "qsr_main_wnd_client_app.h"
+#include "qsr_operations.h"
 #include "uae_options_wnd.h"
 
 #define DLG_TITLE_OPTIONS "Options"
@@ -50,7 +49,7 @@ void UaeClientGuiDesktop::drawContentImp() {
                 assert(cfgFloppy);
                 qsr::open_file_dlg_select_adf(*cfgFloppy);
                 vm->setVmDebugMode(amD::EVmDebugMode::Live);
-                doOperationDefault_<amD::operation::UaeResetAmiga>();
+                doOperation_<amD::operation::UaeResetAmiga>();
             }
             qIm::menuItemFromOperationArgs_<qsr::operations::ShowUaeOptionsWnd>(this);
             if (ImGui::MenuItem("Exit")) {

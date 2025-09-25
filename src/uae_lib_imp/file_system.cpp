@@ -12,7 +12,7 @@
 #include <SDL_filesystem.h>
 #include <SDL_log.h>
 #include <SDL_rwops.h>
-#include <quasar_app/quaesar_debug.h>
+#include <quasar_app/qsr_debug.h>
 #include <sys/stat.h>
 #include <cstdio>
 #include <cstring>  // For strcpy, strcat, etc.
@@ -515,9 +515,8 @@ void my_closedir(struct my_opendir_s* mod) {
 
 int hdf_write_target(struct hardfiledata* /*hfd*/, void* /*buffer*/, uae_u64 /*offset*/, int /*len*/, uint32_t* error) {
     UNIMPLEMENTED();
-    if (error)
-        *error = 1;
-    return 0;
+    //if (error) *error = 1;
+    //return 0;
 }
 
 
@@ -702,8 +701,7 @@ int fsdb_set_file_attrs(a_inode_struct* aino) {
 
 void fetch_nvrampath(TCHAR* out, int size) {
     UNIMPLEMENTED();
-    if (out && size > 0)
-        out[0] = '\0';
+    //if (out && size > 0) out[0] = '\0';
 }
 
 void fetch_configurationpath(TCHAR* out, int /*size*/) {
@@ -821,23 +819,23 @@ int fsdb_name_invalid_dir(a_inode* aino, const TCHAR* n) {
 
 int fsdb_mode_supported(const a_inode*) {
     UNIMPLEMENTED();
-    return 0;
+    //return 0;
 }
 
 
 TCHAR* fsdb_create_unique_nname(a_inode_struct*, char const*) {
     UNIMPLEMENTED();
-    return nullptr;
+    //return nullptr;
 }
 
 int fsdb_mode_representable_p(a_inode_struct const*, int) {
     UNIMPLEMENTED();
-    return 0;
+    //return 0;
 }
 
 int fsdb_name_invalid(a_inode_struct*, char const*) {
     UNIMPLEMENTED();
-    return 0;
+    //return 0;
 }
 
 
@@ -946,7 +944,7 @@ TCHAR* fsdb_search_dir(const TCHAR* dirname, TCHAR* rel, TCHAR** relalt) {
 
 int fsdb_exists(char const*) {
     UNIMPLEMENTED();
-    return 0;
+    //return 0;
 }
 
 

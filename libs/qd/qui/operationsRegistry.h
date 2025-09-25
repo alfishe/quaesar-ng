@@ -7,12 +7,13 @@
 #include "qd/stl/span.h"
 
 
+FORWARD_DECLARATION_3(qd, operation, BaseOpArgs);
+
+
 namespace qd {
 class UiOperation;
 struct UiOperationCreator;
 class IOperationEnvironment;
-FORWARD_DECLARATION_2S(operation, BaseOpArgs);
-
 
 namespace operation {
 

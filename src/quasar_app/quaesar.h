@@ -1,5 +1,5 @@
 #pragma once
-#include "quaesar_app.h"
+#include "qsr_application.h"
 
 
 extern QuasarApp* g_pApp;

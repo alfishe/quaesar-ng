@@ -62,11 +62,11 @@ EA_DISABLE_VC_WARNING(4702 4244) /*unreachable code*/ /*conversion from 'uae_u32
 #include <SDL.h>
 #include <qd/log/log.h>
 #include <qd/thread/thread.h>
+#include <qsr_debug.h>
 #include <quaesar.h>
-#include <quaesar_debug.h>
 #include <filesystem>
 #include "amDebugger/debuggerWndApp.h"
-#include "qsrimp_proxy.h"
+#include "uae_imp/qsr_imp_proxy.h"
 
 
 int avioutput_enabled = 0;
@@ -593,7 +593,7 @@ void console_flush() {
 
 int console_get(char* out, int maxlen) {
     for (;;) {
-        int len = qsrimp_waitConsoleCmd(out, maxlen);
+        int len = qsr_waitConsoleCmd(out, maxlen);
         if (len > 0)
             return len;
     }
@@ -897,7 +897,7 @@ int graphics_init(bool) {
 
     alloc_colors64k(0, bits, bits, bits, red_shift, green_shift, blue_shift, bits, 24, 0, 0, false);
 
-    qsrimp_setUaeInitiized(true);
+    qsr_setUaeInitiized(true);
     return 1;
 }
 
@@ -917,13 +917,13 @@ void unlockscr(struct vidbuffer* vb_in, int /*y_start*/, int /*y_end*/) {
     const int imgSizeY = vb->outheight;
     uint8_t* sptr = vb->bufmem;
     // copy UAE screen to texture buf
-    if (uint32_t* pDestTxBuf = qsrimp_lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
+    if (uint32_t* pDestTxBuf = qsr_lockUaeScreenTexBuf(imgSizeX, imgSizeY)) {
         for (int y = 0; y < imgSizeY; y++) {
             uint8_t* dest = (uint8_t*)&pDestTxBuf[y * imgSizeX];
             memcpy(dest, sptr, imgSizeX * 4);
             sptr += vb->rowbytes;
         }
-        qsrimp_unlockUaeScreenTexBuf();
+        qsr_unlockUaeScreenTexBuf();
     }
 }
 
@@ -955,7 +955,7 @@ bool gui_ask_disk(int, char*) {
 }
 
 bool handle_events() {
-    return qsrimp_onUaeHandleEvents();
+    return qsr_onUaeHandleEvents();
 }
 
 bool hydra_init(autoconfig_info*) {

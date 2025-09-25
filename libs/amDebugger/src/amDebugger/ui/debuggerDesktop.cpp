@@ -3,13 +3,10 @@
 #include "qd/log/log.h"
 #include "qd/qui/comps/uiOperationMgrComp.h"
 #include "qd/qui/comps/uiShortcutMgrComp.h"
-#include "qd/qui/controls/lambda.h"
 #include "qd/qui/controls/menuItemOperation.h"
 #include "qd/qui/operationsRegistry.h"
 #include "qd/qui/shortcutMgr.h"
 #include "qd/typeSystem/typeRegistry.h"
-#include <amDebugger/commonOperations.h>
-#include <amDebugger/dbgOperation.h>
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/shortcutsList.h>
 #include <amDebugger/window/disassembly_wnd.h>
@@ -238,7 +235,7 @@ void DebuggerDesktop::_drawToolBar()
         {
             if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
             {
-                doOperationDefault_<amD::operation::DisasmTraceStepInto>();
+                doOperation_<amD::operation::DisasmTraceStepInto>();
             }
             ImGui::SetItemTooltipV(CC(pOpDesc->getShortcutGuiStr()), nullptr);
 
@@ -262,7 +259,7 @@ void DebuggerDesktop::_drawToolBar()
         ImGui::SameLine();
         if (ImGui::Button("Wait Scanlines"))
         {
-            doOperationDefault_<amD::operation::DebugWaitScanLines>();
+            doOperation_<amD::operation::DebugWaitScanLines>();
         }
     }
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);

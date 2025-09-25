@@ -20,13 +20,13 @@ float vsync_vblank, vsync_hblank;
 // related to GSYNC/VSYNC
 int target_get_display_scanline2(int /*displayindex*/) {
     UNIMPLEMENTED();
-    return 0;
+    //return 0;
 }
 
 // related to GSYNC/VSYNC
 int target_get_display_scanline(int /*displayindex*/) {
     UNIMPLEMENTED();
-    return 0;
+    //return 0;
 }
 
 void target_spin(int /*cycles*/) {

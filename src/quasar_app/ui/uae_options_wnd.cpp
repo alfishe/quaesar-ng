@@ -18,7 +18,7 @@
 #include "qd/qui/uiMessages.h"
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
-#include "quaesar_config.h"
+#include "qsr_config.h"
 
 
 namespace qsr {
@@ -198,16 +198,15 @@ void UaeOptionsDlg::onUiNodeCreated(qd::UiNodeCreator* mk) {
 
     setSize({600, 400});
 
-    UCategory* pCat;
     createCategory(EOptionCat::UNDEF, EOptionCat::ROOT);
 
-    if (pCat = createCategory(EOptionCat::QUICK_START, EOptionCat::ROOT)) {
+    if (UCategory* pCat = createCategory(EOptionCat::QUICK_START, EOptionCat::ROOT)) {
         pCat->title = "Quick Start Options";
     }
 
     //     /*UCategory* pCatHW =*/createCategory(EOptionCat::HARDWARE, EOptionCat::ROOT);
 
-    if (pCat = createCategory(EOptionCat::HOST, EOptionCat::ROOT)) {
+    if (UCategory* pCat = createCategory(EOptionCat::HOST, EOptionCat::ROOT)) {
         pCat->title = "Main options";
         createOption(pCat)->setDrawCb(
             [](OptionDrawCtx*) { ImGui::Checkbox("Use ESC key to Quit", &g_cfg_main->quitByEsc); });
@@ -215,7 +214,7 @@ void UaeOptionsDlg::onUiNodeCreated(qd::UiNodeCreator* mk) {
 
     //     /*UCategory* pCatCpu =*/createCategory(EOptionCat::CPU, EOptionCat::HARDWARE);
 
-    if (pCat = createCategory(EOptionCat::FLOPPY, EOptionCat::HARDWARE)) {
+    if (UCategory* pCat = createCategory(EOptionCat::FLOPPY, EOptionCat::HARDWARE)) {
         pCat->title = "Floppy Drives Options";
         createOption(pCat)->setDrawCb([](OptionDrawCtx* ctx) { draw_opt_floppy_cfg(ctx, 0); });
         createOption(pCat)->setDrawCb([](OptionDrawCtx* ctx) { draw_opt_floppy_cfg(ctx, 1); });

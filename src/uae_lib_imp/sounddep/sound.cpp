@@ -486,11 +486,15 @@ void reset_sound() {
     clearbuffer(sdp);
 }
 
+void dummy_sound() {
+}
+
 int init_sound() {
     // bool started = false;
     gui_data.sndbuf_status = 3;
     gui_data.sndbuf = 0;
     gui_data.sndbuf_avail = false;
+    sample_handler = dummy_sound;
     if (!sound_available)
         return 0;
     if (currprefs.produce_sound <= 1)

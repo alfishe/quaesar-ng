@@ -7,7 +7,7 @@
 #include <qd/typeSystem/typeDeclare.h>
 
 struct CfgVmPrefs;
-
+FORWARD_DECLARATION_2(amD, BreakpointsSortedList);
 
 //////////////////////////////////////////////////////////////////////////
 // It gonna be a snapshot of the machine at any given moment, just data.
@@ -15,6 +15,7 @@ struct CfgVmPrefs;
 namespace IVm {
 static constexpr int MAX_FLOPPIES = 4;
 
+class VM;
 class Memory;
 class Cpu;
 class CustomRegs;
@@ -22,6 +23,13 @@ class Copper;
 class Blitter;
 class Emu;
 class Floppy;
+
+
+class IVmHandler
+{
+public:
+    virtual IVm::VM* getVm() const = 0;
+};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,6 +118,7 @@ public:
         *out_w = 754;
         *out_h = 576;
     }
+    virtual void initBreakPoints(amD::BreakpointsSortedList& /*bpList*/) {}
 
 }; // class Emu
 //////////////////////////////////////////////////////////////////////////
