@@ -37,15 +37,15 @@ class Socket : public CoreObject {
     SOCKET socket;
 
 public:
-
+    
     // Size of the communication buffer
     static constexpr isize BUFFER_SIZE = 512;
-
-
+    
+    
     //
     // Initializing
     //
-
+    
 public:
 
     Socket();
@@ -58,36 +58,36 @@ public:
 
     void create();
 
-
+    
     //
     // Methods from CoreObject
     //
-
+    
 private:
-
+    
     const char *objectName() const override { return "Socket"; }
     void _dump(Category category, std::ostream &os) const override { };
 
-
+    
     //
     // Establishing and terminating a connection
     //
-
+    
 public:
-
+    
     void connect(u16 port) throws;
     void bind(u16 port) throws;
     void listen();
     Socket accept();
     void close();
 
-
+    
     //
     // Transfering data
     //
-
+    
 public:
-
+    
     string recv();
     void send(u8 value);
     void send(char c) { send((u8)c); }

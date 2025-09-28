@@ -21,9 +21,8 @@ class AppPartsManager;
 struct EAppPartMtd {
     enum Type {
         NONE = 0,
-        RENDER = (1 << 0),
-        UPDATE = (1 << 1),
-        UPDATE_WHILE_LOADING = (1 << 2),
+        UPDATE = 0x01,
+        RENDER = 0x02,
     };
     ENUM_DECLARE_BASE(qd::, EAppPartMtd, Type, 0);
     ENUM_DECLARE_FLAGS();
@@ -67,24 +66,17 @@ public:
     const EAppPartMtd& getPartMtd() const { return m_Methods; }
 
     inline bool hasMtd(EAppPartMtd Mtd) const { return m_Methods.has(Mtd); }
-
-    inline ApplicationPart& modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods = EAppPartMtd::NONE)
-    {
-        m_Methods -= ResetMethods;
-        m_Methods += SetMethods;
-        return *this;
-    }
+        ApplicationPart& modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods = EAppPartMtd::NONE);
 
     virtual bool isReadyToActivate() const { return true; }
 
     bool isPartActive() const { return hasMtd(EAppPartMtd::UPDATE); }
     bool setPartActive(bool bActive);
-
-    bool isPartVisible() const { return hasMtd(EAppPartMtd::RENDER); }
-    bool setPartVisible(bool PartVisisble);
-
+    bool isPartRenderable() const { return hasMtd(EAppPartMtd::RENDER); }
+    bool setPartRenderable(bool PartVisisble);
 
     virtual qd::EFlow onAppEventProcImp(qd::appMsg::BaseMsg& in_msg);
+    virtual qd::EFlow onSdlEventProc(SDL_Event& /*event*/) { return qd::EFlow::UNDEF; }
 
     void updateActivateTime() { m_nUpdates++; }
 
@@ -95,7 +87,6 @@ public:
     virtual void update(float /*dt*/, float /*time*/) {}
     virtual void render() {}
 
-    virtual qd::EFlow onSdlEventProc(SDL_Event& /*event*/) { return qd::EFlow::UNDEF; }
 
     virtual void postRender() {}
 

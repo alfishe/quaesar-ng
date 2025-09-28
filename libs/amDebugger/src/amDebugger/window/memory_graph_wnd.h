@@ -15,7 +15,7 @@ class MemoryGraphWnd : public AmDbgWindow {
     qd::Size m_textureSize = {-1, -1};
     qd::Size m_newTextureSize = {640, 320};
     float m_lastTextureCreateTime = FLT_MIN;
-    int m_curBank = MemBank::CHIP;
+    IVm::EMemSrc m_curBank = IVm::EMemSrc::CHIP;
     int m_bankOffset = 0x0;
     int m_textureMod = 0;
     int mStartDragBankOffset = 0;

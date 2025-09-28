@@ -8,11 +8,11 @@
 #include "qd/stl/string.h"
 #include "qd/stl/unique_ptr.h"
 #include "qd/thread/mutex.h"
-#include "qsr_app_interfaces.h"
+#include "quasar_app/qsr_app_interfaces.h"
 
 
 FORWARD_DECLARATION_2(qd, ThreadEvent);
-FORWARD_DECLARATION_4(amD, vm, imp, VAmVmImp);
+FORWARD_DECLARATION_3(IVm, imp, VAmVmImp);
 FORWARD_DECLARATION_2(qsr, VAmServerAppPart);
 FORWARD_DECLARATION_2(vamiga, VAmiga);
 FORWARD_DECLARATION_2S(vamiga, MessageFwd);
@@ -32,7 +32,8 @@ class VAmServerThread : public qsr::IVmServerThread {
     vamiga::VAmiga* m_pVAmiga = nullptr;
     bool m_bRequestToQuit = false;
     bool power_is_on_ = true;
-
+    int m_threadErr = -1;
+    qd::string m_threadErrStr;
 
 public:
     int m_scrWidth = 754;
@@ -41,7 +42,7 @@ public:
     uint32_t* m_pAmigaBuffer = nullptr;
     qd::ThreadEvent* m_onVAmInitialized = nullptr;  // event to wait for VAMIGA initialization
     SDL_atomic_t m_scrFrameNo = {};
-    ref_ptr<amD::vm::imp::VAmVmImp> m_pVm;  // create shared VM
+    ref_ptr<IVm::imp::VAmVmImp> m_pVm;  // create shared VM
     qsr::VAmServerAppPart* m_pServerApp = nullptr;
 
 public:
@@ -51,11 +52,11 @@ public:
     void destroy();
     void setVAmInitialized(bool);
 
-    uint32_t* lockVAmScreenTexBuf(int amiga_width, int amiga_height);
-    void unlockVAmScreenTexBuf();
+    //uint32_t* lockVAmScreenTexBuf(int amiga_width, int amiga_height);
+    //void unlockVAmScreenTexBuf();
 
     virtual IVm::VM* getVm() const override;
-    virtual uint32_t getScrFrameNo() override;
+    virtual int getScrFrameNo() override;
     virtual void pushSdlEvent(const SDL_Event& event) override;
     virtual void pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args) override;
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) override;
@@ -78,5 +79,7 @@ protected:
     void applySdlEventProc(const SDL_Event& event);
     void applyImmediateConsoleCmd(qd::string&& cmd);
 
+private:
+    void fetchScreenBufferToTexture(const uint32_t* pCurDisplayTexBuf, bool lof);
 };  // class VAmServerThread
 //////////////////////////////////////////////////////////////////////////

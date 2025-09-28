@@ -48,7 +48,7 @@ void UaeClientGuiDesktop::drawContentImp() {
                 IVm::Floppy* cfgFloppy = vm->floppies[0];
                 assert(cfgFloppy);
                 qsr::open_file_dlg_select_adf(*cfgFloppy);
-                vm->setVmDebugMode(amD::EVmDebugMode::Live);
+                vm->setVmDebugMode(IVm::EVmDebugMode::Live);
                 doOperation_<amD::operation::UaeResetAmiga>();
             }
             qIm::menuItemFromOperationArgs_<qsr::operations::ShowUaeOptionsWnd>(this);

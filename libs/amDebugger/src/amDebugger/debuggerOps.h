@@ -10,6 +10,7 @@ FORWARD_DECLARATION_2(amD, DebuggerDesktop);
 FORWARD_DECLARATION_3(amD, operation, Operation);
 FORWARD_DECLARATION_3S(amD, shortcut, EId);
 
+using namespace IVm;
 
 namespace amD {
 
@@ -109,7 +110,7 @@ struct DebugTraceContinue : public amD::operation::OperationArgs {
         d.m_name = "Continue";
         d.addShortcut(amD::shortcut::EId::DebugTraceContinue);
     }
-    amD::EVmDebugMode debugMode = EVmDebugMode::Live;
+    IVm::EVmDebugMode debugMode = EVmDebugMode::Live;
 };
 
 

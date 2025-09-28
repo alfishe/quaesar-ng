@@ -16,22 +16,22 @@ extern void on_app_exit_drawing();
 };  // namespace amD::uae
 
 
-QuasarApp::QuasarApp() {
-    QuasarApp::g_pInstance = this;
+QuaesarApplication::QuaesarApplication() {
+    QuaesarApplication::g_pInstance = this;
 }
 
 
-QuasarApp::~QuasarApp() {
-    SAFE_DELETE(m_pServersMgr);
+QuaesarApplication::~QuaesarApplication() {
+    SAFE_DELETE(m_pVmServersMgr);
 }
 
 
-void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
+void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
     TSuper::onConstruct(in);
 
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
-    m_pServersMgr = new QuaesarDebuggerServersMgr(this);
+    m_pVmServersMgr = new QuaesarVmServersMgr(this);
 
     qd::AppPartsManager* appParts = getAppParts();
     m_pUaeServerAppPart = appParts->createPart_<qsr::UaeServerAppPart>("UAE server thread");
@@ -46,65 +46,67 @@ void QuasarApp::onConstruct(qd::CreateApplicationParams& in) {
 
     m_pDebuggerApp = appParts->createPart_<amD::DebuggerApp>("Quaesar Debugger");
     m_pDebuggerApp->init();
+    ref_ptr<amD::IVmServiceProvider> pCurConnect = m_pVmServersMgr->createVmProvider(to_string(EQuaServerId::S_VAMIGA));
+    assert(pCurConnect);
+    getDbg()->setConnection(pCurConnect);
+
     m_pUaeClientAppPart->bringWndToFront();
 }
 
 
-void QuasarApp::initialize() {
+void QuaesarApplication::initialize() {
     //m_pDebuggerApp->toggleWndVisible(amD::DebuggerMode_Live);
 }
 
 
-void QuasarApp::destroyImp() {
+void QuaesarApplication::destroyImp() {
     amD::uae::on_app_exit_debug();
     amD::uae::on_app_exit_drawing();
 }
 
 
-void QuasarApp::onSdlEventProc(SDL_Event& event) {
+void QuaesarApplication::onSdlEventProc(SDL_Event& event) {
     TSuper::onSdlEventProc(event);
 }
 
 
-amD::Debugger* QuasarApp::getDbg() const {
+amD::Debugger* QuaesarApplication::getDbg() const {
     return m_pDebuggerApp->getDbg();
 }
 
 
-void* QuasarApp::getInterface(const qd::TypeInfo& p_interface) {
-    if (QuaesarDebuggerServersMgr::getStaticTypeInfo().isDerivedFrom(p_interface)) {
-        return m_pServersMgr;
+void* QuaesarApplication::getInterface(const qd::TypeInfo& p_interface) {
+    if (QuaesarVmServersMgr::getStaticTypeInfo().isDerivedFrom(p_interface)) {
+        return m_pVmServersMgr;
     }
     return TSuper::getInterface(p_interface);
 }
 
 
-QuaesarDebuggerServersMgr::QuaesarDebuggerServersMgr(QuasarApp* pApp) : m_pApp(pApp) {
+QuaesarVmServersMgr::QuaesarVmServersMgr(QuaesarApplication* pApp) : m_pApp(pApp) {
 }
 
 
-QuaesarDebuggerServersMgr::~QuaesarDebuggerServersMgr() {
+QuaesarVmServersMgr::~QuaesarVmServersMgr() {
     m_pVmServicesList.clear();
 }
 
 
-uint32_t QuaesarDebuggerServersMgr::getNumConnections() {
+uint32_t QuaesarVmServersMgr::getNumConnections() {
     return static_cast<uint32_t>(m_pVmServicesList.size());
 }
 
 
-ref_ptr<amD::IVmServiceConnection> QuaesarDebuggerServersMgr::createVmConnectionByInd(uint32_t idx) {
-    if (idx >= m_pVmServicesList.size())
+ref_ptr<amD::IVmServiceProvider> QuaesarVmServersMgr::createVmProvider(const char* id) {
+    amD::IVmConnectionBuilder* pConnBuilder = findVmConnBuilderByStrId(id);
+    if (!pConnBuilder)
         return nullptr;
-    amD::IVmConnectionBuilder* pServer = m_pVmServicesList[idx].m_pConnBuilder;
-    if (!pServer)
-        return nullptr;
-    return pServer->createConnection();
+    return pConnBuilder->createConnection();
 }
 
 
-void QuaesarDebuggerServersMgr::registerVmServer(EQuaServerId id, amD::IVmConnectionBuilder* pBuilder) {
-    if (!getVmConnBuilderById(id))
+void QuaesarVmServersMgr::registerVmServer(EQuaServerId id, amD::IVmConnectionBuilder* pBuilder) {
+    if (!findVmConnBuilderByStrId(id.toString()))
         m_pVmServicesList.push_back({id, pBuilder});
     else {
         assert(0 && "already registered");
@@ -112,9 +114,25 @@ void QuaesarDebuggerServersMgr::registerVmServer(EQuaServerId id, amD::IVmConnec
 }
 
 
-amD::IVmConnectionBuilder* QuaesarDebuggerServersMgr::getVmConnBuilderById(EQuaServerId id) const {
-    for (const QuaesarDebuggerServersMgr::VmServiceItem& item : m_pVmServicesList)
-        if (item.m_id == id)
+amD::IVmConnectionBuilder* QuaesarVmServersMgr::findVmConnBuilderByStrId(const char* id) const {
+    for (const QuaesarVmServersMgr::VmServiceItem& item : m_pVmServicesList) {
+        const char* curName = item.m_id.toString();
+        if (strstr(curName, id))
             return item.m_pConnBuilder;
+    }
     return nullptr;
+}
+
+
+const char* EQuaServerId::toString() const {
+    switch (mV) {
+        case UNDEF:
+            return "UNDEF";
+        case S_UAE:
+            return "UAE";
+        case S_VAMIGA:
+            return "VAmiga";
+        default:
+            return "UNKNOWN";
+    }
 }

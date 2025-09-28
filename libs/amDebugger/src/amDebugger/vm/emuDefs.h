@@ -2,7 +2,7 @@
 #include "qd/enum/enumBase.h"
 
 
-namespace amD {
+namespace IVm {
 
 static constexpr int breakpoint_reg_end = 37; // instead of #define BREAKPOINT_REG_END
 
@@ -55,11 +55,11 @@ struct EVmDebugMode {
         Live,
         Break,
     };
-    ENUM_DECLARE_BASE(amD::, EVmDebugMode, Type, EVmDebugMode::Live);
+    ENUM_DECLARE_BASE(IVm::, EVmDebugMode, Type, EVmDebugMode::Live);
 
     bool isLive() const { return mV == Live; }
     bool isBreak() const { return mV == Break; }
 };
 
 
-}; // namespace amD
+}; // namespace IVm

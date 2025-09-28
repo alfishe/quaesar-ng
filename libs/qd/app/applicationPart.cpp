@@ -42,6 +42,14 @@ void ApplicationPart::setZOrder(const float& zOrder)
 }
 
 
+qd::ApplicationPart& ApplicationPart::modifyPartMtd(EAppPartMtd SetMethods, EAppPartMtd ResetMethods)
+{
+    m_Methods -= ResetMethods;
+    m_Methods += SetMethods;
+    return *this;
+}
+
+
 bool ApplicationPart::setPartActive(bool bActive)
 {
     if (isPartActive() == bActive)
@@ -54,9 +62,9 @@ bool ApplicationPart::setPartActive(bool bActive)
 }
 
 
-bool ApplicationPart::setPartVisible(bool bPartVisisble)
+bool ApplicationPart::setPartRenderable(bool bPartVisisble)
 {
-    if (isPartVisible() == bPartVisisble)
+    if (isPartRenderable() == bPartVisisble)
         return bPartVisisble;
     qd::appMsg::ON_VISIBLE_CHANGE p;
     p.m_bVisible = bPartVisisble;

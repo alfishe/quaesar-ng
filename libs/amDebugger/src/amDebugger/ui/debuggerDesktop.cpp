@@ -66,7 +66,7 @@ void DebuggerDesktop::_drawMainMenuBar()
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
-            amD::EVmDebugMode debugMode = vm->getVmDebugMode();
+            IVm::EVmDebugMode debugMode = vm->getVmDebugMode();
             qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(pDbg, "", false,
                 debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(pDbg, "", false, debugMode.isLive());

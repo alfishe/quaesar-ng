@@ -3,26 +3,39 @@
 namespace IVm {
 
 
-//IVm::VM* VM::staticVmInst = nullptr;
+// IVm::VM* VM::staticVmInst = nullptr;
 
 
-VM::VM() {}
-
-
-// IVm::VM* VM::setVmInst(IVm::VM* vm_inst)
-// {
-//     IVm::VM::staticVmInst = vm_inst;
-//     return IVm::VM::staticVmInst;
-// }
-// void VM::destrotVmInst()
-// {
-//     IVm::VM* oldVm = IVm::VM::staticVmInst;
-//     IVm::VM::staticVmInst = nullptr;
-//     delete oldVm;
-// }
+VM::VM()
+    : m_pModules({(IModule**)(&mem), (IModule**)(&cpu), (IModule**)&custom, (IModule**)&copper, (IModule**)&blitter,
+          (IModule**)&floppies[0]})
+{}
 
 
 VM::~VM() {}
+
+
+void VM::init()
+{
+    for (IModule** curModule : m_pModules)
+    {
+        IModule* pCurMod = *curModule;
+        if (pCurMod)
+            pCurMod->init(this);
+    }
+    mInit = true;
+}
+
+
+void VM::fetchStateFromEmu()
+{
+    for (IModule** curModule : m_pModules)
+    {
+        IModule* pCurMod = *curModule;
+        if (pCurMod)
+            pCurMod->fetch();
+    }
+}
 
 
 qd::EFlow VM::applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/)
@@ -35,9 +48,9 @@ qd::EFlow VM::applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/)
 void VM::applyVmConfig(CfgVmPrefs* /*prefs*/) {}
 
 
-const amD::MemBank* Memory::findBankByAddr(AddrRef addr) const
+const IVm::MemBank* Memory::findBankByAddr(AddrRef addr) const
 {
-    for (const amD::MemBank& bank : banks)
+    for (const IVm::MemBank& bank : m_banks)
     {
         if (addr >= bank.m_startAddr && addr < (bank.m_startAddr + bank.m_size))
             return &bank;

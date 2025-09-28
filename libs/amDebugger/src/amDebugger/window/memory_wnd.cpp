@@ -58,8 +58,7 @@
 #include <amDebugger/vm/vmInterface.h>
 #include "qd/imGui/imGuiHelperClass.h"
 
-namespace amD {
-namespace window {
+namespace amD::window {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef _MSC_VER
@@ -80,8 +79,10 @@ namespace window {
 static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
 {
     MemoryHexViewWnd* pMemView = (MemoryHexViewWnd*)data;
-    const amD::MemBank* pBank = pMemView->m_pLastBank;
-    if (!pBank || !pBank->isAddrIn((AddrRef)addr))
+    const IVm::MemBank* pBank = pMemView->m_pLastBank;
+    if (!pBank || !pBank->isValid())
+        return 0xff;
+    if (!pBank->isAddrIn((AddrRef)addr))
     {
         IVm::VM* vm = pMemView->getVm();
         pBank = vm->mem->findBankByAddr((AddrRef)addr);
@@ -96,7 +97,7 @@ static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
 static void write_mem_imp(uint8_t* data, size_t addr, uint8_t v)
 {
     MemoryHexViewWnd* pMemView = (MemoryHexViewWnd*)data;
-    const amD::MemBank* pBank = pMemView->m_pLastBank;
+    const IVm::MemBank* pBank = pMemView->m_pLastBank;
     if (!pBank || !pBank->isAddrIn((AddrRef)addr))
         return;
     pBank->setU8((AddrRef)addr, v);
@@ -846,5 +847,4 @@ void MemoryHexViewWnd::draw_preview_data(size_t addr, const uint8_t* mem_data, s
 #pragma warning(pop)
 #endif
 
-};  // namespace window
-};  // namespace amD
+};  // namespace amD::window

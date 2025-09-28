@@ -2,7 +2,7 @@
 #include "amDebugger/ui/uiDefs.h"
 #include "qd/base/classInfoReg.h"
 #include "qd/base/color.h"
-#include "qd/imGui/imgui_eastl.h"
+#include "qd/imGui/imGui.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/qui/controls/window.h"
 #include "qd/qui/uiOperation.h"

@@ -11,7 +11,7 @@
 
 
 FORWARD_DECLARATION_2(qd, ThreadEvent);
-FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
+FORWARD_DECLARATION_3(IVm, imp, UaeVmImp);
 FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 
 
@@ -34,7 +34,7 @@ public:
     uint32_t* m_pAmigaBuffer = nullptr;
     qd::ThreadEvent* m_onUaeInitialized = nullptr;  // event to wait for UAE initialization
     SDL_atomic_t m_scrFrameNo = {};
-    ref_ptr<amD::vm::imp::UaeVmImp> m_pVm;  // create shared VM
+    ref_ptr<IVm::imp::UaeVmImp> m_pVm;  // create shared VM
     qsr::UaeServerAppPart* m_pServerApp = nullptr;
 
 public:
@@ -44,25 +44,27 @@ public:
     void destroy();
     void setUaeInitialized(bool);
 
-    uint32_t* lockUaeScreenTexBuf(int amiga_width, int amiga_height);
-    void unlockUaeScreenTexBuf();
-
-    virtual uint32_t getScrFrameNo() override;
+    virtual int getScrFrameNo() override;
     virtual IVm::VM* getVm() const override;
     virtual bool lockDisplayTexBuf(int* width, int* height, uint32_t** out_pixels) override;
     virtual void unlockDisplayTexBuf() override;
     virtual void pushSdlEvent(const SDL_Event& event) override;
     virtual void pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args) override;
-
     bool onUaeHandleEvents();
 
     void execConsoleCmd(qd::string&& cmd);
     int uaeWaitConsoleCmdImpl(char* out, int maxlen);
 
 public:
+    //
+    // Back-end functions for UAE VM implementation
+    //
+
     static UaeServerThread* get() {
         return g_pSingleton;
     }
+    uint32_t* _lockUaeScreenTexBuf(int amiga_width, int amiga_height);
+    void _unlockUaeScreenTexBuf();
 
 protected:
     void applySdlEventProc(const SDL_Event& event);

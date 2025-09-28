@@ -6,7 +6,7 @@
 #include "amDebugger/vm/memory.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "qd/base/color.h"
-#include "qd/imGui/imgui_eastl.h"
+#include <qd/imGui/imGui.h>
 #include "amDebugger/ui/uiStyle.h"
 #include "amDebugger/ui/uiView.h"
 #include "amDebugger/ui/debuggerDesktop.h"
@@ -49,7 +49,7 @@ public:
 
 void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    IVm::VM* vm = dbg->m_pVm;
+    IVm::VM* vm = dbg->getVm();
 
     IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();
@@ -73,7 +73,7 @@ void CopperDbgWnd::drawContentImp() {
     }
     ImGui::SameLine();
 
-    AddrRef regPc = vm->copper->getCopperAddr(amD::CopperAddr_ip);
+    AddrRef regPc = vm->copper->getCopperAddr(IVm::CopperAddr_ip);
     if (ImGui::Button("PC") || (m_prevRegPc != regPc))
     {
         m_viewBaseAddr.reset();
@@ -107,8 +107,8 @@ void CopperDbgWnd::drawContentImp() {
         getUi()->getShortcuts()->triggerShortcut(this, (int)amD::shortcut::EId::CopperToggleBreakpoint);
     }
 
-    AddrRef lc1 = vm->copper->getCopperAddr(amD::CopperAddr_cop1lc);
-    AddrRef lc2 = vm->copper->getCopperAddr(amD::CopperAddr_cop2lc);
+    AddrRef lc1 = vm->copper->getCopperAddr(IVm::CopperAddr_cop1lc);
+    AddrRef lc2 = vm->copper->getCopperAddr(IVm::CopperAddr_cop2lc);
     AddrRef startAddr = m_viewBaseAddr ? *m_viewBaseAddr : (regPc - lc1) < (regPc - lc2) ? lc1 : lc2;
     DecodedCopperList copDec;
     copDec.decodeLines(vm, startAddr, 1024);

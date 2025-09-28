@@ -6,9 +6,9 @@
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"
 #include "qd/thread/thread.h"
-#include "qsr_config.h"
+#include "quasar_app/qsr_config.h"
 #include "quasar_app/quaesar.h"
-#include "va_server_app_part.h"
+#include "quasar_app/vamiga_imp/va_server_app_part.h"
 #include "va_vm_imp.h"
 
 
@@ -76,12 +76,12 @@ static int vamiga_thread_main_func(void* pThreadData) {
 
 
 VAmServerThread::VAmServerThread(qsr::VAmServerAppPart* pServerApp) : m_pServerApp(pServerApp) {
-    m_pVm = new amD::vm::imp::VAmVmImp();
-    m_pVm->setServerImp(this);
-
     assert(!g_pSingleton);
     g_pSingleton = this;
     m_pConsoleQueue = new VAmConsoleQueue();
+
+    m_scrWidth = vamiga::HPIXELS;
+    m_scrHeight = vamiga::VPIXELS;
 }
 
 
@@ -142,27 +142,8 @@ void VAmServerThread::setVAmInitialized(bool) {
 }
 
 
-uint32_t* VAmServerThread::lockVAmScreenTexBuf(int amiga_width, int amiga_height) {
-    m_VAmScrTextureMutex.lock();
-
-    if (amiga_width > m_scrWidth || amiga_height > m_scrHeight) {
-        delete[] m_pAmigaBuffer;
-        m_pAmigaBuffer = new uint32_t[m_scrWidth * m_scrHeight];
-    }
-    m_scrWidth = amiga_width;
-    m_scrHeight = amiga_height;
-    return m_pAmigaBuffer;
-}
-
-
-void VAmServerThread::unlockVAmScreenTexBuf() {
-    m_VAmScrTextureMutex.unlock();
-    SDL_AtomicIncRef(&m_scrFrameNo);
-}
-
-
-uint32_t VAmServerThread::getScrFrameNo() {
-    return (uint32_t)SDL_AtomicGet(&m_scrFrameNo);
+int VAmServerThread::getScrFrameNo() {
+    return (int)SDL_AtomicGet(&m_scrFrameNo);
 }
 
 
@@ -227,80 +208,123 @@ void VAmServerThread::applyImmediateConsoleCmd(qd::string&& cmd) {
 }
 
 
+void VAmServerThread::fetchScreenBufferToTexture(const uint32_t* pCurDisplayTexBuf, bool lof) {
+    using namespace vamiga;
+
+#if 0
+    //  Visible area
+    constexpr int xstart = (HBLANK_MAX + 1) * 4;
+    constexpr int xend = HPIXELS;
+    constexpr int ystart = 0x1B;
+    constexpr int yend = 0x137;
+    static_assert(xend - xstart <= HPIXELS);
+    static_assert(yend - ystart <= VPIXELS);
+    constexpr int audio_sample_rate = 48000;
+    constexpr int screen_width = xend - xstart;
+    constexpr int screen_height = 2 * (yend - ystart);
+
+    uint32_t* destScrBuf = m_pAmigaBuffer;
+    std::memcpy(destScrBuf, ptr, HPIXELS * VPIXELS * sizeof(uint32_t));
+
+    void* pixels;
+    int pitch;
+    if (SDL_LockTexture(mTexture, nullptr, &pixels, &pitch))
+        SDL_Log("SDL_LockTexture ERROR");
+    uint8_t* dest1 = reinterpret_cast<uint8_t*>(pixels) + !lof * pitch;
+    uint8_t* dest2 = reinterpret_cast<uint8_t*>(pixels) + lof * pitch;
+    const uint32_t* src1 = destScrBuf;
+    const uint32_t* src2 = (lof == last_frame_type_) ? destScrBuf : &last_frame_[0];
+
+    src1 += HPIXELS * ystart + HBLANK_MAX * 4;  // xstart;
+    src2 += HPIXELS * ystart + HBLANK_MAX * 4;  // xstart;
+    for (uint32_t y = 0; y < screen_height / 2; ++y) {
+        std::memcpy(dest1, src1, screen_width * sizeof(uint32_t));
+        std::memcpy(dest2, src2, screen_width * sizeof(uint32_t));
+        dest1 += 2 * pitch;
+        dest2 += 2 * pitch;
+        src1 += HPIXELS;
+        src2 += HPIXELS;
+    }
+    SDL_UnlockTexture(mTexture);
+
+    //std::swap(current_frame_, last_frame_);
+    last_frame_type_ = lof;
+#endif  //
+}
+
+
 void VAmServerThread::execConsoleCmd(qd::string&& cmd) {
     m_pConsoleQueue->addCmdToQueue(std::move(cmd));
 }
 
 
 int VAmServerThread::uaeWaitConsoleCmdImpl(char* out, int maxlen) {
-    eastl::string cmd;
-    if (!m_pConsoleQueue->popConsoleCmdWait(cmd))
-        return -1;
-
-    const int len = (int)cmd.size();
-    if (len < maxlen)
-        strcpy(out, cmd.data());
-    else
-        EASTL_ASSERT(0);
-    return len;
+    return -1;
 }
 
 
 void VAmServerThread::onVAmigaThreadMain() {
+  try
+  {
     using namespace vamiga;
-    //     std::vector<const char*> argv;
-    //     argv.push_back("quaesar.exe");
-    //     argv.reserve(g_initOptions.uaeExtArgs.size() * 2 + 1);
-    //     // pass remain Quaesar CLI args to VAMIGA
-    //     for (const std::string& s : g_initOptions.uaeExtArgs) {
-    //         argv.push_back("-s");
-    //         argv.push_back(s.c_str());
-    //     }
-    //     quae__parseCmdLine((int)argv.size(), const_cast<char**>(&argv[0]));
-    //     ::real_main(0, nullptr);  // call main function of VAMIGA emulator
+    log_debug("VAmigaServerThread: Initializing...");
 
     m_pVAmiga = new vamiga::VAmiga();
     m_pVAmiga->set(vamiga::ConfigScheme::A500_OCS_1MB);
 
     auto vaimga_delegate_cb = [](const void* ptr, vamiga::Message in_msg) {
-        auto pThis = reinterpret_cast<VAmServerThread*>(const_cast<void*>(ptr));
-        const auto& msg = static_cast<vamiga::MessageFwd&>(in_msg);
-        pThis->vAmigaMsgQueueProc(msg);
+      auto pThis = reinterpret_cast<VAmServerThread*>(const_cast<void*>(ptr));
+      const auto& msg = static_cast<vamiga::MessageFwd&>(in_msg);
+      pThis->vAmigaMsgQueueProc(msg);
     };
     m_pVAmiga->launch(this, vaimga_delegate_cb);
 
+    log_debug("VAMIGA: Loading Kick.rom from '%s' ...",
+              g_cfg_startup->kickRomPath.c_str());
     vamiga::RomFile rom{g_cfg_startup->kickRomPath.c_str()};
     m_pVAmiga->mem.loadRom(rom);
 
     m_pVAmiga->powerOn();
     m_pVAmiga->run();
 
+    m_pVm = new IVm::imp::VAmVmImp(this, m_pVAmiga);
+
     setVAmInitialized(true);
 
     const uint32_t* pPrevDispTexBuf = nullptr;
     for (;;) {
-        if (m_bRequestToQuit)
-            break;
+      if (m_bRequestToQuit) break;
 
-        vamiga::VAmiga* pVAmiga = m_pVAmiga;
-        vamiga::VideoPortAPI& vVideoPort = pVAmiga->videoPort;
-        vVideoPort.lockTexture();
-        isize nr;
-        bool lof, prevlof;
-        const uint32_t* pCurDisplayTexBuf = vVideoPort.getTexture(&nr, &lof, &prevlof);
-        if (pCurDisplayTexBuf == pPrevDispTexBuf) {
-            vVideoPort.unlockTexture();
-            SDL_Delay(5);
-        } else {
-            pPrevDispTexBuf = pCurDisplayTexBuf;
-            vVideoPort.unlockTexture();
-            pVAmiga->wakeUp();
+      vamiga::VAmiga* pVAmiga = m_pVAmiga;
+      vamiga::VideoPortAPI& vVideoPort = pVAmiga->videoPort;
+      bool lof, prevlof;
+      isize nr;
 
-            //display->pollEvents();
-            //updateIO();
-        }
+      vVideoPort.lockTexture();
+      const uint32_t* pCurDisplayTexBuf =
+          vVideoPort.getTexture(&nr, &lof, &prevlof);
+      if (getScrFrameNo() == (int)nr) {
+        vVideoPort.unlockTexture();
+        SDL_Delay(5);
+      } else {
+        pPrevDispTexBuf = pCurDisplayTexBuf;
+        m_pAmigaBuffer = const_cast<uint32_t*>(pCurDisplayTexBuf);
+        SDL_AtomicSet(&m_scrFrameNo, (int)nr);
+        vVideoPort.unlockTexture();
+        pVAmiga->wakeUp();
+
+        // display->pollEvents();
+        // updateIO();
+      }
     }
-    qd::log_debug("VAServerThread: DONE");
+  }
+  catch (const std::exception &ex) {
+      qd::log_error("Exception: '%s'", ex.what());
+      m_threadErrStr = ex.what();
+      m_threadErr = 1;
+      assert2(0, "VAmiga thread Exception: '%s'", ex.what());
+  }
+  qd::log_debug("VAmigaServerThread: Done...");
 }
 
 

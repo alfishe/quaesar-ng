@@ -22,6 +22,7 @@ class Emulator : public Thread, public Synchronizable, public Inspectable<Emulat
 
     friend class API;
     friend class VAmiga;
+    friend class QuaesarVAmigaInjectAccess;
 
 public:
 

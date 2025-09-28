@@ -1,9 +1,8 @@
 #include "console_wnd.h"
 #include "amDebugger/debuggerWndApp.h"
-#include <qd/imGui/imgui_eastl.h>
+#include "qd/imGui/imGui.h"
 #include <qd/log/log.h>
 #include <qd/thread/thread.h>
-#include "qd/imGui/imGuiHelperClass.h"
 #include "qd/thread/mutex.h"
 
 

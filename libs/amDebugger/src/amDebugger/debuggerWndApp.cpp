@@ -27,7 +27,9 @@ constexpr uint32_t g_nDebuggerWndSizeY = 800;
 DebuggerApp::DebuggerApp()
 {
     setPartActive(true);
-    setPartVisible(true);
+    setPartRenderable(true);
+
+    m_pDebugger = new amD::Debugger(this); // Debugger client
 }
 
 
@@ -43,14 +45,7 @@ void DebuggerApp::init()
     createRenderWindow();
     initImGui();
 
-    amD::IVmConnectionsManager* pConnMgr = m_pApp->getInterface_<amD::IVmConnectionsManager>();
-    ASSERT_AND_DO(pConnMgr, return);
-    ref_ptr<IVmServiceConnection> pCurConnect = pConnMgr->createVmConnectionByInd(0);
-    assert(pCurConnect);
-
-    m_pDebugger = new amD::Debugger(this, pCurConnect); // Debugger client
-    m_pDebugger->init();
-
+    // m_pDebugger->setConnection(pCurConnect);
 
     assert(m_pDebugger);
     qd::UiNodeCreator mk;
@@ -88,7 +83,6 @@ void DebuggerApp::createRenderWindow()
 
 void DebuggerApp::initImGui()
 {
-
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
     m_pQimGuiCtx = pImGuiMgr->createContextImGui(m_pWindow, m_pWndRenderer);
 
@@ -113,13 +107,6 @@ qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg
 {
     return m_pDebugger->applyOperationMsgProcImp(p_msg);
 }
-
-
-// amD::DebuggerApp* DebuggerApp::get() {
-//     return g_pInstance;
-// }
-
-
 
 
 void DebuggerApp::destroy()
@@ -147,6 +134,7 @@ void DebuggerApp::update(float /*dt*/, float /*time*/)
     if (isWndVisible())
     {
         m_pQimGuiCtx->newFrame();
+        getDbg()->fetchVmState();
         m_pGui->drawImGuiMainFrame();
         m_pQimGuiCtx->endFrame();
     }
@@ -176,12 +164,12 @@ void DebuggerApp::setWndVisible(bool v)
     if (v)
     {
         SDL_ShowWindow(m_pWindow);
-        setPartVisible(true);
+        setPartRenderable(true);
     }
     else
     {
         SDL_HideWindow(m_pWindow);
-        setPartVisible(false);
+        setPartRenderable(false);
     }
 }
 
@@ -209,6 +197,12 @@ qd::EFlow DebuggerApp::onSdlEventProc(SDL_Event& event)
 
     // send system events to current ImGui context
     return m_pQimGuiCtx->onSdlEventProc(event);
+}
+
+
+IVm::VM* DebuggerApp::getVm() const
+{
+    return m_pDebugger->getVm();
 }
 
 

@@ -60,8 +60,8 @@ public:
     void setShowImgui(bool ShowImgui) {
         m_bShowImgui = ShowImgui;
     }
-    QuasarApp* getApp() const {
-        QuasarApp* pApp = (QuasarApp*)TSuper::getApp();
+    QuaesarApplication* getApp() const {
+        QuaesarApplication* pApp = (QuaesarApplication*)TSuper::getApp();
         return pApp;
     }
 

@@ -1,5 +1,4 @@
 #include "disassembly_wnd.h"
-#include "qd/imGui/imGuiHelperClass.h"
 #include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/ui/uiStyle.h>
@@ -8,7 +7,7 @@
 #include <EASTL/fixed_string.h>
 #include <EASTL/string.h>
 #include <EASTL/vector.h>
-#include "qd/imGui/imgui_eastl.h"
+#include <qd/imGui/imGui.h>
 #include "qd/base/variant16.h"
 #include "amDebugger/codeAnalyzer/cdaServer.h"
 #include "amDebugger/codeAnalyzer/cdaTypes.h"

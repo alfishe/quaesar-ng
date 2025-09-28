@@ -79,7 +79,7 @@ static int uae_thread_main_func(void*) {
     argv.push_back("quaesar.exe");
     argv.reserve(g_cfg_startup->uaeExtArgs.size() * 2 + 1);
     // pass remain Quaesar CLI args to UAE
-    for (const qd::string& s : g_cfg_startup->uaeExtArgs) {
+    for (const auto& s : g_cfg_startup->uaeExtArgs) {
         argv.push_back("-s");
         argv.push_back(s.c_str());
     }
@@ -91,7 +91,7 @@ static int uae_thread_main_func(void*) {
 
 
 UaeServerThread::UaeServerThread(qsr::UaeServerAppPart* pServerApp) : m_pServerApp(pServerApp) {
-    m_pVm = new amD::vm::imp::UaeVmImp();
+    m_pVm = new IVm::imp::UaeVmImp();
     m_pVm->setServerImp(this);
 
     assert(!g_pSingleton);
@@ -187,7 +187,7 @@ void UaeServerThread::setUaeInitialized(bool) {
 }
 
 
-uint32_t* UaeServerThread::lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
+uint32_t* UaeServerThread::_lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
     //
     m_UaeScrTextureMutex.lock();
     if (amiga_width != m_scrWidth || amiga_height != m_scrHeight) {
@@ -200,14 +200,14 @@ uint32_t* UaeServerThread::lockUaeScreenTexBuf(int amiga_width, int amiga_height
 }
 
 
-void UaeServerThread::unlockUaeScreenTexBuf() {
+void UaeServerThread::_unlockUaeScreenTexBuf() {
     m_UaeScrTextureMutex.unlock();
     SDL_AtomicIncRef(&m_scrFrameNo);
 }
 
 
-uint32_t UaeServerThread::getScrFrameNo() {
-    return (uint32_t)SDL_AtomicGet(&m_scrFrameNo);
+int UaeServerThread::getScrFrameNo() {
+    return (int)SDL_AtomicGet(&m_scrFrameNo);
 }
 
 
@@ -246,13 +246,16 @@ IVm::VM* UaeServerThread::getVm() const {
 
 
 bool UaeServerThread::lockDisplayTexBuf(int* width, int* height, uint32_t** out_pixels) {
-    if (m_UaeScrTextureMutex.tryLock()) {
-        *width = m_scrWidth;
-        *height = m_scrHeight;
-        *out_pixels = m_pAmigaBuffer;
-        return true;
+    if (!m_UaeScrTextureMutex.tryLock())
+        return false;
+    if (!m_pAmigaBuffer) {
+        unlockDisplayTexBuf();
+        return false;
     }
-    return false;
+    *width = m_scrWidth;
+    *height = m_scrHeight;
+    *out_pixels = m_pAmigaBuffer;
+    return true;
 }
 
 

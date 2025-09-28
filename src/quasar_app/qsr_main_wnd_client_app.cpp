@@ -29,7 +29,7 @@ void UaeClientAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
 
     _createMainOsWindow();
     setPartActive(true);
-    setPartVisible(true);
+    setPartRenderable(true);
 
     // independent ImGui draw context for UAE window
     auto pImGuiMgr = qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();

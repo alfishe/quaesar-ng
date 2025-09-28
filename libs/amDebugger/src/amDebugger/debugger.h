@@ -9,7 +9,7 @@
 namespace amD {
 
 class DebuggerApp;
-class IVmServiceConnection;
+class IVmServiceProvider;
 
 constexpr static int BREAKPOINTS_MAX = 20;
 
@@ -20,7 +20,7 @@ public:
     AddrRef addr1 = {};
     AddrRef addr2 = {};
     bool enabled = false;
-    EReg reg;
+    IVm::EReg reg;
 }; // class Breakpoint
 //////////////////////////////////////////////////////////////////////////
 
@@ -51,28 +51,26 @@ struct DbgProjOptinons
 extern DbgProjOptinons g_opt;
 
 
-// Debugger client
+//------------------------------------------------------------------------
+// Debugger client engine
 //
 class Debugger
     : public qd::RefCounted
     , public qd::IOperationEnvironment
 {
     DebuggerApp* m_pDbgApp = nullptr;
-    ref_ptr<IVmServiceConnection> m_pConnection;
+    ref_ptr<IVmServiceProvider> m_pConnection;
+    ref_ptr<IVm::VM> m_pVm = nullptr; // owner
 
 public:
-    ref_ptr<IVm::VM> m_pVm = nullptr;
-
-public:
-    Debugger(DebuggerApp* _app, ref_ptr<IVmServiceConnection> pCon);
+    Debugger(DebuggerApp* _app);
     virtual ~Debugger() override = default;
 
-    void init();
-    IVm::VM* getVm() const { return m_pVm.get(); }
+    IVm::VM* getVm() const;
     amD::DebuggerApp* getDbgApp() const { return m_pDbgApp; }
 
-
-    amD::IVmServiceConnection* getConnection() const { return m_pConnection.get(); }
+    amD::IVmServiceProvider* getConnection() const;
+    void setConnection(ref_ptr<IVmServiceProvider> pCon);
 
     void execConsoleCmd(qd::string&& cmd);
 
@@ -88,6 +86,7 @@ public:
 
     bool isDebugActivated() const;
     void setDebugMode(EVmDebugMode debug_mode);
+    void fetchVmState();
 
     //------------------------------------------------------------------------
     // Implement Operation Environment
@@ -95,8 +94,8 @@ public:
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
     virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const override;
 
-
 }; // class Debugger
+//////////////////////////////////////////////////////////////////////////
 
 
 }; // namespace amD

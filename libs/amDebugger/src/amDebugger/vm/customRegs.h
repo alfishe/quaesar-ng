@@ -4,9 +4,10 @@
 #include <EASTL/string_view.h>
 #include <amDebugger/vm/customRegsList.h>
 #include <amDebugger/vm/memory.h>
-#include <stdint.h>
+#include <cstdint>
 
-namespace amD {
+
+namespace IVm {
 
 struct CustomFlagsDesc;
 

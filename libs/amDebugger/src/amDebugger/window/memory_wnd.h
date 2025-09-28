@@ -56,18 +56,16 @@
 
 #pragma once
 
-#include <qd/imGui/imgui_eastl.h>
-#include <stdint.h>  // uint8_t, etc.
-#include <stdio.h>   // sprintf, scanf
+#include <qd/imGui/imGui.h>
+#include <cstdint>  // uint8_t, etc.
+#include <cstdio>   // sprintf, scanf
 #include <amDebugger/ui/uiView.h>
 #include "amDebugger/exprValue.h"
 #include "qd/stl/span.h"
 
-namespace amD {
-class MemBank;
+FORWARD_DECLARATION_2(IVm, MemBank);
 
-
-namespace window {
+namespace amD::window {
 
 class MemoryHexViewWnd : public amD::AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::MemoryView, amD::window::MemoryHexViewWnd, amD::AmDbgWindow);
@@ -76,7 +74,7 @@ class MemoryHexViewWnd : public amD::AmDbgWindow {
     size_t m_memSize = 0;
     size_t m_baseDisplayAddr = 0x0000;
     amD::ExprValStr m_exprAddr;
-    const amD::MemBank *m_pLastBank = nullptr;
+    const IVm::MemBank *m_pLastBank = nullptr;
 
 public:
     enum DataFormat { DataFormat_Bin = 0, DataFormat_Dec = 1, DataFormat_Hex = 2, DataFormat_COUNT };
@@ -165,5 +163,4 @@ private:
     void* endianness_copy(void* dst, void* src, size_t size) const;
 };
 
-};  // namespace window
-};  // namespace amD
+};  // namespace amD::window

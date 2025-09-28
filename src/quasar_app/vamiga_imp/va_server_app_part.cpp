@@ -1,7 +1,7 @@
 #include "va_server_app_part.h"
 #include "qd/thread/thread.h"
 #include "qsr_application.h"
-#include "va_server_thread.h"
+#include "vamiga_imp_lib/va_server_thread.h"
 
 
 namespace qsr {
@@ -15,7 +15,7 @@ VAmServerAppPart::~VAmServerAppPart() {
 }
 
 //------------------------------------------------------------------------
-class VAmSharedConnectionImpl : public amD::IVmServiceConnection {
+class VAmSharedConnectionImpl : public amD::IVmServiceProvider {
 public:
     ref_ptr<IVm::VM> m_pVAmVm;
 
@@ -37,7 +37,7 @@ struct VAmConnImpl : public amD::IVmConnectionBuilder {
     VAmServerAppPart* m_pVAmAppPart;
     VAmConnImpl(VAmServerAppPart* pApp) : m_pVAmAppPart(pApp) {
     }
-    virtual ref_ptr<amD::IVmServiceConnection> createConnection() const override {
+    virtual ref_ptr<amD::IVmServiceProvider> createConnection() const override {
         ref_ptr<IVm::VM> vm = m_pVAmAppPart->getVm();
         assert(vm);
         ref_ptr<VAmSharedConnectionImpl> pInst = new VAmSharedConnectionImpl(vm);
@@ -54,7 +54,7 @@ void VAmServerAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     m_pVAmThread->initialize();
 
     m_pConnBuilder = new VAmConnImpl(this);
-    QuaesarDebuggerServersMgr* pSvMgr = ((QuasarApp*)getApp())->m_pServersMgr;
+    QuaesarVmServersMgr* pSvMgr = ((QuaesarApplication*)getApp())->m_pVmServersMgr;
     pSvMgr->registerVmServer(EQuaServerId::S_VAMIGA, m_pConnBuilder);
 }
 

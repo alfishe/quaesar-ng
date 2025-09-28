@@ -8,7 +8,7 @@
 namespace qd {
 
 template<size_t S>
-using TInlineString = eastl::fixed_string<char, S, true, eastl::allocator>;
+using InlineString_ = eastl::fixed_string<char, S, true, eastl::allocator>;
 using InlineString = eastl::fixed_string<char, 255, true, eastl::allocator>;
 
 using string = eastl::basic_string<char, eastl::allocator>;

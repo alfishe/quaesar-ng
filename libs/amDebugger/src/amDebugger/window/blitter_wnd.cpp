@@ -6,9 +6,8 @@
 #include <amDebugger/vm/vmInterface.h>
 #include <EASTL/fixed_string.h>
 #include <EASTL/fixed_vector.h>
-#include "qd/imGui/imGuiHelperClass.h"
 #include <qd/base/color.h>
-#include <qd/imGui/imgui_eastl.h>
+#include <qd/imGui/imGui.h>
 
 
 namespace amD {
@@ -109,7 +108,7 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi()
 void BlitterWnd::drawContentImp()
 {
     Debugger* dbg = getDbg();
-    IVm::VM* vm = dbg->m_pVm;
+    IVm::VM* vm = dbg->getVm();
 
     IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();

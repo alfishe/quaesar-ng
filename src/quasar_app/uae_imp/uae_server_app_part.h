@@ -20,6 +20,7 @@ class UaeServerAppPart : public qd::ApplicationPart {
 private:
     UaeServerThread* m_pUaeThread = nullptr;
     ref_ptr<amD::IVmConnectionBuilder> m_pConnBuilder;
+    int m_vmActive = -1;
 
 public:
     UaeServerAppPart();
@@ -32,6 +33,11 @@ public:
 
     qsr::IVmServerThread* getUaeThread() const;
 
+    virtual void update(float, float) override;
+
+    void setVmActive(int v) {
+        m_vmActive = v;
+    }
 };  // class UaeServerAppPart
 
 

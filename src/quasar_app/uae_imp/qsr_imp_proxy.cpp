@@ -11,12 +11,12 @@ void qsr_setUaeInitiized(bool init) {
 
 
 uint32_t* qsr_lockUaeScreenTexBuf(int amiga_width, int amiga_height) {
-    return g_pUaeThread->lockUaeScreenTexBuf(amiga_width, amiga_height);
+    return g_pUaeThread->_lockUaeScreenTexBuf(amiga_width, amiga_height);
 }
 
 
 void qsr_unlockUaeScreenTexBuf() {
-    g_pUaeThread->unlockUaeScreenTexBuf();
+    g_pUaeThread->_unlockUaeScreenTexBuf();
 }
 
 

@@ -8,18 +8,17 @@ namespace amD {
 DbgProjOptinons g_opt = {};
 
 
-Debugger::Debugger(DebuggerApp* _app, ref_ptr<IVmServiceConnection> pCon)
+Debugger::Debugger(DebuggerApp* _app)
     : m_pDbgApp(_app)
-    , m_pConnection(pCon)
 {
-    assert(m_pConnection);
 }
 
 
-void Debugger::init()
+
+
+IVm::VM* Debugger::getVm() const
 {
-    m_pVm = m_pConnection->getClientVm();
-    assert(m_pVm);
+    return m_pVm.get();
 }
 
 
@@ -45,6 +44,31 @@ qd::EFlow Debugger::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args
         break;
     }
     return qd::EFlow::NO_RESULT;
+}
+
+
+void Debugger::fetchVmState()
+{
+    if (m_pVm)
+        m_pVm->fetchStateFromEmu();
+}
+
+
+amD::IVmServiceProvider* Debugger::getConnection() const
+{
+    return m_pConnection.get();
+}
+
+
+void Debugger::setConnection(ref_ptr<IVmServiceProvider> pCon)
+{
+    if (m_pConnection == pCon)
+        return;
+    m_pConnection = pCon;
+    if (m_pConnection)
+        m_pVm = m_pConnection->getClientVm();
+    else
+        m_pVm = nullptr;
 }
 
 

@@ -43,8 +43,7 @@ extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
 extern uaecptr bplpt[MAX_PLANES], bplptx[MAX_PLANES];
 
 
-namespace amD {
-namespace vm::imp {
+namespace IVm::imp {
 
 
 UaeVmImp::UaeVmImp() {
@@ -66,39 +65,7 @@ UaeVmImp::UaeVmImp() {
 
 
 void UaeVmImp::init() {
-    if (mInit)
-        return;
-    mInit = true;
-    IVm::VM* s = (IVm::VM*)(this);
-    uint32_t hiAddr = 0;
-    while (hiAddr < MEMORY_BANKS) {
-        addrbank* uaeBank = mem_banks[hiAddr];
-        if (!uaeBank->allocated_size) {
-            ++hiAddr;
-            continue;
-        }
-
-        bool combined = false;
-        for (MemBank& existBank : s->mem->banks) {
-            if (existBank.m_realAddr == uaeBank->baseaddr) {
-                combined = true;
-                hiAddr += uaeBank->allocated_size >> 16;
-                break;
-            }
-        }
-        if (combined)
-            continue;
-
-        MemBank& memBank = s->mem->banks.emplace_back();
-        memBank.m_id = (int)s->mem->banks.size() - 1;
-        memBank.m_name = uaeBank->name;
-        memBank.m_label = uaeBank->label;
-        memBank.m_startAddr = uaeBank->start;
-        memBank.m_realAddr = uaeBank->baseaddr;
-        memBank.m_mask = uaeBank->mask;
-        memBank.m_size = uaeBank->allocated_size;
-        hiAddr += memBank.m_size >> 16u;
-    }
+    TSuper::init();
 }
 
 
@@ -223,7 +190,7 @@ void UaeVmImp::CustomRegs::commit() {
 }
 
 
-amD::AddrRef UaeVmImp::Copper::getCopperAddr(amD::ECopperAddr_ copno) {
+amD::AddrRef UaeVmImp::Copper::getCopperAddr(IVm::ECopperAddr_ copno) {
     return ::get_copper_address(copno);
 }
 
@@ -320,15 +287,15 @@ void UaeVmImp::Floppy::setAdfPath(const qd::string& v) {
 
 bool UaeVmImp::Cpu::getFlg(ECpuFlg_ f) const {
     switch (f) {
-        case amD::CpuFlg_Z:
+        case IVm::CpuFlg_Z:
             return GET_ZFLG();
-        case amD::CpuFlg_C:
+        case IVm::CpuFlg_C:
             return GET_CFLG();
-        case amD::CpuFlg_V:
+        case IVm::CpuFlg_V:
             return GET_VFLG();
-        case amD::CpuFlg_N:
+        case IVm::CpuFlg_N:
             return GET_NFLG();
-        case amD::CpuFlg_X:
+        case IVm::CpuFlg_X:
             return GET_XFLG();
         default:
             return false;
@@ -387,14 +354,38 @@ void UaeVmImp::Memory::setU32(AddrRef addr, uint32_t v) {
 }
 
 
-static bool uae_bp_reg_convert(int uae_reg, amD::EReg& out) {
-    if (uae_reg >= amD::breakpoint_reg_end)
+void fill_bank(IVm::Memory* ivmem, EMemSrc id, const ::addrbank& pUaeBank) {
+    IVm::MemBank& memBank = ivmem->m_banks[id];
+    memBank.m_id = id;
+    if (!pUaeBank.allocated_size) {
+        return;
+    }
+    memBank.m_name = pUaeBank.name;
+    memBank.m_label = pUaeBank.label;
+    memBank.m_startAddr = pUaeBank.start;
+    memBank.m_realAddr = pUaeBank.baseaddr;
+    memBank.m_mask = pUaeBank.mask;
+    memBank.m_size = pUaeBank.allocated_size;
+}
+
+
+void UaeVmImp::Memory::init(IVm::VM* p_vm) {
+    fill_bank(this, EMemSrc::ROM, ::kickmem_bank);
+    fill_bank(this, EMemSrc::CHIP, ::chipmem_bank);
+    fill_bank(this, EMemSrc::CUSTOM, ::custom_bank);
+    fill_bank(this, EMemSrc::SLOW, ::bogomem_bank);
+}
+
+
+static bool uae_bp_reg_convert(int uae_reg, IVm::EReg& out) {
+    if (uae_reg >= IVm::breakpoint_reg_end)
         return false;
     out = (EReg::Type)uae_reg;
     return true;
 }
 
-void UaeVmImp::Emu::initBreakPoints(BreakpointsSortedList& bpList) {
+
+void UaeVmImp::Emu::initBreakPoints(amD::BreakpointsSortedList& bpList) {
     static_assert(amD::BREAKPOINTS_MAX == BREAKPOINT_TOTAL);
 
     bpList.mBreakpoints.clear();
@@ -409,7 +400,7 @@ void UaeVmImp::Emu::initBreakPoints(BreakpointsSortedList& bpList) {
         uae_bp_reg_convert(uaeCurBrpt.type, curBp.reg);
 
         if (uaeCurBrpt.oper == BREAKPOINT_CMP_EQUAL && uaeCurBrpt.enabled > 0) {
-            BreakpointsSortedList::OneAddrBp bp;
+            amD::BreakpointsSortedList::OneAddrBp bp;
             bp.addr = curBp.addr1;
             bp.bpIdx = (int)bpList.mBreakpoints.size() - 1;
             bpList.mOneAddrBps.insert(bp);
@@ -418,17 +409,12 @@ void UaeVmImp::Emu::initBreakPoints(BreakpointsSortedList& bpList) {
 }
 
 
-};  // namespace vm::imp
+};  // namespace IVm::imp
 //////////////////////////////////////////////////////////////////////////
-
-
-};  //namespace amD
-//////////////////////////////////////////////////////////////////////////
-
 
 void* IVm::impFactoryCreateInstance(const std::type_info& type) {
     if (type == typeid(IVm::VM)) {
-        return new amD::vm::imp::UaeVmImp();
+        return new IVm::imp::UaeVmImp();
     }
     UNIMPLEMENTED();
     //return nullptr;

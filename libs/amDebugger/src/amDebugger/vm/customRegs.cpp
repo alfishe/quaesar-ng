@@ -2,9 +2,9 @@
 #include <EASTL/array.h>
 #include "customRegsList.h"
 
-namespace amD {
+namespace IVm {
 
-eastl::array<const amD::CustomFlagsDesc*, CustReg::_COUNT_> cust_flags_desc = {};
+eastl::array<const CustomFlagsDesc*, CustReg::_COUNT_> cust_flags_desc = {};
 
 
 static constexpr int CD_WO = 1;
@@ -24,7 +24,7 @@ CustReg::Data CustReg::cust_reg_data[_COUNT_] = {
 #undef __
 
 
-const amD::CustomFlagsDesc* CustReg::getFlagDesc() const {
+const CustomFlagsDesc* CustReg::getFlagDesc() const {
     return cust_flags_desc[mV];
 }
 
@@ -38,7 +38,7 @@ struct CustomRegsStaticInitializer {
 static CustomRegsStaticInitializer initCustRegs;
 
 
-amD::CustReg CustReg::getRegByAddr(AddrRef addr) {
+CustReg CustReg::getRegByAddr(AddrRef addr) {
     CustReg::Data val;
     val.addr = addr;
     auto it = eastl::binary_search_i(&CustReg::cust_reg_data[0], &CustReg::cust_reg_data[_COUNT_], val,
@@ -47,7 +47,7 @@ amD::CustReg CustReg::getRegByAddr(AddrRef addr) {
 }
 
 
-const amD::CustomFlagsDesc& DMAC::getFlagDesc() {
+const CustomFlagsDesc& DMAC::getFlagDesc() {
     static CustomFlagsDesc desc(CustReg::DMACON);
     static bool isInit = false;
     if (!isInit) {
@@ -75,7 +75,7 @@ const amD::CustomFlagsDesc& DMAC::getFlagDesc() {
 }
 
 
-amD::CustomFlagsDesc& CustomFlagsDesc::addBit(const char* p_name, uint8_t bits_count, uint8_t shift_l,
+CustomFlagsDesc& CustomFlagsDesc::addBit(const char* p_name, uint8_t bits_count, uint8_t shift_l,
                                              const char* p_desc /*= nullptr*/) {
     int nextNo = 0;
     if (!bits.empty()) {
@@ -92,4 +92,4 @@ amD::CustomFlagsDesc& CustomFlagsDesc::addBit(const char* p_name, uint8_t bits_c
 }
 
 
-};  // namespace amD
+};  // namespace IVm

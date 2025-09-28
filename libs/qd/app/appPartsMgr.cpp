@@ -203,7 +203,7 @@ void AppPartsManager::render()
     for (int i = 0; i < getNumAppParts(); i++)
     {
         ApplicationPart* pCurPart = m_pParts[i];
-        if (pCurPart && pCurPart->isPartVisible())
+        if (pCurPart && pCurPart->isPartRenderable())
             pActParts.push_back(pCurPart);
     }
     eastl::stable_sort(pActParts.begin(), pActParts.end(), &_getZOrderSort);
@@ -249,10 +249,10 @@ void AppPartsManager::_onImGuiDebugControl(qd::ImAPI::CImGuiBase& /*im*/)
         if (im.TreeNode("BasePartInfo"))
         {
             im.Text("Init: %i", (int)pCurPart->m_bPartInit);
-            bool bVis = pCurPart->isPartVisible();
+            bool bVis = pCurPart->isPartRenderable();
             if (im.Checkbox("IsVisible", &bVis))
             {
-                pCurPart->setPartVisible(bVis);
+                pCurPart->setPartRenderable(bVis);
             }
             float zOrder = pCurPart->m_ZOrder.ToFloat();
             if (im.InputFloat("ZOrder", &zOrder))

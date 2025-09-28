@@ -18,11 +18,16 @@ set(CMAKE_CXX_EXTENSIONS False)
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CAPSTONE_M68K_SUPPORT ON CACHE BOOL "" FORCE)
 
-include(scripts/cmake/format_sources.cmake)
+
+# Include CMake helper utils
 include(scripts/cmake/compile_options.cmake)
+include(scripts/cmake/format_sources.cmake)
 include(external/sdl2/sdl2.cmake)
 
-# Libraries
+
+# Include CMakelists.txt libraries
+set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_lib_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
+add_subdirectory(libs/uae_lib)
 add_subdirectory(external/zlib)
 add_subdirectory(external/ADFlib)
 add_subdirectory(external/dear_imgui)
@@ -30,12 +35,10 @@ add_subdirectory(external/EASTL)
 add_subdirectory(external/capstone)
 add_subdirectory(external/nativefiledialog-extended) #nfd
 add_subdirectory(libs/qd)
-add_subdirectory(libs/vAmiga)
 add_subdirectory(libs/amDebugger)
 add_subdirectory(libs/exprParser)
-
-set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_lib_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
-add_subdirectory(libs/uae_lib)
+add_subdirectory(libs/vAmiga)
+add_subdirectory(libs/vamiga_imp_lib)
 
 # Quasar *.h/cpp files
 file(GLOB_RECURSE QUAESAR_SOURCES "src/*.cpp")
@@ -150,7 +153,7 @@ target_link_libraries(quaesar PRIVATE
     qd
     uae_lib
     amDebugger
-    VACore
+    VamigaImpLib
 )
 
 
@@ -162,7 +165,6 @@ target_link_libraries(quaesar PRIVATE
 add_option_edit_and_continue(quaesar)
 add_option_edit_and_continue(qd)
 add_option_edit_and_continue(amDebugger)
-add_option_edit_and_continue(VACore)
 
 
 if (WIN32)

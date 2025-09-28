@@ -17,7 +17,7 @@ FORWARD_DECLARATION_2(amD, IVmConnectionBuilder);
 
 
 //////////////////////////////////////////////////////////////////////////
-class QuasarApp : public qd::Application {
+class QuaesarApplication : public qd::Application {
     typedef qd::Application TSuper;
 
 public:
@@ -25,15 +25,15 @@ public:
     qsr::UaeClientAppPart* m_pUaeClientAppPart = nullptr;
     qsr::UaeServerAppPart* m_pUaeServerAppPart = nullptr;
     qsr::VAmServerAppPart* m_pVAmServerAppPart = nullptr;
-    class QuaesarDebuggerServersMgr* m_pServersMgr = nullptr;
+    class QuaesarVmServersMgr* m_pVmServersMgr = nullptr;
 
 public:
-    QuasarApp();
-    virtual ~QuasarApp();
+    QuaesarApplication();
+    virtual ~QuaesarApplication() override;
     virtual void onConstruct(qd::CreateApplicationParams& in) override;
 
-    inline static QuasarApp* g_pInstance = nullptr;
-    static QuasarApp* get() {
+    inline static QuaesarApplication* g_pInstance = nullptr;
+    static QuaesarApplication* get() {
         return g_pInstance;
     }
     void initialize();
@@ -55,23 +55,31 @@ public:
         return m_pUaeClientAppPart;
     }
 
-};  // class App
+};  // class QuaesarApplication
 //////////////////////////////////////////////////////////////////////////
 
 
-enum class EQuaServerId {
-    UNDEF = 0,
-    S_UAE = _MAKE4C("QUAE"),
-    S_VAMIGA = _MAKE4C("VAMI"),
+struct EQuaServerId {
+    enum Type {
+        UNDEF = 0,
+        S_UAE = _MAKE4C("QUAE"),
+        S_VAMIGA = _MAKE4C("VAMI"),
+    };
+    ENUM_DECLARE_BASE(::, EQuaServerId, Type, UNDEF);
+    const char* toString() const;
 };
+
+inline const char* to_string(EQuaServerId v) {
+    return v.toString();
+}
 
 
 //------------------------------------------------------------------------
-// Debugger Servers providers manager
+// VM Servers providers manager
 //
-class QuaesarDebuggerServersMgr : public amD::IVmConnectionsManager {
-    TS_REFLECT_CLASS(QuaesarDebuggerServersMgr, amD::IVmConnectionsManager);
-    QuasarApp* m_pApp = nullptr;
+class QuaesarVmServersMgr : public amD::IVmConnectionsManager {
+    TS_REFLECT_CLASS(QuaesarVmServersMgr, amD::IVmConnectionsManager);
+    QuaesarApplication* m_pApp = nullptr;
 
     struct VmServiceItem {
         EQuaServerId m_id;
@@ -80,17 +88,17 @@ class QuaesarDebuggerServersMgr : public amD::IVmConnectionsManager {
     qd::vector<VmServiceItem> m_pVmServicesList;
 
 public:
-    QuaesarDebuggerServersMgr(QuasarApp* pApp);
-    virtual ~QuaesarDebuggerServersMgr();
+    QuaesarVmServersMgr(QuaesarApplication* pApp);
+    virtual ~QuaesarVmServersMgr();
 
 public:
     virtual uint32_t getNumConnections() override;
-    virtual ref_ptr<amD::IVmServiceConnection> createVmConnectionByInd(uint32_t idx) override;
+    virtual ref_ptr<amD::IVmServiceProvider> createVmProvider(const char* id) override;
     void registerVmServer(EQuaServerId id, amD::IVmConnectionBuilder* pBuilder);
 
-    amD::IVmConnectionBuilder* getVmConnBuilderById(EQuaServerId id) const;
+    amD::IVmConnectionBuilder* findVmConnBuilderByStrId(const char* id) const;
 
-};  // class QuaesarDebuggerServersMgr
+};  // class QuaesarVmServersMgr
 //////////////////////////////////////////////////////////////////////////
 
 

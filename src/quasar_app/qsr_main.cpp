@@ -20,7 +20,7 @@
 #endif  // WIN32
 
 
-QuasarApp* g_pApp = nullptr;
+QuaesarApplication* g_pApp = nullptr;
 
 
 // Quaesar main
@@ -48,7 +48,7 @@ int SDL_main(int argc, char* argv[]) {
 
     // create Quaesar app
     {
-        g_pApp = new QuasarApp();
+        g_pApp = new QuaesarApplication();
         qd::CreateApplicationParams prm;
         g_pApp->onConstruct(prm);
     }

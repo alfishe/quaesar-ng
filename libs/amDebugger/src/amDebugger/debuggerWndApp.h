@@ -23,7 +23,7 @@ FORWARD_DECLARATION_2(IVm, VM);
 namespace amD {
 
 class DebuggerDesktop;
-class IVmServiceConnection;
+class IVmServiceProvider;
 
 
 class IVmConnectionsManager
@@ -32,7 +32,7 @@ class IVmConnectionsManager
 
 public:
     virtual uint32_t getNumConnections() = 0;
-    virtual ref_ptr<amD::IVmServiceConnection> createVmConnectionByInd(uint32_t idx) = 0;
+    virtual ref_ptr<amD::IVmServiceProvider> createVmProvider(const char* conn_id) = 0;
 }; // class IVmConnectionsManager
 
 
@@ -69,7 +69,7 @@ public:
     void setWndVisible(bool v);
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
-    IVm::VM* getVm() const { return m_pDebugger->getVm(); }
+    IVm::VM* getVm() const;
 
     amD::Debugger* getDbg() const { return m_pDebugger; }
 

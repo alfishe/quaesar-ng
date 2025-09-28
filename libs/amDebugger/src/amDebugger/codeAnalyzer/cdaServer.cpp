@@ -96,6 +96,8 @@ public:
     {
         reset();
         const uint8_t* startDisasmDat = vm->mem->getRealAddr(begAddr);
+        if (!startDisasmDat)
+            return;
         uint32_t countBytes = endAddr - begAddr;
         m_nInstructions =
             cs_disasm(*m_pCapstone, startDisasmDat, countBytes, begAddr, countBytes / 2, &m_pInstructions);

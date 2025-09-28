@@ -1,11 +1,4 @@
 #pragma once
-// clang-format off
-// #include <sysconfig.h>
-// #include <uae_lib/include/sysdeps.h>
-// #include <uae_lib/include/options.h>
-// #include <uae_lib/include/memory.h>
-// #include <uae_lib/include/newcpu.h>
-// clang-format on
 #include <EASTL/array.h>
 #include <EASTL/fixed_vector.h>
 #include <EASTL/span.h>
@@ -16,33 +9,37 @@
 #include <amDebugger/vm/vmInterface.h>
 #include <qd/base/baseTypes.h>
 #include <qd/base/color.h>
-#include "SDL_stdinc.h"  // strlcpy
-#include "qd/typeSystem/typeDeclare.h"
+#include "VAmiga.h"
+//#include "qd/typeSystem/typeDeclare.h"
 
 
 FORWARD_DECLARATION_1(VAmServerThread);
+FORWARD_DECLARATION_2(vamiga, VAmiga);
+class QuaesarVAmigaInjectAccess;
 
 
-namespace amD::vm::imp {
+namespace IVm::imp {
 
 class VAmVmImp final : public IVm::VM {
-    TS_REFLECT_CLASS(amD::vm::imp::VAmVmImp, IVm::VM);
+    //TS_REFLECT_CLASS(amD::vm::imp::VAmVmImp, IVm::VM);
+    typedef IVm::VM TSuper;
+public:
     VAmServerThread* m_pVAmThread = nullptr;
+    vamiga::VAmiga* m_vaAmiga = nullptr;
+    vamiga::Amiga* main = nullptr;
+    QuaesarVAmigaInjectAccess* m_vaAccess = nullptr;
 
 public:
-    VAmVmImp();
-    void setServerImp(VAmServerThread* pVAmThread) {
-        m_pVAmThread = pVAmThread;
-    }
+    VAmVmImp(VAmServerThread* pVAmThread, vamiga::VAmiga* pVAmiga);
     virtual ~VAmVmImp() override;
     virtual void init() override;
 
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
-    virtual amD::EVmDebugMode getVmDebugMode() const override {
+    virtual IVm::EVmDebugMode getVmDebugMode() const override {
         return TSuper::getVmDebugMode();
     }
-    virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) override;
+    virtual void setVmDebugMode(IVm::EVmDebugMode debug_mode) override;
 
     virtual int getCurCycle() override;
     virtual int getVPos() override;
@@ -51,30 +48,42 @@ public:
 
     //------------------------------------------------------------------------
     struct Cpu : public IVm::Cpu {
+        VAmVmImp* m_pVm = nullptr;
+        vamiga::VAmiga* m_pVAmiga = nullptr;
+        const vamiga::CPUInfo* m_pCpuInfo = nullptr;
+
+    public:
         uint32_t getRegA(int i) const override {
-            return 0;  // m68k_areg(::regs, i);
+            return m_pCpuInfo->a[i];
         }
         uint32_t getRegD(int i) const override {
-            return 0;  //m68k_dreg(regs, i);
+            return m_pCpuInfo->d[i];
         }
         AddrRef getPC() const override {
-            return 0;  //m68k_getpc();
+            return m_pCpuInfo->pc0;
         }
 
         virtual bool getFlg(ECpuFlg_ f) const override;
         virtual int getIntMask() const override {
             return 0;  //regs.intmask;
         }
+
+        virtual void fetch() override {
+            m_pCpuInfo = &m_pVAmiga->cpu.getInfo();
+        }
+
     };  // struct Cpu
     Cpu instCpu;
 
 
     //------------------------------------------------------------------------
     struct Memory final : public IVm::Memory {
+        VAmVmImp* m_pVm = nullptr;
+        vamiga::VAmiga* m_pVAmiga = nullptr;
+
     public:
-        virtual uint8_t* getRealAddr(AddrRef ptr) override {
-            return nullptr;  //(uint8_t*)::memory_get_real_address(ptr);
-        }
+        virtual void init(IVm::VM* p_vm) override;
+        virtual uint8_t* getRealAddr(AddrRef ptr) override;
         virtual bool getU16(AddrRef addr, uint16_t* out) override {
             *out = false;  //(uint16_t)::memory_get_word(addr);
             return true;
@@ -126,7 +135,7 @@ public:
     class Copper final : public IVm::Copper {
     public:
         virtual void fetch() override;
-        virtual AddrRef getCopperAddr(amD::ECopperAddr_ copno) override;
+        virtual AddrRef getCopperAddr(IVm::ECopperAddr_ copno) override;
     };  // class Copper
     Copper instCopper;
 
@@ -169,4 +178,4 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-};  //namespace amD::vm::imp
+};  //namespace IVm::imp

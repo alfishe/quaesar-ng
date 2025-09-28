@@ -1,7 +1,7 @@
 #include "registers_wnd.h"
 #include "amDebugger/debuggerWndApp.h"
 #include "amDebugger/vm/vmInterface.h"
-#include "qd/imGui/imgui_eastl.h"
+#include "qd/imGui/imGui.h"
 #include "amDebugger/ui/uiStyle.h"
 #include "qd/stl/string.h"
 

@@ -36,9 +36,9 @@ void
 AudioPort::_dump(Category category, std::ostream &os) const
 {
     using namespace util;
-
+    
     if (category == Category::Config) {
-
+        
         dumpConfig(os);
     }
 
@@ -156,7 +156,7 @@ i64
 AudioPort::getOption(Opt option) const
 {
     switch (option) {
-
+            
         case Opt::AUD_PAN0:              return (i64)config.pan[0];
         case Opt::AUD_PAN1:              return (i64)config.pan[1];
         case Opt::AUD_PAN2:              return (i64)config.pan[2];
@@ -201,14 +201,14 @@ AudioPort::checkOption(Opt opt, i64 value)
                 throw AppError(Fault::OPT_INV_ARG, "512 ... 65536");
             }
             return;
-
+            
         case Opt::AUD_SAMPLING_METHOD:
 
             if (!SamplingMethodEnum::isValid(value)) {
                 throw AppError(Fault::OPT_INV_ARG, SamplingMethodEnum::keyList());
             }
             return;
-
+            
         case Opt::AUD_ASR:
         case Opt::AUD_FASTPATH:
 
@@ -225,7 +225,7 @@ AudioPort::setOption(Opt option, i64 value)
     isize channel = 0;
 
     switch (option) {
-
+                        
         case Opt::AUD_VOL3: channel++;
         case Opt::AUD_VOL2: channel++;
         case Opt::AUD_VOL1: channel++;
@@ -237,7 +237,7 @@ AudioPort::setOption(Opt option, i64 value)
             return;
 
         case Opt::AUD_VOLL:
-
+            
             config.volL = std::clamp(value, 0LL, 100LL);
             volL = float(pow(value / 50.0, 1.4));
             return;
@@ -258,18 +258,18 @@ AudioPort::setOption(Opt option, i64 value)
             return;
 
         case Opt::AUD_BUFFER_SIZE:
-
+                        
             config.bufferSize = isize(value);
             stream.resize(isize(value));
             return;
-
+            
         case Opt::AUD_SAMPLING_METHOD:
-
+                        
             config.samplingMethod = (SamplingMethod)value;
             return;
 
         case Opt::AUD_ASR:
-
+                        
             config.asr = (bool)value;
             return;
 
@@ -328,7 +328,7 @@ AudioPort::eliminateCracks()
     volR.current = 0;
 }
 
-bool
+bool 
 AudioPort::isMuted() const
 {
     if (volL.isFading() || volR.isFading()) return false;
@@ -358,16 +358,16 @@ AudioPort::synthesize(Cycle clock, Cycle target)
 
     // Run the ASR algorithm (adaptive sample rate)
     if (config.asr) { updateSampleRateCorrection(); } else { sampleRateCorrection = 0.0; }
-
+    
     // Determine the number of elapsed cycles per audio sample
     double cps = double(amiga.masterClockFrequency()) / (sampleRate + sampleRateCorrection);
-
+    
     // Determine how many samples we need to produce
     double exact = (double)(target - clock) / cps + fraction;
 
     // Extract the integer part and remember the rest
     double count; fraction = std::modf(exact, &count);
-
+    
     // Synthesize samples
     synthesize(clock, (long)count, cps);
 }
@@ -377,7 +377,7 @@ AudioPort::updateSampleRateCorrection()
 {
     // Compute the difference between the ideal and the current fill level
     auto error = (0.5 - stream.fillLevel());
-
+    
     // Smooth it out
     sampleRateError = 0.75 * sampleRateError + 0.25 * error;
 
@@ -386,7 +386,7 @@ AudioPort::updateSampleRateCorrection()
 
     // Smooth it out
     sampleRateCorrection = (sampleRateCorrection * 0.75) + (correction * 0.25);
-
+    
     debug(AUDBUF_DEBUG, "ASR correction: %.0f Hz (fill: %.2f)\n",
           sampleRateCorrection, stream.fillLevel());
 }
@@ -403,7 +403,7 @@ AudioPort::synthesize(Cycle clock, long count, double cyclesPerSample)
 
     // Check for a buffer overflow
     if (stream.count() + count >= stream.cap()) handleBufferOverflow();
-
+    
     // Check if we can take a fast path
     if (config.idleFastPath) {
 
@@ -421,7 +421,7 @@ AudioPort::synthesize(Cycle clock, long count, double cyclesPerSample)
             // Copy zeroes if nothing can be heared any more
             auto latest = stream.isEmpty() ? SamplePair{} : stream.latest();
             if (std::abs(latest.l) + std::abs(latest.r) < 1e-8) {
-
+                
                 for (isize i = 0; i < count; i++) stream.write(SamplePair{});
                 stats.idleSamples += count;
                 stream.mutex.unlock();
@@ -511,7 +511,7 @@ AudioPort::handleBufferUnderflow()
     // Determine the elapsed seconds since the last pointer adjustment
     auto elapsedTime = util::Time::now() - lastAlignment;
     lastAlignment = util::Time::now();
-
+    
     // Adjust the sample rate, if condition (1) holds
     if (emulator.isRunning() && !emulator.isWarping()) {
 

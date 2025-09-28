@@ -3,9 +3,7 @@
 #include <SDL.h>
 #include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/vm/vmInterface.h>
-#include <imgui/imgui_internal.h>
-#include <qd/imGui/imgui_eastl.h>
-#include "qd/imGui/imGuiHelperClass.h"
+#include "qd/imGui/imGui.h"
 
 
 namespace amD {
@@ -13,6 +11,7 @@ namespace window {
 
 
 void MemoryGraphWnd::drawContentImp() {
+
     amD::Debugger* dbg = getDbg();
     IVm::VM* vm = dbg->getVm();
 
@@ -43,7 +42,7 @@ void MemoryGraphWnd::drawContentImp() {
 
     const MemBank* pCurBank = vm->mem->getBankByInd(m_curBank);
     if (!pCurBank) {
-        m_curBank = MemBank::CHIP;
+        m_curBank = EMemSrc::CHIP;
         return;
     }
 
@@ -56,16 +55,16 @@ void MemoryGraphWnd::drawContentImp() {
             m_bankOffset = val.getU32();
     }
 
-    eastl::inline_string<255, false> selBankName = "null";
+    qd::InlineString selBankName = "null";
     if (pCurBank) {
         selBankName.assign(pCurBank->m_name.begin(), pCurBank->m_name.end());
         selBankName.append_sprintf(" (%06Xh - %06Xh)", (uint32_t)pCurBank->m_startAddr,
                                    (uint32_t)pCurBank->m_startAddr + pCurBank->m_size);
     }
     if (ImGui::BeginCombo("Memory bank", selBankName.c_str(), ImGuiComboFlags_None)) {
-        eastl::span<const amD::MemBank> banks = vm->mem->banks;
+        eastl::span<const IVm::MemBank> banks = vm->mem->m_banks;
         for (size_t nBank = 0; nBank < banks.size(); ++nBank) {
-            const amD::MemBank& curBank = banks[nBank];
+            const IVm::MemBank& curBank = banks[nBank];
             selBankName.assign(curBank.m_name.begin(), curBank.m_name.end());
             selBankName.append_sprintf(" (%06Xh-%06Xh)", (uint32_t)curBank.m_startAddr,
                                        (uint32_t)curBank.m_startAddr + curBank.m_size);
@@ -84,7 +83,7 @@ void MemoryGraphWnd::drawContentImp() {
                              vm->custom->getRegVal(CustReg::BPL1PTH + nb * 2 + 1);
             selBankName.sprintf("BPL %i (%06Xh)###BPL%i", nb + 1, bplPtr, nb);
             if (ImGui::Selectable(selBankName.c_str())) {
-                m_curBank = MemBank::CHIP;
+                m_curBank = IVm::EMemSrc::CHIP;
                 pCurBank = vm->mem->getBankByInd(m_curBank);
                 m_bankOffset = bplPtr - pCurBank->m_startAddr;
                 CustReg modReg = (nb & 1) == 0 ? CustReg::BPL1MOD : CustReg::BPL2MOD;

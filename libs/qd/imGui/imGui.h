@@ -1,9 +1,11 @@
 #pragma once
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <EASTL/fixed_vector.h>
 #include <EASTL/string.h>
 #include <EASTL/utility.h>
-#include <imgui/imgui.h>
-#include <qd/stl/eastl.h>
+#include "qd/stl/eastl.h"
+#include "qd/imGui/imGuiHelperClass.h"
 
 
 

@@ -1,6 +1,6 @@
 #include "custom_regs_wnd.h"
 #include "amDebugger/debuggerWndApp.h"
-#include "qd/imGui/imgui_eastl.h"
+#include "qd/imGui/imGui.h"
 #include "amDebugger/ui/uiStyle.h"
 
 
@@ -9,7 +9,7 @@ namespace window {
 
 
 struct FlagsTooltipContent {
-    void drawRegisterFlagsTooltip(IVm::CustomRegs* custRegs, amD::CustReg reg_id)
+    void drawRegisterFlagsTooltip(IVm::CustomRegs* custRegs, IVm::CustReg reg_id)
     {
         const CustomFlagsDesc* fd = reg_id.getFlagDesc();
         if (!fd)
@@ -63,7 +63,10 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
 
 
 struct DrawCustomRegColumn {
-    IVm::CustomRegs* custRegs;
+    eastl::fixed_string<char, 128, false> stReg;
+    eastl::fixed_string<char, 128, false> stVal, stCmd, stId;
+    IVm::CustomRegs* custRegs = nullptr;
+
     void drawColumn(CustReg reg_id) {
         stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
         ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
@@ -88,16 +91,12 @@ struct DrawCustomRegColumn {
         }
         ImGui::PopStyleColor();
     }
-
-private:
-    eastl::fixed_string<char, 128, false> stReg;
-    eastl::fixed_string<char, 128, false> stVal, stCmd, stId;
 };  // struct DrawCustomRegColumn
 
 
 void CustomRegsWnd::drawContentImp() {
     Debugger* dbg = getDbg();
-    IVm::VM* vm = dbg->m_pVm;
+    IVm::VM* vm = dbg->getVm();
 
     IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();

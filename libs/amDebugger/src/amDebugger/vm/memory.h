@@ -1,32 +1,95 @@
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 #include "qd/stl/string.h"
 #include "qd/stl/span.h"
 #include "amDebugger/base.h"
+#include "qd/enum/enumBase.h"
+#include "amDebugger/vm/memory.h"
 
 
-namespace amD {
+namespace IVm {
+
+//------------------------------------------------------------------------
+/*
+*     rom: Read-only memory
+*          Holds a Kickstart Rom or a Boot Rom (A1000).
+*
+*     wom: Write-once Memory
+*          If rom holds a Boot Rom, a wom is automatically created. It
+*          is the place where the A1000 stores the Kickstart loaded
+*          from disk.
+*
+*     ext: Extended Rom
+*          Such a Rom was added to newer Amiga models when the 512 KB
+*          Kickstart Rom became too small. It is emulated to support
+*          the Aros Kickstart replacement.
+*
+*    chip: Chip Ram
+*          Holds the memory which is shared by the CPU and the Amiga Chip
+*          set. The original Agnus chip is able to address 512 KB Chip
+*          memory. Newer models are able to address up to 2 MB.
+*
+*    slow: Slow Ram (aka Bogo Ram)
+*          This Ram is addressed by the same bus as Chip Ram, but it can
+*          used by the CPU only.
+*
+*    fast: Fast Ram
+*          Only the CPU can access this Ram. It is connected via a
+*          separate bus and doesn't slow down the Chip set when the CPU
+*          addresses it.
+*/
+
+struct EMemSrc {
+    enum Type {
+        NONE,
+        CHIP,
+        CHIP_MIRROR,
+        SLOW,
+        SLOW_MIRROR,
+        FAST,
+        CIA,
+        CIA_MIRROR,
+        RTC, // Real-time clock
+        CUSTOM,
+        CUSTOM_MIRROR,
+        AUTOCONF,
+        ZOR,
+        ROM,
+        ROM_MIRROR,
+        WOM,
+        EXT,
+        MAX_COUNT,
+    };
+    ENUM_DECLARE_BASE(IVm::, EMemSrc, Type, NONE);
+
+    static const char* to_string(EMemSrc value);
+    static const char* to_desc(EMemSrc value);
+
+}; // struct MemSrc
+//////////////////////////////////////////////////////////////////////////
+
+
 
 class MemBank {
-public:
-    enum {
-        KICK = 0,
-        CHIP = 1,
-    };
 
 public:
-    int m_id = -1;
-    AddrRef m_startAddr = 0;
+    EMemSrc m_id = EMemSrc::NONE;
     uint32_t m_size = 0;
     uint32_t m_mask = 0;
     eastl::string m_name;
     eastl::string m_label;
-    uint8_t* m_realAddr;
+    AddrRef m_startAddr = 0;
+    uint8_t* m_realAddr = nullptr;
+    bool m_bEnabled = false;
 
 public:
 
+    bool isValid() const {
+        return c_def(this) && m_size != 0;
+    }
+
     qd::span<uint8_t> getSpan() const {
-        return qd::span<uint8_t>(m_realAddr + m_startAddr, m_size);
+        return {m_realAddr + m_startAddr, m_size};
     }
 
     bool isAddrIn(AddrRef addr) const {
@@ -106,6 +169,8 @@ struct ECpuFlg {
     ECpuFlg(Type v) : mV(v) {
     }
 };  // ECpuFlg
+//////////////////////////////////////////////////////////////////////////
 
 
-};  // namespace amD
+
+};  // namespace IVm

@@ -90,11 +90,3 @@ target_link_libraries(VAHeadless lz4)
 add_test(NAME SelfTest1 COMMAND VAHeadless --verbose --footprint)
 add_test(NAME SelfTest2 COMMAND VAHeadless --verbose --smoke)
 add_test(NAME SelfTest3 COMMAND VAHeadless --verbose --diagnose)
-
-
-#-------------------------------------------------------------------------------------------
-# Create VisualStudio groups tree in solution with root at CMAKE_CURRENT_SOURCE_DIR
-file(GLOB_RECURSE PROJ_VACORE_FILES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h*" "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROJ_VACORE_FILES})
-#-------------------------------------------------------------------------------------------

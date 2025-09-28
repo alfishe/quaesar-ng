@@ -2,8 +2,8 @@
 #include "amDebugger/debuggerWndApp.h"
 #include <EASTL/fixed_vector.h>
 #include <amDebugger/vm/vmInterface.h>
-#include <qd/base/color.h>
-#include <qd/imGui/imgui_eastl.h>
+#include "qd/base/color.h"
+#include "qd/imGui/imGui.h"
 
 namespace amD {
 namespace window {

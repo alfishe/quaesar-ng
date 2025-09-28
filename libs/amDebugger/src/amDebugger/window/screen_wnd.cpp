@@ -1,8 +1,7 @@
 #include "screen_wnd.h"
-#include "qd/imGui/imGuiHelperClass.h"
+#include <qd/imGui/imGui.h>
 #include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/vm/vmInterface.h>
-#include <qd/imGui/imgui_eastl.h>
 #include <SDL.h>
 #include "qd/qui/controls/menuItemOperation.h"
 

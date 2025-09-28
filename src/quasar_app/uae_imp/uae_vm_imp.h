@@ -1,10 +1,4 @@
 #pragma once
-// clang-format off
-// #include <sysconfig.h>
-// #include <uae_lib/include/sysdeps.h>
-// #include <uae_lib/include/options.h>
-// #include <uae_lib/include/newcpu.h>
-// clang-format on
 #include <EASTL/array.h>
 #include <EASTL/fixed_vector.h>
 #include <EASTL/span.h>
@@ -15,16 +9,16 @@
 #include <amDebugger/vm/vmInterface.h>
 #include <qd/base/baseTypes.h>
 #include <qd/base/color.h>
-#include "qd/typeSystem/typeDeclare.h"
 
 
 FORWARD_DECLARATION_1(UaeServerThread);
 
 
-namespace amD::vm::imp {
+namespace IVm::imp {
 
 class UaeVmImp final : public IVm::VM {
-    TS_REFLECT_CLASS(amD::vm::imp::UaeVmImp, IVm::VM);
+    //TS_REFLECT_CLASS(IVm::imp::UaeVmImp, IVm::VM);
+    typedef IVm::VM TSuper;
     UaeServerThread* m_pUaeThread = nullptr;
 
 public:
@@ -37,10 +31,10 @@ public:
 
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
-    virtual amD::EVmDebugMode getVmDebugMode() const override {
+    virtual IVm::EVmDebugMode getVmDebugMode() const override {
         return TSuper::getVmDebugMode();
     }
-    virtual void setVmDebugMode(amD::EVmDebugMode debug_mode) override;
+    virtual void setVmDebugMode(IVm::EVmDebugMode debug_mode) override;
 
     virtual int getCurCycle() override;
     virtual int getVPos() override;
@@ -53,7 +47,7 @@ public:
         uint32_t getRegD(int i) const override;
         AddrRef getPC() const override;
 
-        virtual bool getFlg(ECpuFlg_ f) const override;
+        virtual bool getFlg(IVm::ECpuFlg_ f) const override;
         virtual int getIntMask() const override;
     };  // struct Cpu
     Cpu instCpu;
@@ -62,6 +56,7 @@ public:
     //------------------------------------------------------------------------
     struct Memory final : public IVm::Memory {
     public:
+        virtual void init(IVm::VM* p_vm) override;
         virtual uint8_t* getRealAddr(AddrRef ptr) override;
         virtual bool getU16(AddrRef addr, uint16_t* out) override;
         virtual uint16_t getU16(AddrRef addr) override;
@@ -83,16 +78,16 @@ public:
     //------------------------------------------------------------------------
     class CustomRegs final : public IVm::CustomRegs {
         static constexpr size_t data_offset = 2;
-        eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
+        eastl::array<uint16_t, IVm::CustReg::_COUNT_ + data_offset> regsData;
 
     public:
         void fetch() override;
         void commit() override;
 
-        uint16_t getRegVal(CustReg reg) override {
+        uint16_t getRegVal(IVm::CustReg reg) override {
             return regsData[(size_t)reg + data_offset];
         }
-        void setRegVal(CustReg reg, uint16_t new_val) override {
+        void setRegVal(IVm::CustReg reg, uint16_t new_val) override {
             regsData[(size_t)reg + data_offset] = new_val;
         }
     };  // class CustomRegs
@@ -103,7 +98,7 @@ public:
     class Copper final : public IVm::Copper {
     public:
         virtual void fetch() override;
-        virtual AddrRef getCopperAddr(amD::ECopperAddr_ copno) override;
+        virtual AddrRef getCopperAddr(IVm::ECopperAddr_ copno) override;
     };  // class Copper
     Copper instCopper;
 
@@ -120,7 +115,7 @@ public:
             *out_w = 754;
             *out_h = 576;
         }
-        virtual void initBreakPoints(BreakpointsSortedList& bpList) override;
+        virtual void initBreakPoints(amD::BreakpointsSortedList& bpList) override;
     };  // class Emu
     Emu instEmu;
 
@@ -141,4 +136,4 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-};  //namespace amD::vm::imp
+};  //namespace IVm::imp

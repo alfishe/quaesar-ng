@@ -9,12 +9,14 @@ namespace amD {
 
 class IVmConnectionBuilder : public qd::RefCounted, public qd::IOperationEnvironment
 {
-public:
+protected:
     IVm::VM* vm = nullptr;
+
+public:
 
     void init();
     IVm::VM* getVm() const { return vm; }
-    virtual ref_ptr<amD::IVmServiceConnection> createConnection() const = 0;
+    virtual ref_ptr<amD::IVmServiceProvider> createConnection() const = 0;
 
 }; // class IVmConnectionBuilder
 

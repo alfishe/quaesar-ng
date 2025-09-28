@@ -4,7 +4,7 @@
 #include "qd/qui/uiOperation.h"
 #include "qd/typeSystem/typeDeclare.h"
 
-extern class QuasarApp* g_pApp;
+extern class QuaesarApplication* g_pApp;
 
 namespace qsr {
 

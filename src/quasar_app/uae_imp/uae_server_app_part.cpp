@@ -17,7 +17,7 @@ UaeServerAppPart::~UaeServerAppPart() {
 
 
 //------------------------------------------------------------------------
-class UaeSharedConnectionImpl : public amD::IVmServiceConnection {
+class UaeSharedConnectionImpl : public amD::IVmServiceProvider {
 public:
     ref_ptr<IVm::VM> m_pUaeVm;
 
@@ -39,7 +39,7 @@ struct UaeConnImpl : public amD::IVmConnectionBuilder {
     UaeServerAppPart* m_pUaeAppPart;
     UaeConnImpl(UaeServerAppPart* pApp) : m_pUaeAppPart(pApp) {
     }
-    virtual ref_ptr<amD::IVmServiceConnection> createConnection() const override {
+    virtual ref_ptr<amD::IVmServiceProvider> createConnection() const override {
         ref_ptr<IVm::VM> vm = m_pUaeAppPart->getVm();
         assert(vm);
         ref_ptr<UaeSharedConnectionImpl> pInst = new UaeSharedConnectionImpl(vm);
@@ -52,11 +52,8 @@ struct UaeConnImpl : public amD::IVmConnectionBuilder {
 void UaeServerAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
-    m_pUaeThread = new UaeServerThread(this);
-    m_pUaeThread->initialize();
-
     m_pConnBuilder = new UaeConnImpl(this);
-    QuaesarDebuggerServersMgr* pSvMgr = ((QuasarApp*)getApp())->m_pServersMgr;
+    QuaesarVmServersMgr* pSvMgr = ((QuaesarApplication*)getApp())->m_pVmServersMgr;
     pSvMgr->registerVmServer(EQuaServerId::S_UAE, m_pConnBuilder);
 }
 
@@ -71,12 +68,26 @@ void UaeServerAppPart::destroyImp() {
 
 
 IVm::VM* UaeServerAppPart::getVm() const {
+    if (!m_pUaeThread)
+        return nullptr;
     return m_pUaeThread->getVm();
 }
 
 
 qsr::IVmServerThread* UaeServerAppPart::getUaeThread() const {
     return m_pUaeThread;
+}
+
+
+void UaeServerAppPart::update(float dt, float time) {
+    TSuper::update(dt, time);
+
+    if (m_vmActive > 0) {
+        if (!m_pUaeThread) {
+            m_pUaeThread = new UaeServerThread(this);
+            m_pUaeThread->initialize();
+        }
+    }
 }
 
 

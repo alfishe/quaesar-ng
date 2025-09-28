@@ -11,8 +11,7 @@
 #include <nfd.h>
 #include <nfd_sdl2.h>
 #include "amDebugger/vm/vmInterface.h"
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
+#include "qd/imGui/imGui.h"
 #include "qd/imGui/imGuiHelperClass.h"
 #include "qd/log/log.h"
 #include "qd/qui/uiMessages.h"
