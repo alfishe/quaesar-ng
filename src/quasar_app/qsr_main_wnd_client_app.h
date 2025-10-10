@@ -1,5 +1,6 @@
 #include "qd/app/applicationPart.h"
 #include "qsr_app_interfaces.h"
+#include "qsr_application.h"
 #include "ui/uae_wnd_desktop.h"
 
 

@@ -81,7 +81,7 @@ void ExprValStr::parse()
     }
     catch (const ExprError& e)
     {
-        qd::log_debug("[ FAIL ] ParserOop: \"%s\" unexpected error: %s\n", m_strVal.c_str(), e.message());
+        qd::logDbg("[ FAIL ] ParserOop: \"%s\" unexpected error: %s\n", m_strVal.c_str(), e.message());
     }
 }
 

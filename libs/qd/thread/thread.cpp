@@ -44,12 +44,12 @@ int _threadSDLProcStatic(void* _pData)
         }
         G_CATCH(std::exception & ex)
         {
-            log_error("EXCEPTION WARNING: Thread Exists with Exception: \"%s\"", ex.what());
+            logErr("EXCEPTION WARNING: Thread Exists with Exception: \"%s\"", ex.what());
             assert2(0, "Thread - Exception: %s", ex.what());
         };
         G_CATCH(...)
         {
-            log_error("UNHANDLED THREAD EXCEPTION ERROR HAPPENED!");
+            logErr("UNHANDLED THREAD EXCEPTION ERROR HAPPENED!");
             assert2(0, "Thread -Unhandled Exception");
         };
         pThreadData->setOnThreadDone();

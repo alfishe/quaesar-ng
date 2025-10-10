@@ -15,6 +15,7 @@
         };                                      \
     }
 
+namespace qd {
 
 template<typename T>
 class ptr;
@@ -76,7 +77,7 @@ inline static T* get_ptr_null(const ref_ptr<T>&)
     return (T*)(nullptr);
 }
 
-namespace qd::details {
+namespace details {
 // clang-format off
 template<class T>
 extern void referenced_static_delete(T* pThis);
@@ -84,10 +85,10 @@ template<typename T> class ref_ptr_base;
 template<typename T> class ref_ptr_getter;
 template<typename T> class wref_ptr_getter;
 // clang-format on
-}; // namespace qd::details
+}; // namespace details
 
 
-namespace qd::MP {
+namespace MP {
 template<typename T>
 struct InnerType {
     typedef T type;
@@ -108,9 +109,9 @@ struct assert_cast<T, true> {
     template<class T2>
     inline static void test(T2* pPtr)
     {
-#if !defined(EA_COMPILER_NO_RTTI)
+    #if !defined(EA_COMPILER_NO_RTTI)
         assert((!pPtr || dynamic_cast<T*>(/*(T*)*/ pPtr)) && "BAD DYNAMIC CAST - WRONG TYPES");
-#endif // EA_COMPILER_NO_RTTI
+    #endif // EA_COMPILER_NO_RTTI
     }
 };
 
@@ -119,8 +120,7 @@ struct assert_cast<T, true> {
 
 
 
-
-namespace qd {
+//namespace qd
 
 // USED IN "ref_ptr<T>"
 class RefCounted
@@ -325,11 +325,9 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 
-}; // namespace qd
 
 
-
-namespace qd::details {
+namespace details {
 
 
 template<typename T>
@@ -1122,3 +1120,9 @@ inline bool isPtrValid(const qd::details::ref_ptr_base<T>& pPtr)
     return pPtr.valid();
 }
 
+}; // namespace qd
+//////////////////////////////////////////////////////////////////////////
+
+using qd::ref_ptr;
+using qd::wref_ptr;
+using qd::ptr;

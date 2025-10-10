@@ -28,6 +28,7 @@ struct CodeChunk : public eastl::intrusive_list_node {
     qd::array<cda::CodeItem*, cda::g_chunkSize / 2> m_codeItems = {};
     uint16_t m_idx = 0;
     union {
+        EA_DISABLE_VC_WARNING(4201) // nameless struct/union
         uint16_t m_flags = 0;
         struct {
             bool m_bAddrValid :1;

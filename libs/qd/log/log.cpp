@@ -56,7 +56,7 @@ qd::Log& logConsole() {
     return instance;
 }
 
-TermMsg log_info(const char* fmt, ...)
+TermMsg logInfo(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -67,7 +67,7 @@ TermMsg log_info(const char* fmt, ...)
 }
 
 
-TermMsg log_debug(const char* fmt, ...)
+TermMsg logDbg(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -78,7 +78,7 @@ TermMsg log_debug(const char* fmt, ...)
 }
 
 
-TermMsg log_warn(const char* fmt, ...)
+TermMsg logWarn(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -88,7 +88,7 @@ TermMsg log_warn(const char* fmt, ...)
     return r; // std::move(r);
 }
 
-TermMsg log_error(const char* fmt, ...)
+TermMsg logErr(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);

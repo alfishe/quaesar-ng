@@ -7,7 +7,7 @@ namespace amD {
 class UaeSharedConnectionImpl;
 
 
-class IVmServiceProvider : public qd::RefCounted
+class IVmDbgServiceBridge : public qd::RefCounted
 {
 public:
     qd::string m_name;
@@ -16,12 +16,12 @@ public:
     virtual ref_ptr<IVm::VM> getClientVm() = 0;
     virtual ref_ptr<IVm::VM> getServerVm() = 0;
 
-}; // IVmServiceProvider
+}; // IVmDbgServiceBridge
 //////////////////////////////////////////////////////////////////////////
 
 
-ref_ptr<IVmServiceProvider> create_dummy_connection();
-ref_ptr<IVmServiceProvider> create_uae_shared_connection(const char* name);
+ref_ptr<IVmDbgServiceBridge> create_dummy_connection();
+ref_ptr<IVmDbgServiceBridge> create_uae_shared_connection(const char* name);
 
 
 }; // namespace amD

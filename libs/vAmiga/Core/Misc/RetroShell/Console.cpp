@@ -508,9 +508,13 @@ Console::seekCommand(const std::vector<string> &argv)
     std::vector<string> args = argv;
     RSCommand *cmd = nullptr;
 
-    for (auto *it = &root; !args.empty() && (it = it->seek(args.front())); ) {
+    for (auto *it = &root; !args.empty(); ) { // fixed: warning C4706: assignment within conditional expression
+
+        auto next = it->seek(args.front());
+        if (!next) break;
 
         args.erase(args.begin());
+        it = next;
         cmd = it;
     }
     return { cmd ? cmd : &root, args };

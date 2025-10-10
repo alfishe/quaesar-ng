@@ -54,13 +54,8 @@ void Debugger::fetchVmState()
 }
 
 
-amD::IVmServiceProvider* Debugger::getConnection() const
-{
-    return m_pConnection.get();
-}
 
-
-void Debugger::setConnection(ref_ptr<IVmServiceProvider> pCon)
+void Debugger::setDbgServiceBridge(ref_ptr<IVmDbgServiceBridge> pCon)
 {
     if (m_pConnection == pCon)
         return;

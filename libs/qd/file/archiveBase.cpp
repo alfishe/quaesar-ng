@@ -556,7 +556,7 @@ void CArchiveBin::_arSaveChunkEnd()
     {
         if (bodySize32 > 0xFFFFFF)
         {
-            log_error("FAILED: To save Tiny File ChunkID: '0x%4.X' ChunkSize=%u ", ChunkItem.m_FileChunk.getId(),
+            logErr("FAILED: To save Tiny File ChunkID: '0x%4.X' ChunkSize=%u ", ChunkItem.m_FileChunk.getId(),
                 bodySize32)
                 ->ASSERT_DLG();
             bodySize32 = 0xFFFFFF;
@@ -569,7 +569,7 @@ void CArchiveBin::_arSaveChunkEnd()
     {
         if (bodySize32 > 0xFFFF)
         {
-            log_error("FAILED: Chunk4 content is too long to save. ChunkID: '0x%4.X' ChunkSize=%u ",
+            logErr("FAILED: Chunk4 content is too long to save. ChunkID: '0x%4.X' ChunkSize=%u ",
                 ChunkItem.m_FileChunk.getId(), bodySize32)
                 ->ASSERT_DLG();
             bodySize32 = 0xFFFF;
@@ -581,7 +581,7 @@ void CArchiveBin::_arSaveChunkEnd()
     {
         if (bodySize32 > 0xFF)
         {
-            log_error("FAILED: Chunk4 content is too long to save. ChunkID: '0x%4.X' ChunkSize=%u ",
+            logErr("FAILED: Chunk4 content is too long to save. ChunkID: '0x%4.X' ChunkSize=%u ",
                 ChunkItem.m_FileChunk.getId(), bodySize32)
                 ->ASSERT_DLG();
             bodySize32 = 0xFF;

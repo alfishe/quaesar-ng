@@ -1,5 +1,6 @@
 #include "qd/app/applicationPart.h"
 #include "qd/qui/uiOperation.h"
+#include "quasar_app/qsr_application.h"
 
 
 FORWARD_DECLARATION_2(qsr, IVmServerThread);
@@ -14,8 +15,8 @@ namespace qsr {
 // It's a server app-part that runs the VAMIGA emulator in a separate thread
 // and can processes requests to it the Main thread.
 //
-class VAmServerAppPart : public qd::ApplicationPart {
-    TS_BEGIN_REFLECT_CLASS(VAmServerAppPart, qd::ApplicationPart);
+class VAmServerAppPart : public qsr::BaseVmServerAppPart {
+    TS_BEGIN_REFLECT_CLASS(VAmServerAppPart, qsr::BaseVmServerAppPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("VAMIGA Server"));
     TS_END();
 
@@ -31,7 +32,7 @@ public:
     virtual void destroyImp() override;
 
     IVm::VM* getVm() const;
-    qsr::IVmServerThread* getVAmThread() const;
+    virtual qsr::IVmServerThread *getServerThread() override;
 
 };  // class VAmServerAppPart
 

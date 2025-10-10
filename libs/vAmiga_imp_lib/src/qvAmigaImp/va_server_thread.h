@@ -32,7 +32,6 @@ class VAmServerThread : public qsr::IVmServerThread {
     vamiga::VAmiga* m_pVAmiga = nullptr;
     bool m_bRequestToQuit = false;
     bool power_is_on_ = true;
-    int m_threadErr = -1;
     qd::string m_threadErrStr;
 
 public:
@@ -44,6 +43,7 @@ public:
     SDL_atomic_t m_scrFrameNo = {};
     ref_ptr<IVm::imp::VAmVmImp> m_pVm;  // create shared VM
     qsr::VAmServerAppPart* m_pServerApp = nullptr;
+    int m_threadErr = -1;
 
 public:
     VAmServerThread(qsr::VAmServerAppPart* pServerApp);

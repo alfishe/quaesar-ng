@@ -37,7 +37,7 @@ class IModule
 {
 public:
     IModule() = default;
-    virtual void init(IVm::VM *p_vm) {}
+    virtual void init(IVm::VM *) {}
     virtual void fetch() {}
 };
 

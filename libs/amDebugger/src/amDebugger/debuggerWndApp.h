@@ -23,7 +23,7 @@ FORWARD_DECLARATION_2(IVm, VM);
 namespace amD {
 
 class DebuggerDesktop;
-class IVmServiceProvider;
+class IVmDbgServiceBridge;
 
 
 class IVmConnectionsManager
@@ -32,7 +32,7 @@ class IVmConnectionsManager
 
 public:
     virtual uint32_t getNumConnections() = 0;
-    virtual ref_ptr<amD::IVmServiceProvider> createVmProvider(const char* conn_id) = 0;
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createVmProvider(const char* conn_id) = 0;
 }; // class IVmConnectionsManager
 
 

@@ -9,7 +9,7 @@
 namespace amD {
 
 class DebuggerApp;
-class IVmServiceProvider;
+class IVmDbgServiceBridge;
 
 constexpr static int BREAKPOINTS_MAX = 20;
 
@@ -59,7 +59,7 @@ class Debugger
     , public qd::IOperationEnvironment
 {
     DebuggerApp* m_pDbgApp = nullptr;
-    ref_ptr<IVmServiceProvider> m_pConnection;
+    ref_ptr<IVmDbgServiceBridge> m_pConnection;
     ref_ptr<IVm::VM> m_pVm = nullptr; // owner
 
 public:
@@ -69,8 +69,7 @@ public:
     IVm::VM* getVm() const;
     amD::DebuggerApp* getDbgApp() const { return m_pDbgApp; }
 
-    amD::IVmServiceProvider* getConnection() const;
-    void setConnection(ref_ptr<IVmServiceProvider> pCon);
+    void setDbgServiceBridge(ref_ptr<IVmDbgServiceBridge> pCon);
 
     void execConsoleCmd(qd::string&& cmd);
 

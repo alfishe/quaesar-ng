@@ -11,6 +11,8 @@
 #include "rommgr.h"
 #include "newcpu.h"
 // clang-format on
+#include "EABase/config/eacompilertraits.h"
+
 
 #ifdef __x86_64__
 static int os_64bit = 1;
@@ -174,5 +176,8 @@ UINT ResetWriteWatch(LPVOID lpBaseAddress, SIZE_T dwRegionSize) {
 
 /* Prevent od-win32/win32.h from being included */
 #define __WIN32_H__
+
+
+EA_DISABLE_VC_WARNING(4100)  // unreferenced formal parameter
 
 #include "../od-win32/mman.cpp"

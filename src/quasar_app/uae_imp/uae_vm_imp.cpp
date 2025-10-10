@@ -369,7 +369,7 @@ void fill_bank(IVm::Memory* ivmem, EMemSrc id, const ::addrbank& pUaeBank) {
 }
 
 
-void UaeVmImp::Memory::init(IVm::VM* p_vm) {
+void UaeVmImp::Memory::init(IVm::VM*) {
     fill_bank(this, EMemSrc::ROM, ::kickmem_bank);
     fill_bank(this, EMemSrc::CHIP, ::chipmem_bank);
     fill_bank(this, EMemSrc::CUSTOM, ::custom_bank);

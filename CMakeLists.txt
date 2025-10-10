@@ -1,12 +1,16 @@
-# Minimum CMake version requirement
 cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
-#set(CMAKE_GENERATOR_TOOLSET "ClangCl") # test compilation on clang-c
+project(quaesar LANGUAGES CXX)
 
+#set(CMAKE_GENERATOR_TOOLSET "ClangCl") # test compilation on clang-c
 option(ENABLE_CODE_GENERATION "Enable code generation" OFF)
 
-# Project name and languages used
-project(quaesar LANGUAGES CXX)
+if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(WARNING "You are doing an in-source build. Recommended:
+      ${CMAKE_COMMAND} -S ${CMAKE_SOURCE_DIR} -B build
+      ${CMAKE_COMMAND} --build build")
+endif()
+
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -25,6 +29,24 @@ include(scripts/cmake/format_sources.cmake)
 include(external/sdl2/sdl2.cmake)
 
 
+# ---------------------------------------------------------------------------
+# Global list of libraries to link with 'quaesar' collected from child cmake files
+# Children can call: quaesar_add_libs(<lib1> <lib2> ...)
+# ---------------------------------------------------------------------------
+set(QUAESAR_EXTRA_LIBS "" CACHE INTERNAL "Accumulated extra libraries for quaesar final link")
+function(quaesar_add_libs)
+    foreach(lib IN LISTS ARGN)
+        if(lib)
+            list(APPEND QUAESAR_EXTRA_LIBS "${lib}")
+        endif()
+    endforeach()
+    list(REMOVE_DUPLICATES QUAESAR_EXTRA_LIBS)
+    # Write back to cache so subdirectories (different scopes) see updated value
+    set(QUAESAR_EXTRA_LIBS "${QUAESAR_EXTRA_LIBS}" CACHE INTERNAL "Accumulated extra libraries for quaesar final link" FORCE)
+endfunction()
+
+
+
 # Include CMakelists.txt libraries
 set(UAE_CUSTOM_IMPL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/uae_lib_imp" CACHE INTERNAL "Path to UAE custom implementation directory")
 add_subdirectory(libs/uae_lib)
@@ -37,8 +59,12 @@ add_subdirectory(external/nativefiledialog-extended) #nfd
 add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
 add_subdirectory(libs/exprParser)
-add_subdirectory(libs/vAmiga)
-add_subdirectory(libs/vamiga_imp_lib)
+
+option(VAMIGA "Enable VAmiga support" ON)
+if (VAMIGA)
+    include(VAmigaLib.cmake)
+endif()
+#-------------------------------------------------------------------------------------------
 
 # Quasar *.h/cpp files
 file(GLOB_RECURSE QUAESAR_SOURCES "src/*.cpp")
@@ -130,6 +156,9 @@ if (LINUX OR UNIX)
     target_link_libraries(quaesar PRIVATE dl)
 endif()
 
+
+include(user_custoom_plugins.cmake OPTIONAL)
+
 #-------------------------------------------------------------------------------------------
 # Include dirs
 #-------------------------------------------------------------------------------------------
@@ -153,12 +182,12 @@ target_link_libraries(quaesar PRIVATE
     qd
     uae_lib
     amDebugger
-    VamigaImpLib
+    ${QUAESAR_EXTRA_LIBS}
 )
 
 
 #if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
-    #file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
+# file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
 #endif()
 
 

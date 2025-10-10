@@ -95,8 +95,6 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-extern qd::Log& logConsole();
-
 
 class TermMsg
 {
@@ -104,12 +102,12 @@ class TermMsg
 
 public:
     enum eLogMsgType : uint8_t {
-        W_VERBOSE = 0,
+        W_VERBOSE = 1,
         W_DEBUG,
         W_INFO,
         W_WARNING,
         W_ERROR,
-        W_EXCEPTION,
+        W_FATAL,
     };
     qd::string m_logStr;
     eLogMsgType m_nMsgType = TThis::W_INFO;
@@ -148,20 +146,22 @@ public:
         throw this->GET_EXCEPTION(excType);
     }
 
+    const qd::string& getLogStr() const { return m_logStr; }
+
     void _flushLogMsg();
-};
+}; // class TermMsg
 
 
-TermMsg log_info(const char* msg, ...);
-TermMsg log_debug(const char* msg, ...);
-TermMsg log_warn(const char* msg, ...);
-TermMsg log_error(const char* msg, ...);
-
+extern qd::Log& logConsole();
+TermMsg logInfo(const char* msg, ...);
+TermMsg logDbg(const char* msg, ...);
+TermMsg logWarn(const char* msg, ...);
+TermMsg logErr(const char* msg, ...);
 
 
 };  // namespace qd
 //////////////////////////////////////////////////////////////////////////
 
-using qd::log_debug;
-using qd::log_warn;
-using qd::log_error;
+using qd::logDbg;
+using qd::logWarn;
+using qd::logErr;

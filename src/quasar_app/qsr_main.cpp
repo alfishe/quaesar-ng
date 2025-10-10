@@ -7,6 +7,7 @@
 #include <cstdio>
 #include "amDebugger/debuggerWndApp.h"
 #include "cli11/CLI11.hpp"
+#include "qsr_application.h"
 #include "qsr_config.h"
 #include "quaesar.h"
 
@@ -18,9 +19,6 @@
 // WTF SDL2MAIN_LIBRARY - I can't to build it on MacOs
 #define SDL_main main
 #endif  // WIN32
-
-
-QuaesarApplication* g_pApp = nullptr;
 
 
 // Quaesar main
@@ -48,7 +46,7 @@ int SDL_main(int argc, char* argv[]) {
 
     // create Quaesar app
     {
-        g_pApp = new QuaesarApplication();
+        g_pApp = new qsr::QuaesarApplication();
         qd::CreateApplicationParams prm;
         g_pApp->onConstruct(prm);
     }

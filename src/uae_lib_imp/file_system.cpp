@@ -513,7 +513,8 @@ void my_closedir(struct my_opendir_s* mod) {
 }
 
 
-int hdf_write_target(struct hardfiledata* /*hfd*/, void* /*buffer*/, uae_u64 /*offset*/, int /*len*/, uint32_t* error) {
+int hdf_write_target(struct hardfiledata* /*hfd*/, void* /*buffer*/, uae_u64 /*offset*/, int /*len*/,
+                     uint32_t* /*error*/) {
     UNIMPLEMENTED();
     //if (error) *error = 1;
     //return 0;
@@ -699,7 +700,7 @@ int fsdb_set_file_attrs(a_inode_struct* aino) {
 }
 
 
-void fetch_nvrampath(TCHAR* out, int size) {
+void fetch_nvrampath(TCHAR* /*out*/, int /*size*/) {
     UNIMPLEMENTED();
     //if (out && size > 0) out[0] = '\0';
 }

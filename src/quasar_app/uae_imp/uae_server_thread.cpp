@@ -24,6 +24,10 @@ extern void real_main(int argc, TCHAR** argv);
 extern void qs_keyboard_set_translation();
 extern void quae__parseCmdLine(int argc, TCHAR** argv);
 
+namespace amD::uae {
+extern void do_console_cmd_immediate(const char* cmd);
+};  //namespace amD::uae
+
 
 class UaeConsoleQueue {
 public:
@@ -159,7 +163,7 @@ void UaeServerThread::initialize() {
 
 void UaeServerThread::destroy() {
     if (m_pConsoleQueue) {
-        qd::log_debug("Waiting UAE thread over ...");
+        qd::logInfo("Waiting UAE thread over ...");
         execConsoleCmd("q");
         // wait UAE done
         SDL_WaitThread(m_uaeThread, nullptr);

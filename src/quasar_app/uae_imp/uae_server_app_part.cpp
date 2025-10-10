@@ -1,8 +1,8 @@
 #include "uae_server_app_part.h"
+#include "qd/log/log.h"
 #include "qd/thread/thread.h"
 #include "qsr_application.h"
 #include "uae_server_thread.h"
-//#include "uae_vm_imp.h"
 
 
 namespace qsr {
@@ -17,7 +17,7 @@ UaeServerAppPart::~UaeServerAppPart() {
 
 
 //------------------------------------------------------------------------
-class UaeSharedConnectionImpl : public amD::IVmServiceProvider {
+class UaeSharedConnectionImpl : public amD::IVmDbgServiceBridge {
 public:
     ref_ptr<IVm::VM> m_pUaeVm;
 
@@ -38,11 +38,12 @@ public:
 struct UaeConnImpl : public amD::IVmConnectionBuilder {
     UaeServerAppPart* m_pUaeAppPart;
     UaeConnImpl(UaeServerAppPart* pApp) : m_pUaeAppPart(pApp) {
+        assert(pApp);
     }
-    virtual ref_ptr<amD::IVmServiceProvider> createConnection() const override {
-        ref_ptr<IVm::VM> vm = m_pUaeAppPart->getVm();
-        assert(vm);
-        ref_ptr<UaeSharedConnectionImpl> pInst = new UaeSharedConnectionImpl(vm);
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createConnection() const override {
+        ref_ptr<IVm::VM> pVm = m_pUaeAppPart->getVm();
+        assert(pVm);
+        ref_ptr<UaeSharedConnectionImpl> pInst = new UaeSharedConnectionImpl(pVm);
         return pInst;
     }
 };
@@ -55,6 +56,17 @@ void UaeServerAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     m_pConnBuilder = new UaeConnImpl(this);
     QuaesarVmServersMgr* pSvMgr = ((QuaesarApplication*)getApp())->m_pVmServersMgr;
     pSvMgr->registerVmServer(EQuaServerId::S_UAE, m_pConnBuilder);
+
+    createUaeThread();
+}
+
+
+void UaeServerAppPart::createUaeThread() {
+    if (!m_pUaeThread) {
+        qd::logInfo("Creating UaeServerThread...");
+        m_pUaeThread = new UaeServerThread(this);
+        m_pUaeThread->initialize();
+    }
 }
 
 
@@ -74,7 +86,7 @@ IVm::VM* UaeServerAppPart::getVm() const {
 }
 
 
-qsr::IVmServerThread* UaeServerAppPart::getUaeThread() const {
+qsr::IVmServerThread* UaeServerAppPart::getServerThread() {
     return m_pUaeThread;
 }
 
@@ -83,12 +95,19 @@ void UaeServerAppPart::update(float dt, float time) {
     TSuper::update(dt, time);
 
     if (m_vmActive > 0) {
-        if (!m_pUaeThread) {
-            m_pUaeThread = new UaeServerThread(this);
-            m_pUaeThread->initialize();
-        }
+        createUaeThread();
     }
 }
 
+
+class UaeServerProviderFactory : public qsr::IAppPartServerProviderFactory {
+    virtual bool createServerAppPart(qsr::ServerAppPartCreateCtx& ctx) override {
+        ctx.outName = "UAEmu";
+        ctx.outPartPtr = new qsr::UaeServerAppPart();
+        ctx.outTypeInfo = &qd::typeof_<qsr::UaeServerAppPart>();
+        return true;
+    }
+};
+static qsr::plugin_api::RegOnLoadAppPartServerFactory reg_me(std::make_unique<UaeServerProviderFactory>());
 
 };  // namespace qsr

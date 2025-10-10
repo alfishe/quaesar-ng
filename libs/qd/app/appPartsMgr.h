@@ -36,7 +36,7 @@ public:
     void sendAppEventMsg(qd::appMsg::BaseMsg& in_msg);
 
 
-#if 0
+#if 0 // TODO
     template<class TPartClass>
     inline TPartClass* getPart_()
     {
@@ -74,17 +74,19 @@ public:
 
 
     // TPartClass base of ApplicationPart*
-    template<class TPartClass, typename ...TArgs>
-    inline TPartClass* createPart_(qd::string name, TArgs&&... args)
+    template<class TAppPartClass, typename ...TArgs>
+    inline TAppPartClass* createPart_(qd::string name, TArgs&&... args)
     {
-        TPartClass* pPart = new TPartClass(args...);
         qd::ApplicationPart::OnCreate_t prm;
         prm.name = name;
-        prm.typeInfo = &qd::typeof_<TPartClass>();
+        prm.typeInfo = &qd::typeof_<TAppPartClass>();
         prm.app = getApp();
-        addPart(pPart);
-        pPart->onPartCreate(prm);
-        return pPart;
+
+        TAppPartClass* pNewInst = new TAppPartClass(args...);
+        qd::ApplicationPart* pBasePtr(pNewInst);
+        pBasePtr->onPartCreate(prm);
+        addPart(pBasePtr);
+        return pNewInst;
     }
 
     ApplicationPart* findPartByName(const qd::string& strPartID) const;

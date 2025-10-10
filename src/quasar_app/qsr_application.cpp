@@ -1,4 +1,5 @@
 #include "qsr_application.h"
+#include <vector>
 #include "SDL.h"
 #include "amDebugger/dbgConnection.h"
 #include "amDebugger/debuggerServer.h"
@@ -7,13 +8,25 @@
 #include "qd/imGui/imGuiContextManager.h"
 #include "qsr_main_wnd_client_app.h"
 #include "uae_imp/uae_server_app_part.h"
-#include "vamiga_imp/va_server_app_part.h"
 
 
 namespace amD::uae {
 extern void on_app_exit_debug();
 extern void on_app_exit_drawing();
 };  // namespace amD::uae
+
+qsr::QuaesarApplication* g_pApp = nullptr;
+
+
+namespace qsr {
+
+namespace plugin_api {
+static std::vector<std::unique_ptr<IAppPartServerProviderFactory>> app_part_server_factory_list;
+
+RegOnLoadAppPartServerFactory::RegOnLoadAppPartServerFactory(std::unique_ptr<IAppPartServerProviderFactory> factory) {
+    app_part_server_factory_list.push_back(std::move(factory));
+}
+};  //namespace plugin_api
 
 
 QuaesarApplication::QuaesarApplication() {
@@ -33,22 +46,37 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
 
     m_pVmServersMgr = new QuaesarVmServersMgr(this);
 
-    qd::AppPartsManager* appParts = getAppParts();
-    m_pUaeServerAppPart = appParts->createPart_<qsr::UaeServerAppPart>("UAE server thread");
-    m_pVAmServerAppPart = appParts->createPart_<qsr::VAmServerAppPart>("VAmiga server thread");
+    qd::AppPartsManager* pAppParts = getAppParts();
+    //     m_pUaeServerAppPart = pAppParts->createPart_<qsr::UaeServerAppPart>("UAE server thread");
+    //     m_pVAmServerAppPart = pAppParts->createPart_<qsr::VAmServerAppPart>("VAmiga server thread");
+
+    for (auto& it : plugin_api::app_part_server_factory_list) {
+        IAppPartServerProviderFactory* pFactory = it.get();
+        ServerAppPartCreateCtx ctx;
+        ctx.app = this;
+        if (pFactory->createServerAppPart(ctx)) {
+            qsr::BaseVmServerAppPart* pPart = ctx.outPartPtr;
+            pPart->onVmServerCreate(ctx);
+            pAppParts->addPart(ctx.outPartPtr);
+            m_vmServerAppParts.push_back(pPart);
+        }
+    }
+
+    // TODO: Error initialization handling
+
+    const char* vmProviderId = to_string(EQuaServerId::S_UAE /*S_VAMIGA*/);  // TODO
 
     qsr::IVmServerThread* pVmIO;
-    //pVmIO = m_pUaeServerAppPart->getUaeThread();
-    pVmIO = m_pVAmServerAppPart->getVAmThread();
+    pVmIO = m_vmServerAppParts[0]->getServerThread();
 
-    m_pUaeClientAppPart = appParts->createPart_<qsr::UaeClientAppPart>("UAE client app");
+    m_pUaeClientAppPart = pAppParts->createPart_<qsr::UaeClientAppPart>("UAE client app");
     m_pUaeClientAppPart->setVmProvider(pVmIO);
 
-    m_pDebuggerApp = appParts->createPart_<amD::DebuggerApp>("Quaesar Debugger");
+    m_pDebuggerApp = pAppParts->createPart_<amD::DebuggerApp>("Quaesar Debugger");
     m_pDebuggerApp->init();
-    ref_ptr<amD::IVmServiceProvider> pCurConnect = m_pVmServersMgr->createVmProvider(to_string(EQuaServerId::S_VAMIGA));
+    ref_ptr<amD::IVmDbgServiceBridge> pCurConnect = m_pVmServersMgr->createVmProvider(vmProviderId);
     assert(pCurConnect);
-    getDbg()->setConnection(pCurConnect);
+    getDbg()->setDbgServiceBridge(pCurConnect);
 
     m_pUaeClientAppPart->bringWndToFront();
 }
@@ -97,7 +125,7 @@ uint32_t QuaesarVmServersMgr::getNumConnections() {
 }
 
 
-ref_ptr<amD::IVmServiceProvider> QuaesarVmServersMgr::createVmProvider(const char* id) {
+ref_ptr<amD::IVmDbgServiceBridge> QuaesarVmServersMgr::createVmProvider(const char* id) {
     amD::IVmConnectionBuilder* pConnBuilder = findVmConnBuilderByStrId(id);
     if (!pConnBuilder)
         return nullptr;
@@ -136,3 +164,15 @@ const char* EQuaServerId::toString() const {
             return "UNKNOWN";
     }
 }
+
+
+void BaseVmServerAppPart::onVmServerCreate(qsr::ServerAppPartCreateCtx& ctx) {
+    qd::ApplicationPart::OnCreate_t prm;
+    prm.app = ctx.app;
+    prm.name = ctx.outName;
+    prm.typeInfo = ctx.outTypeInfo;
+    onPartCreate(prm);
+}
+
+
+};  // namespace qsr
