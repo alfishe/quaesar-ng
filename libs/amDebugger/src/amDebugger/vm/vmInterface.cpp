@@ -1,4 +1,5 @@
 #include "vmInterface.h"
+#include "EASTL/span.h"
 
 namespace IVm {
 
@@ -7,8 +8,6 @@ namespace IVm {
 
 
 VM::VM()
-    : m_pModules({(IModule**)(&mem), (IModule**)(&cpu), (IModule**)&custom, (IModule**)&copper, (IModule**)&blitter,
-          (IModule**)&floppies[0]})
 {}
 
 
@@ -17,9 +16,9 @@ VM::~VM() {}
 
 void VM::init()
 {
-    for (IModule** curModule : m_pModules)
+    for (IModule* curModule : eastl::span<IModule *>(&m_modSectBeg, &m_modSectEnd))
     {
-        IModule* pCurMod = *curModule;
+        IModule* pCurMod = curModule;
         if (pCurMod)
             pCurMod->init(this);
     }
@@ -29,9 +28,9 @@ void VM::init()
 
 void VM::fetchStateFromEmu()
 {
-    for (IModule** curModule : m_pModules)
+    for (IModule* curModule : eastl::span<IModule *>(&m_modSectBeg, &m_modSectEnd))
     {
-        IModule* pCurMod = *curModule;
+        IModule* pCurMod = curModule;
         if (pCurMod)
             pCurMod->fetch();
     }

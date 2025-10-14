@@ -34,14 +34,14 @@ namespace IVm::imp {
 
 VAmVmImp::VAmVmImp(VAmServerThread* pVAmThread, vamiga::VAmiga* pVAmiga) {
   m_pVAmThread = pVAmThread;
-  m_vaAmiga = pVAmiga;
-  m_vaAccess = new QuaesarVAmigaInjectAccess(m_vaAmiga);
+  m_vAmiga = pVAmiga;
+  m_vaAccess = new QuaesarVAmigaInjectAccess(m_vAmiga);
   main = m_vaAccess->main;
 
   instCpu.m_pVm = this;
-  instCpu.m_pVAmiga = m_vaAmiga;
+  instCpu.m_pVAmiga = m_vAmiga;
   instMemory.m_pVm = this;
-  instMemory.m_pVAmiga = m_vaAmiga;
+  instMemory.m_pVAmiga = m_vAmiga;
   TSuper::cpu = &instCpu;
   TSuper::mem = &instMemory;
   TSuper::custom = &instCustomRegs;
@@ -51,10 +51,10 @@ VAmVmImp::VAmVmImp(VAmServerThread* pVAmThread, vamiga::VAmiga* pVAmiga) {
     instEmu.vm = this;
     TSuper::emu = &instEmu;
   }
-  for (size_t i = 0; i < TSuper::floppies.size(); ++i) {
+  for (size_t i = 0; i < IVm::MAX_FLOPPIES; ++i) {
     VAmVmImp::Floppy& curFloppy = instFloppies[i];
     curFloppy.m_nFloppy = (int)i;
-    TSuper::floppies[i] = &curFloppy;
+    (&floppy0)[i] = &curFloppy;
   }
 }
 
@@ -193,16 +193,16 @@ void VAmVmImp::Emu::setDebugDmaMode(int p_mode) {
 
 void VAmVmImp::setVmDebugMode(EVmDebugMode debug_mode) {
   TSuper::setVmDebugMode(debug_mode);
-  if (debug_mode == EVmDebugMode::Break) {
-    while (!instEmu.isDebugActivatedFull()) {
-      //             ::debugger_active = 0;
-      //             ::debugging = 0;
-      //             ::activate_debugger_new();
-    }
-  } else if (debug_mode == EVmDebugMode::Live) {
-    if (m_pVAmThread) m_pVAmThread->execConsoleCmd("g");
-    //        ::debugger_active = 0;
-  }
+//   if (debug_mode == EVmDebugMode::Break) {
+//     while (!instEmu.isDebugActivatedFull()) {
+//       //             ::debugger_active = 0;
+//       //             ::debugging = 0;
+//       //             ::activate_debugger_new();
+//     }
+//   } else if (debug_mode == EVmDebugMode::Live) {
+//     if (m_pVAmThread) m_pVAmThread->execConsoleCmd("g");
+//     //        ::debugger_active = 0;
+//   }
 }
 
 int VAmVmImp::getVPos() { return 0; }
@@ -234,6 +234,27 @@ void VAmVmImp::Floppy::setEnabled(bool v) {
   //     ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
   //     cfgFloppy.dfxtype = v ? 0 : -1;
 }
+
+
+void VAmVmImp::Floppy::setAdfPath(const qd::string &v)
+{
+    vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
+    df->insert(v.c_str(), m_writeProtect);
+}
+
+
+qd::string VAmVmImp::Floppy::getAdfPath()
+{
+    //vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
+    return "";
+}
+
+
+void VAmVmImp::Floppy::init(IVm::VM *vm)
+{
+    m_pVm = static_cast<VAmVmImp *>(vm);
+}
+
 
 bool VAmVmImp::Cpu::getFlg(ECpuFlg_ f) const {
   switch (f) {
@@ -289,7 +310,7 @@ uint8_t* VAmVmImp::Memory::getRealAddr(AddrRef ptr) {
 
 void VAmVmImp::Memory::init(IVm::VM* p_vm) {
   m_pVm = (VAmVmImp*)p_vm;
-  vamiga::VAmiga* pVAmiga = m_pVm->m_vaAmiga;
+  vamiga::VAmiga* pVAmiga = m_pVm->m_vAmiga;
   const vamiga::MemInfo& memInfo = pVAmiga->mem.getInfo();
   const vamiga::MemConfig& memCfg = pVAmiga->mem.getConfig();
 

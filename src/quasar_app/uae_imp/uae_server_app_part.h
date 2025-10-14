@@ -21,7 +21,7 @@ class UaeServerAppPart : public qsr::BaseVmServerAppPart {
 
 private:
     UaeServerThread* m_pUaeThread = nullptr;
-    ref_ptr<amD::IVmConnectionBuilder> m_pConnBuilder;
+    //ref_ptr<amD::IVmConnectionBuilder> m_pConnBuilder;
     int m_vmActive = -1;
 
 public:

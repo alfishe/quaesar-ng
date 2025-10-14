@@ -3,7 +3,7 @@
 
 
 struct DbgConfig {
-    SINGLETON_DECLARE(DbgConfig);
+    SINGLETON_DECLARATION(DbgConfig);
 
     bool showVHPopsLines = false;
 

@@ -9,22 +9,22 @@ struct SDL_Texture;
 struct SDL_Renderer;
 FORWARD_DECLARATION_1(UaeServerThread);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
-FORWARD_DECLARATION_2(qsr, UaeClientGuiDesktop);
+FORWARD_DECLARATION_2(qsr, QsrMainClientGuiDesktop);
 FORWARD_DECLARATION_2(IVm, VM);
 FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 
 
 namespace qsr {
 
-// ApplicationPart that represents UAE-emulator window in main-thread
+// ApplicationPart that represents in main-thread
 //
-class UaeClientAppPart : public qd::ApplicationPart, public qsr::IOperationsVmEnvHandler {
-    TS_BEGIN_REFLECT_CLASS(UaeClientAppPart, qd::ApplicationPart);
+class QsrMainClientWndApp : public qd::ApplicationPart, public qsr::IOperationsVmEnvHandler {
+    TS_BEGIN_REFLECT_CLASS(QsrMainClientWndApp, qd::ApplicationPart);
     TS_ATTRIBUTE(qd::tsAttr::Name("UAE Client"));
     TS_END();
 
 private:
-    qsr::UaeClientGuiDesktop* m_pUaeWndGui = nullptr;
+    qsr::QsrMainClientGuiDesktop* m_pUaeWndGui = nullptr;
     uint32_t m_renderedFrameNo = ~0u;
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_hWndRenderer = nullptr;
@@ -34,8 +34,8 @@ private:
     bool m_bShowImgui = false;
 
 public:
-    UaeClientAppPart(qsr::IVmServerThread* pVmProvider = nullptr);
-    virtual ~UaeClientAppPart() override;
+    QsrMainClientWndApp(qsr::IVmServerThread* pVmProvider = nullptr);
+    virtual ~QsrMainClientWndApp() override;
 
     virtual void onPartCreate(qd::ApplicationPart::OnCreate_t& prm) override;
 
@@ -71,10 +71,10 @@ public:
 
 private:
     void _drawGuiMenus();
-    void tryRecreateEmuScreenTexture(int newWidth, int newHeight);
+    SDL_Texture* tryRecreateEmuScreenTexture(int newWidth, int newHeight);
     void destroyUaeWindow();
 
-};  // class UaeClientAppPart
+};  // class QsrMainClientWndApp
 //////////////////////////////////////////////////////////////////////////
 
 

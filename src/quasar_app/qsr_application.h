@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>  // unique_ptr
+#include <string>
 #include "amDebugger/debuggerWndApp.h"
 #include "qd/app/application.h"
 #include "qd/typeSystem/typeDeclare.h"
@@ -8,7 +9,7 @@
 FORWARD_DECLARATION_1S(SDL_Window);
 FORWARD_DECLARATION_1S(SDL_Texture);
 FORWARD_DECLARATION_1S(SDL_Renderer);
-FORWARD_DECLARATION_2(qsr, UaeClientAppPart);
+FORWARD_DECLARATION_2(qsr, QsrMainClientWndApp);
 FORWARD_DECLARATION_2(qsr, QuaesarApplication);
 FORWARD_DECLARATION_2(qd, ThreadEvent);
 FORWARD_DECLARATION_2(amD, DebuggerApp);
@@ -29,15 +30,22 @@ class QuaesarApplication : public qd::Application {
 
 public:
     amD::DebuggerApp* m_pDebuggerApp = nullptr;
-    qsr::UaeClientAppPart* m_pUaeClientAppPart = nullptr;
+    qsr::QsrMainClientWndApp* m_pUaeClientAppPart = nullptr;
 
     //qsr::UaeServerAppPart* m_pUaeServerAppPart = nullptr;
     //qsr::VAmServerAppPart* m_pVAmServerAppPart = nullptr;
 
-    qd::vector<BaseVmServerAppPart*> m_vmServerAppParts;
-    QuaesarVmServersMgr* m_pVmServersMgr = nullptr;
+    struct ProviderItem {
+        BaseVmServerAppPart* pServerApp = nullptr;
+        qd::string id;
+        qd::string title;
+    };
 
-    IAppPartServerProviderFactory* m_pCurServerFactory = nullptr;
+    qd::vector<QuaesarApplication::ProviderItem> m_vmServerAppParts;
+
+    //QuaesarVmServersMgr* m_pVmServersMgr = nullptr;
+
+    int m_nCurServerFactory = -1;
 
 public:
     QuaesarApplication();
@@ -54,7 +62,7 @@ public:
     virtual void onSdlEventProc(SDL_Event& event) override;
 
     amD::Debugger* getDbg() const;
-    qsr::UaeClientAppPart* getUaeClientApp() const {
+    qsr::QsrMainClientWndApp* getUaeClientApp() const {
         return m_pUaeClientAppPart;
     }
 
@@ -63,7 +71,7 @@ public:
     amD::DebuggerApp* getDebuggerApp() const {
         return m_pDebuggerApp;
     }
-    qsr::UaeClientAppPart* getUaeClientAppPart() const {
+    qsr::QsrMainClientWndApp* getUaeClientAppPart() const {
         return m_pUaeClientAppPart;
     }
 
@@ -86,6 +94,7 @@ inline const char* to_string(EQuaServerId v) {
 }
 
 
+#if 0
 //------------------------------------------------------------------------
 // VM Servers providers manager
 //
@@ -112,6 +121,7 @@ public:
 
 };  // class QuaesarVmServersMgr
 //////////////////////////////////////////////////////////////////////////
+#endif  //
 
 
 struct ServerAppPartCreateCtx;
@@ -124,7 +134,6 @@ class BaseVmServerAppPart : public qd::ApplicationPart {
 public:
     BaseVmServerAppPart() = default;
 
-    virtual void onVmServerCreate(qsr::ServerAppPartCreateCtx& ctx);
     virtual qsr::IVmServerThread* getServerThread() = 0;
 
 };  // class BaseVmServerAppPart
@@ -133,22 +142,27 @@ public:
 
 struct ServerAppPartCreateCtx {
     qsr::QuaesarApplication* app = nullptr;
-    qd::string outName;
-    const qd::TypeInfo* outTypeInfo = nullptr;
     ref_ptr<qsr::BaseVmServerAppPart> outPartPtr = {};
 };
 
 
 class IAppPartServerProviderFactory {
 public:
+    std::string id = {};
+    std::string guiName = {};
+    virtual void setup() = 0;
     virtual bool createServerAppPart(qsr::ServerAppPartCreateCtx& prm) = 0;
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createConnection() {
+        return nullptr;
+    }
+
     virtual ~IAppPartServerProviderFactory() = default;
 };
 
 
 namespace plugin_api {
 struct RegOnLoadAppPartServerFactory {
-    RegOnLoadAppPartServerFactory(std::unique_ptr<IAppPartServerProviderFactory> factory);
+    RegOnLoadAppPartServerFactory(IAppPartServerProviderFactory* factory);
 };
 };  //namespace plugin_api
 

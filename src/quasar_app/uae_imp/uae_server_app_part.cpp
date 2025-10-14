@@ -35,6 +35,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+/*
 struct UaeConnImpl : public amD::IVmConnectionBuilder {
     UaeServerAppPart* m_pUaeAppPart;
     UaeConnImpl(UaeServerAppPart* pApp) : m_pUaeAppPart(pApp) {
@@ -47,15 +48,43 @@ struct UaeConnImpl : public amD::IVmConnectionBuilder {
         return pInst;
     }
 };
+*/
+
+
+//------------------------------------------------------------------------
+class UaeServerProviderFactory : public qsr::IAppPartServerProviderFactory {
+    qsr::UaeServerAppPart* m_pUaeAppPart = nullptr;
+
+public:
+    virtual void setup() override {
+        id = "uae";
+        guiName = "UAEmu";
+    }
+
+    virtual bool createServerAppPart(qsr::ServerAppPartCreateCtx& ctx) override {
+        m_pUaeAppPart = new qsr::UaeServerAppPart();
+        ctx.outPartPtr = m_pUaeAppPart;
+        return true;
+    }
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createConnection() override {
+        ref_ptr<IVm::VM> pVm = m_pUaeAppPart->getVm();
+        assert(pVm);
+        ref_ptr<UaeSharedConnectionImpl> pInst = new UaeSharedConnectionImpl(pVm);
+        return pInst;
+    }
+};
+static qsr::plugin_api::RegOnLoadAppPartServerFactory reg_me(new UaeServerProviderFactory());
 //////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////////////
 
 void UaeServerAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
-    m_pConnBuilder = new UaeConnImpl(this);
-    QuaesarVmServersMgr* pSvMgr = ((QuaesarApplication*)getApp())->m_pVmServersMgr;
-    pSvMgr->registerVmServer(EQuaServerId::S_UAE, m_pConnBuilder);
+    //     m_pConnBuilder = new UaeConnImpl(this);
+    //     QuaesarVmServersMgr* pSvMgr = ((QuaesarApplication*)getApp())->m_pVmServersMgr;
+    //     pSvMgr->registerVmServer(EQuaServerId::S_UAE, m_pConnBuilder);
 
     createUaeThread();
 }
@@ -99,15 +128,5 @@ void UaeServerAppPart::update(float dt, float time) {
     }
 }
 
-
-class UaeServerProviderFactory : public qsr::IAppPartServerProviderFactory {
-    virtual bool createServerAppPart(qsr::ServerAppPartCreateCtx& ctx) override {
-        ctx.outName = "UAEmu";
-        ctx.outPartPtr = new qsr::UaeServerAppPart();
-        ctx.outTypeInfo = &qd::typeof_<qsr::UaeServerAppPart>();
-        return true;
-    }
-};
-static qsr::plugin_api::RegOnLoadAppPartServerFactory reg_me(std::make_unique<UaeServerProviderFactory>());
 
 };  // namespace qsr

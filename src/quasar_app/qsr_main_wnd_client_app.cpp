@@ -8,9 +8,6 @@
 #include "qsr_config.h"
 #include "qsr_operations.h"
 #include "quaesar.h"
-#include "uae_imp/uae_server_app_part.h"
-#include "uae_imp/uae_server_thread.h"
-#include "uae_imp/uae_vm_imp.h"
 #include "ui/uae_options_wnd.h"
 #include "ui/uae_wnd_desktop.h"
 
@@ -18,13 +15,13 @@
 namespace qsr {
 
 
-UaeClientAppPart::UaeClientAppPart(qsr::IVmServerThread* pVmProvider) : m_pVmProvider(pVmProvider) {
+QsrMainClientWndApp::QsrMainClientWndApp(qsr::IVmServerThread* pVmProvider) : m_pVmProvider(pVmProvider) {
 }
 
-UaeClientAppPart::~UaeClientAppPart() {
+QsrMainClientWndApp::~QsrMainClientWndApp() {
 }
 
-void UaeClientAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
+void QsrMainClientWndApp::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
     TSuper::onPartCreate(prm);
 
     _createMainOsWindow();
@@ -38,12 +35,12 @@ void UaeClientAppPart::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
 
     // UAE's root ui-window
     qd::UiNodeCreator mk;
-    m_pUaeWndGui = mk.make_<qsr::UaeClientGuiDesktop>(this);
+    m_pUaeWndGui = mk.make_<qsr::QsrMainClientGuiDesktop>(this);
     m_pUaeWndGui->init();
 }
 
 
-void UaeClientAppPart::_createMainOsWindow() {
+void QsrMainClientWndApp::_createMainOsWindow() {
     int wndWidth = g_cfg_main->mainWndSizeX;
     int wndHeight = g_cfg_main->mainWndSizeY;
 
@@ -73,12 +70,12 @@ void UaeClientAppPart::_createMainOsWindow() {
     }
 }
 
-void UaeClientAppPart::update(float /*dt*/, float /*time*/) {
+void QsrMainClientWndApp::update(float /*dt*/, float /*time*/) {
     _drawGuiMenus();
 }
 
 
-void UaeClientAppPart::_drawGuiMenus() {
+void QsrMainClientWndApp::_drawGuiMenus() {
     if (!m_bShowImgui)
         return;
     m_pQimGuiCtx->newFrame();
@@ -87,7 +84,7 @@ void UaeClientAppPart::_drawGuiMenus() {
 }
 
 
-void UaeClientAppPart::render() {
+void QsrMainClientWndApp::render() {
     // render Display texture screen
     IVmServerThread* pVmThread = getVmProvider();
     uint32_t curFrame = pVmThread->getScrFrameNo();
@@ -97,14 +94,17 @@ void UaeClientAppPart::render() {
         int curWndSizeX, curWndSizeY;
         SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
 
-        int uaeWidth, uaeHeight;
-        uint32_t* srcDisplayBuf;
-        if (pVmThread->lockDisplayTexBuf(&uaeWidth, &uaeHeight, &srcDisplayBuf)) {
-            if (!uaeWidth || !uaeHeight)
+        int bufWidth, bufHeight;
+        uint32_t* pSrcDisplayBuf = nullptr;
+        if (pVmThread->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
+            if (!bufWidth || !bufHeight)
                 return;
 
+            if (bufHeight < 350)
+                bufHeight *= 2;
+
             // Maintain aspect ratio
-            float image_aspect = (float)uaeWidth / (float)uaeHeight;
+            float image_aspect = (float)bufWidth / (float)bufHeight;
             float window_aspect = (float)curWndSizeX / (float)curWndSizeY;
             int new_width = 0, new_height = 0;
 
@@ -118,18 +118,18 @@ void UaeClientAppPart::render() {
             SDL_Rect rect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
             SDL_RenderClear(m_hWndRenderer);
 
-            tryRecreateEmuScreenTexture(uaeWidth, uaeHeight);  // Recreate texture if needed
-            uint32_t* texture_pixels = nullptr;
+            SDL_Texture* hDisplayTex = tryRecreateEmuScreenTexture(bufWidth, bufHeight);  // Recreate texture if needed
+            void* texture_pixels = nullptr;
             int pitch = 0;
-            if (SDL_LockTexture(m_hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                for (int y = 0; y < uaeHeight; y++) {
-                    uint8_t* dest = (uint8_t*)&texture_pixels[y * uaeWidth];
-                    memcpy(dest, &srcDisplayBuf[y * uaeWidth], uaeWidth * 4);
+            if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
+                for (int curY = 0; curY < bufHeight; curY++) {
+                    uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
+                    memcpy(dest, &pSrcDisplayBuf[curY / 2 * bufWidth], bufWidth * 4);
                 }
-                SDL_UnlockTexture(m_hDisplayTex);
+                SDL_UnlockTexture(hDisplayTex);
             }
 
-            SDL_RenderCopy(m_hWndRenderer, m_hDisplayTex, nullptr, &rect);
+            SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
             pVmThread->unlockDisplayTexBuf();
         }
     }
@@ -142,14 +142,14 @@ void UaeClientAppPart::render() {
 
 
 // Function to recreate a dynamic texture with new dimensions
-void UaeClientAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
+SDL_Texture* QsrMainClientWndApp::tryRecreateEmuScreenTexture(int newWidth, int newHeight) {
     // Get the format of the old texture
     int access, currentWidth, currentHeight;
     Uint32 format;
     if (SDL_QueryTexture(m_hDisplayTex, &format, &access, &currentWidth, &currentHeight) != 0)
-        return;
+        return m_hDisplayTex;
     if (newWidth == currentWidth && newHeight == currentHeight) {
-        return;
+        return m_hDisplayTex;
     }
     // Destroy the old texture
     SDL_DestroyTexture(m_hDisplayTex);
@@ -157,10 +157,11 @@ void UaeClientAppPart::tryRecreateEmuScreenTexture(int newWidth, int newHeight) 
     m_hDisplayTex = SDL_CreateTexture(m_hWndRenderer, format,
                                       access,  // Using the same access pattern as the original
                                       newWidth, newHeight);
+    return m_hDisplayTex;
 }
 
 
-void UaeClientAppPart::destroyImp() {
+void QsrMainClientWndApp::destroyImp() {
     destroyUaeWindow();
 
     if (m_pUaeWndGui) {
@@ -173,13 +174,13 @@ void UaeClientAppPart::destroyImp() {
 }
 
 
-void UaeClientAppPart::bringWndToFront() {
+void QsrMainClientWndApp::bringWndToFront() {
     if (m_pWindow)
         SDL_RaiseWindow(m_pWindow);
 }
 
 
-qd::EFlow UaeClientAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
+qd::EFlow QsrMainClientWndApp::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
     switch (in_msg.id) {
         case qd::appMsg::OnAppRequestToQuit::CID: {
             doOperation_<qsr::operations::QuitQuasarApp>();
@@ -192,7 +193,7 @@ qd::EFlow UaeClientAppPart::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
 }
 
 
-qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
+qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
     IVmServerThread* pVmProvider = getVmProvider();
     uint32_t uaeWndId = SDL_GetWindowID(m_pWindow);
     switch (event.type) {
@@ -244,20 +245,20 @@ qd::EFlow UaeClientAppPart::onSdlEventProc(SDL_Event& event) {
 }
 
 
-IVmServerThread* UaeClientAppPart::getVmProvider() const {
+IVmServerThread* QsrMainClientWndApp::getVmProvider() const {
     assert(m_pVmProvider);
     return m_pVmProvider;
 }
 
 
-void UaeClientAppPart::setVmProvider(qsr::IVmServerThread* VmProvider) {
+void QsrMainClientWndApp::setVmProvider(qsr::IVmServerThread* VmProvider) {
     if (m_pVmProvider == VmProvider)
         return;
     m_pVmProvider = VmProvider;
 }
 
 
-qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
+qd::EFlow QsrMainClientWndApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
         unused(p);
         amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();
@@ -273,12 +274,12 @@ qd::EFlow UaeClientAppPart::applyOperationMsgProcImp(qd::operation::BaseOpArgs* 
 }
 
 
-IVm::VM* UaeClientAppPart::getVm() const {
+IVm::VM* QsrMainClientWndApp::getVm() const {
     return m_pVmProvider->getVm();
 }
 
 
-void UaeClientAppPart::destroyUaeWindow() {
+void QsrMainClientWndApp::destroyUaeWindow() {
     SDL_DestroyTexture(m_hDisplayTex);
     m_hDisplayTex = nullptr;
     SDL_DestroyRenderer(m_hWndRenderer);

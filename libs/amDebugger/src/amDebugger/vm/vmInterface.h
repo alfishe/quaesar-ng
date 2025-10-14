@@ -61,8 +61,8 @@ public:
 
 
 protected:
-    int amiga_width = (754 + 7) & ~7;
-    int amiga_height = 576;
+    int m_scrSizeX = (754 + 7) & ~7;
+    int m_scrSizeY = 576;
     bool mInit = false;
     IVm::EVmDebugMode m_debugMode = IVm::EVmDebugMode::Live;
     VM();
@@ -75,8 +75,8 @@ public:
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* /*args*/) override;
     virtual void applyVmConfig(CfgVmPrefs* prefs);
 
-    int getScreenSizeX() const { return amiga_width; }
-    int getScreenSizeY() const { return amiga_height; }
+    int getScreenSizeX() const { return m_scrSizeX; }
+    int getScreenSizeY() const { return m_scrSizeY; }
     virtual int getCurCycle() { return -1; }
     virtual int getVPos() { return -1; }
     virtual int getHPos() { return -1; }
@@ -84,21 +84,24 @@ public:
     virtual IVm::EVmDebugMode getVmDebugMode() const { return m_debugMode; }
     virtual void setVmDebugMode(IVm::EVmDebugMode debug_mode) { m_debugMode = debug_mode; }; // base
 
+    IVm::IModule* m_modSectBeg = nullptr;
     IVm::Memory* mem = nullptr;
     IVm::Cpu* cpu = nullptr;
     IVm::CustomRegs* custom = nullptr;
     IVm::Copper* copper = nullptr;
     IVm::Blitter* blitter = nullptr;
-    qd::array<IVm::Floppy*, IVm::MAX_FLOPPIES> floppies = {};
+    IVm::Floppy* floppy0 = nullptr;
+    IVm::Floppy* floppy1 = nullptr;
+    IVm::Floppy* floppy2 = nullptr;
+    IVm::Floppy* floppy3 = nullptr;
     IVm::Emu* emu = nullptr;
-
-    qd::array<IModule**, MS_MAX_COUNT> m_pModules;
+    IVm::IModule* m_modSectEnd = nullptr;
 
 }; // class IVm::VM
 //////////////////////////////////////////////////////////////////////////
 
 
-class Floppy : public IModule
+class Floppy : public IVm::IModule
 {
 public:
     int m_nFloppy = 0;
@@ -114,7 +117,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class Emu : public IModule
+class Emu : public IVm::IModule
 {
 public:
     virtual int getDebugDmaMode() { return 0; }
@@ -131,7 +134,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class Memory : public IModule
+class Memory : public IVm::IModule
 {
 public:
     qd::array<IVm::MemBank, EMemSrc::MAX_COUNT> m_banks;
@@ -156,7 +159,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class Cpu : public IModule
+class Cpu : public IVm::IModule
 {
 public:
     virtual uint32_t getRegA(int i) const = 0;
@@ -168,7 +171,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
-class CustomRegs : public IModule
+class CustomRegs : public IVm::IModule
 {
 public:
     virtual void fetch() override = 0;

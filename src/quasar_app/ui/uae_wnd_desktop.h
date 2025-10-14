@@ -13,12 +13,13 @@ public:
 };  // class IOperationsVmEnvHandler
 
 
-class UaeClientGuiDesktop : public qd::UiDesktop, public qd::IOperationEnvironment {
-    TS_REFLECT_CLASS(UaeClientGuiDesktop, qd::UiDesktop);
-    IOperationsVmEnvHandler* m_pUaeClientApp = nullptr;
+//------------------------------------------------------------------------
+class QsrMainClientGuiDesktop : public qd::UiDesktop, public qd::IOperationEnvironment {
+    TS_REFLECT_CLASS(QsrMainClientGuiDesktop, qd::UiDesktop);
+    IOperationsVmEnvHandler* m_pMainClientWndApp = nullptr;
 
 public:
-    UaeClientGuiDesktop(qsr::IOperationsVmEnvHandler* pEmuApp) : m_pUaeClientApp(pEmuApp) {
+    QsrMainClientGuiDesktop(qsr::IOperationsVmEnvHandler* pEmuApp) : m_pMainClientWndApp(pEmuApp) {
     }
 
     void init();
@@ -26,14 +27,16 @@ public:
     virtual IOperationEnvironment* getOpEnvParent() const override;
 
     IOperationsVmEnvHandler* getUaeClientApp() const {
-        return m_pUaeClientApp;
+        return m_pMainClientWndApp;
     }
 
 protected:
     virtual void drawContentImp() override;
     virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const override;
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
-};  // class UaeClientGuiDesktop
+
+};  // class QsrMainClientGuiDesktop
+//////////////////////////////////////////////////////////////////////////
 
 
 };  // namespace qsr

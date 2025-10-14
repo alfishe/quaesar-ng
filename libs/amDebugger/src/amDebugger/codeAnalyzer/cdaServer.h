@@ -59,7 +59,7 @@ struct CodeChunk : public eastl::intrusive_list_node {
 
 class M68CodeDisassembler
 {
-    SINGLETON_DECLARE(M68CodeDisassembler);
+    SINGLETON_DECLARATION(M68CodeDisassembler);
 
 public:
     csh* m_pCapstone = nullptr;

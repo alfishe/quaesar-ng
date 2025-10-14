@@ -16,6 +16,7 @@
 FORWARD_DECLARATION_1(VAmServerThread);
 FORWARD_DECLARATION_2(vamiga, VAmiga);
 class QuaesarVAmigaInjectAccess;
+#undef main
 
 
 namespace IVm::imp {
@@ -25,7 +26,7 @@ class VAmVmImp final : public IVm::VM {
     typedef IVm::VM TSuper;
 public:
     VAmServerThread* m_pVAmThread = nullptr;
-    vamiga::VAmiga* m_vaAmiga = nullptr;
+    vamiga::VAmiga* m_vAmiga = nullptr;
     vamiga::Amiga* main = nullptr;
     QuaesarVAmigaInjectAccess* m_vaAccess = nullptr;
 
@@ -158,6 +159,8 @@ public:
 
     //------------------------------------------------------------------------
     class Floppy : public IVm::Floppy {
+        VAmVmImp *m_pVm = nullptr;
+        bool m_writeProtect = false;
     public:
         virtual bool getEnabled() override;
         virtual void setEnabled(bool v) override;
@@ -166,11 +169,10 @@ public:
         }
         virtual void setWriteProtect(bool v) override {
         }
-        virtual qd::string getAdfPath() override {
-            return "";
-        }
-        virtual void setAdfPath(const qd::string& v) override {
-        }
+        virtual qd::string getAdfPath() override;
+        virtual void setAdfPath(const qd::string& v) override;
+
+        virtual void init(IVm::VM *) override;
     };
     qd::array<Floppy, IVm::MAX_FLOPPIES> instFloppies = {};
 

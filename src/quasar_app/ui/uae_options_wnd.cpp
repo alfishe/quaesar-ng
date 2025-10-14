@@ -48,7 +48,7 @@ void set_native_window(SDL_Window* sdlWindow, ::nfdwindowhandle_t* nativeWindow)
 static void draw_opt_floppy_cfg(OptionDrawCtx* ctx, int nFloppy) {
     qd::string strDF = qd::string_format("DF%i:", nFloppy);
 
-    IVm::Floppy* pFloppyCfg = ctx->vm->floppies[nFloppy];
+    IVm::Floppy* pFloppyCfg = (&ctx->vm->floppy0)[nFloppy];
     bool bEnabled = pFloppyCfg->getEnabled();
     if (ImGui::Checkbox(strDF.c_str(), &bEnabled))
         pFloppyCfg->setEnabled(bEnabled);  // ? 0 : -1;

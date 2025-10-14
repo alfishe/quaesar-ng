@@ -15,7 +15,7 @@ static constexpr int64_t TTime64_MAX = INT64_MAX;
 
 
 //////////////////////////////////////////////////////////////////////////
-#define SINGLETON_DECLARE(TClassName)      \
+#define SINGLETON_DECLARATION(TClassName)  \
 public:                                    \
     static TClassName& getSingleton()      \
     {                                      \

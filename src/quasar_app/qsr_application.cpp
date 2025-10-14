@@ -21,12 +21,40 @@ qsr::QuaesarApplication* g_pApp = nullptr;
 namespace qsr {
 
 namespace plugin_api {
-static std::vector<std::unique_ptr<IAppPartServerProviderFactory>> app_part_server_factory_list;
 
-RegOnLoadAppPartServerFactory::RegOnLoadAppPartServerFactory(std::unique_ptr<IAppPartServerProviderFactory> factory) {
-    app_part_server_factory_list.push_back(std::move(factory));
+class AppPartServerFactoryListMgr {
+    SINGLETON_DECLARATION(AppPartServerFactoryListMgr);
+
+public:
+    std::vector<std::unique_ptr<IAppPartServerProviderFactory>> m_appPartServerFactoryList;
+
+public:
+    AppPartServerFactoryListMgr() = default;
+    ~AppPartServerFactoryListMgr() {
+        m_appPartServerFactoryList.clear();
+    }
+
+    void addFactory(IAppPartServerProviderFactory* factory) {
+        factory->setup();
+        m_appPartServerFactoryList.push_back(std::unique_ptr<IAppPartServerProviderFactory>(factory));
+    }
+
+    IAppPartServerProviderFactory* findFactoryById(const char* id) {
+        for (const auto& factory : m_appPartServerFactoryList) {
+            if (factory->id == id)
+                return factory.get();
+        }
+        return nullptr;
+    }
+
+};  // class AppPartServerFactoryListMgr
+
+
+RegOnLoadAppPartServerFactory::RegOnLoadAppPartServerFactory(IAppPartServerProviderFactory* factory) {
+    AppPartServerFactoryListMgr::get().addFactory(factory);
 }
 };  //namespace plugin_api
+//////////////////////////////////////////////////////////////////////////
 
 
 QuaesarApplication::QuaesarApplication() {
@@ -35,7 +63,7 @@ QuaesarApplication::QuaesarApplication() {
 
 
 QuaesarApplication::~QuaesarApplication() {
-    SAFE_DELETE(m_pVmServersMgr);
+    //SAFE_DELETE(m_pVmServersMgr);
 }
 
 
@@ -44,39 +72,52 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
 
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
-    m_pVmServersMgr = new QuaesarVmServersMgr(this);
+    //m_pVmServersMgr = new QuaesarVmServersMgr(this);
 
     qd::AppPartsManager* pAppParts = getAppParts();
-    //     m_pUaeServerAppPart = pAppParts->createPart_<qsr::UaeServerAppPart>("UAE server thread");
-    //     m_pVAmServerAppPart = pAppParts->createPart_<qsr::VAmServerAppPart>("VAmiga server thread");
 
-    for (auto& it : plugin_api::app_part_server_factory_list) {
-        IAppPartServerProviderFactory* pFactory = it.get();
-        ServerAppPartCreateCtx ctx;
-        ctx.app = this;
-        if (pFactory->createServerAppPart(ctx)) {
-            qsr::BaseVmServerAppPart* pPart = ctx.outPartPtr;
-            pPart->onVmServerCreate(ctx);
-            pAppParts->addPart(ctx.outPartPtr);
-            m_vmServerAppParts.push_back(pPart);
-        }
+    const char* vmProviderId = nullptr;
+    //vmProviderId = "uae";
+    vmProviderId = "vamiga";
+
+    IAppPartServerProviderFactory* pFactory =
+        plugin_api::AppPartServerFactoryListMgr::get().findFactoryById(vmProviderId);
+    assert(pFactory);
+    ServerAppPartCreateCtx ctx;
+    ctx.app = this;
+    if (pFactory->createServerAppPart(ctx)) {
+        qsr::BaseVmServerAppPart* pPart = ctx.outPartPtr;
+
+        ProviderItem& item = m_vmServerAppParts.push_back();
+        item.pServerApp = pPart;
+        item.title = pFactory->guiName.c_str();
+        item.id = pFactory->id.c_str();
+
+        qd::ApplicationPart::OnCreate_t prm;
+        prm.app = ctx.app;
+        prm.name = pFactory->id.c_str();
+        pPart->onPartCreate(prm);
+        pAppParts->addPart(ctx.outPartPtr);
     }
 
     // TODO: Error initialization handling
 
-    const char* vmProviderId = to_string(EQuaServerId::S_UAE /*S_VAMIGA*/);  // TODO
+    m_nCurServerFactory = 0;
 
     qsr::IVmServerThread* pVmIO;
-    pVmIO = m_vmServerAppParts[0]->getServerThread();
+    const QuaesarApplication::ProviderItem* provItem = &m_vmServerAppParts[m_nCurServerFactory];
+    pVmIO = provItem->pServerApp->getServerThread();
 
-    m_pUaeClientAppPart = pAppParts->createPart_<qsr::UaeClientAppPart>("UAE client app");
+    m_pUaeClientAppPart = pAppParts->createPart_<qsr::QsrMainClientWndApp>("UAE client app");
     m_pUaeClientAppPart->setVmProvider(pVmIO);
 
     m_pDebuggerApp = pAppParts->createPart_<amD::DebuggerApp>("Quaesar Debugger");
     m_pDebuggerApp->init();
-    ref_ptr<amD::IVmDbgServiceBridge> pCurConnect = m_pVmServersMgr->createVmProvider(vmProviderId);
+
+    ref_ptr<amD::IVmDbgServiceBridge> pCurConnect = pFactory->createConnection();
     assert(pCurConnect);
-    getDbg()->setDbgServiceBridge(pCurConnect);
+    amD::Debugger* pDbg = getDbg();
+    pDbg->setDbgServiceBridge(pCurConnect);
 
     m_pUaeClientAppPart->bringWndToFront();
 }
@@ -104,13 +145,14 @@ amD::Debugger* QuaesarApplication::getDbg() const {
 
 
 void* QuaesarApplication::getInterface(const qd::TypeInfo& p_interface) {
-    if (QuaesarVmServersMgr::getStaticTypeInfo().isDerivedFrom(p_interface)) {
-        return m_pVmServersMgr;
-    }
+    //     if (QuaesarVmServersMgr::getStaticTypeInfo().isDerivedFrom(p_interface)) {
+    //         return m_pVmServersMgr;
+    //     }
     return TSuper::getInterface(p_interface);
 }
 
 
+#if 0
 QuaesarVmServersMgr::QuaesarVmServersMgr(QuaesarApplication* pApp) : m_pApp(pApp) {
 }
 
@@ -164,15 +206,7 @@ const char* EQuaServerId::toString() const {
             return "UNKNOWN";
     }
 }
-
-
-void BaseVmServerAppPart::onVmServerCreate(qsr::ServerAppPartCreateCtx& ctx) {
-    qd::ApplicationPart::OnCreate_t prm;
-    prm.app = ctx.app;
-    prm.name = ctx.outName;
-    prm.typeInfo = ctx.outTypeInfo;
-    onPartCreate(prm);
-}
+#endif  //
 
 
 };  // namespace qsr

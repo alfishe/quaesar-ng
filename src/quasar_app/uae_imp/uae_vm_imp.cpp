@@ -56,10 +56,10 @@ UaeVmImp::UaeVmImp() {
         instEmu.vm = this;
         TSuper::emu = &instEmu;
     }
-    for (size_t i = 0; i < TSuper::floppies.size(); ++i) {
+    for (size_t i = 0; i < IVm::MAX_FLOPPIES; ++i) {
         UaeVmImp::Floppy& curFloppy = instFloppies[i];
         curFloppy.m_nFloppy = (int)i;
-        TSuper::floppies[i] = &curFloppy;
+        (&floppy0)[i] = &curFloppy;
     }
 }
 
