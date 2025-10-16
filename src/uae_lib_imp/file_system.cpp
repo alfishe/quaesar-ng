@@ -723,7 +723,7 @@ static int fsdb_name_invalid_2x(const char* n, int dir) {
     char c = (b == '\0' ? b : n[2]);
     char d = (c == '\0' ? c : n[3]);
     size_t l = _tcslen(n);
-    int ll;
+    size_t ll;
 
     /* the reserved fsdb filename */
     if (_tcscmp(n, FSDB_FILE) == 0)

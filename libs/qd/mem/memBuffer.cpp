@@ -29,7 +29,9 @@ void MemBuf::expandBuffer(uint32_t newSize)
         {
             m_pBuffer = (uint8_t*)malloc(newSize);
             if (!m_pBuffer)
+            {
                 ASSERT_F(0, "CMemBuf - Out of memory size:%u", newSize);
+            }
         }
     }
     m_nCapacity = newSize;

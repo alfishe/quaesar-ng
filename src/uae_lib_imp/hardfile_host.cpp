@@ -103,7 +103,7 @@ static void rdbdump(FILE* h, uae_u64 offset, uae_u8* buf, int blocksize) {
         if (fseeko64(h, offset, SEEK_SET) != 0)
             break;
         size_t outlen = fread(buf, 1, blocksize, h);
-        if (outlen != blocksize) {
+        if (outlen != (size_t)blocksize) {
             write_log("rdbdump: warning: read %u bytes (not blocksize %u)\n", (uint32_t)outlen, (uint32_t)blocksize);
         }
         fwrite(buf, 1, blocksize, f);
@@ -135,7 +135,7 @@ static int safetycheck(FILE* h, const char* /*name*/, uae_u64 offset, uae_u8* bu
         }
         memset(buf, 0xaa, blocksize);
         outlen = fread(buf, 1, blocksize, h);
-        if (outlen != blocksize) {
+        if (outlen != (size_t)blocksize) {
             write_log("hd ignored, read error %d!\n", errno);
             return 2;
         }
@@ -573,7 +573,7 @@ int hdf_read_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int 
     if (hfd->drive_empty)
         return 0;
     while (len > 0) {
-        int maxlen;
+        size_t maxlen;
         size_t ret = 0;
         if (hfd->physsize < CACHE_SIZE) {
             hfd->cache_valid = 0;
@@ -634,7 +634,7 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
                 memset(tmp, 0xa1, tmplen);
                 hdf_seek(hfd, offset);
                 fread(tmp, 1, tmplen, hfd->handle->h);
-                if (memcmp(hfd->cache, tmp, tmplen) != 0 || outlen != len)
+                if (memcmp(hfd->cache, tmp, tmplen) != 0 || outlen != (size_t)len)
                     gui_message(_T("\"%s\"\n\nblock zero write failed!"), name);
                 xfree(tmp);
             }

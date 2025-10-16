@@ -38,7 +38,9 @@ target_link_libraries(VAmigaImpLib PRIVATE
 
 #Whole archive option is needed to ensure that all windows are linked in the final binary
 if(MSVC)
-target_link_options(VAmigaImpLib INTERFACE "/WHOLEARCHIVE:VAmigaImpLib")
+    target_link_options(VAmigaImpLib INTERFACE "/WHOLEARCHIVE:VAmigaImpLib")
+    target_compile_options(VAmigaImpLib PRIVATE /wd4244) #disable conversion warning
+    target_compile_options(VACore PRIVATE /wd4244) #disable conversion warning
 endif()
 
 #include(../../scripts/cmake/compile_options.cmake)

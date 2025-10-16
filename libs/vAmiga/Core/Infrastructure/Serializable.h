@@ -159,7 +159,7 @@ public:
     COUNT64(const unsigned long long)
     COUNTD(const float)
     COUNTD(const double)
-       
+
     template <class T>
     auto& operator<<(util::Allocator<T> &a)
     {
@@ -498,7 +498,7 @@ public:
         i64 len;
         *this << len;
         v.clear();
-        v.reserve(len);
+        v.reserve((size_t)len);
         for (isize i = 0; i < len; i++) {
             v.push_back(T());
             *this << v.back();

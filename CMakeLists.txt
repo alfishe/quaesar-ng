@@ -17,8 +17,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS False)
 
-# Zlib and disable examples
 
+# Ставим статическую CRT для всех конфигураций (Debug -> /MTd, Release/RelWithDebInfo/MinSizeRel -> /MT)
+if (MSVC)
+    # Включаем опцию чтобы можно было отключить через -DUSE_STATIC_MSVC_RUNTIME=OFF
+    option(USE_STATIC_MSVC_RUNTIME "Link with static MSVC runtime (/MT,/MTd)" ON)
+    if (USE_STATIC_MSVC_RUNTIME)
+        # Генераторное выражение добавляет 'Debug' суффикс только для Debug сборки
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
+endif()
+
+# Zlib and disable examples
 set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(CAPSTONE_M68K_SUPPORT ON CACHE BOOL "" FORCE)
 
@@ -129,6 +139,9 @@ if (WIN32)
     target_compile_definitions(quaesar PUBLIC MICROSOFT_WINDOWS_WINBASE_H_DEFINE_INTERLOCKED_CPLUSPLUS_OVERLOADS=0)
 endif()
 
+if (MSVC AND CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_CONFIGURATION_TYPES "RelWithDebInfo;Debug;Release;MinSizeRel" CACHE STRING "" FORCE)
+endif()
 
  # Link libraries
 if (APPLE OR LINUX OR UNIX)

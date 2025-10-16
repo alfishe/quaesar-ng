@@ -17,6 +17,7 @@ void* operator new[](size_t size, size_t alignment, size_t /*alignmentOffset*/, 
                      unsigned /*debugFlags*/, const char* /*file*/, int /*line*/) {
     // this allocator doesn't support alignment
     EASTL_ASSERT(alignment <= 8);
+    (void)alignment;
     return malloc(size);
 }
 

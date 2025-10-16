@@ -86,12 +86,14 @@ Emulator::_dump(Category category, std::ostream &os) const
     if (category == Category::Debug) {
 
         for (const auto &i : DebugFlagEnum::elements()) {
-
+            (void)i;
             os << tab(DebugFlagEnum::key(i));
+        #ifdef DEBUG
             os << dec(getDebugVariable(DebugFlag(i))) << std::endl;
+        #endif
         }
     }
-    
+
     if (category == Category::Defaults) {
 
         defaults.dump(category, os);
@@ -118,7 +120,7 @@ Emulator::_dump(Category category, std::ostream &os) const
          os << tab("Beam");
          os << " (" << dec(rua.v) << "," << dec(rua.h) << ")" << std::endl;
      }
-    
+
     if (category == Category::State) {
 
         os << tab("Execution state");
@@ -231,18 +233,18 @@ bool
 Emulator::shouldWarp() const
 {
     auto &config = main.getConfig();
-    
+
     if (main.agnus.clock < SEC(config.warpBoot)) {
-        
+
         return true;
     }
-    
+
     switch (config.warpMode) {
-            
+
         case Warp::AUTO:     return main.paula.diskController.spinning();
         case Warp::NEVER:    return false;
         case Warp::ALWAYS:   return true;
-            
+
         default:
             fatalError;
     }
@@ -416,47 +418,47 @@ int
 Emulator::getDebugVariable(DebugFlag flag)
 {
 #ifdef NDEBUG
-    
+
     throw AppError(Fault::OPT_UNSUPPORTED, "Debug variables are only accessible in debug builds.");
-    
+
 #else
-    
+
     switch (flag) {
-            
+
         case DebugFlag::XFILES:           return XFILES;
         case DebugFlag::CNF_DEBUG:        return CNF_DEBUG;
         case DebugFlag::OBJ_DEBUG:        return OBJ_DEBUG;
         case DebugFlag::DEF_DEBUG:        return DEF_DEBUG;
         case DebugFlag::MIMIC_UAE:        return MIMIC_UAE;
-            
+
         case DebugFlag::RUN_DEBUG:        return RUN_DEBUG;
         case DebugFlag::TIM_DEBUG:        return TIM_DEBUG;
         case DebugFlag::WARP_DEBUG:       return WARP_DEBUG;
         case DebugFlag::CMD_DEBUG:        return CMD_DEBUG;
         case DebugFlag::MSG_DEBUG:        return MSG_DEBUG;
         case DebugFlag::SNP_DEBUG:        return SNP_DEBUG;
-            
+
         case DebugFlag::RUA_DEBUG:        return RUA_DEBUG;
         case DebugFlag::RUA_CHECKSUM:     return RUA_CHECKSUM;
         case DebugFlag::RUA_ON_STEROIDS:  return RUA_ON_STEROIDS;
-            
+
         case DebugFlag::CPU_DEBUG:        return CPU_DEBUG;
-            
+
         case DebugFlag::OCSREG_DEBUG:     return OCSREG_DEBUG;
         case DebugFlag::ECSREG_DEBUG:     return ECSREG_DEBUG;
         case DebugFlag::INVREG_DEBUG:     return INVREG_DEBUG;
         case DebugFlag::MEM_DEBUG:        return MEM_DEBUG;
-            
+
         case DebugFlag::DMA_DEBUG:        return DMA_DEBUG;
         case DebugFlag::DDF_DEBUG:        return DDF_DEBUG;
         case DebugFlag::SEQ_DEBUG:        return SEQ_DEBUG;
         case DebugFlag::SEQ_ON_STEROIDS:  return SEQ_ON_STEROIDS;
         case DebugFlag::NTSC_DEBUG:       return NTSC_DEBUG;
-            
+
         case DebugFlag::COP_CHECKSUM:     return COP_CHECKSUM;
         case DebugFlag::COPREG_DEBUG:     return COPREG_DEBUG;
         case DebugFlag::COP_DEBUG:        return COP_DEBUG;
-            
+
         case DebugFlag::BLT_CHECKSUM:     return BLT_CHECKSUM;
         case DebugFlag::BLTREG_DEBUG:     return BLTREG_DEBUG;
         case DebugFlag::BLT_REG_GUARD:    return BLT_REG_GUARD;
@@ -464,7 +466,7 @@ Emulator::getDebugVariable(DebugFlag flag)
         case DebugFlag::BLT_DEBUG:        return BLT_DEBUG;
         case DebugFlag::BLTTIM_DEBUG:     return BLTTIM_DEBUG;
         case DebugFlag::SLOW_BLT_DEBUG:   return SLOW_BLT_DEBUG;
-            
+
         case DebugFlag::BPLREG_DEBUG:     return BPLREG_DEBUG;
         case DebugFlag::BPLDAT_DEBUG:     return BPLDAT_DEBUG;
         case DebugFlag::BPLMOD_DEBUG:     return BPLMOD_DEBUG;
@@ -477,32 +479,32 @@ Emulator::getDebugVariable(DebugFlag flag)
         case DebugFlag::CLX_DEBUG:        return CLX_DEBUG;
         case DebugFlag::BORDER_DEBUG:     return BORDER_DEBUG;
         case DebugFlag::LINE_DEBUG:       return LINE_DEBUG;
-            
+
         case DebugFlag::INTREG_DEBUG:     return INTREG_DEBUG;
         case DebugFlag::INT_DEBUG:        return INT_DEBUG;
-            
+
         case DebugFlag::CIAREG_DEBUG:     return CIAREG_DEBUG;
         case DebugFlag::CIASER_DEBUG:     return CIASER_DEBUG;
         case DebugFlag::CIA_DEBUG:        return CIA_DEBUG;
         case DebugFlag::TOD_DEBUG:        return TOD_DEBUG;
-            
+
         case DebugFlag::ALIGN_HEAD:       return ALIGN_HEAD;
         case DebugFlag::DSK_CHECKSUM:     return DSK_CHECKSUM;
         case DebugFlag::DSKREG_DEBUG:     return DSKREG_DEBUG;
         case DebugFlag::DSK_DEBUG:        return DSK_DEBUG;
         case DebugFlag::MFM_DEBUG:        return MFM_DEBUG;
         case DebugFlag::FS_DEBUG:         return FS_DEBUG;
-            
+
         case DebugFlag::HDR_ACCEPT_ALL:   return HDR_ACCEPT_ALL;
         case DebugFlag::HDR_FS_LOAD_ALL:  return HDR_FS_LOAD_ALL;
         case DebugFlag::WT_DEBUG:         return WT_DEBUG;
-            
+
         case DebugFlag::AUDREG_DEBUG:     return AUDREG_DEBUG;
         case DebugFlag::AUD_DEBUG:        return AUD_DEBUG;
         case DebugFlag::AUDBUF_DEBUG:     return AUDBUF_DEBUG;
         case DebugFlag::AUDVOL_DEBUG:     return AUDVOL_DEBUG;
         case DebugFlag::DISABLE_AUDIRQ:   return DISABLE_AUDIRQ;
-            
+
         case DebugFlag::POSREG_DEBUG:     return POSREG_DEBUG;
         case DebugFlag::JOYREG_DEBUG:     return JOYREG_DEBUG;
         case DebugFlag::POTREG_DEBUG:     return POTREG_DEBUG;
@@ -513,33 +515,33 @@ Emulator::getDebugVariable(DebugFlag flag)
         case DebugFlag::HOLD_MOUSE_L:     return HOLD_MOUSE_L;
         case DebugFlag::HOLD_MOUSE_M:     return HOLD_MOUSE_M;
         case DebugFlag::HOLD_MOUSE_R:     return HOLD_MOUSE_R;
-            
+
         case DebugFlag::ZOR_DEBUG:        return ZOR_DEBUG;
         case DebugFlag::ACF_DEBUG:        return ACF_DEBUG;
         case DebugFlag::FAS_DEBUG:        return FAS_DEBUG;
         case DebugFlag::HDR_DEBUG:        return HDR_DEBUG;
         case DebugFlag::DBD_DEBUG:        return DBD_DEBUG;
-            
+
         case DebugFlag::ADF_DEBUG:        return ADF_DEBUG;
         case DebugFlag::HDF_DEBUG:        return HDF_DEBUG;
         case DebugFlag::DMS_DEBUG:        return DMS_DEBUG;
         case DebugFlag::IMG_DEBUG:        return IMG_DEBUG;
-            
+
         case DebugFlag::RTC_DEBUG:        return RTC_DEBUG;
         case DebugFlag::KBD_DEBUG:        return KBD_DEBUG;
         case DebugFlag::KEY_DEBUG:        return KEY_DEBUG;
-            
+
         case DebugFlag::RSH_DEBUG:        return RSH_DEBUG;
         case DebugFlag::REC_DEBUG:        return REC_DEBUG;
         case DebugFlag::SCK_DEBUG:        return SCK_DEBUG;
         case DebugFlag::SRV_DEBUG:        return SRV_DEBUG;
         case DebugFlag::GDB_DEBUG:        return GDB_DEBUG;
-            
+
         default:
             throw AppError(Fault::OPT_UNSUPPORTED,
                         "Unhandled debug variable: " + string(DebugFlagEnum::key(flag)));
     }
-    
+
 #endif
 }
 
@@ -547,20 +549,20 @@ void
 Emulator::setDebugVariable(DebugFlag flag, bool val)
 {
 #ifdef NDEBUG
-    
+
     throw AppError(Fault::OPT_UNSUPPORTED, "Debug variables are only accessible in debug builds.");
 
 #else
-    
+
     switch (flag) {
-            
+
             // General
         case DebugFlag::XFILES:           XFILES = val; break;
         case DebugFlag::CNF_DEBUG:        CNF_DEBUG = val; break;
         case DebugFlag::OBJ_DEBUG:        OBJ_DEBUG = val; break;
         case DebugFlag::DEF_DEBUG:        DEF_DEBUG = val; break;
         case DebugFlag::MIMIC_UAE:        MIMIC_UAE = val; break;
-            
+
             // Runloop
         case DebugFlag::RUN_DEBUG:        RUN_DEBUG = val; break;
         case DebugFlag::TIM_DEBUG:        TIM_DEBUG = val; break;
@@ -568,33 +570,33 @@ Emulator::setDebugVariable(DebugFlag flag, bool val)
         case DebugFlag::CMD_DEBUG:        CMD_DEBUG = val; break;
         case DebugFlag::MSG_DEBUG:        MSG_DEBUG = val; break;
         case DebugFlag::SNP_DEBUG:        SNP_DEBUG = val; break;
-            
+
             // Run-ahead
         case DebugFlag::RUA_DEBUG:        RUA_DEBUG = val; break;
         case DebugFlag::RUA_CHECKSUM:     RUA_CHECKSUM = val; break;
         case DebugFlag::RUA_ON_STEROIDS:  RUA_ON_STEROIDS = val; break;
-            
+
             // CPU
         case DebugFlag::CPU_DEBUG:        CPU_DEBUG = val; break;
-            
+
             // Memory access
         case DebugFlag::OCSREG_DEBUG:     OCSREG_DEBUG = val; break;
         case DebugFlag::ECSREG_DEBUG:     ECSREG_DEBUG = val; break;
         case DebugFlag::INVREG_DEBUG:     INVREG_DEBUG = val; break;
         case DebugFlag::MEM_DEBUG:        MEM_DEBUG = val; break;
-            
+
             // Agnus
         case DebugFlag::DMA_DEBUG:        DMA_DEBUG = val; break;
         case DebugFlag::DDF_DEBUG:        DDF_DEBUG = val; break;
         case DebugFlag::SEQ_DEBUG:        SEQ_DEBUG = val; break;
         case DebugFlag::SEQ_ON_STEROIDS:  SEQ_ON_STEROIDS = val; break;
         case DebugFlag::NTSC_DEBUG:       NTSC_DEBUG = val; break;
-            
+
             // Copper
         case DebugFlag::COP_CHECKSUM:     COP_CHECKSUM = val; break;
         case DebugFlag::COPREG_DEBUG:     COPREG_DEBUG = val; break;
         case DebugFlag::COP_DEBUG:        COP_DEBUG = val; break;
-            
+
             // Blitter
         case DebugFlag::BLT_CHECKSUM:     BLT_CHECKSUM = val; break;
         case DebugFlag::BLTREG_DEBUG:     BLTREG_DEBUG = val; break;
@@ -603,7 +605,7 @@ Emulator::setDebugVariable(DebugFlag flag, bool val)
         case DebugFlag::BLT_DEBUG:        BLT_DEBUG = val; break;
         case DebugFlag::BLTTIM_DEBUG:     BLTTIM_DEBUG = val; break;
         case DebugFlag::SLOW_BLT_DEBUG:   SLOW_BLT_DEBUG = val; break;
-            
+
             // Denise
         case DebugFlag::BPLREG_DEBUG:     BPLREG_DEBUG = val; break;
         case DebugFlag::BPLDAT_DEBUG:     BPLDAT_DEBUG = val; break;
@@ -617,17 +619,17 @@ Emulator::setDebugVariable(DebugFlag flag, bool val)
         case DebugFlag::CLX_DEBUG:        CLX_DEBUG = val; break;
         case DebugFlag::BORDER_DEBUG:     BORDER_DEBUG = val; break;
         case DebugFlag::LINE_DEBUG:       LINE_DEBUG = val; break;
-            
+
             // Paula
         case DebugFlag::INTREG_DEBUG:     INTREG_DEBUG = val; break;
         case DebugFlag::INT_DEBUG:        INT_DEBUG = val; break;
-            
+
             // CIAs
         case DebugFlag::CIAREG_DEBUG:     CIAREG_DEBUG = val; break;
         case DebugFlag::CIASER_DEBUG:     CIASER_DEBUG = val; break;
         case DebugFlag::CIA_DEBUG:        CIA_DEBUG = val; break;
         case DebugFlag::TOD_DEBUG:        TOD_DEBUG = val; break;
-            
+
             // Floppy Drives
         case DebugFlag::ALIGN_HEAD:       ALIGN_HEAD = val; break;
         case DebugFlag::DSK_CHECKSUM:     DSK_CHECKSUM = val; break;
@@ -635,19 +637,19 @@ Emulator::setDebugVariable(DebugFlag flag, bool val)
         case DebugFlag::DSK_DEBUG:        DSK_DEBUG = val; break;
         case DebugFlag::MFM_DEBUG:        MFM_DEBUG = val; break;
         case DebugFlag::FS_DEBUG:         FS_DEBUG = val; break;
-            
+
             // Hard Drives
         case DebugFlag::HDR_ACCEPT_ALL:   HDR_ACCEPT_ALL = val; break;
         case DebugFlag::HDR_FS_LOAD_ALL:  HDR_FS_LOAD_ALL = val; break;
         case DebugFlag::WT_DEBUG:         WT_DEBUG = val; break;
-            
+
             // Audio
         case DebugFlag::AUDREG_DEBUG:     AUDREG_DEBUG = val; break;
         case DebugFlag::AUD_DEBUG:        AUD_DEBUG = val; break;
         case DebugFlag::AUDBUF_DEBUG:     AUDBUF_DEBUG = val; break;
         case DebugFlag::AUDVOL_DEBUG:     AUDVOL_DEBUG = val; break;
         case DebugFlag::DISABLE_AUDIRQ:   DISABLE_AUDIRQ = val; break;
-            
+
             // Ports
         case DebugFlag::POSREG_DEBUG:     POSREG_DEBUG = val; break;
         case DebugFlag::JOYREG_DEBUG:     JOYREG_DEBUG = val; break;
@@ -659,37 +661,37 @@ Emulator::setDebugVariable(DebugFlag flag, bool val)
         case DebugFlag::HOLD_MOUSE_L:     HOLD_MOUSE_L = val; break;
         case DebugFlag::HOLD_MOUSE_M:     HOLD_MOUSE_M = val; break;
         case DebugFlag::HOLD_MOUSE_R:     HOLD_MOUSE_R = val; break;
-            
+
             // Expansion boards
         case DebugFlag::ZOR_DEBUG:        ZOR_DEBUG = val; break;
         case DebugFlag::ACF_DEBUG:        ACF_DEBUG = val; break;
         case DebugFlag::FAS_DEBUG:        FAS_DEBUG = val; break;
         case DebugFlag::HDR_DEBUG:        HDR_DEBUG = val; break;
         case DebugFlag::DBD_DEBUG:        DBD_DEBUG = val; break;
-            
+
             // Media types
         case DebugFlag::ADF_DEBUG:        ADF_DEBUG = val; break;
         case DebugFlag::HDF_DEBUG:        HDF_DEBUG = val; break;
         case DebugFlag::DMS_DEBUG:        DMS_DEBUG = val; break;
         case DebugFlag::IMG_DEBUG:        IMG_DEBUG = val; break;
-            
+
             // Other components
         case DebugFlag::RTC_DEBUG:        RTC_DEBUG = val; break;
         case DebugFlag::KBD_DEBUG:        KBD_DEBUG = val; break;
         case DebugFlag::KEY_DEBUG:        KEY_DEBUG = val; break;
-            
+
             // Misc
         case DebugFlag::RSH_DEBUG:        RSH_DEBUG = val; break;
         case DebugFlag::REC_DEBUG:        REC_DEBUG = val; break;
         case DebugFlag::SCK_DEBUG:        SCK_DEBUG = val; break;
         case DebugFlag::SRV_DEBUG:        SRV_DEBUG = val; break;
         case DebugFlag::GDB_DEBUG:        GDB_DEBUG = val; break;
-            
+
         default:
             throw AppError(Fault::OPT_UNSUPPORTED,
                         "Unhandled debug variable: " + string(DebugFlagEnum::key(flag)));
     }
-    
+
 #endif
 }
 
