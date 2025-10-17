@@ -81,9 +81,9 @@ public:
 static int uae_thread_main_func(void*) {
     std::vector<const char*> argv;
     argv.push_back("quaesar.exe");
-    argv.reserve(g_cfg_startup->uaeExtArgs.size() * 2 + 1);
+    argv.reserve(g_cfg_startup.uaeExtArgs.size() * 2 + 1);
     // pass remain Quaesar CLI args to UAE
-    for (const auto& s : g_cfg_startup->uaeExtArgs) {
+    for (const auto& s : g_cfg_startup.uaeExtArgs) {
         argv.push_back("-s");
         argv.push_back(s.c_str());
     }
@@ -111,23 +111,23 @@ void UaeServerThread::initialize() {
     ::fixup_prefs(&::currprefs, true);
 
     //const CfgQsrStartup& options = ;
-    if (!g_cfg_startup->input.empty()) {
-        if (qd::ends_with(g_cfg_startup->input, ".exe") || !qd::ends_with(g_cfg_startup->input, ".adf")) {
-            if (FILE* check_file = fopen(g_cfg_startup->input.c_str(), "rb")) {
+    if (!g_cfg_startup.input.empty()) {
+        if (qd::ends_with(g_cfg_startup.input, ".exe") || !qd::ends_with(g_cfg_startup.input, ".adf")) {
+            if (FILE* check_file = fopen(g_cfg_startup.input.c_str(), "rb")) {
                 fclose(check_file);
-                Adf::create_for_exefile(g_cfg_startup->input.c_str());
+                Adf::create_for_exefile(g_cfg_startup.input.c_str());
                 strcpy(::currprefs.floppyslots[0].df, "dummy.adf");
             } else {
-                SDL_Log("can't open input file:'%s'", g_cfg_startup->input.c_str());
+                SDL_Log("can't open input file:'%s'", g_cfg_startup.input.c_str());
             }
         } else {
-            strcpy(::currprefs.floppyslots[0].df, g_cfg_startup->input.c_str());
+            strcpy(::currprefs.floppyslots[0].df, g_cfg_startup.input.c_str());
         }
     }
 
-    if (!g_cfg_startup->serialPort.empty()) {
+    if (!g_cfg_startup.serialPort.empty()) {
         currprefs.use_serial = 1;
-        strcpy(currprefs.sername, g_cfg_startup->serialPort.c_str());
+        strcpy(currprefs.sername, g_cfg_startup.serialPort.c_str());
     }
 
     // Most compatible mode
@@ -141,7 +141,7 @@ void UaeServerThread::initialize() {
     currprefs.win32_filesystem_mangle_reserved_names = true;  // required for FS
     currprefs.filesys_custom_uaefsdb = false;                 // hack to not implement 'custom_fsdb_*' funcs now
 
-    strcpy(currprefs.romfile, g_cfg_startup->kickRomPath.c_str());
+    strcpy(currprefs.romfile, g_cfg_startup.kickRomPath.c_str());
 
     m_scrWidth = 754;
     m_scrHeight = 576;

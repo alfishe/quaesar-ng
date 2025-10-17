@@ -21,7 +21,6 @@ class UaeServerAppPart : public qsr::BaseVmServerAppPart {
 
 private:
     UaeServerThread* m_pUaeThread = nullptr;
-    //ref_ptr<amD::IVmConnectionBuilder> m_pConnBuilder;
     int m_vmActive = -1;
 
 public:
@@ -35,9 +34,8 @@ public:
 
     IVm::VM* getVm() const;
 
-    virtual qsr::IVmServerThread* getServerThread() override;
-
-    virtual void update(float, float) override;
+    virtual qsr::IVmClientPlayer* getVmPlayer() override;
+    virtual void updateAppPart(float, float) override;
 
     void setVmActive(int v) {
         m_vmActive = v;

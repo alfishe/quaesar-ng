@@ -172,7 +172,7 @@ void AppPartsManager::update(float dt, float time)
             if (!pCurPart->isReadyToActivate())
                 continue;
 
-            pCurPart->update(dt, time);
+            pCurPart->updateAppPart(dt, time);
         }
     }
 }
@@ -211,7 +211,7 @@ void AppPartsManager::render()
     for (int i = 0; i < (int)pActParts.size(); ++i)
     {
         ApplicationPart* pCurPart = pActParts[i];
-        pCurPart->render();
+        pCurPart->renderAppPart();
     }
 }
 

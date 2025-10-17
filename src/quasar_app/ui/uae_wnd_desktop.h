@@ -6,36 +6,37 @@
 
 
 namespace qsr {
+class QsrMainClientWndApp;
 
-class IOperationsVmEnvHandler : public qd::IOperationEnvironment, public IVm::IVmHandler {
+
+// Combined IOperationEnvironment and IVmHandler
+class IVmOperationsHandler : public qd::IOperationEnvironment, public IVm::IVmHandler {
 public:
-    virtual IVm::VM* getVm() const = 0;
-};  // class IOperationsVmEnvHandler
+    virtual IVm::VM* getVm() const override = 0;
+};  // class IVmOperationsHandler
 
 
 //------------------------------------------------------------------------
-class QsrMainClientGuiDesktop : public qd::UiDesktop, public qd::IOperationEnvironment {
-    TS_REFLECT_CLASS(QsrMainClientGuiDesktop, qd::UiDesktop);
-    IOperationsVmEnvHandler* m_pMainClientWndApp = nullptr;
+class QsrVmClientPlayerGuiDesktop : public qd::UiDesktop, public qd::IOperationEnvironment {
+    TS_REFLECT_CLASS(QsrVmClientPlayerGuiDesktop, qd::UiDesktop);
+    qsr::QsrMainClientWndApp* m_pVmOpsHandler = nullptr;
 
 public:
-    QsrMainClientGuiDesktop(qsr::IOperationsVmEnvHandler* pEmuApp) : m_pMainClientWndApp(pEmuApp) {
+    QsrVmClientPlayerGuiDesktop(qsr::QsrMainClientWndApp* pEmuApp) : m_pVmOpsHandler(pEmuApp) {
     }
 
     void init();
 
     virtual IOperationEnvironment* getOpEnvParent() const override;
 
-    IOperationsVmEnvHandler* getUaeClientApp() const {
-        return m_pMainClientWndApp;
-    }
+    IVmOperationsHandler* getVmOpsHandler() const;
 
 protected:
     virtual void drawContentImp() override;
     virtual qd::EFlow setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const override;
     virtual qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) override;
 
-};  // class QsrMainClientGuiDesktop
+};  // class QsrVmClientPlayerGuiDesktop
 //////////////////////////////////////////////////////////////////////////
 
 

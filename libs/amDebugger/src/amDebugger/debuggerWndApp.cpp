@@ -129,7 +129,7 @@ void DebuggerApp::destroy()
 }
 
 
-void DebuggerApp::update(float /*dt*/, float /*time*/)
+void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
 {
     if (isWndVisible())
     {
@@ -143,7 +143,7 @@ void DebuggerApp::update(float /*dt*/, float /*time*/)
 }
 
 
-void DebuggerApp::render()
+void DebuggerApp::renderAppPart()
 {
     if (isWndVisible() && m_pQimGuiCtx->m_frameStarted)
         m_pQimGuiCtx->render(qd::Color(128, 128, 128));

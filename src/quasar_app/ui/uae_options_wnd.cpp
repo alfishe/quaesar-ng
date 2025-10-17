@@ -18,6 +18,7 @@
 #include "qd/stl/algorithm.h"
 #include "qd/stl/string.h"
 #include "qsr_config.h"
+#include "qsr_main_wnd_client_app.h"
 
 
 namespace qsr {
@@ -208,7 +209,7 @@ void UaeOptionsDlg::onUiNodeCreated(qd::UiNodeCreator* mk) {
     if (UCategory* pCat = createCategory(EOptionCat::HOST, EOptionCat::ROOT)) {
         pCat->title = "Main options";
         createOption(pCat)->setDrawCb(
-            [](OptionDrawCtx*) { ImGui::Checkbox("Use ESC key to Quit", &g_cfg_main->quitByEsc); });
+            [](OptionDrawCtx*) { ImGui::Checkbox("Use ESC key to Quit", &g_cfg_vm_wnd.quitByEsc); });
     }
 
     //     /*UCategory* pCatCpu =*/createCategory(EOptionCat::CPU, EOptionCat::HARDWARE);

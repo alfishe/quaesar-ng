@@ -17,7 +17,7 @@
 
 namespace qsr {
 
-void QsrMainClientGuiDesktop::init() {
+void QsrVmClientPlayerGuiDesktop::init() {
     qd::imGuiApplyStyleDark();
     ImVec4* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.5f);  // empty background
@@ -27,29 +27,28 @@ void QsrMainClientGuiDesktop::init() {
 }
 
 
-void QsrMainClientGuiDesktop::drawContentImp() {
+void QsrVmClientPlayerGuiDesktop::drawContentImp() {
     // Main TOOLBAR
-    IVm::VM* vm = getUaeClientApp()->getVm();
-
     qd::OperationsRegistry& pOpsReg = qd::OperationsRegistry::get();
-    pOpsReg.testOperationsShortcuts_<
-        // clang-format off
-        amD::operation::UaeResetAmiga
+
+    pOpsReg.testOperationsShortcuts_<  // clang-format off
+        amD::operation::VmEmuReset
         , amD::operation::ToggleTurboEmulation
-        , amD::operation::UaeWndAlwaysOnTop
+        , amD::operation::VmPlayerWndAlwaysOnTop
         , qsr::operations::ShowDebuggerWnd
         , qsr::operations::ShowUaeOptionsWnd
-        // clang-format on
-        >(this);
+        >(this);  // clang-format on
 
     if (ImGui::BeginMainMenuBar()) {
         if (auto p1 = qIm::LockMenu("File")) {
             if (ImGui::MenuItem("Open DF0:")) {
-                IVm::Floppy* cfgFloppy = vm->floppy0;
-                assert(cfgFloppy);
-                qsr::open_file_dlg_select_adf(*cfgFloppy);
-                vm->setVmDebugMode(IVm::EVmDebugMode::Live);
-                doOperation_<amD::operation::UaeResetAmiga>();
+                IVm::VM* vm = getVmOpsHandler()->getVm();
+                IVm::Floppy* cfgFloppy = vm ? vm->floppy0 : nullptr;
+                if (cfgFloppy) {
+                    qsr::open_file_dlg_select_adf(*cfgFloppy);
+                    vm->setVmDebugMode(IVm::EVmDebugMode::Live);
+                }
+                doOperation_<amD::operation::VmEmuReset>();
             }
             qIm::menuItemFromOperationArgs_<qsr::operations::ShowUaeOptionsWnd>(this);
             if (ImGui::MenuItem("Exit")) {
@@ -59,40 +58,47 @@ void QsrMainClientGuiDesktop::drawContentImp() {
 
         if (auto p2 = qIm::LockMenu("Emulator", true)) {
             qIm::menuItemFromOperationArgs_<amD::operation::ToggleTurboEmulation>(this);
-            qIm::menuItemFromOperationArgs_<amD::operation::UaeWndAlwaysOnTop>(this);
-            qIm::menuItemFromOperationArgs_<amD::operation::UaeResetAmiga>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmPlayerWndAlwaysOnTop>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmEmuReset>(this);
+            ImGui::Separator();
+            // todo VM providers list
+            //m_pVmOpsHandler->getVmProvider()->
         }
+
 
         if (auto p2 = qIm::LockMenu("Window", true)) {
             qIm::menuItemFromOperationArgs_<qsr::operations::ShowDebuggerWnd>(this);
         }
-
         ImGui::EndMainMenuBar();
     }
     return TSuper::drawContentImp();
 }
 
 
-qd::IOperationEnvironment* QsrMainClientGuiDesktop::getOpEnvParent() const {
-    assert(m_pMainClientWndApp);
-    return m_pMainClientWndApp;
+qd::IOperationEnvironment* QsrVmClientPlayerGuiDesktop::getOpEnvParent() const {
+    assert(m_pVmOpsHandler);
+    return m_pVmOpsHandler;
 }
 
 
-qd::EFlow QsrMainClientGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const {
+qsr::IVmOperationsHandler* QsrVmClientPlayerGuiDesktop::getVmOpsHandler() const {
+    return m_pVmOpsHandler;
+}
+
+
+qd::EFlow QsrVmClientPlayerGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
-        p->dbgSource = EQuaServerId::S_UAE;
         return EFlow::DONE;
     }
     return EFlow::NO_RESULT;
 }
 
 
-qd::EFlow QsrMainClientGuiDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
+qd::EFlow QsrVmClientPlayerGuiDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowUaeOptionsWnd>()) {
         unused(p);
         qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);
-        IVm::VM* vm = getUaeClientApp()->getVm();
+        IVm::VM* vm = getVmOpsHandler()->getVm();
         pOptionsDlg->setVm(vm);
         this->showModal(pOptionsDlg);
         return EFlow::DONE;

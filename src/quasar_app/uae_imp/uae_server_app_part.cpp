@@ -3,6 +3,7 @@
 #include "qd/thread/thread.h"
 #include "qsr_application.h"
 #include "uae_server_thread.h"
+#include "vm_player_selector.h"
 
 
 namespace qsr {
@@ -41,7 +42,7 @@ struct UaeConnImpl : public amD::IVmConnectionBuilder {
     UaeConnImpl(UaeServerAppPart* pApp) : m_pUaeAppPart(pApp) {
         assert(pApp);
     }
-    virtual ref_ptr<amD::IVmDbgServiceBridge> createConnection() const override {
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createVmDebuggerConnection() const override {
         ref_ptr<IVm::VM> pVm = m_pUaeAppPart->getVm();
         assert(pVm);
         ref_ptr<UaeSharedConnectionImpl> pInst = new UaeSharedConnectionImpl(pVm);
@@ -66,7 +67,7 @@ public:
         ctx.outPartPtr = m_pUaeAppPart;
         return true;
     }
-    virtual ref_ptr<amD::IVmDbgServiceBridge> createConnection() override {
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createVmDebuggerConnection() override {
         ref_ptr<IVm::VM> pVm = m_pUaeAppPart->getVm();
         assert(pVm);
         ref_ptr<UaeSharedConnectionImpl> pInst = new UaeSharedConnectionImpl(pVm);
@@ -115,13 +116,13 @@ IVm::VM* UaeServerAppPart::getVm() const {
 }
 
 
-qsr::IVmServerThread* UaeServerAppPart::getServerThread() {
+qsr::IVmClientPlayer* UaeServerAppPart::getVmPlayer() {
     return m_pUaeThread;
 }
 
 
-void UaeServerAppPart::update(float dt, float time) {
-    TSuper::update(dt, time);
+void UaeServerAppPart::updateAppPart(float dt, float time) {
+    TSuper::updateAppPart(dt, time);
 
     if (m_vmActive > 0) {
         createUaeThread();

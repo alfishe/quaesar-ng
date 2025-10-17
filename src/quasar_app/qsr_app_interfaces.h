@@ -9,7 +9,7 @@ FORWARD_DECLARATION_3(qd, operation, BaseOpArgs);
 
 namespace qsr {
 
-class IVmServerThread {
+class IVmClientPlayer {
 public:
     virtual IVm::VM* getVm() const = 0;
     virtual int getScrFrameNo() = 0;
@@ -18,7 +18,7 @@ public:
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) = 0;
     virtual void unlockDisplayTexBuf() = 0;
 
-};  // class IVmServerThread
+};  // class IVmClientPlayer
 //////////////////////////////////////////////////////////////////////////
 
 };  // namespace qsr

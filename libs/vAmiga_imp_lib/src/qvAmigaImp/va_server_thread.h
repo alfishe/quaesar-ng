@@ -22,7 +22,7 @@ FORWARD_DECLARATION_2S(vamiga, MessageFwd);
 // VAMIGA's parent server-work-thread
 // (it works in the same thread as VAMIGA)
 //
-class VAmServerThread : public qsr::IVmServerThread {
+class VAmServerThread : public qsr::IVmClientPlayer {
     struct SDL_Thread* m_uaeThread = nullptr;  // start VAMIGA in separate thread
     inline static VAmServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;

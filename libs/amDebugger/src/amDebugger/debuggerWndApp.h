@@ -63,8 +63,8 @@ public:
     virtual void onPartCreate(ApplicationPart::OnCreate_t& prm) override;
     void init();
     virtual void destroy() override;
-    virtual void update(float dt, float time) override;
-    virtual void render() override;
+    virtual void updateAppPart(float dt, float time) override;
+    virtual void renderAppPart() override;
     bool isWndVisible() const;
     void setWndVisible(bool v);
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;

@@ -15,15 +15,15 @@
 namespace qsr {
 
 
-QsrMainClientWndApp::QsrMainClientWndApp(qsr::IVmServerThread* pVmProvider) : m_pVmProvider(pVmProvider) {
+QsrMainClientWndApp::QsrMainClientWndApp(qsr::IVmClientPlayer* pVmProvider) : m_pVmClientPlayer(pVmProvider) {
 }
 
 QsrMainClientWndApp::~QsrMainClientWndApp() {
 }
 
-void QsrMainClientWndApp::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
-    TSuper::onPartCreate(prm);
 
+void QsrMainClientWndApp::init() {
+    m_vmSelector.init();
     _createMainOsWindow();
     setPartActive(true);
     setPartRenderable(true);
@@ -35,14 +35,22 @@ void QsrMainClientWndApp::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
 
     // UAE's root ui-window
     qd::UiNodeCreator mk;
-    m_pUaeWndGui = mk.make_<qsr::QsrMainClientGuiDesktop>(this);
-    m_pUaeWndGui->init();
+    m_pDesktop = mk.make_<qsr::QsrVmClientPlayerGuiDesktop>(this);
+    m_pDesktop->init();
+
+    m_nCurVmPlayterId = m_vmSelector.activateVmPlayerByIdStr(getApp(), g_cfg_vm_wnd.vmPlayerId.c_str());
+}
+
+
+void QsrMainClientWndApp::onPartCreate(qd::ApplicationPart::OnCreate_t& prm) {
+    TSuper::onPartCreate(prm);
+    init();
 }
 
 
 void QsrMainClientWndApp::_createMainOsWindow() {
-    int wndWidth = g_cfg_main->mainWndSizeX;
-    int wndHeight = g_cfg_main->mainWndSizeY;
+    int wndWidth = g_cfg_vm_wnd.mainWndSizeX;
+    int wndHeight = g_cfg_vm_wnd.mainWndSizeY;
 
     // Create a window
     uint32_t window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN;
@@ -60,9 +68,9 @@ void QsrMainClientWndApp::_createMainOsWindow() {
         return;
     }
 
-    m_hDisplayTex =
+    m_hVmDisplayTx =
         SDL_CreateTexture(m_hWndRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, wndWidth, wndHeight);
-    if (!m_hDisplayTex) {
+    if (!m_hVmDisplayTx) {
         SDL_Log("Could not create texture: %s", SDL_GetError());
         SDL_DestroyRenderer(m_hWndRenderer);
         SDL_DestroyWindow(m_pWindow);
@@ -70,71 +78,77 @@ void QsrMainClientWndApp::_createMainOsWindow() {
     }
 }
 
-void QsrMainClientWndApp::update(float /*dt*/, float /*time*/) {
+void QsrMainClientWndApp::updateAppPart(float /*dt*/, float /*time*/) {
+    if (!m_pVmClientPlayer && m_nCurVmPlayterId >= 0) {
+        m_pVmClientPlayer = m_vmSelector.getVmPlayer(m_nCurVmPlayterId);
+    }
     _drawGuiMenus();
 }
 
 
 void QsrMainClientWndApp::_drawGuiMenus() {
-    if (!m_bShowImgui)
+    if (!m_bShowGui)
         return;
     m_pQimGuiCtx->newFrame();
-    m_pUaeWndGui->draw();
+    m_pDesktop->draw();
     m_pQimGuiCtx->endFrame();
 }
 
 
-void QsrMainClientWndApp::render() {
-    // render Display texture screen
-    IVmServerThread* pVmThread = getVmProvider();
-    uint32_t curFrame = pVmThread->getScrFrameNo();
-    if (curFrame != m_renderedFrameNo) {
-        m_renderedFrameNo = curFrame;
+void QsrMainClientWndApp::renderAppPart() {
+    // render VM display texture screen
+    IVmClientPlayer* pVmPlayer = getVmProvider();
+    if (pVmPlayer) {
+        uint32_t curFrame = pVmPlayer->getScrFrameNo();
+        if (curFrame != m_renderedFrameNo) {
+            m_renderedFrameNo = curFrame;
 
-        int curWndSizeX, curWndSizeY;
-        SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
+            int curWndSizeX, curWndSizeY;
+            SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
 
-        int bufWidth, bufHeight;
-        uint32_t* pSrcDisplayBuf = nullptr;
-        if (pVmThread->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
-            if (!bufWidth || !bufHeight)
-                return;
+            int bufWidth, bufHeight;
+            uint32_t* pSrcDisplayBuf = nullptr;
+            if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
+                if (!bufWidth || !bufHeight)
+                    return;
 
-            if (bufHeight < 350)
-                bufHeight *= 2;
+                if (bufHeight < 350)
+                    bufHeight *= 2;
 
-            // Maintain aspect ratio
-            float image_aspect = (float)bufWidth / (float)bufHeight;
-            float window_aspect = (float)curWndSizeX / (float)curWndSizeY;
-            int new_width = 0, new_height = 0;
+                // Maintain aspect ratio
+                float image_aspect = (float)bufWidth / (float)bufHeight;
+                float window_aspect = (float)curWndSizeX / (float)curWndSizeY;
+                int new_width = 0, new_height = 0;
 
-            if (window_aspect < image_aspect) {
-                new_width = curWndSizeX;
-                new_height = (int)(curWndSizeX / image_aspect);
-            } else {
-                new_height = curWndSizeY;
-                new_width = (int)(curWndSizeY * image_aspect);
-            }
-            SDL_Rect rect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
-            SDL_RenderClear(m_hWndRenderer);
-
-            SDL_Texture* hDisplayTex = tryRecreateEmuScreenTexture(bufWidth, bufHeight);  // Recreate texture if needed
-            void* texture_pixels = nullptr;
-            int pitch = 0;
-            if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                for (int curY = 0; curY < bufHeight; curY++) {
-                    uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
-                    memcpy(dest, &pSrcDisplayBuf[curY / 2 * bufWidth], bufWidth * 4);
+                if (window_aspect < image_aspect) {
+                    new_width = curWndSizeX;
+                    new_height = (int)(curWndSizeX / image_aspect);
+                } else {
+                    new_height = curWndSizeY;
+                    new_width = (int)(curWndSizeY * image_aspect);
                 }
-                SDL_UnlockTexture(hDisplayTex);
-            }
+                SDL_Rect rect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
+                SDL_RenderClear(m_hWndRenderer);
 
-            SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
-            pVmThread->unlockDisplayTexBuf();
+                SDL_Texture* hDisplayTex =
+                    tryRecreateEmuScreenTexture(bufWidth, bufHeight);  // Recreate texture if needed
+                void* texture_pixels = nullptr;
+                int pitch = 0;
+                if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
+                    for (int curY = 0; curY < bufHeight; curY++) {
+                        uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
+                        memcpy(dest, &pSrcDisplayBuf[curY / 2 * bufWidth], bufWidth * 4);
+                    }
+                    SDL_UnlockTexture(hDisplayTex);
+                }
+
+                SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
+                pVmPlayer->unlockDisplayTexBuf();
+            }
         }
     }
 
-    if (m_bShowImgui)
+    if (m_bShowGui)
         m_pQimGuiCtx->render();
 
     SDL_RenderPresent(m_hWndRenderer);
@@ -146,28 +160,28 @@ SDL_Texture* QsrMainClientWndApp::tryRecreateEmuScreenTexture(int newWidth, int 
     // Get the format of the old texture
     int access, currentWidth, currentHeight;
     Uint32 format;
-    if (SDL_QueryTexture(m_hDisplayTex, &format, &access, &currentWidth, &currentHeight) != 0)
-        return m_hDisplayTex;
+    if (SDL_QueryTexture(m_hVmDisplayTx, &format, &access, &currentWidth, &currentHeight) != 0)
+        return m_hVmDisplayTx;
     if (newWidth == currentWidth && newHeight == currentHeight) {
-        return m_hDisplayTex;
+        return m_hVmDisplayTx;
     }
     // Destroy the old texture
-    SDL_DestroyTexture(m_hDisplayTex);
+    SDL_DestroyTexture(m_hVmDisplayTx);
     // Create a new texture with the desired dimensions
-    m_hDisplayTex = SDL_CreateTexture(m_hWndRenderer, format,
-                                      access,  // Using the same access pattern as the original
-                                      newWidth, newHeight);
-    return m_hDisplayTex;
+    m_hVmDisplayTx = SDL_CreateTexture(m_hWndRenderer, format,
+                                       access,  // Using the same access pattern as the original
+                                       newWidth, newHeight);
+    return m_hVmDisplayTx;
 }
 
 
 void QsrMainClientWndApp::destroyImp() {
     destroyUaeWindow();
 
-    if (m_pUaeWndGui) {
-        m_pUaeWndGui->destroy();
-        //delete m_pUaeWndGui;
-        m_pUaeWndGui = nullptr;
+    if (m_pDesktop) {
+        m_pDesktop->destroy();
+        //delete m_pDesktop;
+        m_pDesktop = nullptr;
     }
 
     SAFE_DESTROY(m_pQimGuiCtx);
@@ -194,7 +208,7 @@ qd::EFlow QsrMainClientWndApp::onAppEventProcImp(qd::appMsg::BaseMsg& in_msg) {
 
 
 qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
-    IVmServerThread* pVmProvider = getVmProvider();
+    IVmClientPlayer* pVmProvider = getVmProvider();
     uint32_t uaeWndId = SDL_GetWindowID(m_pWindow);
     switch (event.type) {
         case SDL_KEYDOWN: {
@@ -207,22 +221,24 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                     // Handle shift + F12
                     doOperation_<qsr::operations::ShowDebuggerWnd>();
                 } else
-                    setShowImgui(!m_bShowImgui);
+                    setShowImgui(!m_bShowGui);
                 return qd::EFlow::STOP;
             } else if (sym.sym == SDLK_ESCAPE) {
-                if (g_cfg_main->quitByEsc) {
+                if (g_cfg_vm_wnd.quitByEsc) {
                     getApp()->requestAppToQuit();
                     return qd::EFlow::STOP;
                 }
             }
-            pVmProvider->pushSdlEvent(event);
+            if (pVmProvider)
+                pVmProvider->pushSdlEvent(event);
             return qd::EFlow::STOP;
         } break;
 
         case SDL_KEYUP: {
             if (event.key.keysym.sym == SDLK_F12)
                 return qd::EFlow::STOP;
-            pVmProvider->pushSdlEvent(event);
+            if (pVmProvider)
+                pVmProvider->pushSdlEvent(event);
         } break;
 
         case SDL_WINDOWEVENT: {
@@ -238,23 +254,22 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
         default:
             break;
     }
-    if (m_bShowImgui)
+    if (m_bShowGui)
         return m_pQimGuiCtx->onSdlEventProc(event);
 
     return qd::EFlow::CONTINUE;
 }
 
 
-IVmServerThread* QsrMainClientWndApp::getVmProvider() const {
-    assert(m_pVmProvider);
-    return m_pVmProvider;
+IVmClientPlayer* QsrMainClientWndApp::getVmProvider() const {
+    return m_pVmClientPlayer;
 }
 
 
-void QsrMainClientWndApp::setVmProvider(qsr::IVmServerThread* VmProvider) {
-    if (m_pVmProvider == VmProvider)
+void QsrMainClientWndApp::setVmPlayer(qsr::IVmClientPlayer* VmProvider) {
+    if (m_pVmClientPlayer == VmProvider)
         return;
-    m_pVmProvider = VmProvider;
+    m_pVmClientPlayer = VmProvider;
 }
 
 
@@ -266,7 +281,7 @@ qd::EFlow QsrMainClientWndApp::applyOperationMsgProcImp(qd::operation::BaseOpArg
         return qd::EFlow::STOP;
     }
     // send operation to UAE thread
-    if (IVmServerThread* pUaeThread = getVmProvider()) {
+    if (IVmClientPlayer* pUaeThread = getVmProvider()) {
         qd::operation::BaseOpArgs* pClonedArgs = args->clone();
         pUaeThread->pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs>(pClonedArgs));
     }
@@ -275,13 +290,13 @@ qd::EFlow QsrMainClientWndApp::applyOperationMsgProcImp(qd::operation::BaseOpArg
 
 
 IVm::VM* QsrMainClientWndApp::getVm() const {
-    return m_pVmProvider->getVm();
+    return m_pVmClientPlayer ? m_pVmClientPlayer->getVm() : nullptr;
 }
 
 
 void QsrMainClientWndApp::destroyUaeWindow() {
-    SDL_DestroyTexture(m_hDisplayTex);
-    m_hDisplayTex = nullptr;
+    SDL_DestroyTexture(m_hVmDisplayTx);
+    m_hVmDisplayTx = nullptr;
     SDL_DestroyRenderer(m_hWndRenderer);
     m_hWndRenderer = nullptr;
     SDL_DestroyWindow(m_pWindow);

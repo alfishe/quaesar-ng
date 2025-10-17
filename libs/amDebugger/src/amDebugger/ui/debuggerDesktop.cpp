@@ -7,11 +7,11 @@
 #include "qd/qui/operationsRegistry.h"
 #include "qd/qui/shortcutMgr.h"
 #include "qd/typeSystem/typeRegistry.h"
+#include "qd/stl/optional.h"
+#include "qd/stl/span.h"
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/shortcutsList.h>
 #include <amDebugger/window/disassembly_wnd.h>
-#include <EASTL/optional.h>
-#include <EASTL/span.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
@@ -52,7 +52,6 @@ void DebuggerDesktop::_drawMainMenuBar()
     if (ImGui::BeginMainMenuBar())
     {
         Debugger* pDbg = m_pDbg;
-        IVm::VM* vm = pDbg->getVm();
 
         if (auto pm = qIm::LockMenu("File"))
         {
@@ -60,13 +59,14 @@ void DebuggerDesktop::_drawMainMenuBar()
 
         if (auto pm = qIm::LockMenu("Emulator"))
         {
-            qIm::menuItemFromOperationArgs_<amD::operation::UaeWndAlwaysOnTop>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::UaeResetAmiga>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmPlayerWndAlwaysOnTop>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmEmuReset>(pDbg);
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
-            IVm::EVmDebugMode debugMode = vm->getVmDebugMode();
+            IVm::VM* vm = pDbg->getVm();
+            IVm::EVmDebugMode debugMode = vm ? vm->getVmDebugMode().get() : IVm::EVmDebugMode::Live;
             qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(pDbg, "", false,
                 debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
@@ -80,6 +80,7 @@ void DebuggerDesktop::_drawMainMenuBar()
             ImGui::Separator();
 
             amD::operation::DebugDmaOption debugDmaOp;
+            if (vm)
             {
                 qd::OperationsRegistry& opMgr = qd::OperationsRegistry::get();
                 const qd::operation::OpDesc& opDesc = opMgr.getOpDesc_(&debugDmaOp);
@@ -185,7 +186,7 @@ void DebuggerDesktop::drawImGuiMainFrame()
             // clang-format off
               amD::operation::DisasmTraceStepInto
             , amD::operation::DebugWaitScanLines
-            , amD::operation::UaeWndAlwaysOnTop
+            , amD::operation::VmPlayerWndAlwaysOnTop
             , amD::operation::DebugTraceContinue
             , amD::operation::DebugTraceStart
             , amD::operation::DisasmToggleBreakpoint
@@ -211,7 +212,7 @@ void DebuggerDesktop::_drawToolBar()
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;
 
         Debugger* dbg = getDbg();
-        eastl::string hint;
+        qd::string hint;
 
         bool isDbgMode = dbg->isDebugActivated();
         if (ImGui::Checkbox("Trace", &isDbgMode))

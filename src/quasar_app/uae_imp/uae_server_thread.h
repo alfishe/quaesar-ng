@@ -19,7 +19,7 @@ FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 // UAE's parent server-work-thread
 // (it works in the same thread as UAE)
 //
-class UaeServerThread : public qsr::IVmServerThread {
+class UaeServerThread : public qsr::IVmClientPlayer {
     struct SDL_Thread* m_uaeThread = nullptr;  // start UAE in separate thread
     inline static UaeServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;

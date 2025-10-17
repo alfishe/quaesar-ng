@@ -1,7 +1,9 @@
+#include "amDebugger/config.h"
 #include "qd/app/applicationPart.h"
 #include "qsr_app_interfaces.h"
 #include "qsr_application.h"
 #include "ui/uae_wnd_desktop.h"
+#include "vm_player_selector.h"
 
 
 struct SDL_Window;
@@ -9,39 +11,53 @@ struct SDL_Texture;
 struct SDL_Renderer;
 FORWARD_DECLARATION_1(UaeServerThread);
 FORWARD_DECLARATION_2(qd, QImGuiContext);
-FORWARD_DECLARATION_2(qsr, QsrMainClientGuiDesktop);
+FORWARD_DECLARATION_2(qsr, QsrVmClientPlayerGuiDesktop);
 FORWARD_DECLARATION_2(IVm, VM);
 FORWARD_DECLARATION_4(amD, vm, imp, UaeVmImp);
 
-
 namespace qsr {
 
-// ApplicationPart that represents in main-thread
+struct CfgQsrMain : public CfgBase {
+    CFG_DECLARE(qsr::CfgQsrMain);
+    bool quitByEsc = true;
+
+    int mainWndSizeX = 754;
+    int mainWndSizeY = 576;
+
+    std::string vmPlayerId = "vamiga";
+};
+inline static CfgQsrMain& g_cfg_vm_wnd = CfgQsrMain::get();
+
+
+//------------------------------------------------------------------------
+// ApplicationPart that represents VM player window with UIDesktop
 //
-class QsrMainClientWndApp : public qd::ApplicationPart, public qsr::IOperationsVmEnvHandler {
+class QsrMainClientWndApp : public qd::ApplicationPart, public qsr::IVmOperationsHandler {
     TS_BEGIN_REFLECT_CLASS(QsrMainClientWndApp, qd::ApplicationPart);
-    TS_ATTRIBUTE(qd::tsAttr::Name("UAE Client"));
+    TS_ATTRIBUTE(qd::tsAttr::Name("Main Quaesar VM player window"));
     TS_END();
 
 private:
-    qsr::QsrMainClientGuiDesktop* m_pUaeWndGui = nullptr;
+    qsr::IVmClientPlayer* m_pVmClientPlayer = nullptr;
+    qsr::QsrVmClientPlayerGuiDesktop* m_pDesktop = nullptr;
+    bool m_bShowGui = false;
     uint32_t m_renderedFrameNo = ~0u;
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_hWndRenderer = nullptr;
-    SDL_Texture* m_hDisplayTex = nullptr;
+    SDL_Texture* m_hVmDisplayTx = nullptr;
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
-    qsr::IVmServerThread* m_pVmProvider = nullptr;
-    bool m_bShowImgui = false;
+    VmPlayersSelector m_vmSelector;
+    int m_nCurVmPlayterId = -1;
 
 public:
-    QsrMainClientWndApp(qsr::IVmServerThread* pVmProvider = nullptr);
+    QsrMainClientWndApp(qsr::IVmClientPlayer* pVmProvider = nullptr);
     virtual ~QsrMainClientWndApp() override;
 
-    virtual void onPartCreate(qd::ApplicationPart::OnCreate_t& prm) override;
+    void init();
 
     void _createMainOsWindow();
-    virtual void update(float dt, float time) override;
-    virtual void render() override;
+    virtual void updateAppPart(float dt, float time) override;
+    virtual void renderAppPart() override;
 
     virtual void destroyImp() override;
 
@@ -56,18 +72,25 @@ public:
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;
 
     bool getShowImgui() const {
-        return m_bShowImgui;
+        return m_bShowGui;
     }
     void setShowImgui(bool ShowImgui) {
-        m_bShowImgui = ShowImgui;
+        m_bShowGui = ShowImgui;
     }
     QuaesarApplication* getApp() const {
         QuaesarApplication* pApp = (QuaesarApplication*)TSuper::getApp();
         return pApp;
     }
 
-    qsr::IVmServerThread* getVmProvider() const;
-    void setVmProvider(qsr::IVmServerThread* VmProvider);
+    qsr::IVmClientPlayer* getVmProvider() const;
+    void setVmPlayer(qsr::IVmClientPlayer* VmProvider);
+
+
+    virtual void onPartCreate(qd::ApplicationPart::OnCreate_t& prm) override;
+
+    qsr::VmPlayersSelector& getVmSelector() const {
+        return const_cast<qsr::VmPlayersSelector&>(m_vmSelector);
+    }
 
 private:
     void _drawGuiMenus();

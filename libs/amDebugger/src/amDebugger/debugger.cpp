@@ -78,7 +78,7 @@ void Debugger::execConsoleCmd(qd::string&& cmd)
 
 bool Debugger::isDebugActivated() const
 {
-    return m_pVm->getVmDebugMode() == EVmDebugMode::Break;
+    return m_pVm ? m_pVm->getVmDebugMode() == EVmDebugMode::Break : false;
 }
 
 

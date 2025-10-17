@@ -111,7 +111,7 @@ qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     //             ::warpmode(2);  // on
     //         }
 
-  } else if (args->cast_<amD::operation::UaeResetAmiga>()) {
+  } else if (args->cast_<amD::operation::VmEmuReset>()) {
     r = true;
     //::uae_reset(1, 1);
 
@@ -127,7 +127,7 @@ qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     cmd.sprintf("fs %i", p->waitScanLines);
     pVAm->execConsoleCmd(eastl::move(cmd));
     return qd::EFlow::SUCCESS;
-  } else if (args->cast_<amD::operation::UaeWndAlwaysOnTop>()) {
+  } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
     r = true;
     //         if (pVAm->isWndAlwaysOnTop()) {
     //             pVAm->setWndAlwaysOnTop(false);

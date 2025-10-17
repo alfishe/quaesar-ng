@@ -7,7 +7,6 @@ namespace qsr::operations {
 
 struct ShowDebuggerWnd : public amD::operation::OperationArgs {
     DECLARE_OPERATION_1(qsr::operations::ShowDebuggerWnd);
-    EQuaServerId dbgSource = EQuaServerId::UNDEF;
 
     static void setup(qd::operation::OpDesc& d) {
         d.m_name = "Activate debugger";

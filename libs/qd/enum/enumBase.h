@@ -6,77 +6,60 @@
 // EnumNamespace = "Namespace::ToEnum::"
 // example: ENUM_DECLARE_BASE(app::shortcut::, EShortcutId, Type, UNDEF);
 //
-#define ENUM_DECLARE_BASE(EnumNamespace, EnumNameStruct, eEnumType, _DefaultValue)        \
-private:                                                                                  \
-    typedef EnumNamespace EnumNameStruct EThis; /* CONCAT NAME */                         \
-protected:                                                                                \
-    typedef eEnumType TEnum;                                                              \
-                                                                                          \
-public:                                                                                   \
-    eEnumType mV; /* member */                                                            \
-    constexpr inline EnumNameStruct()                                                     \
-        : mV(static_cast<TEnum>(_DefaultValue))                                           \
-    {}                                                                                    \
-    template<typename V>                                                                  \
-    constexpr inline EnumNameStruct(V Value)                                              \
-        : mV(static_cast<TEnum>(Value))                                                   \
-    {}                                                                                    \
-    constexpr inline EnumNameStruct(const EnumNameStruct& r)                              \
-        : mV(r.mV)                                                                        \
-    {}                                                                                    \
-    constexpr inline EnumNameStruct& operator= (const EnumNameStruct& r) throw()          \
-    {                                                                                     \
-        mV = r.mV;                                                                        \
-        return *this;                                                                     \
-    }                                                                                     \
-    template<typename V>                                                                  \
-    inline constexpr EnumNameStruct& operator= (const V& Value) throw()                   \
-    {                                                                                     \
-        mV = static_cast<TEnum>(Value);                                                   \
-        return *this;                                                                     \
-    }                                                                                     \
-    inline constexpr operator TEnum () const                                              \
-    {                                                                                     \
-        return mV;                                                                        \
-    }                                                                                     \
-    inline constexpr EnumNameStruct& operator++ () /* ++ prefix */ throw()                \
-    {                                                                                     \
-        mV = (TEnum)(mV + 1); /* -V1016 */                                                \
-        return *this;                                                                     \
-    }                                                                                     \
-    inline constexpr EnumNameStruct& operator-- () throw()                                \
-    {                                                                                     \
-        mV = (TEnum)(mV - 1); /* -V1016 */                                                \
-        return *this;                                                                     \
-    } /* -- prefix */                                                                     \
-    inline constexpr EnumNameStruct operator++ (int) /* postfix ++ */ throw()             \
-    {                                                                                     \
-        EnumNameStruct t(mV);                                                             \
-        mV = (TEnum)(mV + 1); /* -V1016 */                                                \
-        return t;                                                                         \
-    }                                                                                     \
-    inline constexpr EnumNameStruct operator-- (int) /* postfix -- */ throw()             \
-    {                                                                                     \
-        EnumNameStruct t(mV);                                                             \
-        mV = (TEnum)(mV - 1); /* -V1016 */                                                \
-        return t;                                                                         \
-    }                                                                                     \
-    template<typename V>                                                                  \
-    inline constexpr bool operator== (const V& Value) throw()                             \
-    {                                                                                     \
-        return (mV == (TEnum)Value);                                                      \
-    }                                                                                     \
-    template<typename V>                                                                  \
-    inline constexpr bool operator!= (const V& Value) throw()                             \
-    {                                                                                     \
-        return !(mV == (TEnum)Value);                                                     \
-    }                                                                                     \
-    template<typename V>                                                                  \
-    inline constexpr volatile EnumNameStruct& operator= (const V& Value) volatile throw() \
-    {                                                                                     \
-        mV = (TEnum)Value;                                                                \
-        return *this;                                                                     \
+// clang-format off
+#define ENUM_DECLARE_BASE(EnumNamespace, EnumNameStruct, eEnumType, _DefaultValue)                \
+private:                                                                                          \
+    typedef EnumNamespace EnumNameStruct EThis; /* CONCAT NAME */                                 \
+protected:                                                                                        \
+    typedef eEnumType TEnum;                                                                      \
+                                                                                                  \
+public:                                                                                           \
+    eEnumType mV; /* member */                                                                    \
+    constexpr inline EnumNameStruct() : mV(static_cast<TEnum>(_DefaultValue)) {}                  \
+    template<typename V>                                                                          \
+    constexpr inline EnumNameStruct(V Value) : mV(static_cast<TEnum>(Value)) {}                   \
+    constexpr inline EnumNameStruct(const EnumNameStruct& r) : mV(r.mV) {}                        \
+    constexpr inline EnumNameStruct& operator= (const EnumNameStruct& r) throw() {                \
+        mV = r.mV;                                                                                \
+        return *this;                                                                             \
+    }                                                                                             \
+    template<typename V>                                                                          \
+    inline constexpr EnumNameStruct& operator= (const V& Value) throw() {                         \
+        mV = static_cast<TEnum>(Value);                                                           \
+        return *this;                                                                             \
+    }                                                                                             \
+    inline constexpr operator TEnum () const throw() { return mV; }                               \
+    inline constexpr TEnum get() const throw() { return mV; }                                     \
+    inline constexpr EnumNameStruct& operator++ () /* ++ prefix */ throw() {                      \
+        mV = (TEnum)(mV + 1); /* -V1016 */                                                        \
+        return *this;                                                                             \
+    }                                                                                             \
+    inline constexpr EnumNameStruct& operator-- () throw() {  /* --prefix */                      \
+        mV = (TEnum)(mV - 1); /* -V1016 */                                                        \
+        return *this;                                                                             \
+    }                                                                                             \
+    inline constexpr EnumNameStruct operator++ (int) /* postfix ++ */ throw() {                   \
+        EnumNameStruct t(mV);                                                                     \
+        mV = (TEnum)(mV + 1); /* -V1016 */                                                        \
+        return t;                                                                                 \
+    }                                                                                             \
+    inline constexpr EnumNameStruct operator-- (int) /* postfix -- */ throw() {                   \
+        EnumNameStruct t(mV);                                                                     \
+        mV = (TEnum)(mV - 1); /* -V1016 */                                                        \
+        return t;                                                                                 \
+    }                                                                                             \
+    template<typename V>                                                                          \
+    inline constexpr bool operator== (const V& Value) throw() { return (mV == (TEnum)Value);}     \
+    template<typename V>                                                                          \
+    inline constexpr bool operator!= (const V& Value) throw() {                                   \
+        return !(mV == (TEnum)Value);                                                             \
+    }                                                                                             \
+    template<typename V>                                                                          \
+    inline constexpr volatile EnumNameStruct& operator= (const V& Value) volatile throw() {       \
+        mV = (TEnum)Value;                                                                        \
+        return *this;                                                                             \
     }
+// clang-format on
 //////////////////////////////////////////////////////////////////////////
 
 

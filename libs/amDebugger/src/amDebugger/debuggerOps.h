@@ -58,8 +58,8 @@ struct AmDebuggerOperationCreator : public qd::UiOperationCreator {
 //------------------------------------------------------------------------
 // Operations arguments
 //
-struct UaeResetAmiga : public amD::operation::OperationArgs {
-    DECLARE_OPERATION_1(amD::operation::UaeResetAmiga);
+struct VmEmuReset : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::VmEmuReset);
     static void setup(qd::operation::OpDesc& d)
     {
         d.m_id = "reset";
@@ -193,8 +193,8 @@ struct DebugWaitScanLines : public amD::operation::OperationArgs {
 
 
 
-struct UaeWndAlwaysOnTop : public amD::operation::OperationArgs {
-    DECLARE_OPERATION_1(amD::operation::UaeWndAlwaysOnTop);
+struct VmPlayerWndAlwaysOnTop : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::VmPlayerWndAlwaysOnTop);
     static void setup(qd::operation::OpDesc& d)
     {
         d.m_name = "Always on Top";

@@ -84,11 +84,9 @@ public:
     void setApp(qd::Application* pApp) { m_pApp = pApp; }
 
 
-    virtual void update(float /*dt*/, float /*time*/) {}
-    virtual void render() {}
-
-
-    virtual void postRender() {}
+    virtual void updateAppPart(float /*dt*/, float /*time*/) {}
+    virtual void renderAppPart() {}
+    virtual void postRenderAppPart() {}
 
     virtual void destroyImp() {}
     virtual void destroy() override;

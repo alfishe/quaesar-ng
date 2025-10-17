@@ -7,7 +7,7 @@
       "displayName": "x64 Debug",
       "generator": "Visual Studio 17 2022",
       "architecture": { "value": "x64" },
-      "binaryDir": "${sourceDir}/build/x64",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -15,7 +15,7 @@
     {
       "name": "x64",
       "inherits": "x64-debug",
-      "binaryDir": "${sourceDir}/build/x64",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
@@ -25,7 +25,7 @@
       "displayName": "Win32 Debug",
       "generator": "Visual Studio 17 2022",
       "architecture": { "value": "Win32" },
-      "binaryDir": "${sourceDir}/build/win32",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
       }
     },
@@ -33,7 +33,7 @@
       "name": "win32",
       "displayName": "Win32 RelWithDebInfo",
       "inherits": "win32-debug",
-      "binaryDir": "${sourceDir}/build/win32",
+      "binaryDir": "${sourceDir}/build",
       "cacheVariables": {
       }
     }

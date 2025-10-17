@@ -27,12 +27,12 @@ int SDL_main(int argc, char* argv[]) {
 
     CLI::App cliApp{"Quaesar"};
     cliApp.allow_extras();
-    cliApp.add_option("input", g_cfg_startup->input,
+    cliApp.add_option("input", g_cfg_startup.input,
                       "Executable or image file (adf, dms)");  // ->check(CLI::ExistingFile);
-    cliApp.add_option("-k,--kickstart", g_cfg_startup->kickRomPath,
+    cliApp.add_option("-k,--kickstart", g_cfg_startup.kickRomPath,
                       "Path to the kickstart ROM");  // ->check(CLI::ExistingFile);
-    cliApp.add_option("--serial_port", g_cfg_startup->serialPort, "Serial port path");
-    cliApp.add_option("-s", g_cfg_startup->uaeExtArgs,
+    cliApp.add_option("--serial_port", g_cfg_startup.serialPort, "Serial port path");
+    cliApp.add_option("-s", g_cfg_startup.uaeExtArgs,
                       "key followed by the original WinUAE commands. Example:\n"
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
     cliApp.parse(argc, argv);

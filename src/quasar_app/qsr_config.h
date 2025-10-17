@@ -5,16 +5,6 @@
 #include "vector"
 
 
-struct CfgQsrMain : public CfgBase {
-    CFG_DECLARE(CfgQsrMain);
-    bool quitByEsc = true;
-
-    int mainWndSizeX = 754;
-    int mainWndSizeY = 576;
-};
-inline static CfgQsrMain* g_cfg_main = CfgQsrMain::get();
-
-
 //------------------------------------------------------------------------
 struct CfgQsrStartup : public CfgBase {
     CFG_DECLARE(CfgQsrStartup);
@@ -28,4 +18,4 @@ struct CfgQsrStartup : public CfgBase {
 
     std::vector<std::string> uaeExtArgs;
 };
-inline static CfgQsrStartup* g_cfg_startup = CfgQsrStartup::get();
+inline static CfgQsrStartup& g_cfg_startup = CfgQsrStartup::get();

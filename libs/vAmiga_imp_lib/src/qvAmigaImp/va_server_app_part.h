@@ -3,7 +3,7 @@
 #include "quasar_app/qsr_application.h"
 
 
-FORWARD_DECLARATION_2(qsr, IVmServerThread);
+FORWARD_DECLARATION_2(qsr, IVmClientPlayer);
 FORWARD_DECLARATION_2(IVm, VM);
 FORWARD_DECLARATION_2(amD, IVmConnectionBuilder);
 class VAmServerThread;
@@ -32,7 +32,7 @@ public:
     virtual void destroyImp() override;
 
     IVm::VM* getVm() const;
-    virtual qsr::IVmServerThread *getServerThread() override;
+    virtual qsr::IVmClientPlayer *getVmPlayer() override;
 
 };  // class VAmServerAppPart
 

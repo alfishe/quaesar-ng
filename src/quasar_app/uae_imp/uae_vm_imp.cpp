@@ -122,7 +122,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
             ::warpmode(2);  // on
         }
 
-    } else if (args->cast_<amD::operation::UaeResetAmiga>()) {
+    } else if (args->cast_<amD::operation::VmEmuReset>()) {
         r = true;
         ::uae_reset(1, 1);
 
@@ -141,7 +141,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     } else if (args->cast_<qsr::operations::QuitQuasarApp>()) {
         ::quit_program = UAE_QUIT;
         r = true;
-    } else if (args->cast_<amD::operation::UaeWndAlwaysOnTop>()) {
+    } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
         r = true;
         //         if (pUae->isWndAlwaysOnTop()) {
         //             pUae->setWndAlwaysOnTop(false);

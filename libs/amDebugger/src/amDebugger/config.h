@@ -12,10 +12,10 @@ struct CfgBase {
 
 #define CFG_DECLARE(TCfgClass)            \
     TS_REFLECT_CLASS(TCfgClass, CfgBase); \
-    static TCfgClass* get()               \
+    static TCfgClass& get()               \
     {                                     \
         static TCfgClass instance;        \
-        return &instance;                 \
+        return instance;                  \
     }
 
 
@@ -58,4 +58,4 @@ struct CfgVmPrefs : public CfgBase {
     EVmModel model = EVmModel::A500;
     EVmModelCfg modelCfg = EVmModelCfg::A500_DEF;
 };
-inline static CfgVmPrefs* g_cfg_vm_prefs = CfgVmPrefs::get();
+inline static CfgVmPrefs& g_cfg_vm_prefs = CfgVmPrefs::get();

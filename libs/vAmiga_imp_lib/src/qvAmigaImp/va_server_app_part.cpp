@@ -1,7 +1,7 @@
 #include "va_server_app_part.h"
 #include "va_server_thread.h"
 #include "qd/thread/thread.h"
-#include "quasar_app/qsr_application.h"
+#include "quasar_app/vm_player_selector.h"
 
 //------------------------------------------------------------------------
 namespace qsr {
@@ -41,7 +41,7 @@ public:
         return true;
     }
 
-    virtual ref_ptr<amD::IVmDbgServiceBridge> createConnection() override {
+    virtual ref_ptr<amD::IVmDbgServiceBridge> createVmDebuggerConnection() override {
         ref_ptr<IVm::VM> vm = m_pVAmAppPart->getVm();
         assert(vm);
         ref_ptr<qsr::VAmSharedConnectionImpl> pInst = new qsr::VAmSharedConnectionImpl(vm);
@@ -98,7 +98,7 @@ IVm::VM *VAmServerAppPart::getVm() const {
 }
 
 
-qsr::IVmServerThread *VAmServerAppPart::getServerThread() {
+qsr::IVmClientPlayer *VAmServerAppPart::getVmPlayer() {
     return m_pVAmThread;
 }
 
