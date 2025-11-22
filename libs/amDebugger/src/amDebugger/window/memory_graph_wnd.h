@@ -12,8 +12,8 @@ class MemoryGraphWnd : public AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::MemoryGraph, amD::window::MemoryGraphWnd, amD::AmDbgWindow);
 
     ImTextureID m_textureId = 0;
-    qd::Size m_textureSize = {-1, -1};
-    qd::Size m_newTextureSize = {640, 320};
+    qd::Size2 m_textureSize = {-1, -1};
+    qd::Size2 m_newTextureSize = {640, 320};
     float m_lastTextureCreateTime = FLT_MIN;
     IVm::EMemSrc m_curBank = IVm::EMemSrc::CHIP;
     int m_bankOffset = 0x0;

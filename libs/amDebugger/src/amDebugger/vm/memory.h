@@ -88,7 +88,7 @@ public:
         return c_def(this) && m_size != 0;
     }
 
-    qd::span<uint8_t> getSpan() const {
+    qtd::span<uint8_t> getSpan() const {
         return {m_realAddr + m_startAddr, m_size};
     }
 

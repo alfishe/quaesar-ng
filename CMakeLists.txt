@@ -170,7 +170,8 @@ if (LINUX OR UNIX)
 endif()
 
 
-include(user_custoom_plugins.cmake OPTIONAL)
+# Optional plugins dev
+include(user_custom_plugins.cmake OPTIONAL)
 
 #-------------------------------------------------------------------------------------------
 # Include dirs

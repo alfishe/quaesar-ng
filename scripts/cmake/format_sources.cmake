@@ -2,7 +2,7 @@
 
 # Format source code with clang-format
 if(WIN32)
-    set(CLANG_FORMAT_EXE "${CMAKE_SOURCE_DIR}/bin/windows/bin/clang-format.exe")
+    set(CLANG_FORMAT_EXE "${CMAKE_SOURCE_DIR}/bin/win/clang-format.exe")
 else()
     find_program(CLANG_FORMAT_EXE NAMES clang-format)
 endif()

@@ -16,9 +16,7 @@ class VmPlayersSelector {
     int m_nCurServerFactory = 0;
 
 public:
-
-    void init()
-    {
+    void init() {
     }
 
     int activateVmPlayerByIdStr(QuaesarApplication* pApp, const char* vmProviderId);

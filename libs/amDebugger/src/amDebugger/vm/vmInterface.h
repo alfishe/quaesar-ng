@@ -1,10 +1,11 @@
 #pragma once
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/emuDefs.h>
-#include <EASTL/span.h>
 #include <qd/base/baseTypes.h>
-#include <qd/qui/uiOperation.h>
 #include <qd/typeSystem/typeDeclare.h>
+#include <qd/stl/span.h>
+#include <qd/stl/array.h>
+#include <qd/qui/uiOperation.h>
 
 
 struct CfgVmPrefs;
@@ -137,7 +138,7 @@ public:
 class Memory : public IVm::IModule
 {
 public:
-    qd::array<IVm::MemBank, EMemSrc::MAX_COUNT> m_banks;
+    qtd::array<IVm::MemBank, EMemSrc::MAX_COUNT> m_banks;
 
 public:
     const IVm::MemBank* getBankByInd(int ind) const
