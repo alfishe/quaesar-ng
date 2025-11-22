@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include <cstdint>
 
 
 #define SCID(name) qd::fnv1aHash(#name)
@@ -12,8 +12,7 @@ constexpr uint32_t FNV_PRIME_32 = 0x01000193u; // Prime multiplier for FNV
 
 
 // Function to compute the FNV-1a hash for a string
-constexpr uint32_t fnv1aHash(const char* str, size_t len, uint32_t hash = FNV_OFFSET_BASIS_32)
-{
+constexpr uint32_t fnv1aHash(const char* str, size_t len, uint32_t hash = FNV_OFFSET_BASIS_32) {
     // clang-format off
     EA_DISABLE_CLANG_WARNING(-Wunsafe-buffer-usage);
     return (len == 0) ? hash : fnv1aHash(str + 1, len - 1, (hash ^ static_cast<uint8_t>(*str)) * FNV_PRIME_32);
@@ -22,17 +21,14 @@ constexpr uint32_t fnv1aHash(const char* str, size_t len, uint32_t hash = FNV_OF
 }
 
 
-constexpr uint32_t fnv1aHash(const char* str)
-{
+constexpr uint32_t fnv1aHash(const char* str) {
     return fnv1aHash(str, (uint32_t)__builtin_strlen(str));
 }
 
 
 template<typename T>
-uint32_t fnv1aHash_(const T* dat, size_t size, uint32_t hash = FNV_OFFSET_BASIS_32)
-{
+uint32_t fnv1aHash_(const T* dat, size_t size, uint32_t hash = FNV_OFFSET_BASIS_32) {
     return fnv1aHash((const char*)dat, size, hash);
 }
-
 
 }; // namespace qd

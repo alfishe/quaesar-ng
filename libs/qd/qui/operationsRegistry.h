@@ -51,11 +51,11 @@ class OperationsRegistry : public qd::RefCounted
     friend class OperationMgrOperationsListImp;
     //qd::vector<ref_ptr<UiOperation>> m_pOperations;
     using TOpList = qd::vector<ref_ptr<UiOperation>>;
-    qd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
+    qtd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
     // qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
 
     qd::vector<qd::operation::OpDesc> m_OpDescList;
-    qd::vector_map<THash32, uint32_t /*OpDescIndex*/> m_opsCidToDescIdx;
+    qtd::vector_map<THash32, uint32_t /*OpDescIndex*/> m_opsCidToDescIdx;
 
     bool mInit = false;
 
@@ -68,8 +68,7 @@ public:
     void createOperations(qd::UiOperationCreator* ca);
     virtual void destroy();
 
-
-    qd::span<qd::operation::OpDesc const> getOperationsList() const;
+    qtd::span<qd::operation::OpDesc const> getOperationsList() const;
 
     template<typename TClass>
     TClass* getOperation_() const
@@ -90,7 +89,6 @@ public:
     template<typename TOpArg>
     const qd::operation::OpDesc& getOpDesc_(TOpArg* = nullptr) const
     {
-        //const qd::TypeInfo& ti = TOpArg::getStaticTypeInfo();
         const qd::operation::OpDesc* pDesc = findOpDesc(TOpArg::CID);
         assert(pDesc);
         return *pDesc;
@@ -108,13 +106,13 @@ public:
 
     void addOperationDesc(const qd::TypeInfo& ti, qd::operation::OpDesc&& desc);
 
-    void testOperationsShortcuts(qd::IOperationEnvironment* pEnv, qd::span<qd::operation::OpDesc* const> opDescs);
+    void testOperationsShortcuts(qd::IOperationEnvironment* pEnv, qtd::span<qd::operation::OpDesc* const> opDescs);
 
     template<typename ...TOpClass>
     void testOperationsShortcuts_(qd::IOperationEnvironment* pEnv)
     {
         const qd::operation::OpDesc* opDescs[] = {(&getOpDesc_<TOpClass>())...};
-        qd::span<qd::operation::OpDesc* const> spanOpDescs((qd::operation::OpDesc**)opDescs,
+        qtd::span<qd::operation::OpDesc* const> spanOpDescs((qd::operation::OpDesc**)opDescs,
             EAArrayCount(opDescs));
         testOperationsShortcuts(pEnv, spanOpDescs);
     }

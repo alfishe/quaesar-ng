@@ -14,13 +14,12 @@ bool ModuleManager::m_bSingleDestroyed = false;
 ModuleManager* ModuleManager::m_pSingleInstance = 0;
 
 
-ModuleInfo* ModuleManager::registerModule(const ModuleInfo& moduleInfo)
-{
+ModuleInfo* ModuleManager::registerModule(const ModuleInfo& moduleInfo) {
+
     const qd::TypeInfo& moduleId = moduleInfo.getModuleId();
 
     ModuleInfo* pModule = findModuleInfo(moduleId);
-    if (!pModule)
-    {
+    if (!pModule) {
         qd::unique_ptr<ModuleInfo> pNewModule = qd::make_unique<ModuleInfo>(moduleId);
         pModule = pNewModule.get();
         ModuleManager::InfoItem item;
@@ -34,31 +33,28 @@ ModuleInfo* ModuleManager::registerModule(const ModuleInfo& moduleInfo)
 }
 
 
-ModuleInfo* ModuleManager::findModuleInfo(const qd::TypeInfo& moduleId) const
-{
+ModuleInfo* ModuleManager::findModuleInfo(const qd::TypeInfo& moduleId) const {
 
-    for (auto& it : m_pModuleInfoMap)
-    {
-        if (moduleId.isDerivedFrom(*it.m_pType))
+    for (const auto& it : m_pModuleInfoMap) {
+        const ModuleManager::InfoItem& item = it;
+        assert(item.m_pType);
+        if (moduleId.isDerivedFrom(*item.m_pType))
             return it.m_pModuleInfo.get();
     }
     return nullptr;
 }
 
 
-ModuleInfo* ModuleManager::getOrCreateModuleInfo(const qd::TypeInfo& moduleId)
-{
+ModuleInfo* ModuleManager::getOrCreateModuleInfo(const qd::TypeInfo& moduleId) {
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
-    if (!pModuleInfo)
-    {
+    if (!pModuleInfo) {
         pModuleInfo = registerModule(ModuleInfo(moduleId));
     }
     return pModuleInfo;
 }
 
 
-void ModuleManager::setModuleInstance(const qd::TypeInfo& ModuleId, IModuleInterface* pInstance)
-{
+void ModuleManager::setModuleInstance(const qd::TypeInfo& ModuleId, IModuleInterface* pInstance) {
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(ModuleId);
     pModuleInfo->setInstance(pInstance);
     return;
@@ -66,12 +62,12 @@ void ModuleManager::setModuleInstance(const qd::TypeInfo& ModuleId, IModuleInter
 
 
 qd::IModuleInterface* ModuleManager::createModuleInstance(const qd::TypeInfo& ModuleId, bool bSingletonInstance,
-    qd::ModuleCreateParams* pCreateParam)
-{
+
+    qd::ModuleCreateParams* pCreateParam) {
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(ModuleId);
     if (!pModuleInfo)
-        throw Exception("Module Manger can't Create module: '%s' - module not registered",
-            ModuleId.getFullName().c_str());
+        G_THROW_OR_DO(Exception("Module Manger can't Create module: '%s' - module not registered", ModuleId.getFullName().c_str()),
+            return nullptr);
 
     if (!pCreateParam)
         pCreateParam = &m_defaultCreateParam;
@@ -85,11 +81,11 @@ qd::IModuleInterface* ModuleManager::createModuleInstance(const qd::TypeInfo& Mo
 }
 
 
-qd::IModuleInterface* ModuleManager::loadModule(const qd::TypeInfo& moduleId, qd::ModuleCreateParams* pCreateParam)
-{
+qd::IModuleInterface* ModuleManager::loadModule(const qd::TypeInfo& moduleId, qd::ModuleCreateParams* pCreateParam) {
+
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(moduleId);
     if (!pModuleInfo)
-        throw Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0);
+        G_THROW_OR_DO(Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0), return nullptr);
 
     pModuleInfo->retainInstance();
 
@@ -105,20 +101,20 @@ qd::IModuleInterface* ModuleManager::loadModule(const qd::TypeInfo& moduleId, qd
 }
 
 
-void ModuleManager::unloadModule(const qd::TypeInfo& ModuleId, bool /*bIsShutdown*/)
-{
+void ModuleManager::unloadModule(const qd::TypeInfo& ModuleId, bool /*bIsShutdown*/) {
+
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
-        throw Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0);
+        G_THROW_OR_DO(Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0), return);
     pModuleInfo->releaseInstance();
 }
 
 
-qd::IModuleInterface* ModuleManager::getModuleInstance(const qd::TypeInfo& moduleId, bool bMakeInst /*= true */)
-{
+qd::IModuleInterface* ModuleManager::getModuleInstance(const qd::TypeInfo& moduleId, bool bMakeInst /*= true */) {
+
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo)
-        throw Exception(EException::NOT_FOUND, "Module:'%s' not registered", CC(moduleId.getFullName()));
+        G_THROW_OR_DO(Exception(EException::NOT_FOUND, "Module:'%s' not registered", moduleId.getFullName().c_str()), return nullptr);
     IModuleInterface* pExistInst = pModuleInfo->getInstance();
     if (pExistInst || !bMakeInst)
         return pExistInst;
@@ -126,8 +122,7 @@ qd::IModuleInterface* ModuleManager::getModuleInstance(const qd::TypeInfo& modul
 }
 
 
-bool ModuleManager::isModuleRegistered(const qd::TypeInfo& moduleId) const
-{
+bool ModuleManager::isModuleRegistered(const qd::TypeInfo& moduleId) const {
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (pModuleInfo != nullptr)
         return true;
@@ -135,11 +130,9 @@ bool ModuleManager::isModuleRegistered(const qd::TypeInfo& moduleId) const
 }
 
 
-bool ModuleManager::isModuleLoaded(const qd::TypeInfo& ModuleId) const
-{
+bool ModuleManager::isModuleLoaded(const qd::TypeInfo& ModuleId) const {
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
-    if (pModuleInfo != nullptr)
-    {
+    if (pModuleInfo != nullptr) {
         if (pModuleInfo->getInstance())
             return true;
     }
@@ -147,11 +140,12 @@ bool ModuleManager::isModuleLoaded(const qd::TypeInfo& ModuleId) const
 }
 
 
-qd::IModuleInterface* ModuleManager::getOrCreateModule(const qd::TypeInfo& ModuleId)
-{
+qd::IModuleInterface* ModuleManager::getOrCreateModule(const qd::TypeInfo& ModuleId) {
+
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
-        throw Exception("Module Manger can't Create module: '%s' - module not registered", CC(ModuleId.getFullName()));
+        G_THROW_OR_DO(Exception("Module Manger can't Create module: '%s' - module not registered", CC(ModuleId.getFullName())),
+            return nullptr);
 
     IModuleInterface* pInstance = pModuleInfo->getInstance();
     if (!pInstance)
@@ -160,11 +154,9 @@ qd::IModuleInterface* ModuleManager::getOrCreateModule(const qd::TypeInfo& Modul
 }
 
 
-qd::ModuleManager* ModuleManager::I()
-{
+qd::ModuleManager* ModuleManager::I() {
     // PHOENIX SINGLETON
-    if (!TThis::m_pSingleInstance && !TThis::m_bSingleDestroyed)
-    {
+    if (!TThis::m_pSingleInstance && !TThis::m_bSingleDestroyed) {
         // qd::String::gInitStaticData(); // First create qd::string(W) + Destroy Singleton
         m_pSingleInstance = new TThis();
         ::atexit(&TThis::_destroySingleton);
@@ -180,20 +172,17 @@ ModuleManager::ModuleManager(void) /*: m_pFastModules(ECgModuleID::_FAST_ACCESS_
 }
 
 
-void ModuleManager::cleanUp()
-{
+void ModuleManager::cleanUp() {
     // Modules are unloaded in reverse order to when their StartupModule() FINISHES.
     // The practical implication of this is that if module A depends on another module B,
     // and A loads B during A's StartupModule, that B will actually get Unloaded after A during shutdown.
     // This allows A's ShutdownModule() call to still reference module B.
 
-    for (auto It = m_pModuleInfoMap.begin(); It != m_pModuleInfoMap.end(); ++It)
-    {
+    for (auto It = m_pModuleInfoMap.begin(); It != m_pModuleInfoMap.end(); ++It) {
         ModuleInfo* pModuleInfo = It->m_pModuleInfo.get();
         if (!pModuleInfo)
             continue;
-        if (!pModuleInfo->m_pInstance)
-        {
+        if (!pModuleInfo->m_pInstance) {
             assert(pModuleInfo->m_nInstanceRef == 0);
             continue;
         }
@@ -209,24 +198,20 @@ void ModuleManager::cleanUp()
 }
 
 
-ModuleManager::~ModuleManager(void)
-{
+ModuleManager::~ModuleManager(void) {
     // Modules are unloaded in reverse order to when their StartupModule() FINISHES.
     // The practical implication of this is that if module A depends on another module B,
     // and A loads B during A's StartupModule, that B will actually get Unloaded after A during shutdown.
     // This allows A's ShutdownModule() call to still reference module B.
 
     // DESTROY MODULE INFO
-    while (!m_pModuleInfoMap.empty())
-    {
+    while (!m_pModuleInfoMap.empty()) {
         auto It = m_pModuleInfoMap.rbegin();
         qd::unique_ptr<ModuleInfo> pModuleInfo = eastl::move(It->m_pModuleInfo);
         m_pModuleInfoMap.erase(It);
-        if (pModuleInfo)
-        {
+        if (pModuleInfo) {
             // assert2( !pModuleInfo->m_pInstance, "Not deleted module \"%s\" found", CC(pModuleInfo->m_ModuleName) );
-            if (pModuleInfo->m_pInstance)
-            {
+            if (pModuleInfo->m_pInstance) {
                 // FORCE DESTROY
                 ModuleManager::_shutDownInstance(pModuleInfo->m_pInstance);
                 ModuleManager::_destroyInstance(pModuleInfo->m_pInstance);
@@ -239,11 +224,9 @@ ModuleManager::~ModuleManager(void)
 }
 
 
-uint32_t ModuleManager::destroyModule(const qd::TypeInfo& moduleId)
-{
+uint32_t ModuleManager::destroyModule(const qd::TypeInfo& moduleId) {
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
-    if (!pModuleInfo)
-    {
+    if (!pModuleInfo) {
         // throw Exception( "Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint)moduleId );
         return 0;
     }
@@ -251,22 +234,18 @@ uint32_t ModuleManager::destroyModule(const qd::TypeInfo& moduleId)
 }
 
 
-void ModuleManager::destroyModule(const qd::TypeInfo& moduleId, IModuleInterface* pInstance)
-{
+void ModuleManager::destroyModule(const qd::TypeInfo& moduleId, IModuleInterface* pInstance) {
     destroyModule(moduleId);
-    if (pInstance)
-    {
+    if (pInstance) {
         ModuleManager::_shutDownInstance(pInstance);
         ModuleManager::_destroyInstance(pInstance);
     }
 }
 
 
-ModuleInfo* ModuleManager::overrideModule(const qd::TypeInfo& moduleId, const ModuleInfo::TCreateFunc& pCreateFunc)
-{
+ModuleInfo* ModuleManager::overrideModule(const qd::TypeInfo& moduleId, const ModuleInfo::TCreateFunc& pCreateFunc) {
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
-    if (!pModuleInfo)
-    {
+    if (!pModuleInfo) {
         ModuleInfo m(moduleId);
         pModuleInfo = registerModule(m);
     }
@@ -275,16 +254,15 @@ ModuleInfo* ModuleManager::overrideModule(const qd::TypeInfo& moduleId, const Mo
 }
 
 
-void ModuleInfo::setInstance(IModuleInterface* pInstance)
-{
+void ModuleInfo::setInstance(IModuleInterface* pInstance) {
+
     if (m_pInstance == pInstance)
         return;
     // 		if ( !pInstance ) {
     // 			ReleaseInstance();
     // 			return;
     // 		}
-    if (m_pInstance)
-    {
+    if (m_pInstance) {
         assert2(0, "Instance already Set", 0);
         return;
     }
@@ -294,8 +272,7 @@ void ModuleInfo::setInstance(IModuleInterface* pInstance)
 }
 
 
-uint32_t ModuleInfo::retainInstance()
-{
+uint32_t ModuleInfo::retainInstance() {
     ModuleInfo* pModuleInfo = this;
     assert(pModuleInfo);
     ++pModuleInfo->m_nInstanceRef;
@@ -303,22 +280,19 @@ uint32_t ModuleInfo::retainInstance()
 }
 
 
-uint32_t ModuleInfo::releaseInstance()
-{
+uint32_t ModuleInfo::releaseInstance() {
+
     ModuleInfo* pModuleInfo = this;
     assert(pModuleInfo);
-    if (pModuleInfo->m_nInstanceRef == 0)
-    {
+    if (pModuleInfo->m_nInstanceRef == 0) {
         // pModuleInfo->SetInstance(nullptr);
         pModuleInfo->m_pInstance = nullptr;
         return 0;
     }
 
-    if (--pModuleInfo->m_nInstanceRef == 0)
-    {
+    if (--pModuleInfo->m_nInstanceRef == 0) {
         IModuleInterface* pInstance = pModuleInfo->getInstance();
-        if (pInstance)
-        {
+        if (pInstance) {
             ModuleManager::_shutDownInstance(pInstance);
             ModuleManager::_destroyInstance(pInstance);
             pModuleInfo->m_pInstance = nullptr;
@@ -330,16 +304,15 @@ uint32_t ModuleInfo::releaseInstance()
 }
 
 
-IModuleInterface* ModuleInfo::makeInstance(bool bRegisterInstance, const ModuleCreateParams& createParam)
-{
+IModuleInterface* ModuleInfo::makeInstance(bool bRegisterInstance, const ModuleCreateParams& createParam) {
+
     TThis* pModuleInfo = this;
     if (!pModuleInfo->m_CreateFunc)
         return nullptr;
 
     IModuleInterface* pNewInstance = pModuleInfo->m_CreateFunc(createParam); // MAKE INSTANCE
     // pNewInstance->m_CGModuleTypeID = pModuleInfo->getModuleId();
-    if (bRegisterInstance)
-    {
+    if (bRegisterInstance) {
         pModuleInfo->setInstance(pNewInstance);
     }
     ModuleManager::_onStatrupInstance(pNewInstance, createParam);
@@ -347,8 +320,7 @@ IModuleInterface* ModuleInfo::makeInstance(bool bRegisterInstance, const ModuleC
 }
 
 
-void ModuleInfo::merge(const ModuleInfo& r)
-{
+void ModuleInfo::merge(const ModuleInfo& r) {
     assert(!r.m_pInstance);
     assert(m_ModuleId == r.m_ModuleId);
 
@@ -359,10 +331,9 @@ void ModuleInfo::merge(const ModuleInfo& r)
 }
 
 
-void IModuleInterface::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg)
-{
-    switch (in_msg.id)
-    {
+void IModuleInterface::onModuleMessageProc(qd::moduleMsg::BaseMsg& in_msg) {
+
+    switch (in_msg.id) {
     case qd::moduleMsg::RENDER_IMGUI_DEBUG_INFO_TREE::ID:
         // qd::Modules::ImGuiCG::ImGuiDrawForModule(this);
         break;

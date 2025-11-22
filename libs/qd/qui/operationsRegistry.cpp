@@ -47,7 +47,7 @@ void OperationsRegistry::destroy()
 
 
 
-qd::span<qd::operation::OpDesc const> OperationsRegistry::getOperationsList() const
+qtd::span<qd::operation::OpDesc const> OperationsRegistry::getOperationsList() const
 {
     return {m_OpDescList.data(), m_OpDescList.size()};
 }
@@ -68,7 +68,7 @@ void OperationsRegistry::addOperationDesc(const qd::TypeInfo& ti, qd::operation:
 
 
 void OperationsRegistry::testOperationsShortcuts(qd::IOperationEnvironment* pEnv,
-    qd::span<qd::operation::OpDesc* const> opDescs)
+    qtd::span<qd::operation::OpDesc* const> opDescs)
 {
     ShortcutsMgr* pShMgr = ShortcutsMgr::get();
     for(const qd::operation::OpDesc* pCurOpDesc : opDescs)

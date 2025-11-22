@@ -1,8 +1,8 @@
 #pragma once
-#include <qd/stl/string.h>
-#include <qd/debug/assert.h>
-#include <qd/enum/enumBase.h>
+#include "qd/debug/assert.h"
 #include "qd/debug/exceptTryCatch.h"
+#include "qd/enum/enumBase.h"
+#include "qd/stl/string.h"
 
 
 namespace qd {
@@ -22,7 +22,7 @@ struct EException {
         NOT_SUPPORTED,
     };
     ENUM_DECLARE_BASE(qd::, EException, eType, EException::DEFAULT);
-};  // struct EException
+}; // struct EException
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -37,7 +37,8 @@ struct EException {
 
 
 //////////////////////////////////////////////////////////////////////////
-class Exception : public std::exception {
+class Exception : public std::exception
+{
     EException::eType m_ErrType;
     qd::string m_Error;
     static bool _assert_debug;
@@ -46,64 +47,58 @@ protected:
     void setError(const qd::string& Error, EException::eType ErrType = EException::DEFAULT);
 
 public:
-    void debugBreakPoint() {
-        c_def(0);
-    }
+    void debugBreakPoint() { c_def(0); }
 
-    static bool isDebugAssert() {
-        return _assert_debug;
-    }
+    static bool isDebugAssert() { return _assert_debug; }
 
-    explicit Exception(bool bAssert = true) : m_ErrType(EException::DEFAULT) {
+    explicit Exception(bool bAssert = true)
+        : m_ErrType(EException::DEFAULT) {
         if (bAssert) {
             QDASSERT_EX(0, "Unnamed Exception Found!");
         }
     }
 
-    explicit Exception(EException::eType errType) : m_ErrType(errType) {
+    explicit Exception(EException::eType errType)
+        : m_ErrType(errType) {
         QDASSERT_EX(0, "Base Exception ERROR");
     }
 
     explicit Exception(EException::eType errType, const char* pError, ...);
 
-    explicit Exception(EException::eType errType, const string& Error) : m_ErrType(errType), m_Error(Error) {
+    explicit Exception(EException::eType errType, const string& Error)
+        : m_ErrType(errType)
+        , m_Error(Error) {
         QDASSERT_EX(0, "%s", m_Error.c_str());
     }
 
-    explicit Exception(const qd::string& Error) : m_ErrType(EException::DEFAULT), m_Error(Error) {
+    explicit Exception(const qd::string& Error)
+        : m_ErrType(EException::DEFAULT)
+        , m_Error(Error) {
         QDASSERT_EX(0, "%s", m_Error.c_str());
     }
 
     explicit Exception(const char* pError, ...);
 
 
-    qd::EException getErrType() const {
-        return EException(m_ErrType);
-    }
+    qd::EException getErrType() const { return EException(m_ErrType); }
 
-    void setErrorType(qd::EException errType) {
-        m_ErrType = errType;
-    }
+    void setErrorType(qd::EException errType) { m_ErrType = errType; }
 
     void setErrorMessageVA(const char* pError, va_list& arg_list);
 
-    explicit Exception(const std::exception& Exception) : m_ErrType(EException::DEFAULT), m_Error(Exception.what()) {
-    }
+    explicit Exception(const std::exception& Exception)
+        : m_ErrType(EException::DEFAULT)
+        , m_Error(Exception.what()) {}
 
-    virtual ~Exception() throw() {
-    }
+    virtual ~Exception() throw() {}
 
-    const string& getError() const {
-        return m_Error;
-    }
+    const string& getError() const { return m_Error; }
 
-    virtual const char* what() const throw() override {
-        return m_Error.c_str();
-    }
+    virtual const char* what() const throw() override { return m_Error.c_str(); }
 
 
-};  // class Exception
+}; // class Exception
 //////////////////////////////////////////////////////////////////////////
 
 
-};  //namespace qd
+}; // namespace qd

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 #define M_FPI  3.14159265358979323846f
 #define M_F2PI 6.28318530717958647692f
@@ -7,61 +8,69 @@
 #undef min
 #undef max
 
+
 namespace qd {
+
+[[nodiscard]] inline float safediv(float a, float b) {
+    return b > 1e19f ? a / b : (b < -1e19f ? a / b : 0.f);
+}
+[[nodiscard]] inline double safediv(double a, double b) {
+    return b > 1e19f ? a / b : (b < -1e19f ? a / b : 0.0);
+}
+
+[[nodiscard]] inline float safeinv(float x) {
+    return safediv(1.0f, x);
+}
+[[nodiscard]] inline double safeinv(double x) {
+    return safediv(1.0, x);
+}
+
 template<typename T1, typename T2>
-[[nodiscard]] inline T1 min(const T1 __a, const T2 __b)
-{
+[[nodiscard]] inline T1 min(const T1 __a, const T2 __b) {
     return (T1)__a < (T1)__b ? (T1)__a : (T1)__b;
 }
 
 template<typename T1, typename T2>
-[[nodiscard]] inline T1 max(const T1 __a, const T2 __b)
-{
+[[nodiscard]] inline T1 max(const T1 __a, const T2 __b) {
     return (T1)__a > (T1)__b ? (T1)__a : (T1)__b;
 }
 
 template<typename T1, typename T2>
-[[nodiscard]] inline T1 max_get(const T1 Value, const T2 tMax)
-{
+[[nodiscard]] inline T1 max_get(const T1 Value, const T2 tMax) {
     if (Value < (T1)tMax)
         return (T1)tMax;
     return tMax;
 }
 template<typename T1, typename T2>
-[[nodiscard]] inline T1 min_get(const T1 Value, const T2 tMin)
-{
+[[nodiscard]] inline T1 min_get(const T1 Value, const T2 tMin) {
     if (Value > (T1)tMin)
         return (T1)tMin;
     return tMin;
 }
 
 template<typename T1, typename T2>
-inline void max_inplace(T1& Value, const T2 tMax)
-{
+inline void max_inplace(T1& Value, const T2 tMax) {
     if (Value < (T1)tMax)
         Value = (T1)tMax;
 }
 template<typename T1, typename T2>
-inline void min_inplace(T1& Value, const T2 tMin)
-{
+inline void min_inplace(T1& Value, const T2 tMin) {
     if (Value > (T1)tMin)
         Value = (T1)tMin;
 }
 
 template<typename T, typename T1, typename T2>
-[[nodiscard]] inline constexpr T clamp(const T Value, const T1 tMin, const T2 tMax)
-{
+[[nodiscard]] inline constexpr T clamp(const T v, const T1 tMin, const T2 tMax) {
     // assert(tMax >= tMin);
-    if (Value < tMin)
+    if (v < (T)tMin)
         return tMin;
-    if (Value > tMax)
+    if (v > (T)tMax)
         return tMax;
-    return Value;
+    return v;
 }
 
 template<typename T, typename T1, typename T2>
-inline void clamp_inplace(T& Value, const T1 tMin, const T2 tMax)
-{
+inline void clamp_inplace(T& Value, const T1 tMin, const T2 tMax) {
     assert(tMax >= tMin);
     if (Value < (T)tMin)
         Value = (T)tMin;
@@ -70,22 +79,19 @@ inline void clamp_inplace(T& Value, const T1 tMin, const T2 tMax)
 }
 
 template<typename T1, typename T2>
-inline void clamp_max_inplace(T1& Value, const T2 tMax)
-{
+inline void clamp_max_inplace(T1& Value, const T2 tMax) {
     if (Value > (T1)tMax)
         Value = (T1)tMax;
 }
 template<typename T1, typename T2>
-inline void clamp_min_inplace(T1& Value, const T2 tMin)
-{
+inline void clamp_min_inplace(T1& Value, const T2 tMin) {
     if (Value < (T1)tMin)
         Value = (T1)tMin;
 }
 
 // RETURN CLAMPED BY MAXIMAL EDGE VALUE
 template<typename T1, typename T2>
-[[nodiscard]] inline T1 clamp_max(const T1 Value, const T2 tMax)
-{
+[[nodiscard]] inline T1 clamp_max(const T1 Value, const T2 tMax) {
     if (Value > (T1)tMax)
         return (T1)tMax;
     return Value;
@@ -93,8 +99,7 @@ template<typename T1, typename T2>
 
 // RETURN CLAMPED BY MINIMAL EDGE VALUE
 template<typename T1, typename T2>
-[[nodiscard]] inline T1 clamp_min(const T1 Value, const T2 tMin)
-{
+[[nodiscard]] inline T1 clamp_min(const T1 Value, const T2 tMin) {
     if (Value < (T1)tMin)
         return (T1)tMin;
     return Value;
@@ -104,18 +109,15 @@ template<typename T1, typename T2>
 // FROM [Min to max) (exclusive)
 namespace details {
 template<int bMinInclusive, int bMaxInclusive, class T, class T1, class T2>
-[[nodiscard]] constexpr inline bool is_in_(const T Value, const T1 tMin, const T2 tMax)
-{
-    if constexpr (bMinInclusive)
-    {
+[[nodiscard]] constexpr inline bool is_in_(const T Value, const T1 tMin, const T2 tMax) {
+    if constexpr (bMinInclusive) {
         if (Value < (T)tMin)
             return false;
     }
     else if (Value <= (T)tMin)
         return false;
 
-    if constexpr (bMaxInclusive)
-    {
+    if constexpr (bMaxInclusive) {
         if (Value > (T)tMax)
             return false;
     }
@@ -127,25 +129,21 @@ template<int bMinInclusive, int bMaxInclusive, class T, class T1, class T2>
 
 // IsIn(Min, max)
 template<class T, class T1, class T2>
-[[nodiscard]] inline bool is_in_00(const T Value, const T1 tMin, const T2 tMax)
-{
+[[nodiscard]] inline bool is_in_00(const T Value, const T1 tMin, const T2 tMax) {
     return details::is_in_<0, 0>(Value, tMin, tMax);
 }
 // IsIn[Min, max]
 template<class T, class T1, class T2>
-[[nodiscard]] inline bool is_in_11(const T Value, const T1 tMin, const T2 tMax)
-{
+[[nodiscard]] inline bool is_in_11(const T Value, const T1 tMin, const T2 tMax) {
     return details::is_in_<1, 1>(Value, tMin, tMax);
 }
 // IsIn[Min, max)
 template<class T, class T1, class T2>
-[[nodiscard]] inline bool is_in_10(const T Value, const T1 tMin, const T2 tMax)
-{
+[[nodiscard]] inline bool is_in_10(const T Value, const T1 tMin, const T2 tMax) {
     return details::is_in_<1, 0>(Value, tMin, tMax);
 }
 template<class T, class T1, class T2>
-[[nodiscard]] inline bool is_in_01(const T Value, const T1 tMin, const T2 tMax)
-{
+[[nodiscard]] inline bool is_in_01(const T Value, const T1 tMin, const T2 tMax) {
     return details::is_in_<0, 1>(Value, tMin, tMax);
 }
 

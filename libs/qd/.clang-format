@@ -10,7 +10,7 @@ UseTab: Never
 AccessModifierOffset: -4
 IndentAccessModifiers: false
 
-ColumnLimit: 120
+ColumnLimit: 140
 CompactNamespaces: false
 ShortNamespaceLines: 3
 ConstructorInitializerIndentWidth: 4
@@ -60,9 +60,9 @@ BreakBeforeBraces: Custom
 BraceWrapping: 
   AfterCaseLabel: true
   AfterClass: true
-  AfterControlStatement: Always #MultiLine
+  AfterControlStatement: MultiLine #Always #MultiLine
   AfterEnum: false
-  AfterFunction: true # u8 a() {}
+  AfterFunction: false #true # u8 a() {}
   AfterNamespace: false
   AfterObjCDeclaration: false
   AfterStruct: false

@@ -2,6 +2,10 @@
 #include <qd/base/base.h>
 #include <SDL_log.h>
 
+#ifdef _WINDOWS
+#include <windows.h>
+#endif // _WINDOWS
+
 
 namespace qd {
 
@@ -56,8 +60,7 @@ qd::Log& logConsole() {
     return instance;
 }
 
-TermMsg logInfo(const char* fmt, ...)
-{
+TermMsg logInfo(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     TermMsg r(TermMsg::W_INFO);
@@ -67,8 +70,7 @@ TermMsg logInfo(const char* fmt, ...)
 }
 
 
-TermMsg logDbg(const char* fmt, ...)
-{
+TermMsg logDbg(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     TermMsg r(TermMsg::W_DEBUG);
@@ -78,8 +80,7 @@ TermMsg logDbg(const char* fmt, ...)
 }
 
 
-TermMsg logWarn(const char* fmt, ...)
-{
+TermMsg logWarn(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     TermMsg r(TermMsg::W_WARNING);
@@ -88,8 +89,7 @@ TermMsg logWarn(const char* fmt, ...)
     return r; // std::move(r);
 }
 
-TermMsg logErr(const char* fmt, ...)
-{
+TermMsg logErr(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
     TermMsg r(TermMsg::W_ERROR);
@@ -99,18 +99,20 @@ TermMsg logErr(const char* fmt, ...)
 }
 
 
-qd::TermMsg::TThis* TermMsg::setMsgV(const char* pFormat, va_list arguments)
-{
+qd::TermMsg::TThis* TermMsg::setMsgV(const char* pFormat, va_list arguments) {
     m_logStr.sprintf_va_list(pFormat, arguments);
     return this;
 }
 
 
-void TermMsg::_flushLogMsg()
-{
+void TermMsg::_flushLogMsg() {
     SDL_LogMessage(0, (SDL_LogPriority)m_nMsgType, "%s", m_logStr.c_str());
+
+#ifdef _WINDOWS
+    OutputDebugStringA(m_logStr.c_str());
+    OutputDebugStringA("\n");
+#endif // _WINDOWS
 }
 
 
-};  // namespace qd
-
+}; // namespace qd

@@ -7,3 +7,11 @@ using eastl::unique_ptr;
 using eastl::make_unique;
 
 }; // namespace qd
+
+
+namespace qtd {
+
+using eastl::unique_ptr;
+using eastl::make_unique;
+
+}; // namespace qtd

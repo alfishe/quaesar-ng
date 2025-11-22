@@ -71,7 +71,22 @@ void Application::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
     EFlow f = onAppEventProcImp(in_msg);
     if (f == EFlow::STOP)
         return;
-    m_pAppParts->sendAppEventMsg(in_msg);
+    if (m_pAppParts)
+        m_pAppParts->sendAppEventMsg(in_msg);
+}
+
+
+void Application::onFrameUpdate(float /*dt*/, float /*time*/)
+{
+    if (m_pAppParts)
+        m_pAppParts->update(0, 0); // todo delta-time
+}
+
+
+void Application::onFrameRender()
+{
+    if (m_pAppParts)
+        m_pAppParts->render();
 }
 
 
@@ -88,8 +103,8 @@ void Application::doMainLoop()
         if (hasQuitRequest())
             break;
 
-        m_pAppParts->update(0, 0); // todo delta-time
-        m_pAppParts->render();
+        onFrameUpdate(0, 0); // todo delta-time
+        onFrameRender();
     }
 }
 

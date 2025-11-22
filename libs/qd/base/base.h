@@ -1,7 +1,7 @@
 #pragma once
 #include <EABase/eabase.h>
 #include <EASTL/internal/config.h>
-#include <stdint.h>
+#include <cstdint>
 
 using THash32 = uint32_t;
 
@@ -47,8 +47,13 @@ EA_RESTORE_VC_WARNING()
 #define MAKE4C(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 #define _MAKE4C(s) MAKE4C(s[0], s[1], s[2], s[3])
 
+
 namespace qd {
 	static constexpr uint32_t _noPos = UINT32_MAX; // ~0u
+
+    inline constexpr uint32_t fourcc(const char s[4]) {
+        return MAKE4C(s[0], s[1], s[2], s[3]);
+    }
 }; // namespace qd
 
 

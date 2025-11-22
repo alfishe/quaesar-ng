@@ -8,8 +8,7 @@
 
 #define SAFE_DELETE_REF_PTR(pPtr)               \
     {                                           \
-        if (pPtr != nullptr)                    \
-        {                                       \
+        if (pPtr != nullptr) {                  \
             pPtr->ref_ptr_release_and_delete(); \
             pPtr = nullptr;                     \
         };                                      \
@@ -30,50 +29,42 @@ class RefCounted;
 
 
 template<class T>
-inline static ptr<T> make_ptr(const T* pPtr)
-{
+inline static ptr<T> make_ptr(const T* pPtr) {
     return ptr<T>(pPtr);
 }
 
 template<class T>
-inline static ptr<T> make_ptr(const ref_ptr<T>& pPtr)
-{
+inline static ptr<T> make_ptr(const ref_ptr<T>& pPtr) {
     return ptr<T>(pPtr);
 }
 template<class T>
-inline static ptr<T> make_ptr(const wref_ptr<T>& pPtr)
-{
+inline static ptr<T> make_ptr(const wref_ptr<T>& pPtr) {
     return ptr<T>(pPtr);
 }
 
 template<typename T>
-inline static T* get_ptr(const T* pPtr)
-{
+inline static T* get_ptr(const T* pPtr) {
     return const_cast<T*>(pPtr);
 }
 
 template<typename T>
-inline static T* get_ptr(const ref_ptr<T>& pPtr)
-{
+inline static T* get_ptr(const ref_ptr<T>& pPtr) {
     return pPtr.get();
 }
 
 template<typename T>
-inline static T* get_ptr(const wref_ptr<T>& pPtr)
-{
+inline static T* get_ptr(const wref_ptr<T>& pPtr) {
     return pPtr.get();
 }
 
 template<typename T>
-inline static T* get_ptr(const int& pPtr)
-{
+inline static T* get_ptr(const int& pPtr) {
     assert(pPtr == 0);
     return nullptr;
 }
 
 template<class T>
-inline static T* get_ptr_null(const ref_ptr<T>&)
-{
+inline static T* get_ptr_null(const ref_ptr<T>&) {
     return (T*)(nullptr);
 }
 
@@ -98,8 +89,7 @@ struct InnerType {
 template<class T, bool isPod = std::is_polymorphic<T>::value >
 struct assert_cast {
     template<class T2>
-    static void test(T2*)
-    {
+    static void test(T2*) {
         c_def(0);
     };
 };
@@ -107,11 +97,10 @@ struct assert_cast {
 template<class T>
 struct assert_cast<T, true> {
     template<class T2>
-    inline static void test(T2* pPtr)
-    {
-    #if !defined(EA_COMPILER_NO_RTTI)
+    inline static void test(T2* pPtr) {
+#if !defined(EA_COMPILER_NO_RTTI)
         assert((!pPtr || dynamic_cast<T*>(/*(T*)*/ pPtr)) && "BAD DYNAMIC CAST - WRONG TYPES");
-    #endif // EA_COMPILER_NO_RTTI
+#endif // EA_COMPILER_NO_RTTI
     }
 };
 
@@ -120,7 +109,7 @@ struct assert_cast<T, true> {
 
 
 
-//namespace qd
+// namespace qd
 
 // USED IN "ref_ptr<T>"
 class RefCounted
@@ -146,14 +135,12 @@ public:
 
     public:
         inline CRefLock(const RefCounted& pPtr)
-            : m_Obj(pPtr)
-        {
+            : m_Obj(pPtr) {
             m_Obj.ref_ptr_retain();
         }
 
         inline CRefLock(const RefCounted* pPtr)
-            : m_Obj(*pPtr)
-        {
+            : m_Obj(*pPtr) {
             assert(pPtr);
             m_Obj.ref_ptr_retain();
         }
@@ -161,8 +148,7 @@ public:
         inline ~CRefLock() { m_Obj.ref_ptr_release(); }
 
         template<class T2>
-        inline T2* get_() const
-        {
+        inline T2* get_() const {
             return m_Obj.get_<T2>;
         }
     }; // class CRefLock
@@ -171,13 +157,11 @@ public:
 
     inline RefCounted()
         : _ref_ptr_RefCount(0)
-        , _ref_ptr_WeakRefCount(0)
-    {}
+        , _ref_ptr_WeakRefCount(0) {}
 
     inline RefCounted(const RefCounted&)
         : _ref_ptr_RefCount(0)
-        , _ref_ptr_WeakRefCount(0)
-    {}
+        , _ref_ptr_WeakRefCount(0) {}
 
     // DEEP COPY SHOULD NO COPY REF_COUNTERS
     inline void operator= (const RefCounted&) {}
@@ -185,8 +169,7 @@ public:
 
     // STATIC_CAST TO ANY DERIVED
     template<class T2>
-    inline T2* get_() const
-    {
+    inline T2* get_() const {
 #if !defined EA_COMPILER_NO_RTTI
         assert((!c_def(this) || dynamic_cast<T2*>((qd::RefCounted*)this)) && "BAD DYNAMIC_CAST");
 #endif // EA_COMPILER_NO_RTTI
@@ -195,22 +178,19 @@ public:
 
 #if !defined EA_COMPILER_NO_RTTI
     template<class T2>
-    inline bool is_() const
-    {
+    inline bool is_() const {
         return dynamic_cast<const T2*>(/*(const T2* )*/ this) !=
                0 /*nullptr*/; // NOT WORKED IF COMPLEX DERIVITY HIERACTION
     }
 #endif // EA_COMPILER_NO_RTTI
 
     template<class T2>
-    inline bool isSame_() const
-    {
+    inline bool isSame_() const {
         return typeid(*this) == typeid(T2);
     }
 
     template<class T2>
-    inline typename qd::MP::InnerType<T2>::type* get_if_() const
-    {
+    inline typename qd::MP::InnerType<T2>::type* get_if_() const {
 #if !defined EA_COMPILER_NO_RTTI
         T2* p = dynamic_cast<T2*>((RefCounted*)this);
         return p;
@@ -220,8 +200,7 @@ public:
     }
 
 
-    virtual ~RefCounted()
-    {
+    virtual ~RefCounted() {
         assert((!c_def(this) || (int)_ref_ptr_RefCount >= 0) && "ref_ptr<T> Already Removed!");
         // assert(_ref_ptr_RefCount == 0); // VERY STRICT RULE TO NOT DELETE REFERENCED OBJECTS
     }
@@ -232,15 +211,13 @@ public:
         this->_ref_ptr_retain();
         return this;
     }
-    inline const RefCounted* ref_ptr_retain() const
-    {
+    inline const RefCounted* ref_ptr_retain() const {
         this->_ref_ptr_retain();
         return this;
     }
 
     template<class TPtr>
-    inline TPtr* ref_ptr_retain_() const
-    {
+    inline TPtr* ref_ptr_retain_() const {
         if (!c_def(this))
             return const_cast<TPtr*>(this);
         this->_ref_ptr_retain();
@@ -265,14 +242,12 @@ public:
     inline static void operator delete (void* ptr) { ::operator delete (ptr); }
 
 private:
-    inline bool _is_ref_ptr_valid() const
-    {
+    inline bool _is_ref_ptr_valid() const {
         assert((int)_ref_ptr_RefCount >= 0);
         return _ref_ptr_RefCount != 0;
     }
 
-    EA_FORCE_INLINE void _ref_ptr_retain() const
-    {
+    EA_FORCE_INLINE void _ref_ptr_retain() const {
         assert((int)_ref_ptr_RefCount >= 0 && "BAD ref_ptr<T> POINTER");
         TRefInt r = ++_ref_ptr_RefCount;
         assert((int)r > 0);
@@ -280,8 +255,7 @@ private:
     }
 
 
-    EA_FORCE_INLINE TRefInt _ref_ptr_release() const
-    {
+    EA_FORCE_INLINE TRefInt _ref_ptr_release() const {
         assert((int)_ref_ptr_RefCount > 0);
         TRefInt r = (--_ref_ptr_RefCount);
         assert((int)r >= 0);
@@ -289,12 +263,10 @@ private:
     }
 
     template<class T>
-    static inline TRefInt _ref_ptr_release_and_delete(T* pThis)
-    {
+    static inline TRefInt _ref_ptr_release_and_delete(T* pThis) {
         assert(/*c_def(this) &&*/ (int)pThis->_ref_ptr_RefCount > 0);
         TRefInt r = (--pThis->_ref_ptr_RefCount);
-        if (r)
-        {
+        if (r) {
             assert((int)r > 0); // check for overflow
             return r;
         }
@@ -303,18 +275,15 @@ private:
     }
 
 
-    inline void wref_ptr_retain() const
-    {
+    inline void wref_ptr_retain() const {
         assert((int)_ref_ptr_WeakRefCount >= 0 && "BAD ref_ptr<T> POINTER");
         ++_ref_ptr_WeakRefCount;
     }
 
     template<class T>
-    static inline void _wref_ptr_release(T* pThis)
-    {
+    static inline void _wref_ptr_release(T* pThis) {
         assert((int)pThis->_ref_ptr_WeakRefCount >= 0);
-        if ((--pThis->_ref_ptr_WeakRefCount == 0) && (pThis->_ref_ptr_RefCount == 0))
-        {
+        if ((--pThis->_ref_ptr_WeakRefCount == 0) && (pThis->_ref_ptr_RefCount == 0)) {
             T::operator delete (pThis);
             // qd::details::weak_ref_static_delete(this); // NOINLINE CALL
         }
@@ -346,55 +315,47 @@ public:
     inline static T* get(const ref_ptr_base<T>* pRefPtr) { return pRefPtr->_ptr; }
 
     template<class T2>
-    static inline T2* get_(const ref_ptr_base<T>* pRefPtr)
-    {
+    static inline T2* get_(const ref_ptr_base<T>* pRefPtr) {
         assert((!(pRefPtr->_ptr) || pRefPtr->template is_<T2>()) && "Wrong class type while dynamic_cast<class>");
         return static_cast<T2*>((T2*)pRefPtr->_ptr);
     }
 
 
-    static inline void destroy(const ref_ptr_base<T>* pRefPtr)
-    {
-        if (pRefPtr->_ptr && (RefCounted::_ref_ptr_release_and_delete(pRefPtr->_ptr) == 0))
-        {
+    static inline void destroy(const ref_ptr_base<T>* pRefPtr) {
+        if (pRefPtr->_ptr && (RefCounted::_ref_ptr_release_and_delete(pRefPtr->_ptr) == 0)) {
             pRefPtr->_ptr = nullptr;
         }
     }
 
     // RESET - don't free OLD_PTR
-    static inline void reset(const ref_ptr_base<T>* pRefPtr, T* pNewInst)
-    {
+    static inline void reset(const ref_ptr_base<T>* pRefPtr, T* pNewInst) {
         // intentionally complex - simplification causes regressions
         typedef char type_must_be_complete[sizeof(T) ? 1 : -1];
         (void)sizeof(type_must_be_complete);
 
         assert(pRefPtr->_ptr == nullptr);
-        if (pNewInst)
-        {
+        if (pNewInst) {
 #if !defined EA_COMPILER_NO_RTTI
             assert(dynamic_cast<T*>(pNewInst) && "Wrong ref_ptr class assigned");
 #endif // EA_COMPILER_NO_RTTI
             pNewInst->_ref_ptr_retain();
             pRefPtr->_ptr = pNewInst;
         }
-        else
-        {
+        else {
             // pRefPtr->_ptr = nullptr;  // already must be a null
         }
     }
 
 
     // ASSIGN - free OLD_PTR and retain count of NEW PTR
-    static inline void assign(const ref_ptr_base<T>* pRefPtr, T* pNewInst)
-    {
+    static inline void assign(const ref_ptr_base<T>* pRefPtr, T* pNewInst) {
         T* old_ptr = pRefPtr->_ptr;
         if (old_ptr == pNewInst) // not delete same pointer
             return;
         pRefPtr->_ptr = nullptr;
         TThis::reset(pRefPtr, pNewInst);
 
-        if (old_ptr)
-        {
+        if (old_ptr) {
             assert(old_ptr->is_ref_ptr_valid()); // safe valid
             RefCounted::_ref_ptr_release_and_delete(old_ptr);
         }
@@ -416,50 +377,41 @@ public:
     inline static T* get(const ref_ptr_base<T>* pRefPtr) { return pRefPtr->valid() ? pRefPtr->_ptr : nullptr; }
 
     template<class T2>
-    inline static T2* get_(const ref_ptr_base<T>* pRefPtr)
-    {
+    inline static T2* get_(const ref_ptr_base<T>* pRefPtr) {
         if (!pRefPtr->valid())
             return nullptr;
         assert(pRefPtr->template is_<T2>());
         return static_cast<T2*>((T2*)pRefPtr->_ptr);
     }
 
-    static inline void destroy(const ref_ptr_base<T>* pRefPtr)
-    {
-        if (pRefPtr->_ptr)
-        {
+    static inline void destroy(const ref_ptr_base<T>* pRefPtr) {
+        if (pRefPtr->_ptr) {
             RefCounted::_wref_ptr_release(pRefPtr->_ptr);
             pRefPtr->_ptr = nullptr;
         }
     }
 
-    static inline void reset(const ref_ptr_base<T>* pRefPtr, T* pNewInst)
-    {
+
+    static inline void reset(const ref_ptr_base<T>* pRefPtr, T* pNewInst) {
+
         // intentionally complex - simplification causes regressions
         typedef char type_must_be_complete[sizeof(T) ? 1 : -1];
         (void)sizeof(type_must_be_complete);
-
         assert(pRefPtr->_ptr == nullptr);
-
         if (!pNewInst)
             return;
-        if ((pNewInst->_ref_ptr_RefCount) /*|| (pNewInst->_ref_ptr_WeakRefCount)*/)
-        {
+        if ((pNewInst->_ref_ptr_RefCount) /*|| (pNewInst->_ref_ptr_WeakRefCount)*/) {
             pNewInst->wref_ptr_retain();
             pRefPtr->_ptr = pNewInst;
         }
     }
 
 
-    static EA_FORCE_INLINE void assign(const ref_ptr_base<T>* pRefPtr, T* pNewInst)
-    {
+    static inline void assign(const ref_ptr_base<T>* pRefPtr, T* pNewInst) {
         T* tmp_ptr = pRefPtr->_ptr;
-
         pRefPtr->_ptr = nullptr;
         reset(pRefPtr, pNewInst);
-
-        if (tmp_ptr)
-        {
+        if (tmp_ptr) {
             RefCounted::_wref_ptr_release(tmp_ptr);
         }
     }
@@ -485,14 +437,12 @@ private:
     ref_ptr_base& operator= (const ref_ptr_base&) { return *this; }
 
 public:
-    inline bool valid() const
-    {
+    inline bool valid() const {
         RefCounted* pPtr = (RefCounted*)(this->_ptr);
         return pPtr != nullptr && (pPtr->_ref_ptr_RefCount != 0); // _ptr - may
     }
 
-    inline bool refvalid() const
-    {
+    inline bool refvalid() const {
         RefCounted* p = (RefCounted*)_ptr;
         return p ? p->is_ref_ptr_valid() : true;
     }
@@ -502,8 +452,7 @@ public:
     inline T* _get_raw() const { return _ptr; }
 
     template<class T2>
-    inline T2* _get_() const
-    {
+    inline T2* _get_() const {
         if (!valid())
             return nullptr;
         assert(is_<T2>());
@@ -511,8 +460,7 @@ public:
     }
 
     template<class T2>
-    inline bool is_() const
-    {
+    inline bool is_() const {
         if (!valid())
             return false;
 #if !defined EA_COMPILER_NO_RTTI
@@ -523,8 +471,7 @@ public:
     }
 
     template<class T2>
-    inline bool eq_() const
-    {
+    inline bool eq_() const {
         return valid() && typeid(*_ptr) == typeid(T2);
     }
 
@@ -549,8 +496,7 @@ public:
 
     inline T* get() const throw() { return TRefPtrGetter::get(this); }
 
-    inline T* getsafe() const
-    {
+    inline T* getsafe() const {
         if (!TSuper::valid())
             assert(0 && "ref_ptr is nullptr");
         return TSuper::_ptr;
@@ -561,8 +507,7 @@ public:
     inline const T& getcref() const { return static_cast<const T&>(*this->getsafe()); }
 
     template<class T2>
-    inline T2* get_() const
-    {
+    inline T2* get_() const {
         return TRefPtrGetter::template get_<T2>(this);
     }
 
@@ -570,21 +515,18 @@ public:
     inline bool operator!() const { return !(this->operator bool ()); }
 
     template<class T2>
-    inline const T2* get_const() const
-    {
+    inline const T2* get_const() const {
         assert(TSuper::template is_<T2>());
         return static_cast<const T2*>(get());
     }
 
     template<class T2>
-    inline bool operator== (const T2& p) const
-    {
+    inline bool operator== (const T2& p) const {
         return (get() == (T*)get_ptr(p));
     }
 
     template<class T2>
-    inline bool operator!= (const T2& p) const
-    {
+    inline bool operator!= (const T2& p) const {
         return (get() != (T*)get_ptr(p));
     }
 
@@ -598,8 +540,7 @@ public:
 
     inline bool operator> (const T* p) const { return (get() > p); }
 
-    static const typename TRefPtrGetter::TRef_ptr& NullPtr()
-    {
+    static const typename TRefPtrGetter::TRef_ptr& NullPtr() {
         static typename TRefPtrGetter::TRef_ptr pNullPtr;
         return pNullPtr;
     }
@@ -621,8 +562,7 @@ protected:
 //////////////////////////////////////////////////////////////////////////
 /* NO_INLINE DELETER */
 template<class T>
-void referenced_static_delete(T* pThis)
-{
+void referenced_static_delete(T* pThis) {
     // SELF DELETE
     assert(pThis->_ref_ptr_RefCount == 0);
 
@@ -630,10 +570,8 @@ void referenced_static_delete(T* pThis)
 
     uint32_t nWeakCount = uint32_t(++(pThis->_ref_ptr_WeakRefCount)); // inc to call destructor properly
 
-    if (/*nStrongRefs == 0 &&*/ (--nWeakCount) == 0)
-    {
-        if (c_def(true) /*pRefThis->_ref_ptr_RefCount == 0*/)
-        { // test once again to be sure //-V571
+    if (/*nStrongRefs == 0 &&*/ (--nWeakCount) == 0) {
+        if (c_def(true) /*pRefThis->_ref_ptr_RefCount == 0*/) { // test once again to be sure //-V571
             pThis->_ref_ptr_WeakRefCount = 0;
             delete pRefThis;
             return;
@@ -641,15 +579,13 @@ void referenced_static_delete(T* pThis)
     }
     // CALL DESTRUCTOR FIRST
     // WARNING: MAY CALL DESTRUCTOR 2 TIMES
-    else /*if( pRefThis->_ref_ptr_WeakRefCount != 0 )*/
-    {
+    else /*if( pRefThis->_ref_ptr_WeakRefCount != 0 )*/ {
 
         // ALREADY DO ++(pThis->_ref_ptr_WeakRefCount); // inc to call destructor properly
         pRefThis->~RefCounted(); // CALL THE VIRTUAL DESTRUCTOR
 
         // RECURSIVE DELETETING
-        if (--(pThis->_ref_ptr_WeakRefCount) == 0)
-        {
+        if (--(pThis->_ref_ptr_WeakRefCount) == 0) {
             T::operator delete (pThis);
         }
     }
@@ -680,38 +616,32 @@ class ref_ptr
 public:
     typedef T TRefClass;
 
-    operator T* () const
-    {
+    operator T* () const {
         return this->_ptr; // TSuper::_get_raw();
     }
 
-    T* operator->() const
-    {
+    T* operator->() const {
         assert(TSuper::valid() && "NULL POINTER EXCEPTION");
         return this->_ptr; // TSuper::_get_raw();
     }
 
-    T& operator* ()
-    {
+    T& operator* () {
         assert(TSuper::valid());
         return *TSuper::get();
     }
 
-    const T& operator* () const
-    {
+    const T& operator* () const {
         assert(TSuper::valid());
         return *TSuper::get();
     }
 
 #ifdef RVALUE_REFERENCES_SUPPORTED
-    inline ref_ptr(TThis&& rv)
-    {
+    inline ref_ptr(TThis&& rv) {
         this->_ptr = rv._ptr;
         rv._ptr = nullptr;
     }
     template<class T2>
-    inline ref_ptr(ref_ptr<T2>&& rv)
-    {
+    inline ref_ptr(ref_ptr<T2>&& rv) {
         qd::details::ref_ptr_getter<T2> pt;
         this->_ptr = pt.template get_<T>(&rv); // rv.get_<T>();
         pt.set_raw(&rv, nullptr); // rv._ptr = nullptr;
@@ -726,27 +656,23 @@ public:
     /*explicit*/ inline ref_ptr(const T* p) { TSuper::reset(p); }
 
 
-    inline ref_ptr(const ref_ptr<T>& rp)
-    {
+    inline ref_ptr(const ref_ptr<T>& rp) {
         // test with is_valid protection (by ref_ptr::get() ) ( RefCounted* already can't be have a null refCounter
         TSuper::reset(rp.gcc_only_template get());
     }
 
-    inline ref_ptr(const ref_ptr<const T>& rp)
-    {
+    inline ref_ptr(const ref_ptr<const T>& rp) {
         // test with is_valid protection (by ref_ptr::get() ) ( RefCounted* already can't be have a null refCounter
         TSuper::reset(rp.gcc_only_template get());
     }
 
 
-    inline ref_ptr(const wref_ptr<T>& rp)
-    {
+    inline ref_ptr(const wref_ptr<T>& rp) {
         TSuper::reset(rp.gcc_only_template get()); // removed for clang
     }
 
     template<class T2>
-    inline ref_ptr(const ref_ptr<T2>& rp)
-    {
+    inline ref_ptr(const ref_ptr<T2>& rp) {
         // test with is_valid protection (by ref_ptr::get() ) ( RefCounted* already can't be have a null refCounter
         TSuper::reset(rp.template /*_get*/ get_<T>());
     }
@@ -759,53 +685,45 @@ public:
 
 
     template<class T2>
-    inline ref_ptr(const wref_ptr<T2>& rp)
-    {
+    inline ref_ptr(const wref_ptr<T2>& rp) {
         TSuper::reset(rp.template get_<T>());
     }
 
     inline ref_ptr(const std::nullptr_t&) {}
 
-    inline const TThis& operator= (const std::nullptr_t&)
-    {
+    inline const TThis& operator= (const std::nullptr_t&) {
         TSuper::assign((T*)nullptr);
         return *this;
     }
 
     template<class T2>
-    inline ref_ptr(const ptr<T2>& rp)
-    {
+    inline ref_ptr(const ptr<T2>& rp) {
         TSuper::reset(rp.gcc_template get_<T>());
     }
 
-    inline const TThis& operator= (T* pPtr)
-    {
+    inline const TThis& operator= (T* pPtr) {
         TSuper::assign(pPtr);
         return *this;
     }
 
-    inline TThis& reset(T* pPtr = nullptr)
-    {
+    inline TThis& reset(T* pPtr = nullptr) {
         TSuper::assign(pPtr);
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (T2* p2)
-    {
+    inline const TThis& operator= (T2* p2) {
         assert(!p2 || dynamic_cast<T*>(p2)); // tested
         TSuper::assign(static_cast<T*>((T*)p2));
         return *this;
     }
 
-    inline const TThis& operator= (const ref_ptr<T>& rp)
-    {
+    inline const TThis& operator= (const ref_ptr<T>& rp) {
         TSuper::assign(rp.gcc_only_template _get_raw());
         return *this;
     }
 
-    inline const TThis& operator= (ref_ptr<T>&& rv) noexcept
-    {
+    inline const TThis& operator= (ref_ptr<T>&& rv) noexcept {
         TSuper::destroy();
         this->_ptr = rv.template _get_<T>();
         rv._ptr = nullptr;
@@ -814,28 +732,24 @@ public:
 
 
     template<class T2>
-    inline const TThis& operator= (const ref_ptr<T2>& rp)
-    {
+    inline const TThis& operator= (const ref_ptr<T2>& rp) {
         TSuper::assign(rp.gcc_template _get_<T>());
         return *this;
     }
 
-    inline const TThis& operator= (const wref_ptr<T>& rp)
-    {
+    inline const TThis& operator= (const wref_ptr<T>& rp) {
         TSuper::assign(rp.gcc_only_template get());
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (const wref_ptr<T2>& rp)
-    {
+    inline const TThis& operator= (const wref_ptr<T2>& rp) {
         TSuper::assign(rp.gcc_template get_<T>());
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (const ptr<T2>& rp)
-    {
+    inline const TThis& operator= (const ptr<T2>& rp) {
         TSuper::assign(rp.gcc_template get_<T>());
         return *this;
     }
@@ -843,68 +757,57 @@ public:
 
     static inline ref_ptr<T> make() { return new T(); }
     template<typename T1>
-    static inline ref_ptr<T> make(const T1& p1)
-    {
+    static inline ref_ptr<T> make(const T1& p1) {
         return new T(p1);
     }
     template<typename T1, typename T2>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2)
-    {
+    static inline ref_ptr<T> make(const T1& p1, const T2& p2) {
         return new T(p1, p2);
     }
     template<typename T1, typename T2, typename T3>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3)
-    {
+    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3) {
         return new T(p1, p2, p3);
     }
     template<typename T1, typename T2, typename T3, typename T4>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3, const T4& p4)
-    {
+    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3, const T4& p4) {
         return new T(p1, p2, p3, p4);
     }
     template<typename T1, typename T2, typename T3, typename T4, typename T5>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3, const T4& p4, const T5& p5)
-    {
+    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3, const T4& p4, const T5& p5) {
         return new T(p1, p2, p3, p4, p5);
     }
 
-    inline T* makeSelf()
-    {
+    inline T* makeSelf() {
         T* pPtr = new T();
         TSuper::assign(pPtr);
         return pPtr;
     }
     template<typename T1>
-    inline T* makeSelf(const T1& p1)
-    {
+    inline T* makeSelf(const T1& p1) {
         T* pPtr = new T(p1);
         TSuper::assign(pPtr);
         return pPtr;
     }
     template<typename T1, typename T2>
-    inline T* makeSelf(const T1& p1, const T2& p2)
-    {
+    inline T* makeSelf(const T1& p1, const T2& p2) {
         T* pPtr = new T(p1, p2);
         TSuper::assign(pPtr);
         return pPtr;
     }
     template<typename T1, typename T2, typename T3>
-    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3)
-    {
+    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3) {
         T* pPtr = new T(p1, p2, p3);
         TSuper::assign(pPtr);
         return pPtr;
     }
     template<typename T1, typename T2, typename T3, typename T4>
-    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3, const T4& p4)
-    {
+    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3, const T4& p4) {
         T* pPtr = new T(p1, p2, p3, p4);
         TSuper::assign(pPtr);
         return pPtr;
     }
     template<typename T1, typename T2, typename T3, typename T4, typename T5>
-    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3, const T4& p4, const T5& p5)
-    {
+    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3, const T4& p4, const T5& p5) {
         T* pPtr = new T(p1, p2, p3, p4, p5);
         TSuper::assign(pPtr);
         return pPtr;
@@ -926,25 +829,21 @@ class wref_ptr : public qd::details::ref_ptr_base2< T, qd::details::wref_ptr_get
 public:
     inline wref_ptr() {}
 
-    inline wref_ptr(TThis&& rv)
-    {
+    inline wref_ptr(TThis&& rv) {
         this->_ptr = rv._ptr;
         rv._ptr = nullptr;
     }
 
     inline operator T* () const { return TSuper::get(); }
-    inline T& operator* ()
-    {
+    inline T& operator* () {
         assert(TSuper::valid());
         return *TSuper::get();
     }
-    inline const T& operator* () const
-    {
+    inline const T& operator* () const {
         assert(TSuper::valid());
         return *TSuper::get();
     }
-    inline T* operator->() const
-    {
+    inline T* operator->() const {
         assert(TSuper::valid());
         return TSuper::get();
     }
@@ -962,26 +861,22 @@ public:
     inline wref_ptr(const wref_ptr<T>& rp) { TSuper::reset(rp.get()); }
 
     template<class T2>
-    inline wref_ptr(const ref_ptr<T2>& rp)
-    {
+    inline wref_ptr(const ref_ptr<T2>& rp) {
         TSuper::reset(rp.template _get_<T>());
     }
 
     template<class T2>
-    inline wref_ptr(const wref_ptr<T2>& rp)
-    {
+    inline wref_ptr(const wref_ptr<T2>& rp) {
         TSuper::reset(rp.template get_<T>());
     }
 
     template<class T2>
-    inline wref_ptr(const ptr<T2>& rp)
-    {
+    inline wref_ptr(const ptr<T2>& rp) {
         TSuper::reset(rp.gcc_template get_<T>());
     }
 
     template<class T2>
-    inline const TThis& operator= (const ptr<T2>& rp)
-    {
+    inline const TThis& operator= (const ptr<T2>& rp) {
         TSuper::assign(rp.gcc_template get_<T>());
         return *this;
     }
@@ -989,8 +884,7 @@ public:
 // NULL
 #if defined(COMPILER_NULLPTR_NOT_SUPPORTED)
     inline wref_ptr(const qd::CNullPtr&) {}
-    inline const TThis& operator= (const qd::CNullPtr&)
-    {
+    inline const TThis& operator= (const qd::CNullPtr&) {
         TSuper::assign((T*)nullptr);
         return *this;
     }
@@ -998,61 +892,52 @@ public:
 #endif // COMPILER_NULLPTR_NOT_SUPPORTED
 
     inline wref_ptr(const std::nullptr_t&) {}
-    inline const TThis& operator= (const std::nullptr_t&)
-    {
+    inline const TThis& operator= (const std::nullptr_t&) {
         TSuper::assign((T*)nullptr);
         return *this;
     }
 
 
-    inline const TThis& operator= (T* ptr)
-    {
+    inline const TThis& operator= (T* ptr) {
         TSuper::assign(ptr);
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (T2* ptr)
-    {
+    inline const TThis& operator= (T2* ptr) {
         TSuper::assign(ptr->template get_<T>());
         return *this;
     }
 
-    inline const TThis& operator= (const ref_ptr<T>& rp)
-    {
+    inline const TThis& operator= (const ref_ptr<T>& rp) {
         TSuper::assign(rp._get_raw());
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (const ref_ptr<T2>& rp)
-    {
+    inline const TThis& operator= (const ref_ptr<T2>& rp) {
         TSuper::assign(rp.template _get_<T>());
         return *this;
     }
 
-    inline const TThis& operator= (const wref_ptr<T>& rp)
-    {
+    inline const TThis& operator= (const wref_ptr<T>& rp) {
         TSuper::assign(rp./*gcc_template*/ get());
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (const wref_ptr<T2>& rp)
-    {
+    inline const TThis& operator= (const wref_ptr<T2>& rp) {
         TSuper::assign(rp.gcc_template get_<T>());
         return *this;
     }
 
-    inline TThis& reset(T* pPtr = nullptr)
-    {
+    inline TThis& reset(T* pPtr = nullptr) {
         TSuper::assign(pPtr);
         return *this;
     }
 
     template<class T2>
-    inline const TThis& operator= (const TThis&& rv)
-    {
+    inline const TThis& operator= (const TThis&& rv) {
         TSuper::destroy();
         this->_ptr = rv.template _get_<T>();
         rv._ptr = nullptr;
@@ -1066,15 +951,13 @@ public:
 
 
 template<class T>
-inline T* ref_retain_(T& _Obj)
-{
+inline T* ref_retain_(T& _Obj) {
     _Obj.ref_ptr_retain();
     return &_Obj;
 }
 
 template<class T>
-inline T* ref_retain_(T* pObj)
-{
+inline T* ref_retain_(T* pObj) {
     pObj->ref_ptr_retain();
     return pObj;
 }
@@ -1082,47 +965,41 @@ inline T* ref_retain_(T* pObj)
 
 //////////////////////////////////////////////////////////////////////////
 template<typename T>
-inline bool isPtrNull(const T& pPtr)
-{
+inline bool isPtrNull(const T& pPtr) {
     return pPtr == (T)0;
 }
 
 // PTR VALID
 template<class T>
-inline bool isPtrValid(T* pPtr)
-{
+inline bool isPtrValid(T* pPtr) {
     return pPtr != nullptr;
 }
 
 
 template<typename T>
-inline bool isPtrNull(const ptr<T>& pPtr)
-{
+inline bool isPtrNull(const ptr<T>& pPtr) {
     return !pPtr.valid();
 }
 
 template<typename T>
-inline bool isPtrNull(const ref_ptr<T>& pPtr)
-{
+inline bool isPtrNull(const ref_ptr<T>& pPtr) {
     return !pPtr.valid();
 }
 
 template<typename T>
-inline bool isPtrNull(const qd::details::ref_ptr_base<T>& pPtr)
-{
+inline bool isPtrNull(const qd::details::ref_ptr_base<T>& pPtr) {
     return !pPtr.valid();
 }
 
 
 template<class T>
-inline bool isPtrValid(const qd::details::ref_ptr_base<T>& pPtr)
-{
+inline bool isPtrValid(const qd::details::ref_ptr_base<T>& pPtr) {
     return pPtr.valid();
 }
 
 }; // namespace qd
 //////////////////////////////////////////////////////////////////////////
 
+using qd::ptr;
 using qd::ref_ptr;
 using qd::wref_ptr;
-using qd::ptr;

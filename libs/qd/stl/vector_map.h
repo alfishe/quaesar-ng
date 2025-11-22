@@ -1,8 +1,7 @@
 #pragma once
 #include <EASTL/vector_map.h>
 
-namespace qd
-{
+namespace qtd {
 using eastl::vector_map;
-}; // namespace qd
+}; // namespace qtd
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "qd/base/base.h"
 #include "qd/stl/string.h"
 #include <EASTL/fixed_function.h>
 #include <SDL_log.h>

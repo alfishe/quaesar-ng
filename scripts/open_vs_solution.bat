@@ -3,7 +3,7 @@ pushd %~dp0
 setlocal
 
 set ROOT_DIR=%cd%\..\
-set CMAKE_EXE=%ROOT_DIR%\bin\windows\bin\cmake.exe
+set CMAKE_EXE=%ROOT_DIR%\bin\win\cmake\bin\cmake.exe
 set BUILD_DIR=build
 set OUTPUT_DIR=%ROOT_DIR%\%BUILD_DIR%
 

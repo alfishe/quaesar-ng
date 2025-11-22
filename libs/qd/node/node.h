@@ -1,7 +1,6 @@
 #pragma once
 #include <EASTL/fixed_vector.h>
 #include <EASTL/vector.h>
-#include <qd/stl/forwardDecl.h>
 
 #include <qd/stl/ref_ptr.h>
 #include <qd/base/baseTypes.h>

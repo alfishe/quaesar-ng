@@ -1,9 +1,9 @@
 #pragma once
+#include "qd/base/base.h"
 #include "qd/stl/vector.h"
-// #include <qd/base/stringId.h>
-#include <qd/debug/assert.h>
-#include <qd/typeSystem/stdTypeId.h>
-#include <qd/typeSystem/typeInfoBase.h>
+#include "qd/debug/assert.h"
+#include "qd/typeSystem/stdTypeId.h"
+#include "qd/typeSystem/typeInfoBase.h"
 
 
 namespace qd {

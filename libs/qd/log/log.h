@@ -1,11 +1,10 @@
 #pragma once
-#include <EASTL/fixed_vector.h>
-#include <EASTL/string.h>
-#include <cstdarg>
-#include <ctime>
-#include "qd/stl/string.h"
 #include "qd/debug/assert.h"
 #include "qd/debug/exception.h"
+#include "qd/stl/fixed_vector.h"
+#include "qd/stl/string.h"
+#include <cstdarg>
+#include <ctime>
 
 
 namespace qd {
@@ -20,25 +19,26 @@ struct LogEntry {
     };
 
     std::time_t timeStamp = 0;
+    qtd::string message;
     ELevel level = E_DEBUG;
-    eastl::string message;
-};  // struct LogEntry
+}; // struct LogEntry
 //////////////////////////////////////////////////////////////////////////
 
 
-class ILogWriter {
+class ILogWriter
+{
 public:
     virtual void addLogEntry(const LogEntry& entry) = 0;
-    virtual void destroy() {
-    }
+    virtual void destroy() {}
     virtual ~ILogWriter() = default;
-};  // class ILogWriter
+}; // class ILogWriter
 
 
 //////////////////////////////////////////////////////////////////////////
-class Log {
+class Log
+{
     using LogWriter_ptr = ILogWriter*;
-    eastl::fixed_vector<LogWriter_ptr, 4, false> mpLogWriters;
+    qtd::fixed_vector<LogWriter_ptr, 4, false> mpLogWriters;
 
 public:
     Log() = default;
@@ -48,7 +48,7 @@ public:
     void destroyWriter(ILogWriter* p_ptr);
     void done();
 
-    template <class TWriter>
+    template<class TWriter>
     TWriter* createWriter_() {
         TWriter* pInst = new TWriter();
         registerWriter(eastl::move(pInst));
@@ -91,7 +91,7 @@ public:
         va_end(args);
     }
 
-};  // class Log
+}; // class Log
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -116,32 +116,25 @@ public:
     TThis* operator->() { return this; }
 
     TermMsg(TermMsg::eLogMsgType nType)
-        : m_nMsgType(nType)
-    {}
+        : m_nMsgType(nType) {}
 
-    ~TermMsg()
-    {
-        _flushLogMsg();
-    }
+    ~TermMsg() { _flushLogMsg(); }
 
     TThis* setMsgV(const char* pFormat, va_list arguments);
 
-    TThis* ASSERT_DLG()
-    {
+    TThis* ASSERT_DLG() {
         ASSERT_F(0, "%s", m_logStr.c_str());
         return this;
     }
 
-    qd::Exception GET_EXCEPTION(qd::EException excType = qd::EException::DEFAULT)
-    {
+    qd::Exception GET_EXCEPTION(qd::EException excType = qd::EException::DEFAULT) {
         _flushLogMsg();
         return qd::Exception(excType, m_logStr);
     }
 
     inline void Throw_Exception(qd::EException excType = qd::EException::DEFAULT) { throw GET_EXCEPTION(excType); }
 
-    inline void THROW_ASSERT(qd::EException excType = qd::EException::DEFAULT)
-    {
+    inline void THROW_ASSERT(qd::EException excType = qd::EException::DEFAULT) {
         this->ASSERT_DLG();
         throw this->GET_EXCEPTION(excType);
     }
@@ -150,6 +143,7 @@ public:
 
     void _flushLogMsg();
 }; // class TermMsg
+//////////////////////////////////////////////////////////////////////////
 
 
 extern qd::Log& logConsole();
@@ -159,9 +153,9 @@ TermMsg logWarn(const char* msg, ...);
 TermMsg logErr(const char* msg, ...);
 
 
-};  // namespace qd
+}; // namespace qd
 //////////////////////////////////////////////////////////////////////////
 
 using qd::logDbg;
-using qd::logWarn;
 using qd::logErr;
+using qd::logWarn;

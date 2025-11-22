@@ -36,6 +36,7 @@ protected:
         int64_t m_i64;
         uint64_t m_u64; // 8 byte
         void* m_pPointer; // 8 byte
+        float m_vec2f[2];
 
         uint64_t _bodyData = 0;
     };
@@ -59,11 +60,6 @@ public:
         DATA_INT64 = 9,
         DATA_UINT64 = 10,
         DATA_DOUBLE = 11,
-
-        DATA_EXTERNAL_PTR = 0x80,
-        // HERE ARE STORING BIG TYPES IN EXTERNAL MEMORY STORAGE
-        DATA_STRING,
-        DATA_STRING_W,
 
         DATA_MAX_FORMATS,
         UNDEFINED_NULL = 0xFF,
@@ -177,9 +173,6 @@ public:
     }
 
 
-    void setStr(const qd::string_view& Value);
-
-
     inline uint32_t getU32() const
     {
         assert(m_type == DATA_INT32 || m_type == DATA_UINT32);
@@ -226,17 +219,6 @@ public:
         return m_pPointer;
     }
 
-
-    const qd::string_view& getStr() const;
-
-    inline bool getStr(qd::string_view& Out) const
-    {
-        if (m_type != DATA_STRING)
-            return false;
-        Out = getStr();
-        return true;
-    }
-
     inline float getF32() const
     {
         assert(m_type == DATA_FLOAT);
@@ -256,8 +238,6 @@ public:
     void set(int Value) { setI32(Value); }
     void set(float Value) { setF32(Value); }
     void set(uint32_t Value) { setU32(Value); }
-    void set(const char* Value) { setStr(qd::string_view(Value, strlen(Value))); }
-    void set(const qd::string_view& Value) { setStr(Value); }
 
 
     struct RetZero {
@@ -290,8 +270,6 @@ public:
     }
 
 protected:
-    void _setString(const qd::string_view& Value);
-
     // FOR std::map Container
     bool operator< (const Var16& r) const;
 
@@ -307,5 +285,26 @@ public:
 
 static_assert(sizeof(Var16) == 16);
 
+
+inline bool Var16::operator== (const Var16& r) const
+{
+    if (memcmp(this, &r, g_sizeOf) != 0)
+        return false;
+    return true;
+}
+
+
+inline const Var16& Var16::operator= (const Var16& in_clone)
+{
+    _headData = in_clone._headData;
+    _bodyData = in_clone._bodyData;
+    return *this;
+}
+
+inline void Var16::reset()
+{
+    _headData = 0;
+    _bodyData = 0;
+}
 
 }; // namespace qd

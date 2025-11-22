@@ -50,6 +50,8 @@ public:
     void sendAppEventMsg(qd::appMsg::BaseMsg& in_msg);
 
     void doMainLoop();
+    virtual void onFrameUpdate(float dt, float time);
+    virtual void onFrameRender();
 
     virtual void onSdlEventProc(SDL_Event& event);
 

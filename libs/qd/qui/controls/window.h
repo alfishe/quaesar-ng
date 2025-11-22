@@ -1,8 +1,8 @@
 #pragma once
-#include "qd/math/point2.h"
-#include "qd/stl/vector.h"
-#include "qd/qui/uiNode.h"
 #include "imgui/imgui.h"
+#include "qd/math/point2.h"
+#include "qd/qui/uiNode.h"
+#include "qd/stl/vector.h"
 
 
 
@@ -14,13 +14,13 @@ class UiWindow : public qd::UiNode
     TS_END();
 
     qd::string m_title;
-    qd::Size m_size = {-1, -1};
+    qd::Size2 m_size = {-1, -1};
     bool m_bModal = false;
     uint32_t m_windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
 public:
     UiWindow() = default;
-    virtual ~UiWindow() = default;
+    virtual ~UiWindow() override = default;
 
     bool isModal() const { return m_bModal; }
     void setModal(bool Modal) { m_bModal = Modal; }
@@ -29,12 +29,8 @@ public:
     virtual void setText(const char* pText) { m_title = pText; }
     virtual void drawImp() override;
 
-    qd::Size getSize() const {
-        return m_size;
-    }
-    void setSize(const qd::Size& Size) {
-        m_size = Size;
-    }
+    qd::Size2 getSize() const { return m_size; }
+    void setSize(const qd::Size2& Size) { m_size = Size; }
 }; // class UiWindow
 
 
