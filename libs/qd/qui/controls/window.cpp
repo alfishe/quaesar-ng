@@ -1,6 +1,6 @@
 #include "window.h"
 #include "imgui/imgui.h"
-#include "qd/base/tribool.h"
+#include "qd/base/Tribool.h"
 
 
 namespace qd {

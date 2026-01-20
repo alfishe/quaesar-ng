@@ -39,7 +39,7 @@ public:
 
 public:
     UaeServerThread(qsr::UaeServerAppPart* pServerApp);
-    ~UaeServerThread();
+    virtual ~UaeServerThread();
     void initialize();
     void destroy();
     void setUaeInitialized(bool);

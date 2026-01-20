@@ -116,7 +116,7 @@ public:
 
     template<int N>
     explicit Var16(const char (&pStr)[N]) {
-        _setString(qtd::string_view(pStr, (uint32_t)(N - 1)));
+        _setString(pStr, (uint32_t)(N - 1));
     }
 
     Var16(const qtd::string_view& val) { _setString(val.data(), (int)val.size()); }

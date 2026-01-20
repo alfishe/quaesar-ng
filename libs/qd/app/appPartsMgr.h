@@ -1,3 +1,4 @@
+#pragma once
 #include "qd/app/moduleManager.h"
 #include <qd/stl/vector.h>
 #include <qd/app/applicationPart.h>

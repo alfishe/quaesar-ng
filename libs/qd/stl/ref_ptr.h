@@ -63,7 +63,7 @@ inline static T* get_ptr(const int& pPtr) {
     return nullptr;
 }
 
-template<class T>
+template<typename T>
 inline static T* get_ptr_null(const ref_ptr<T>&) {
     return (T*)(nullptr);
 }
@@ -514,25 +514,33 @@ public:
     inline operator bool () const { return get() != nullptr; }
     inline bool operator!() const { return !(this->operator bool ()); }
 
+    // C++20 compatible comparison operators - specific overloads instead of greedy template
+    inline bool operator== (const T* p) const { return get() == p; }
+    inline bool operator== (std::nullptr_t) const { return get() == nullptr; }
+    
     template<class T2>
-    inline const T2* get_const() const {
-        assert(TSuper::template is_<T2>());
-        return static_cast<const T2*>(get());
+    inline bool operator== (const ref_ptr_base2<T2, qd::details::ref_ptr_getter<T2>>& p) const {
+        return get() == p.get();
+    }
+    
+    template<class T2>
+    inline bool operator== (const ref_ptr_base2<T2, qd::details::wref_ptr_getter<T2>>& p) const {
+        return get() == p.get();
     }
 
+    // C++20 generates != from == automatically, but explicit for older standards
+    inline bool operator!= (const T* p) const { return get() != p; }
+    inline bool operator!= (std::nullptr_t) const { return get() != nullptr; }
+    
     template<class T2>
-    inline bool operator== (const T2& p) const {
-        return (get() == (T*)get_ptr(p));
+    inline bool operator!= (const ref_ptr_base2<T2, qd::details::ref_ptr_getter<T2>>& p) const {
+        return get() != p.get();
     }
-
+    
     template<class T2>
-    inline bool operator!= (const T2& p) const {
-        return (get() != (T*)get_ptr(p));
+    inline bool operator!= (const ref_ptr_base2<T2, qd::details::wref_ptr_getter<T2>>& p) const {
+        return get() != p.get();
     }
-
-    inline bool operator== (const std::nullptr_t /*p*/) const { return !(this->operator bool ()); }
-
-    inline bool operator!= (const std::nullptr_t /*p*/) const { return this->operator bool (); }
 
     inline bool operator< (const ref_ptr_base2& rp) const { return (get() < rp.get()); }
 
@@ -756,25 +764,10 @@ public:
 
 
     static inline ref_ptr<T> make() { return new T(); }
-    template<typename T1>
-    static inline ref_ptr<T> make(const T1& p1) {
-        return new T(p1);
-    }
-    template<typename T1, typename T2>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2) {
-        return new T(p1, p2);
-    }
-    template<typename T1, typename T2, typename T3>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3) {
-        return new T(p1, p2, p3);
-    }
-    template<typename T1, typename T2, typename T3, typename T4>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3, const T4& p4) {
-        return new T(p1, p2, p3, p4);
-    }
-    template<typename T1, typename T2, typename T3, typename T4, typename T5>
-    static inline ref_ptr<T> make(const T1& p1, const T2& p2, const T3& p3, const T4& p4, const T5& p5) {
-        return new T(p1, p2, p3, p4, p5);
+
+    template<typename... Args>
+    static inline ref_ptr<T> make(Args&&... args) {
+        return new T(std::forward<Args>(args)...);
     }
 
     inline T* makeSelf() {
@@ -782,33 +775,10 @@ public:
         TSuper::assign(pPtr);
         return pPtr;
     }
-    template<typename T1>
-    inline T* makeSelf(const T1& p1) {
-        T* pPtr = new T(p1);
-        TSuper::assign(pPtr);
-        return pPtr;
-    }
-    template<typename T1, typename T2>
-    inline T* makeSelf(const T1& p1, const T2& p2) {
-        T* pPtr = new T(p1, p2);
-        TSuper::assign(pPtr);
-        return pPtr;
-    }
-    template<typename T1, typename T2, typename T3>
-    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3) {
-        T* pPtr = new T(p1, p2, p3);
-        TSuper::assign(pPtr);
-        return pPtr;
-    }
-    template<typename T1, typename T2, typename T3, typename T4>
-    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3, const T4& p4) {
-        T* pPtr = new T(p1, p2, p3, p4);
-        TSuper::assign(pPtr);
-        return pPtr;
-    }
-    template<typename T1, typename T2, typename T3, typename T4, typename T5>
-    inline T* makeSelf(const T1& p1, const T2& p2, const T3& p3, const T4& p4, const T5& p5) {
-        T* pPtr = new T(p1, p2, p3, p4, p5);
+
+    template<typename... Args>
+    inline T* makeSelf(Args&&... args) {
+        T* pPtr = new T(std::forward<Args>(args)...);
         TSuper::assign(pPtr);
         return pPtr;
     }

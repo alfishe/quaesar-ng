@@ -124,9 +124,9 @@ static void clear_shm (void)
 
 bool preinit_shm (void)
 {
-	uae_u64 total64;
-	uae_u64 totalphys64;
-#ifdef _WIN32
+	uae_u64 total64 = 0;
+	uae_u64 totalphys64 = 0;
+#if defined(_WIN32) && !defined(__clang__)
 	MEMORYSTATUS memstats;
 	GLOBALMEMORYSTATUSEX pGlobalMemoryStatusEx;
 	MEMORYSTATUSEX memstatsex;
@@ -158,12 +158,12 @@ bool preinit_shm (void)
 	if (maxmem > max_allowed_mman)
 		max_allowed_mman = maxmem;
 
-#ifdef _WIN32
+#if defined _WIN32 && !defined(__clang__)
 	memstats.dwLength = sizeof(memstats);
 	GlobalMemoryStatus(&memstats);
 	totalphys64 = memstats.dwTotalPhys;
 	total64 = (uae_u64)memstats.dwAvailPageFile + (uae_u64)memstats.dwTotalPhys;
-	pGlobalMemoryStatusEx = (GLOBALMEMORYSTATUSEX)GetProcAddress (GetModuleHandle (_T("kernel32.dll")), "GlobalMemoryStatusEx");
+	pGlobalMemoryStatusEx = (GLOBALMEMORYSTATUSEX)(GetProcAddress (GetModuleHandle (_T("kernel32.dll")), "GlobalMemoryStatusEx"));
 	if (pGlobalMemoryStatusEx) {
 		memstatsex.dwLength = sizeof (MEMORYSTATUSEX);
 		if (pGlobalMemoryStatusEx(&memstatsex)) {
@@ -345,6 +345,7 @@ static int doinit_shm (void)
 	totalsize = 0x01000000;
 
 	z3rtgmem_size = gfxboard_get_configtype(rbc) == 3 ? rbc->rtgmem_size : 0;
+    ((void)(z3rtgmem_size));
 
 	if (p->cpu_model >= 68020)
 		totalsize = 0x10000000;
@@ -890,6 +891,7 @@ void *uae_shmat (addrbank *ab, int shmid, void *shmaddr, int shmflg, struct uae_
 {
 	void *result = (void *)-1;
 	bool got = false, readonly = false, maprom = false;
+    (void)(got);
 	int p96special = FALSE;
 	struct uae_mman_data md2;
 

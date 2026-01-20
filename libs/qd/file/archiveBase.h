@@ -3,7 +3,7 @@
 #include "fileBase.h"
 #include "qd/base/base.h"
 #include "qd/base/baseTypes.h" // SINGLETON
-#include "qd/base/tribool.h"
+#include "qd/base/Tribool.h"
 #include "qd/debug/assert.h"
 #include "qd/debug/exception.h"
 #include "qd/stl/string.h"

@@ -54,7 +54,7 @@ template<typename T> constexpr inline T c_expr(T value) { return value; }
 
 EA_DISABLE_VC_WARNING(4100) // unreferenced formal parameter
     template<typename... T> inline void unused(T&&... x) { (void(sizeof...(x))); }
-#define G_UNUSED(...) qd::unused(__VA_ARGS__)
+#define QD_UNUSED(...) qd::unused(__VA_ARGS__)
 EA_RESTORE_VC_WARNING()
 
 }; // namespace qd

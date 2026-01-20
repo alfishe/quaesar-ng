@@ -17,18 +17,19 @@
 #include "qd/typeSystem/typeInfo.h"
 #include "va_server_thread.h"
 
-#undef main
 
 class QuaesarVAmigaInjectAccess {
- public:
-  vamiga::VAmiga* m_pVAmiga = nullptr;
-  vamiga::Amiga* main = &m_pVAmiga->emu->main;
+public:
+#undef main
+    vamiga::VAmiga *m_pVAmiga;
+    vamiga::Amiga *main;
 
- public:
-  QuaesarVAmigaInjectAccess(vamiga::VAmiga* pVAmiga) : m_pVAmiga(pVAmiga) {}
+public:
+    QuaesarVAmigaInjectAccess(vamiga::VAmiga *pVAmiga) : m_pVAmiga(pVAmiga), main(&m_pVAmiga->emu->main) {}
 
 };  // class QuaesarVAmigaInjectAccess
 //////////////////////////////////////////////////////////////////////////
+
 
 namespace IVm::imp {
 

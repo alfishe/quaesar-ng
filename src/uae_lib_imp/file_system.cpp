@@ -290,7 +290,7 @@ TCHAR* au_fs(const char* src) {
 
 
 char* ua_fs(const TCHAR* s, int defchar) {
-    G_UNUSED(defchar);
+    QD_UNUSED(defchar);
 #ifdef NO_TRANSLATION
     if (s == NULL)
         return NULL;
@@ -346,7 +346,7 @@ TCHAR* au_fs_copy(TCHAR* dst, int maxlen, const char* src) {
 
 
 char* ua_fs_copy(char* dst, int maxlen, const TCHAR* src, int defchar) {
-    G_UNUSED(defchar);
+    QD_UNUSED(defchar);
 #ifdef NO_TRANSLATION
     if (!dst || maxlen <= 0)
         return NULL;

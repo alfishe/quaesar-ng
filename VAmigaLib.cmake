@@ -6,3 +6,4 @@ add_subdirectory(libs/vAmiga)
 add_subdirectory(libs/vAmiga_imp_lib)
 
 quaesar_add_libs(VAmigaImpLib)
+

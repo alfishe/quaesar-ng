@@ -88,6 +88,7 @@ qsr::IVmOperationsHandler* QsrVmClientPlayerGuiDesktop::getVmOpsHandler() const 
 
 qd::EFlow QsrVmClientPlayerGuiDesktop::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args) const {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
+        QD_UNUSED(p);
         return EFlow::DONE;
     }
     return EFlow::NO_RESULT;

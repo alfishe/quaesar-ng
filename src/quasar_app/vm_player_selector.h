@@ -13,7 +13,6 @@ class VmPlayersSelector {
         qd::string title;
     };
     qd::vector<ProviderItem> m_vmServerAppParts;
-    int m_nCurServerFactory = 0;
 
 public:
     void init() {

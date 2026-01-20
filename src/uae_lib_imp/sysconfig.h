@@ -651,8 +651,8 @@ typedef long uae_atomic;
 
 
 // #define TRACE() do { printf("%s\n", __func__); } while (0)
-#define TRACE() \
-    do {        \
+#define TRACE(...) \
+    do {           \
     } while (0)
 
 #endif /* WINUAE_SYSCONFIG_H */

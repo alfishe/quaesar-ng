@@ -93,13 +93,13 @@ public:
             return 0;  //(uint16_t)::memory_get_word(addr);
         }
         virtual void setU16(AddrRef addr, uint16_t v) override {
-            nullptr;  //::memory_put_word(addr, v);
+            //::memory_put_word(addr, v);
         }
         virtual uint32_t getU32(AddrRef addr) override {
             return 0;  //(uint32_t)::memory_get_long(addr);
         }
         virtual void setU32(AddrRef addr, uint32_t v) override {
-            nullptr;  //::memory_put_long(addr, v);
+            //::memory_put_long(addr, v);
         }
     };  // struct Memory
     Memory instMemory;

@@ -89,14 +89,42 @@ public:
     std::unordered_map<Block, std::unique_ptr<FSBlock>>::const_iterator begin() const { return blocks.begin(); }
     std::unordered_map<Block, std::unique_ptr<FSBlock>>::const_iterator end() const { return blocks.end(); }
 
+#if 0 // C++20 ranges - not working with unordered_map
     // Returns a view for all keys
-    auto keys() const { return std::views::keys(blocks); }
+    auto keys() const {
+        // unordered_map doesn't satisfy the range constraints in this context
+        return blocks | std::views::transform([](const auto &pair) { return pair.first; });
+    }
 
     // Returns a view for all keys in a particular range
     auto keys(Block min, Block max) const {
-        
+
         auto in_range = [=](Block key) { return key >= min && key <= max; };
-        return std::views::keys(blocks) | std::views::filter(in_range);
+        return blocks
+            | std::views::transform([](const auto &pair) { return pair.first; })
+            | std::views::filter(in_range);
+    }
+#endif // 
+
+    // Returns a vector with all keys
+    std::vector<Block> keys() const {
+        std::vector<Block> result;
+        result.reserve(blocks.size());
+        for (const auto &pair : blocks) {
+            result.push_back(pair.first);
+        }
+        return result;
+    }
+
+    // Returns a vector with all keys in a particular range
+    std::vector<Block> keys(Block min, Block max) const {
+        std::vector<Block> result;
+        for (const auto &pair : blocks) {
+            if (pair.first >= min && pair.first <= max) {
+                result.push_back(pair.first);
+            }
+        }
+        return result;
     }
 
     // Returns a vector with all keys in sorted order

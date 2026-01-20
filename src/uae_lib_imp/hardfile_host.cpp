@@ -588,14 +588,14 @@ int hdf_read_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int 
             maxlen = len;
         } else {
             maxlen = len > CACHE_SIZE ? CACHE_SIZE : len;
-            ret = hdf_read_2(hfd, p, offset, maxlen);
+            ret = hdf_read_2(hfd, p, offset, (int)maxlen);
         }
         got += ret;
         if (ret != maxlen)
             return (int)got;
         offset += maxlen;
         p += maxlen;
-        len -= maxlen;
+        len -= (int)maxlen;
     }
     return (int)got;
 }

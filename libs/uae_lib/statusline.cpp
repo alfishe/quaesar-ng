@@ -70,7 +70,8 @@ static const char *numbers_default = { /* ugly  0123456789CHD%+-PNKV */
 //   x      x      x      x      x      x      x      x      x      x      x      x      x      x      x      x      x      x      x      x      x  
 };
 
-static const char *numbers = numbers_default;
+// fix: error: reference to 'numbers' is ambiguous
+static const char *a_numbers = numbers_default;
 
 
 STATIC_INLINE uae_u32 ledcolor(uae_u32 c, uae_u32 *rc, uae_u32 *gc, uae_u32 *bc, uae_u32 *a)
@@ -86,7 +87,7 @@ static void write_tdnumber(uae_u8 *buf, int bpp, int x, int y, int num, uae_u32 
 	int j;
 	const char *numptr;
 
-	numptr = numbers + num * td_numbers_width + NUMBERS_NUM * td_numbers_width * y;
+	numptr = a_numbers + num * td_numbers_width + NUMBERS_NUM * td_numbers_width * y;
 	for (j = 0; j < td_numbers_width; j++) {
 		for (int k = 0; k < mult; k++) {
 			if (*numptr == 'x')
@@ -123,10 +124,10 @@ void statusline_set_font(const char *newnumbers, int width, int height)
 	td_led_height = TD_DEFAULT_LED_HEIGHT;
 	td_width = TD_DEFAULT_WIDTH;
 	td_custom = false;
-	numbers = numbers_default;
+	a_numbers = numbers_default;
 	if (!newnumbers)
 		return;
-	numbers = newnumbers;
+	a_numbers = newnumbers;
 	td_numbers_width = width;
 	td_numbers_height = height;
 	td_led_width = td_numbers_width * 3 + td_numbers_width / 2;

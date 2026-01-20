@@ -1,7 +1,7 @@
 #pragma once
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include "qd/base/tribool.h"
+#include "qd/base/Tribool.h"
 
 
 namespace qIm {

@@ -874,7 +874,7 @@ MutableFileSystem::exportBlocks(Block first, Block last, u8 *dst, isize size, Fa
     std::memset(dst, 0, size);
     
     // Export all blocks
-    for (auto &block: storage.keys(first, last)) {
+    for (const auto &block: storage.keys(first, last)) {
 
         storage.read(block)->exportBlock(dst + (block - first) * traits.bsize, traits.bsize);
     }

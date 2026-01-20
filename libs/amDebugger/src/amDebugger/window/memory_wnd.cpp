@@ -344,8 +344,8 @@ void MemoryHexViewWnd::draw_contents(void* mem_data_void, size_t mem_size, size_
                         if (data_editing_take_fucus)
                         {
                             ImGui::SetKeyboardFocusHere(0);
-                            sprintf(addr_input_buffer, format_data, s.addr_digits_count, base_display_addr + addr);
-                            sprintf(data_input_buffer, format_byte, read_fn ? read_fn(mem_data, addr) : mem_data[addr]);
+                            snprintf(addr_input_buffer, sizeof(addr_input_buffer), format_data, s.addr_digits_count, base_display_addr + addr);
+                            snprintf(data_input_buffer, sizeof(data_input_buffer), format_byte, read_fn ? read_fn(mem_data, addr) : mem_data[addr]);
                         }
                         struct UserData {
                             // FIXME: We should have a way to retrieve the text edit cursor position more easily in the
@@ -374,7 +374,7 @@ void MemoryHexViewWnd::draw_contents(void* mem_data_void, size_t mem_size, size_
                         };
                         UserData user_data;
                         user_data.CursorPos = -1;
-                        sprintf(user_data.CurrentBufOverwrite, format_byte,
+                        snprintf(user_data.CurrentBufOverwrite, 3, format_byte,
                             read_fn ? read_fn(mem_data, addr) : mem_data[addr]);
                         ImGuiInputTextFlags flags =
                             ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue |

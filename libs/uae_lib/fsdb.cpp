@@ -31,11 +31,13 @@
 * Offset 519, 81 bytes, comment
 */
 
+#ifndef TRACE
 #define TRACING_ENABLED 0
 #if TRACING_ENABLED
 #define TRACE(x) do { write_log x; } while(0)
 #else
-#define TRACE(x)
+#define TRACE(...)
+#endif
 #endif
 
 TCHAR *nname_begin (TCHAR *nname)

@@ -39,8 +39,9 @@ const char* IVm::EMemSrc::to_string(EMemSrc value)
         return "WOM";
     case EMemSrc::EXT:
         return "EXT";
+    default:
+        return "???";
     }
-    return "???";
 }
 
 
@@ -82,6 +83,7 @@ const char* IVm::EMemSrc::to_desc(EMemSrc value)
         return "Write-only memory";
     case EMemSrc::EXT:
         return "Extension ROM";
+    default:
+        return "???";
     }
-    return "???";
 }

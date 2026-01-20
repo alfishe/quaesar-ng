@@ -289,7 +289,7 @@ void VAmServerThread::onVAmigaThreadMain() {
         setVAmInitialized(true);
         m_onVAmInitialized->set();  // sync with main thread
 
-        const uint32_t *pPrevDispTexBuf = nullptr;
+        //const uint32_t *pPrevDispTexBuf = nullptr;
         for (;;) {
             if (m_bRequestToQuit) break;
 
@@ -306,7 +306,7 @@ void VAmServerThread::onVAmigaThreadMain() {
                 SDL_Delay(5);
             }
             else {
-                pPrevDispTexBuf = pCurDisplayTexBuf;
+                //pPrevDispTexBuf = pCurDisplayTexBuf;
                 m_pAmigaBuffer = const_cast<uint32_t *>(pCurDisplayTexBuf);
                 SDL_AtomicSet(&m_scrFrameNo, (int)nr);
                 vVideoPort.unlockTexture();

@@ -30,7 +30,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 template<class TClass>
-static amD::operation::Operation* createOperationCb_(const qd::TypeInfo& meta, qd::UiOperationCreator* cp)
+static amD::operation::Operation* createOperationCb_(const qd::TypeInfo& /*meta*/, qd::UiOperationCreator* cp)
 {
     TClass* pNewInst = new TClass();
     pNewInst->onOperationCreate(cp);

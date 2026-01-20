@@ -16,13 +16,16 @@
 #include "Thread.h"
 #include "CmdQueue.h"
 
+class QuaesarVAmigaInjectAccess;
+
+
 namespace vamiga {
 
 class Emulator : public Thread, public Synchronizable, public Inspectable<EmulatorInfo, EmulatorStats> {
 
     friend class API;
     friend class VAmiga;
-    friend class QuaesarVAmigaInjectAccess;
+    friend class ::QuaesarVAmigaInjectAccess;
 
 public:
 
