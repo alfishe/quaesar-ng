@@ -154,7 +154,7 @@ public:
     void setId(uint32_t newId);
     void setIdByName(const char* p_name) { setId(qd::fnv1aHash(p_name)); }
 
-    virtual qd::string getText() const { return ""; }
+    virtual qtd::string getText() const { return ""; }
 
     virtual EFlow onUiNodeMessageProc(qd::UiMessage* in_msg);
 

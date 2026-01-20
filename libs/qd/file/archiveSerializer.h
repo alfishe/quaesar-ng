@@ -68,9 +68,9 @@ public:
 
 protected:
     virtual void _arWrite_String(const char* pString, uint32_t Length) override;
-    virtual void _arRead_String(qd::string& String) override;
+    virtual void _arRead_String(qtd::string& String) override;
 
-    virtual qd::string_view _arGetFileName() override { return string_view(m_pFile->getFileName()); }
+    virtual qtd::string_view _arGetFileName() override { return string_view(m_pFile->getFileName()); }
 
     virtual void _arSkip(const qd::IFileChunk& Chunk) override;
     virtual void _arUndo(const qd::IFileChunk& Chunk) override;

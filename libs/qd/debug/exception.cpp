@@ -7,7 +7,7 @@ namespace qd {
 bool qd::Exception::_assert_debug = false;
 
 
-void qd::Exception::setError(const qd::string& Error, EException::eType ErrType /*= EException::DEFAULT */) {
+void qd::Exception::setError(const qtd::string& Error, EException::eType ErrType /*= EException::DEFAULT */) {
     m_Error = Error;
     m_ErrType = ErrType;
 }

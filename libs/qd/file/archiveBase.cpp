@@ -69,7 +69,7 @@ void CArchiveBin::_arWrite_String(const char* pString, uint32_t Length)
 
 
 
-void CArchiveBin::_arRead_String(qd::string& in_str)
+void CArchiveBin::_arRead_String(qtd::string& in_str)
 {
     uint32_t nLen;
     uint8_t bLength;
@@ -608,7 +608,7 @@ CArchive& CArchive::operator<< (const qd::CStringW& StringW) {
 
 
 CArchive& CArchive::operator>> (qd::CStringW& StringW) {
-    qd::string String;
+    qtd::string String;
     this->operator>> (String);
     StringW = convertFromUTF8(String);
     return *this;
@@ -785,7 +785,7 @@ void IFileChunk::rewind(CArchive& ar) const
 
 
 
-void IFileChunk::_setChunkStrID(qd::string_view src)
+void IFileChunk::_setChunkStrID(qtd::string_view src)
 {
     // class IFileChunk
     uint32_t nLen = (uint32_t)strnlen(src.data(), IFileChunk::MAX_CHUNK_LEN);

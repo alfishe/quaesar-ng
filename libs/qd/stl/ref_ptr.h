@@ -2,7 +2,7 @@
 #include "qd/base/base.h"
 #include "qd/debug/assert.h"
 #include "qd/platform/compiler.h"
-#include <EASTL/atomic.h>
+#include "qd/stl/atomic.h"
 #include <typeinfo>
 
 
@@ -109,13 +109,13 @@ struct assert_cast<T, true> {
 
 
 
-// namespace qd
+// namespace qd {
 
 // USED IN "ref_ptr<T>"
 class RefCounted
 {
-    mutable eastl::atomic<int> _ref_ptr_RefCount;
-    mutable eastl::atomic<int> _ref_ptr_WeakRefCount;
+    mutable qtd::atomic<int> _ref_ptr_RefCount;
+    mutable qtd::atomic<int> _ref_ptr_WeakRefCount;
     typedef int TRefInt;
 
     template<class T>
@@ -447,7 +447,7 @@ public:
         return p ? p->is_ref_ptr_valid() : true;
     }
 
-    inline bool is_null() const { return _ptr == nullptr; }
+    inline bool isNull() const { return _ptr == nullptr; }
 
     inline T* _get_raw() const { return _ptr; }
 

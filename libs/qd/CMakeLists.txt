@@ -51,7 +51,12 @@ target_link_libraries(qd PRIVATE imgui EASTL ${SDL2_LIBRARIES})
 
 # Compiler options
 if (MSVC)
-    target_compile_options(qd PRIVATE /W4 /permissive- /Zc:__cplusplus)
+    #target_compile_options(qd PRIVATE /W4 /permissive- /Zc:__cplusplus)
+	
+    target_compile_options(qd PRIVATE /W4 /WX /bigobj /ZI)
+    target_link_options(qd PRIVATE /INCREMENTAL /SAFESEH:NO)
+    target_compile_options(qd PRIVATE /MP) # multiprocessor build
+
 endif()
 
 # Append content from the original va_stdafx.h file to the generated file

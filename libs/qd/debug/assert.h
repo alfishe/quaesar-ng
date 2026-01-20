@@ -19,7 +19,7 @@
     {                                                                                       \
         while (!(condition))                                                                \
         {                                                                                   \
-            qd::string textFormat = qd::string_format(pFormat, ##__VA_ARGS__);              \
+            qtd::string textFormat = qd::string_format(pFormat, ##__VA_ARGS__);              \
             struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
             const SDL_AssertState sdl_assert_state =                                        \
                 SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \
@@ -39,11 +39,13 @@
 //////////////////////////////////////////////////////////////////////////
 
 
-#if SDL_ASSERT_LEVEL > 0 /* normal settings. */
-#define assert2(expr, pFormat, ...) QDSDL_enabled_assert_2((expr), pFormat, ##__VA_ARGS__)
-#else
-#define assert2(expr, pFormat, ...) SDL_assert(c_def(0 != (expr)) && pFormat)
-#endif // #if SDL_ASSERT_LEVEL
+#ifndef assert2
+#  if SDL_ASSERT_LEVEL > 0 /* normal settings. */
+#    define assert2(expr, pFormat, ...) QDSDL_enabled_assert_2((expr), pFormat, ##__VA_ARGS__)
+#  else
+#  define assert2(expr, pFormat, ...) SDL_assert(c_def(0 != (expr)) && pFormat)
+#     endif // #if SDL_ASSERT_LEVEL
+#endif
 
 
 #define ASSERT_F(expr, format, ...) EASTL_ASSERT_MSG(expr, qd::string_format(format, __VA_ARGS__).c_str());
@@ -56,7 +58,7 @@
 #define ASSERT_AND_DO(expression, do_action, ...)                                       \
     if (EASTL_UNLIKELY(!(expression)))                                                  \
     {                                                                                   \
-        qd::string textFormat = qd::string_format(__VA_ARGS__);                         \
+        qtd::string textFormat = qd::string_format(__VA_ARGS__);                         \
         struct SDL_AssertData sdl_assert_data = {0, 0, textFormat.c_str(), 0, 0, 0, 0}; \
         const SDL_AssertState sdl_assert_state =                                        \
             SDL_ReportAssertion(&sdl_assert_data, SDL_FUNCTION, SDL_FILE, SDL_LINE);    \

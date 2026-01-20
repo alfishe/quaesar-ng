@@ -1,4 +1,6 @@
 @echo off
+cls
+
 pushd %~dp0
 setlocal
 
@@ -12,10 +14,10 @@ if not exist "%OUTPUT_DIR%" (
 )
 
 rem set ARCH=x64
- set ARCH=Win32
+set ARCH=Win32
 
 pushd %OUTPUT_DIR%
-%CMAKE_EXE% .. -A %ARCH% -DVAMIGA=ON
+%CMAKE_EXE% %ROOT_DIR% -A %ARCH% -DVAMIGA=ON
 
 @echo on ""
 echo  "------- CMake generation finished ------- "

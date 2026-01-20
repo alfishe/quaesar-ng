@@ -68,7 +68,7 @@ qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
   VAmVmImp* vm = this;
   VAmServerThread* pVAm = m_pVAmThread;
   bool r = false;
-  if (c_def(0)) {
+  if constexpr (0) {
   } else if (args->cast_<amD::operation::DebugTraceContinue>()) {
     r = true;
     if (vm->getVmDebugMode() == EVmDebugMode::Live)

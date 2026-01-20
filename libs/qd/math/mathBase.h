@@ -147,4 +147,20 @@ template<class T, class T1, class T2>
     return details::is_in_<0, 1>(Value, tMin, tMax);
 }
 
+// Same as GLSL function - Results are undefined if edge0 == edge1.
+// returns value from 0 .. 1.0f, depends on edgle value
+[[nodiscard]] inline float smoothstep(float edge0, float edge1, float x) {
+    float t = clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+    return t * t * (3.0f - 2.0f * t);
+}
+
+[[nodiscard]] inline float step(float edge, float x) {
+    return (x < edge) ? 0.0f : 1.0f;
+}
+
+// GLSL like function to mix values
+[[nodiscard]] inline float mix(float x, float y, float a) {
+    return x * (1.0f - a) + y * a;
+}
+
 }; // namespace qd

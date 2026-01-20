@@ -157,7 +157,7 @@ qd::IModuleInterface* ModuleManager::getOrCreateModule(const qd::TypeInfo& Modul
 qd::ModuleManager* ModuleManager::I() {
     // PHOENIX SINGLETON
     if (!TThis::m_pSingleInstance && !TThis::m_bSingleDestroyed) {
-        // qd::String::gInitStaticData(); // First create qd::string(W) + Destroy Singleton
+        // qd::String::gInitStaticData(); // First create qtd::string(W) + Destroy Singleton
         m_pSingleInstance = new TThis();
         ::atexit(&TThis::_destroySingleton);
         m_bSingleDestroyed = false;

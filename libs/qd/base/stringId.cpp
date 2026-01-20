@@ -10,7 +10,7 @@
 //-------------------------------------------------------------------------
 
 namespace qd {
-class StringIDHashMap : public eastl::hash_map<uint64_t, qd::string>
+class StringIDHashMap : public eastl::hash_map<uint64_t, qtd::string>
 {
 public:
     eastl::hash_node<value_type, false> const* const* GetBuckets() const { return mpBucketArray; }

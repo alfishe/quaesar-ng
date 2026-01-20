@@ -85,7 +85,7 @@ public:
 public:
 
     bool isValid() const {
-        return c_def(this) && m_size != 0;
+        return qd::c_def(this) && m_size != 0;
     }
 
     qtd::span<uint8_t> getSpan() const {

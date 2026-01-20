@@ -78,7 +78,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     UaeVmImp* vm = this;
     UaeServerThread* pUae = m_pUaeThread;
     bool r = false;
-    if (c_def(0)) {
+    if (qd::c_def(0)) {
     } else if (args->cast_<amD::operation::DebugTraceContinue>()) {
         r = true;
         if (vm->getVmDebugMode() == EVmDebugMode::Live)

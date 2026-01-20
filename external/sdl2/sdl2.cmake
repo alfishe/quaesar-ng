@@ -5,6 +5,6 @@ if (APPLE OR LINUX OR UNIX)
 endif()
 
 if(NOT DEFINED SDL2_INCLUDE_DIRS)
-    set(SDL2_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/sdl2/include")
+    set(SDL2_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/include")
 endif()
 

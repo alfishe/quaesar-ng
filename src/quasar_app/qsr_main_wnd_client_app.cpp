@@ -275,7 +275,7 @@ void QsrMainClientWndApp::setVmPlayer(qsr::IVmClientPlayer* VmProvider) {
 
 qd::EFlow QsrMainClientWndApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowDebuggerWnd>()) {
-        unused(p);
+        qd::unused(p);
         amD::DebuggerApp* pDbg = getApp()->getDebuggerApp();
         pDbg->setWndVisible(true);
         return qd::EFlow::STOP;

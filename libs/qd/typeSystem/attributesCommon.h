@@ -9,7 +9,7 @@ namespace qd::tsAttr {
 //
 class Name : public qd::TypeInfoAttribute
 {
-    qd::string m_Name;
+    qtd::string m_Name;
 
 public:
     explicit Name(const string& name)

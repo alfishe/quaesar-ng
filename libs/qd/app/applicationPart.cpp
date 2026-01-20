@@ -17,7 +17,7 @@ void ApplicationPart::onPartCreate(ApplicationPart::OnCreate_t& prm)
 {
     m_pApp = prm.app;
 
-    qd::string name = prm.name;
+    qtd::string name = prm.name;
     if (name.empty() && prm.typeInfo)
     {
     }

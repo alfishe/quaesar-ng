@@ -7,6 +7,7 @@
 namespace qtd {
 using eastl::string;
 using eastl::string_view;
+using eastl::to_string;
 };
 
 namespace qd {
@@ -27,10 +28,10 @@ using wstring_view = eastl::basic_string_view<wchar_t>;
 
 
 template<size_t TCapacity = 32>
-inline qd::string string_format(const char* pFormat, ...) {
+inline qtd::string string_format(const char* pFormat, ...) {
     va_list argList;
     va_start(argList, pFormat);
-    qd::string result;
+    qtd::string result;
     result.reserve(TCapacity);
     result.sprintf_va_list(pFormat, argList);
     va_end(argList);
@@ -39,15 +40,15 @@ inline qd::string string_format(const char* pFormat, ...) {
 
 
 template<size_t TCapacity = 32>
-inline qd::string string_format_v(const char* pFormat, va_list argList) {
-    qd::string result;
+inline qtd::string string_format_v(const char* pFormat, va_list argList) {
+    qtd::string result;
     result.reserve(TCapacity);
     result.sprintf_va_list(pFormat, argList);
     return result;
 }
 
 
-inline qd::string string_format() { // for zero args template
+inline qtd::string string_format() { // for zero args template
     return {};
 }
 
@@ -134,7 +135,7 @@ inline int strnicmp(const char* str1, const char* str2, size_t count) {
 // clang-format off
 template<class TString>
 inline const char* CC(const TString& str) { return str.c_str(); }
-inline const char* CC(const qd::string_view& pStr) { return pStr.data(); }
+inline const char* CC(const qtd::string_view& pStr) { return pStr.data(); }
 inline const char* CC(const char* pStr) { return pStr; }
 inline const wchar_t* CC(const wchar_t* pStr) { return pStr; }
 inline const wchar_t* CW(const wchar_t* pStr) { return pStr; }

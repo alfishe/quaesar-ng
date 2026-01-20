@@ -169,7 +169,7 @@ struct ChunkInfo_t {
 
 struct ChunkID_t {
     uint32_t m_ID32 = 0;
-    qd::string m_IDStr;
+    qtd::string m_IDStr;
     EChunkID m_Type = EChunkID_Undef;
 }; // struct ChunkID_t
 
@@ -284,7 +284,7 @@ public:
         return m_ChunkStrIDLen; // (uint)strnlen_s(m_pIDStr, IFileChunk::MAX_CHUNK_LEN);
     }
 
-    qd::string_view getChunkStrIDRef() const { return qd::string_view(&m_pIDStr[0], m_ChunkStrIDLen); }
+    qtd::string_view getChunkStrIDRef() const { return qtd::string_view(&m_pIDStr[0], m_ChunkStrIDLen); }
 
     void _serializeChunkID32(qd::CArchive& ar, uint32_t ID, uint32_t nVersion = 0, bool bCheckId = true);
     void _serializeChunkStr(qd::CArchive& ar, string_view pStrID, uint32_t nVersion /*= 0*/);
@@ -318,7 +318,7 @@ public:
 
     void setFile(qd::IBaseFileIO* pFile);
 
-    virtual qd::string_view _arGetFileName() { return "AR_UNKNOWN_FILE"; }
+    virtual qtd::string_view _arGetFileName() { return "AR_UNKNOWN_FILE"; }
 
     virtual bool _arLoadChunkTryTest(IFileChunk& /*FileChunk*/, uint32_t /*ChunkID*/ = 0)
     {
@@ -363,7 +363,7 @@ public:
     virtual void _arWrite_Float(const void* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
 
     // strings
-    virtual void _arRead_String(qd::string& /*Dest*/) { _err_NotSupported(); }
+    virtual void _arRead_String(qtd::string& /*Dest*/) { _err_NotSupported(); }
     virtual void _arWrite_String(const char* /*pSrc*/, uint32_t /*nBytes*/) { _err_NotSupported(); }
     virtual void _arWrite_StringW(const wchar_t* /*pSrc*/) { _err_NotSupported(); }
 
@@ -591,10 +591,10 @@ public:
     inline CArchive& operator<< (const IFileChunk& FileChunk);
     inline CArchive& operator<< (const char* pString)
     {
-        qd::string String(pString);
+        qtd::string String(pString);
         return operator<< (String);
     }
-    CArchive& operator<< (const qd::string& String)
+    CArchive& operator<< (const qtd::string& String)
     {
         m_pAr->_arWrite_String(String.c_str(), (uint32_t)String.size());
         return *this;
@@ -671,7 +671,7 @@ public:
         return *this;
     }
     inline CArchive& operator>> (IFileChunk& FileChunk);
-    CArchive& operator>> (qd::string& String)
+    CArchive& operator>> (qtd::string& String)
     {
         m_pAr->_arRead_String(String);
         return *this;
@@ -699,7 +699,7 @@ public:
 
     // names not supported yet
 #if 1
-    // 		inline CArchiveNamedArgScope operator [] (const qd::string_view& attrName) {
+    // 		inline CArchiveNamedArgScope operator [] (const qtd::string_view& attrName) {
     // 			return *this;
     // 		}
     template<std::size_t N>
@@ -797,7 +797,7 @@ public:
 
     void skipBytes(uint32_t nBytes) { m_pAr->_arSkipBytes(nBytes); }
 
-    qd::string_view getFileName() const { return m_pAr->_arGetFileName(); }
+    qtd::string_view getFileName() const { return m_pAr->_arGetFileName(); }
 
     void skip(const qd::IFileChunk& Chunk) { m_pAr->_arSkip(Chunk); }
     void undo(const qd::IFileChunk& Chunk) { m_pAr->_arUndo(Chunk); }

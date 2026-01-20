@@ -40,7 +40,7 @@ class ApplicationPart : public qd::Node
 
 
 protected:
-    qd::string m_PartName;
+    qtd::string m_PartName;
     EAppPartMtd m_Methods;
     float m_ZOrder = 0; // qd.AppParts.EBaseZOrder
     qd::Application* m_pApp = nullptr;
@@ -54,7 +54,7 @@ public:
     virtual ~ApplicationPart() override;
 
     struct OnCreate_t {
-        qd::string name;
+        qtd::string name;
         const qd::TypeInfo* typeInfo = nullptr;
         qd::Application* app = nullptr;
     };
@@ -97,8 +97,8 @@ public:
 
     void setZOrder(const float& zOrder);
 
-    const qd::string& getPartName() const { return m_PartName; }
-    void setPartName(const qd::string& PartName)
+    const qtd::string& getPartName() const { return m_PartName; }
+    void setPartName(const qtd::string& PartName)
     {
         assert(!PartName.empty());
         m_PartName = PartName;

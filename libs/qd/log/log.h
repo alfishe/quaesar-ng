@@ -109,7 +109,7 @@ public:
         W_ERROR,
         W_FATAL,
     };
-    qd::string m_logStr;
+    qtd::string m_logStr;
     eLogMsgType m_nMsgType = TThis::W_INFO;
 
 public:
@@ -139,7 +139,7 @@ public:
         throw this->GET_EXCEPTION(excType);
     }
 
-    const qd::string& getLogStr() const { return m_logStr; }
+    const qtd::string& getLogStr() const { return m_logStr; }
 
     void _flushLogMsg();
 }; // class TermMsg

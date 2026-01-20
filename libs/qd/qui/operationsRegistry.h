@@ -21,8 +21,8 @@ class OpDesc
 {
 public:
     ShortcutsHnd* m_pShortcuts = nullptr;
-    qd::string m_id;
-    qd::string m_name;
+    qtd::string m_id;
+    qtd::string m_name;
     qd::operation::BaseOpArgs* m_pOpTemplate = nullptr; // owner
 
     OpDesc() = default;

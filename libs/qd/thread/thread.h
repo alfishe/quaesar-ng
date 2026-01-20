@@ -1,14 +1,16 @@
 #pragma once
 #include "qd/base/base.h"
 #include "qd/stl/string.h"
-#include <EASTL/fixed_function.h>
-#include <SDL_log.h>
-#include <SDL_thread.h>
-#include <SDL_timer.h>
+#include "qd/stl/fixed_function.h"
+
+struct SDL_cond;
+struct SDL_mutex;
+struct SDL_Thread;
 
 
 namespace qd {
 FORWARD_DECLARATION_2(Details, CThreadData);
+
 
 //------------------------------------------------------------------------
 class ThreadEvent
@@ -54,27 +56,17 @@ public:
     void join();
     bool isActive();
     bool waitForDeath(float TimeOut);
-    inline bool isCurrentThread() { return SDL_GetThreadID(m_pSDLThread) == SDL_ThreadID(); }
+    bool isCurrentThread();
     void setThreadName(const qd::string_view& pName);
 }; // class Thread
 //////////////////////////////////////////////////////////////////////////
 
 
+bool is_main_thread();
 
-inline bool is_main_thread()
-{
-    return SDL_ThreadID() == SDL_GetThreadID(nullptr);
-}
+void sleep_ms(uint32_t timeMs);
 
-
-inline void sleep_ms(uint32_t timeMs)
-{
-    SDL_Delay(timeMs);
-}
-
-
-inline void sleep(float duration_sec)
-{
+inline void sleep(float duration_sec) {
     qd::sleep_ms((uint32_t)(duration_sec * 1000.0f));
 }
 

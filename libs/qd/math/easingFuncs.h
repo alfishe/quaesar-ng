@@ -219,6 +219,11 @@ inline float outBack(float p)
   return 1.f - (f * f * f - f * sinf(f * M_PI));
 }
 
+inline float outBack2(float t, float s = 1.70158f) {
+    float t0 = t - 1.0f;
+    return t0 * t0 * ((s + 1.0f) * t0 + s) + 1.0f;
+}
+
 
 // Modeled after the piecewise overshooting cubic function:
 // y = (1/2)*((2x)^3-(2x)*sinf(2*x*pi))           ; [0, 0.5)

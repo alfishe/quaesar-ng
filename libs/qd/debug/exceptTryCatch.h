@@ -3,6 +3,23 @@
 #include <qd/base/base.h>
 #include <qd/debug/assert.h>
 
+//////////////////////////////////////////////////////////////////////////
+//
+// Example of usage:
+//
+//
+// G_TRY {
+//  if (!invokeAction())
+//    G_THROW_OR_DO(Exception("Can't read file"), return false);
+// }
+// G_CATCH(qd::Exception& ex) {
+//     m_ApplicationException = ex.getError();
+// };
+// G_CATCH(std::bad_alloc& ex) {
+//     logErr("STD::BAD_ALLOC FOUND: Not Enough Memory: \"%s\"", ex.what());
+// };
+//
+//////////////////////////////////////////////////////////////////////////
 
 namespace qd {
 
@@ -21,10 +38,10 @@ namespace qd {
 #define G_TRY                                  try
 #define G_CATCH(x)                             catch (x)
 
-#else // EASTL_EXCEPTIONS_ENABLED
+#else // QD_EXCEPTIONS_ENABLED
 
 #define G_THROW_OR_DO(TException, action, ...) \
-    if (c_def(true))                           \
+    if constexpr (true)                        \
     {                                          \
         const auto& _tmp_ex_v = TException;    \
         EA_UNUSED(_tmp_ex_v);                  \
@@ -36,11 +53,11 @@ namespace qd {
 #define G_TRY if (1)
 
 // turning exception into lambda
-#define G_CATCH(TException) \
-    if (c_def(0))           \
-    [[maybe_unused]] auto _tmp_cb##__LINE__ = [&](TException)
+#define G_CATCH(TException)            \
+    if constexpr (0) [[maybe_unused]]  \
+    auto _tmp_cb##__LINE__ = [&](TException)
 
-#endif // EASTL_EXCEPTIONS_ENABLED
+#endif // QD_EXCEPTIONS_ENABLED
 //////////////////////////////////////////////////////////////////////////
 
 

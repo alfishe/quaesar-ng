@@ -26,7 +26,7 @@ void AppPartsManager::sendAppEventMsg(qd::appMsg::BaseMsg& in_msg)
 }
 
 
-qd::ApplicationPart* AppPartsManager::findPartByName(const qd::string& strPartID) const
+qd::ApplicationPart* AppPartsManager::findPartByName(const qtd::string& strPartID) const
 {
     for (auto it = m_pParts.begin(); it != m_pParts.end(); ++it)
     {
@@ -57,7 +57,7 @@ bool AppPartsManager::addPartTry(ref_ptr<ApplicationPart> pPart)
     if (!pPart)
         return false;
 
-    const qd::string& strPartName = pPart->getPartName();
+    const qtd::string& strPartName = pPart->getPartName();
     assert(!strPartName.empty());
 
     if (qd::is_has(pPart, m_pParts))
@@ -79,7 +79,7 @@ void AppPartsManager::addPart(ref_ptr<ApplicationPart> pPart)
     if (!pPart)
         return;
 
-    const qd::string& strPartName = pPart->getPartName();
+    const qtd::string& strPartName = pPart->getPartName();
     if (strPartName.empty())
         pPart->setPartName(pPart->getTypeInfo().getTypeName());
 
@@ -90,7 +90,7 @@ void AppPartsManager::addPart(ref_ptr<ApplicationPart> pPart)
 }
 
 
-void AppPartsManager::addPart(ref_ptr<ApplicationPart> p_part, const qd::string& part_name_id)
+void AppPartsManager::addPart(ref_ptr<ApplicationPart> p_part, const qtd::string& part_name_id)
 {
     p_part->setPartName(part_name_id);
     addPart(p_part);

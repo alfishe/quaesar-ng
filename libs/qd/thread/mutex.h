@@ -50,23 +50,21 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+template<class TMutex>
 class MutexLock
 {
-    Mutex* m_pMutex;
+    TMutex* m_pMutex;
 
 public:
-    MutexLock(Mutex& mutex)
-        : m_pMutex(&mutex)
-    {
+    explicit MutexLock(TMutex& mutex)
+        : m_pMutex(&mutex) {
         m_pMutex->lock();
     }
     MutexLock(MutexLock&& rh) noexcept
-        : m_pMutex(rh.m_pMutex)
-    {
+        : m_pMutex(rh.m_pMutex) {
         rh.m_pMutex = nullptr;
     }
-    ~MutexLock()
-    {
+    ~MutexLock() {
         if (m_pMutex)
             m_pMutex->unlock();
     }

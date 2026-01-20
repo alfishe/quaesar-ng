@@ -11,21 +11,21 @@ public:                                                                       \
         return &_Enum;                                                        \
     } /* SINGLETON */                                                         \
 public:                                                                       \
-    inline const qd::string& toString() const                                 \
+    inline const qtd::string& toString() const                                 \
     {                                                                         \
         return getEnum()->getStrVal(mV);                                      \
     }                                                                         \
                                                                               \
 public:                                                                       \
     template<typename V>                                                      \
-    static inline const qd::string& toString(V ID)                            \
+    static inline const qtd::string& toString(V ID)                            \
     {                                                                         \
         return getEnum()->getStrVal((TEnum)ID);                               \
     }                                                                         \
                                                                               \
 public:                                                                       \
     template<typename V>                                                      \
-    static inline bool toString(V ID, qd::string& outVal)                     \
+    static inline bool toString(V ID, qtd::string& outVal)                     \
     {                                                                         \
         return getEnum()->findStrVal((TEnum)ID, outVal);                      \
     }                                                                         \
@@ -53,7 +53,7 @@ public:                                                                       \
                                                                               \
 public:                                                                       \
     template<typename V>                                                      \
-    static inline bool fromStringReg(const qd::string& Name, V& RetVal)       \
+    static inline bool fromStringReg(const qtd::string& Name, V& RetVal)       \
     {                                                                         \
         bool bRes = false;                                                    \
         RetVal = (V)getEnum()->findIntByStrOrRegister(Name, &bRes);           \
@@ -61,7 +61,7 @@ public:                                                                       \
     };                                                                        \
                                                                               \
 public:                                                                       \
-    inline bool fromStringSelfReg(const qd::string& pName)                    \
+    inline bool fromStringSelfReg(const qtd::string& pName)                    \
     {                                                                         \
         bool bRes = false;                                                    \
         mV = (TEnum)getEnum()->findIntByStrOrRegister(pName, &bRes);          \

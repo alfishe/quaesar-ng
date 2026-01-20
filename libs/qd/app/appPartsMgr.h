@@ -75,7 +75,7 @@ public:
 
     // TPartClass base of ApplicationPart*
     template<class TAppPartClass, typename ...TArgs>
-    inline TAppPartClass* createPart_(qd::string name, TArgs&&... args)
+    inline TAppPartClass* createPart_(qtd::string name, TArgs&&... args)
     {
         qd::ApplicationPart::OnCreate_t prm;
         prm.name = name;
@@ -89,13 +89,13 @@ public:
         return pNewInst;
     }
 
-    ApplicationPart* findPartByName(const qd::string& strPartID) const;
+    ApplicationPart* findPartByName(const qtd::string& strPartID) const;
 
 
     int findPartIndex(ApplicationPart* pPart) const;
     bool addPartTry(ref_ptr<ApplicationPart> pPart);
     void addPart(ref_ptr<ApplicationPart> p_part);
-    void addPart(ref_ptr<ApplicationPart> p_part, const qd::string& part_name_id);
+    void addPart(ref_ptr<ApplicationPart> p_part, const qtd::string& part_name_id);
 
     void destroyPart(ref_ptr<ApplicationPart> pPart);
     void destroy();

@@ -31,7 +31,7 @@ public:
     eastl::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> m_CreateFunc;
     typedef eastl::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> TCreateFunc;
     uint32_t m_nInstanceRef;
-    qd::string m_ModuleName;
+    qtd::string m_ModuleName;
 
 public:
     ModuleInfo(const qd::TypeInfo& pModuleInfo)

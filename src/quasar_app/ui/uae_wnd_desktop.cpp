@@ -96,7 +96,7 @@ qd::EFlow QsrVmClientPlayerGuiDesktop::setupDefaultOperationArgsImp(qd::operatio
 
 qd::EFlow QsrVmClientPlayerGuiDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     if (auto p = args->cast_<qsr::operations::ShowUaeOptionsWnd>()) {
-        unused(p);
+        qd::unused(p);
         qsr::UaeOptionsDlg* pOptionsDlg = this->findChildByIdName_<qsr::UaeOptionsDlg>(DLG_TITLE_OPTIONS);
         IVm::VM* vm = getVmOpsHandler()->getVm();
         pOptionsDlg->setVm(vm);

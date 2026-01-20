@@ -16,9 +16,9 @@ class TypeInfo : public qd::TypeInfoBase
 {
     StdTypeId m_stdTypeId;
 
-    qd::string m_fullName;
-    qd::string_view m_shortName;
-    qd::string_view m_namespace;
+    qtd::string m_fullName;
+    qtd::string_view m_shortName;
+    qtd::string_view m_namespace;
     THash32 m_cid = 0; // =hash(m_fullName)
 
     int32_t m_size = -1;
@@ -35,14 +35,14 @@ class TypeInfo : public qd::TypeInfoBase
     friend struct TypeInfoBuilder;
 
 public:
-    const qd::string& getFullName() const { return m_fullName; }
+    const qtd::string& getFullName() const { return m_fullName; }
 
     // Basic Type Info
     //-------------------------------------------------------------------------
 
     const StdTypeId& getStdTypeId() const { return m_stdTypeId; }
 
-    inline const qd::string& getTypeName() const { return m_fullName; }
+    inline const qtd::string& getTypeName() const { return m_fullName; }
 
     bool isAbstractType() const { return m_isAbstract; }
 

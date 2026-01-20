@@ -11,6 +11,7 @@ using eastl::data;
 using eastl::equal_to;
 using eastl::hash;
 using eastl::size;
+using eastl::move;
 
 
 template<class TVector, typename TPredicate>

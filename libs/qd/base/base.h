@@ -1,15 +1,17 @@
 #pragma once
+#include <cstdint>
 #include <EABase/eabase.h>
 #include <EASTL/internal/config.h>
-#include <cstdint>
 
 using THash32 = uint32_t;
 
 // clang-format off
 
 #define SIDENT(x)      x
-#define STRINGIFY(x)   _STRINGIFY2(x) /* #x */
-#define _STRINGIFY2(x) #x
+#ifndef STRINGIFY
+#  define STRINGIFY(x)   _STRINGIFY2(x) /* #x */
+#  define _STRINGIFY2(x) #x
+#endif
 #define CON(a, b)      a##b
 #define PASTE(a, b)    CON(a, b)
 
@@ -34,26 +36,27 @@ using THash32 = uint32_t;
 // dummy place to set breakpoint if needed
 #define BPT() [](){return 0;}();
 
-template<typename T> T c_def(T v) { return v; }
-template<typename T> constexpr inline T c_expr(T value) { return value; }
-
-
-EA_DISABLE_VC_WARNING(4100) // unreferenced formal parameter
-template<typename... T> inline void unused(T&&... x) { (void(sizeof...(x))); }
-#define G_UNUSED(...) unused(__VA_ARGS__)
-EA_RESTORE_VC_WARNING()
-
-
 #define MAKE4C(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 #define _MAKE4C(s) MAKE4C(s[0], s[1], s[2], s[3])
 
 
 namespace qd {
-	static constexpr uint32_t _noPos = UINT32_MAX; // ~0u
 
-    inline constexpr uint32_t fourcc(const char s[4]) {
-        return MAKE4C(s[0], s[1], s[2], s[3]);
-    }
+static constexpr uint32_t _noPos = UINT32_MAX; // ~0u
+
+inline constexpr uint32_t fourcc(const char s[4]) {
+    return MAKE4C(s[0], s[1], s[2], s[3]);
+}
+
+template<typename T> T c_def(T v) { return v; }
+template<typename T> constexpr inline T c_expr(T value) { return value; }
+
+
+EA_DISABLE_VC_WARNING(4100) // unreferenced formal parameter
+    template<typename... T> inline void unused(T&&... x) { (void(sizeof...(x))); }
+#define G_UNUSED(...) qd::unused(__VA_ARGS__)
+EA_RESTORE_VC_WARNING()
+
 }; // namespace qd
 
 

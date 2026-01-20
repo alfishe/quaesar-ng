@@ -40,11 +40,11 @@ struct EException {
 class Exception : public std::exception
 {
     EException::eType m_ErrType;
-    qd::string m_Error;
+    qtd::string m_Error;
     static bool _assert_debug;
 
 protected:
-    void setError(const qd::string& Error, EException::eType ErrType = EException::DEFAULT);
+    void setError(const qtd::string& Error, EException::eType ErrType = EException::DEFAULT);
 
 public:
     void debugBreakPoint() { c_def(0); }
@@ -71,7 +71,7 @@ public:
         QDASSERT_EX(0, "%s", m_Error.c_str());
     }
 
-    explicit Exception(const qd::string& Error)
+    explicit Exception(const qtd::string& Error)
         : m_ErrType(EException::DEFAULT)
         , m_Error(Error) {
         QDASSERT_EX(0, "%s", m_Error.c_str());
