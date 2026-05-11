@@ -1,5 +1,6 @@
 #pragma once
 #include "Point2.h"
+#include <cfloat>
 
 
 namespace qd {

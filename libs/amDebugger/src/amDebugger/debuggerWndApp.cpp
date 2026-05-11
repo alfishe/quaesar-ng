@@ -6,13 +6,13 @@
 #include "dbgConnection.h"
 #include "qd/app/application.h"
 #include "qd/app/moduleManager.h"
-#include "qd/imGui/backends/imgui_impl_sdl2.h"
-#include "qd/imGui/backends/imgui_impl_sdlrenderer2.h"
+#include "qd/imGui/backends/sdl2/imgui_impl_sdl2.h"
+#include "qd/imGui/backends/sdl2/imgui_impl_sdlrenderer2.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/qui/operationsRegistry.h"
 #include "qd/thread/thread.h"
 #include <EASTL/queue.h>
-#include <EASTL/sort.h>
+#include "qd/stl/algorithm.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <SDL.h>
@@ -45,7 +45,7 @@ void DebuggerApp::init()
     createRenderWindow();
     initImGui();
 
-    // m_pDebugger->setConnection(pCurConnect);
+    m_pDebugger->setDbgServiceBridge(create_dummy_connection());
 
     assert(m_pDebugger);
     qd::UiNodeCreator mk;

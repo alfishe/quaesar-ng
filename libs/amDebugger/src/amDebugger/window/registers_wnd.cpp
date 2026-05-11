@@ -55,23 +55,23 @@ void RegistersView::drawContentImp() {
     };
 
     auto editRegisterValue = [&](uint32_t reg_val, const char* reg_name) {
-        stVal.sprintf("%08X", reg_val);
+        qd::string_format_inplace(stVal, "%08X", reg_val);
         stId.assign("##") += reg_name;
         ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
         ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::RegistersWnd_RegValue));
         if (ImGui::InputText(stId.c_str(), &stVal, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            stCmd.sprintf("r %s %s", reg_name, stVal.c_str());
+            qd::string_format_inplace(stCmd, "r %s %s", reg_name, stVal.c_str());
             dbg->execConsoleCmd(stCmd.c_str());
         }
         ImGui::PopStyleColor();
     };
 
     auto editFlagValue = [&](const char* flag_name, uint32_t flag_val) {
-        stVal.sprintf("%01X", flag_val);
+        qd::string_format_inplace(stVal, "%01X", flag_val);
         stId.assign("##") += flag_name;
         ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
         if (ImGui::InputText(stId.c_str(), &stVal, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            stCmd.sprintf("r %s %s", flag_name, stVal.c_str());
+            qd::string_format_inplace(stCmd, "r %s %s", flag_name, stVal.c_str());
             dbg->execConsoleCmd(stCmd.c_str());
         }
     };

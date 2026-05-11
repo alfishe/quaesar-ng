@@ -14,28 +14,28 @@ void qd::Exception::setError(const qtd::string& Error, EException::eType ErrType
 
 
 qd::Exception::Exception(EException::eType errType, const char* pError, ...) : m_ErrType(errType) {
-    G_TRY {
+    QD_TRY {
         va_list arg_list;
         va_start(arg_list, pError);
         setErrorMessageVA(pError, arg_list);
         QDASSERT_EX(0, "%s", m_Error.c_str());
     }
-    G_CATCH(...) {
+    QD_CATCH(...) {
         m_Error = "EXCEPTION ERROR in var_list";
-        assert2(0, "EXCEPTION:%s", m_Error.c_str());
+        ASSERT_F(0, "EXCEPTION:%s", m_Error.c_str());
     };
 }
 
 
 
 qd::Exception::Exception(const char* pError, ...) : m_ErrType(EException::DEFAULT) {
-    G_TRY {
+    QD_TRY {
         va_list arg_list;
         va_start(arg_list, pError);
         setErrorMessageVA(pError, arg_list);
     }
-    G_CATCH(...) {
-        assert(0 && "EXCEPTION - VA ERROR in Exception" && pError);
+    QD_CATCH(...) {
+        ASSERT_F(0, "EXCEPTION - VA ERROR in Exception:'%s'", pError);
     };
     QDASSERT_EX(0, "%s", m_Error.c_str());
 }
@@ -43,7 +43,7 @@ qd::Exception::Exception(const char* pError, ...) : m_ErrType(EException::DEFAUL
 
 void qd::Exception::setErrorMessageVA(const char* pError, va_list& arg_list) {
     m_Error.clear();
-    m_Error.append_sprintf_va_list(pError, arg_list);
+    m_Error = qd::string_format(pError, arg_list);
 }
 
 

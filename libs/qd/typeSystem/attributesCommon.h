@@ -12,11 +12,11 @@ class Name : public qd::TypeInfoAttribute
     qtd::string m_Name;
 
 public:
-    explicit Name(const string& name)
+    explicit Name(const qtd::string& name)
         : m_Name(name)
     {}
 
-    const string& getName() const { return m_Name; }
+    const qtd::string& getName() const { return m_Name; }
 }; // class Name
 //////////////////////////////////////////////////////////////////////////
 
@@ -25,14 +25,14 @@ public:
 //
 class Description : public qd::TypeInfoAttribute
 {
-    string m_Description;
+    qtd::string m_Description;
 
 public:
-    explicit Description(const string& description)
+    explicit Description(const qtd::string& description)
         : m_Description(description)
     {}
 
-    const string& getDescription() const { return m_Description; }
+    const qtd::string& getDescription() const { return m_Description; }
 }; // class Description
 //////////////////////////////////////////////////////////////////////////
 
@@ -41,14 +41,14 @@ public:
 //
 class Category : public qd::TypeInfoAttribute
 {
-    string m_Category;
+    qtd::string m_Category;
 
 public:
-    explicit Category(const string& category)
+    explicit Category(const qtd::string& category)
         : m_Category(category)
     {}
 
-    const string& getCategory() const { return m_Category; }
+    const qtd::string& getCategory() const { return m_Category; }
 }; // class Category
 //////////////////////////////////////////////////////////////////////////
 

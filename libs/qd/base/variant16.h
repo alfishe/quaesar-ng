@@ -1,5 +1,6 @@
 #pragma once
 #include "qd/base/baseTypes.h"
+#include "qd/base/compiler.h"
 #include "qd/debug/assert.h"
 #include "qd/stl/string.h"
 
@@ -18,7 +19,7 @@ protected:
     static constexpr size_t g_headDataCapacity = 8 - 2;
     static constexpr size_t g_bodyDataCapacity = 8;
 
-    EA_DISABLE_VC_WARNING(4201) // nameless struct/union
+    QD_PUSH_VC_WARNING(4201) // nameless struct/union
     // Head data
     union {
         uint32_t _headData = 0;
@@ -42,7 +43,7 @@ protected:
 
         uint64_t _bodyData = 0;
     };
-    EA_RESTORE_VC_WARNING()
+    QD_POP_VC_WARNING()
 
 
 public:

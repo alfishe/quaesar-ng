@@ -1,11 +1,11 @@
 #include "qd/app/appPartsMgr.h"
-#include "EASTL/sort.h"
 #include "qd/app/appMessages.h"
 #include "qd/debug/assert.h"
 #include "qd/debug/exception.h"
 #include "qd/stl/stlUtils.h"
 #include "qd/typeSystem/typeInfo.h"
 #include <ctime> // std::time
+#include "qd/stl/algorithm.h"
 
 
 // DECLARE MODULE
@@ -61,7 +61,7 @@ bool AppPartsManager::addPartTry(ref_ptr<ApplicationPart> pPart) {
     //    return false;
 
     if (findPartByName(strPartName)) {
-        assert2(0, "addPartTry() Error - Part with this name already exists");
+        ASSERT_F(0, "addPartTry() Error - Part with this name already exists");
         return false;
     }
     m_pParts.push_back(pPart);
@@ -79,7 +79,7 @@ void AppPartsManager::addPart(ref_ptr<ApplicationPart> pPart) {
         pPart->setPartName(pPart->getTypeInfo().getTypeName());
 
     if (!addPartTry(pPart)) {
-        G_THROW_OR_DO(Exception("AddPartError: Duplicate Part Found: \"%s\"", strPartName.c_str()), return);
+        QD_THROW_OR_DO(Exception("AddPartError: Duplicate Part Found: \"%s\"", strPartName.c_str()), return);
     }
 }
 
@@ -174,7 +174,7 @@ qd::EFlow AppPartsManager::onSdlEventProc(SDL_Event& event) {
 
 
 void AppPartsManager::render() {
-    static qd::vector<ApplicationPart*> pActParts;
+    static qtd::vector<ApplicationPart*> pActParts;
     pActParts.clear();
 
     // MAIN RENDER
@@ -183,7 +183,7 @@ void AppPartsManager::render() {
         if (pCurPart && pCurPart->isPartRenderable())
             pActParts.push_back(pCurPart);
     }
-    eastl::stable_sort(pActParts.begin(), pActParts.end(), &_getZOrderSort);
+    qtd::stable_sort(pActParts.begin(), pActParts.end(), &_getZOrderSort);
 
     for (int i = 0; i < (int)pActParts.size(); ++i) {
         ApplicationPart* pCurPart = pActParts[i];

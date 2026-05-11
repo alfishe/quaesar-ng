@@ -1,10 +1,11 @@
 #include "qd/file/archiveBase.h"
-#include "archiveSerializer.h"
+#include "qd/file/archiveSerializer.h"
 #include "qd/base/color.h"
 #include "qd/base/endian.h"
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"
 #include "qd/mem/fnvHash.h"
+#include "qd/stl/vector.h"
 
 
 namespace qd {
@@ -124,7 +125,7 @@ CArchive& CArchive::operator<< (qd::IBaseFileIO& File)
     if (!FileSize)
         return *this;
 
-    eastl::vector<uint8_t> pBuf(1024);
+    qtd::vector<uint8_t> pBuf(1024);
     uint32_t curPos = File.tell();
     File.seek(0, SEEK_SET);
 
@@ -152,7 +153,7 @@ qd::CArchive& CArchive::operator>> (IBaseFileIO& File)
     uint32_t nFileSize;
     ar >> nFileSize;
 
-    eastl::vector<uint8_t> pBuf(1024);
+    qtd::vector<uint8_t> pBuf(1024);
     do
     {
         uint32_t nBytes = qd::min(nFileSize, (uint32_t)1024);
@@ -657,13 +658,13 @@ bool CArchiveBin::_arLoadChunkTryTest(qd::IFileChunk& FileChunk, uint32_t ChunkI
         return false;
 
     bool bRes;
-    G_TRY
+    QD_TRY
     {
         // Exception::CAssertLock a(false);
         bRes = loadChunk(FileChunk, ChunkID, false);
         c_def(0);
     }
-    G_CATCH(...)
+    QD_CATCH(...)
     {
         bRes = false;
     };
@@ -683,13 +684,13 @@ bool CArchive::loadMark8Test(uint8_t ID)
 
     uint32_t oldPos = getFilePos();
     bool bRes;
-    G_TRY
+    QD_TRY
     {
         // Exception::CAssertLock a(false);
         uint8_t loadID = U8_L();
         bRes = (loadID == ID);
     }
-    G_CATCH(...)
+    QD_CATCH(...)
     {
         bRes = false;
     };
@@ -717,7 +718,7 @@ uint8_t CArchive::loadMark8Throw(uint8_t FromID, uint8_t ToID, uint8_t* pOut /*=
 {
     uint8_t Mark;
     if (!loadMark8Test(FromID, ToID, &Mark))
-        G_THROW_OR_DO(Exception(EException::IO_ERROR,
+        QD_THROW_OR_DO(Exception(EException::IO_ERROR,
                           "Wrong SerialByteID Loaded. Expected From:'0x%2.X' To:'0x%2.X' Received: '0x%2.X'",
                           (uint32_t)FromID, (uint32_t)ToID, (uint32_t)Mark),
             return 0);
@@ -794,7 +795,7 @@ void IFileChunk::_setChunkStrID(qtd::string_view src)
     if (nLen != IFileChunk::MAX_CHUNK_LEN)
         m_pIDStr[nLen] = '\0';
 
-    THash32 stHash = qd::fnv1aHash(src.data(), src.size());
+    THash32 stHash = qd::fnv1aHash2(src.data(), src.size());
     m_ID = stHash & (255u);
 }
 
@@ -841,11 +842,11 @@ void IFileChunkScope::endChunk()
         return;
 
     bool bOk = false;
-    G_TRY
+    QD_TRY
     {
         bOk = m_pArchive->endChunk(*this);
     }
-    G_CATCH(...)
+    QD_CATCH(...)
     {
         bOk = false;
     };
@@ -899,7 +900,7 @@ void IFileChunk::_serializeChunkID32(qd::CArchive& ar, uint32_t ID, uint32_t nVe
 
 
 
-void IFileChunk::_serializeChunkStr(qd::CArchive& ar, string_view pStrID, uint32_t nVersion /*= 0*/)
+void IFileChunk::_serializeChunkStr(qd::CArchive& ar, qtd::string_view pStrID, uint32_t nVersion /*= 0*/)
 {
 
     _setChunkStrID(pStrID);
@@ -999,11 +1000,11 @@ bool CArchive::loadChunk(IFileChunk& outFileChunk, uint32_t checkChunkID /*= 0*/
     // throw Exception(EException::OPERATION_ERR, "Archive is not in Loading mode");
 
     IFileChunk origFileChunk = outFileChunk; // DEEP COPY ORIGINAL
-    G_TRY
+    QD_TRY
     {
         m_pAr->_arLoadChunkBegin(origFileChunk, &outFileChunk);
     }
-    G_CATCH(std::exception&)
+    QD_CATCH(std::exception&)
     {
         outFileChunk.m_bWasException = true;
         if (bThrow)

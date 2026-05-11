@@ -10,7 +10,7 @@ class UaeSharedConnectionImpl;
 class IVmDbgServiceBridge : public qd::RefCounted
 {
 public:
-    qd::string m_name;
+    qtd::string m_name;
 
 public:
     virtual ref_ptr<IVm::VM> getClientVm() = 0;

@@ -9,7 +9,7 @@ class ConsoleLogWriter;
 class ConsoleWnd : public AmDbgWindow {
     QDB_WINDOW_REGISTER(WndId::Console, amD::window::ConsoleWnd, amD::AmDbgWindow);
 
-    eastl::string m_inputStr;
+    qtd::string m_inputStr;
     ConsoleLogWriter* mpConsoleWriter = nullptr;
 
 public:

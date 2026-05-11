@@ -1,7 +1,7 @@
 #pragma once
 #include "qd/base/base.h"
-#include "qd/stl/vector.h"
 #include "qd/debug/assert.h"
+#include "qd/stl/vector.h"
 #include "qd/typeSystem/stdTypeId.h"
 #include "qd/typeSystem/typeInfoBase.h"
 
@@ -12,6 +12,7 @@ template<typename T>
 const qd::TypeInfo& typeof_();
 
 
+//------------------------------------------------------------------------
 class TypeInfo : public qd::TypeInfoBase
 {
     StdTypeId m_stdTypeId;
@@ -28,8 +29,8 @@ class TypeInfo : public qd::TypeInfoBase
     bool m_bFinal = false;
 
     // parents (super) classes of this type
-    qd::vector<const TypeInfo*> m_pBaseSuperTypes;
-    typedef qd::vector<const TypeInfo*> TBaseSuperTypes;
+    qtd::vector<const TypeInfo*> m_pBaseSuperTypes;
+    typedef qtd::vector<const TypeInfo*> TBaseSuperTypes;
 
     friend class TypeRegistry;
     friend struct TypeInfoBuilder;
@@ -39,24 +40,20 @@ public:
 
     // Basic Type Info
     //-------------------------------------------------------------------------
-
     const StdTypeId& getStdTypeId() const { return m_stdTypeId; }
-
+    const std::type_info& getStdType() const { return m_stdTypeId.getType(); }
     inline const qtd::string& getTypeName() const { return m_fullName; }
 
     bool isAbstractType() const { return m_isAbstract; }
-
     bool isDerivedFrom(const TypeInfo& parentTypeID) const;
 
     template<typename T>
-    inline bool isDerivedFrom_() const
-    {
+    inline bool isDerivedFrom_() const {
         checkDefined();
         return isDerivedFrom(qd::typeof_<T>());
     }
 
     bool isDefined() const { return m_bDefined; }
-
     THash32 getCid() const { return m_cid; }
 
     //------------------------------------------------------------------------
@@ -65,22 +62,18 @@ public:
     TypeInfo(TypeInfo const&) = default;
 
     TypeInfo(const StdTypeId& typeInfo)
-        : m_stdTypeId(typeInfo)
-    {}
+        : m_stdTypeId(typeInfo) {}
 
     virtual ~TypeInfo() override = default;
     TypeInfo& operator= (TypeInfo const& rhs) = default;
 
     bool checkDefined() const;
-
     bool operator== (const TypeInfo& rhs) const { return m_stdTypeId == rhs.m_stdTypeId; }
     bool operator!= (const TypeInfo& rhs) const { return m_stdTypeId != rhs.m_stdTypeId; }
 
-
 protected:
     void onTypeCreated();
-
-    virtual void getInheritedProviders(/*Out*/ qd::vector<const TypeInfoBase* >& out_list) const override;
+    virtual void getInheritedProviders(/*Out*/ qtd::vector<const TypeInfoBase* >& out_list) const override;
 
 }; // class TypeInfo
 //////////////////////////////////////////////////////////////////////////

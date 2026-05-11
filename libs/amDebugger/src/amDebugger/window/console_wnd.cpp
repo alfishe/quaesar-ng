@@ -1,6 +1,8 @@
 #include "console_wnd.h"
 #include "amDebugger/debuggerWndApp.h"
 #include "qd/imGui/imGui.h"
+#include "qd/stl/algorithm.h"
+#include "qd/stl/vector.h"
 #include <qd/log/log.h>
 #include <qd/thread/thread.h>
 #include "qd/thread/mutex.h"
@@ -10,7 +12,7 @@ namespace amD {
 namespace window {
 
 class ConsoleLogWriter : public qd::ILogWriter {
-    eastl::vector<qd::LogEntry> msgList;
+    qtd::vector<qd::LogEntry> msgList;
     qd::Mutex mMutex;
 
 public:
@@ -38,7 +40,7 @@ public:
         mpMutex->lock();
     }
 
-    EntriesList(EntriesList&& rh) : mOwner(rh.mOwner), mpMutex(eastl::move(rh.mpMutex)) {
+    EntriesList(EntriesList&& rh) : mOwner(rh.mOwner), mpMutex(qtd::move(rh.mpMutex)) {
         rh.mpMutex = nullptr;
     }
     const qd::LogEntry* begin() const {

@@ -47,7 +47,7 @@ void set_native_window(SDL_Window* sdlWindow, ::nfdwindowhandle_t* nativeWindow)
 
 
 static void draw_opt_floppy_cfg(OptionDrawCtx* ctx, int nFloppy) {
-    qd::string strDF = qd::string_format("DF%i:", nFloppy);
+    qtd::string strDF = qd::string_format("DF%i:", nFloppy);
 
     IVm::Floppy* pFloppyCfg = (&ctx->vm->floppy0)[nFloppy];
     bool bEnabled = pFloppyCfg->getEnabled();
@@ -69,7 +69,7 @@ static void draw_opt_floppy_cfg(OptionDrawCtx* ctx, int nFloppy) {
             pFloppyCfg->setEnabled(false);
             pFloppyCfg->setAdfPath("");
         }
-        qd::string adfPath = pFloppyCfg->getAdfPath();
+        qtd::string adfPath = pFloppyCfg->getAdfPath();
         if (ImGui::InputText("##Image file", &adfPath, ImGuiInputTextFlags_EnterReturnsTrue))
             pFloppyCfg->setAdfPath(adfPath);
     }
@@ -98,7 +98,7 @@ void BaseOptionsDlg::drawContentImp() {
                                                          // minor optimization, but generally you don't need to.
 
             int nSelectedCat =
-                qd::find_index(m_pCategories, [&](const auto& cat) { return cat.get() == m_pSelectedCat; });
+                qtd::find_index(m_pCategories, [&](const auto& cat) { return cat.get() == m_pSelectedCat; });
 
             clipper.IncludeItemByIndex(nSelectedCat);
 
@@ -171,7 +171,7 @@ EFlow BaseOptionsDlg::onUiNodeMessageProc(qd::UiMessage* in_msg) {
 
 UCategory* BaseOptionsDlg::createCategory(EOptionCat nOpt, EOptionCat nParentCat) {
     assert(!getCategoryById(nOpt));
-    qd::unique_ptr<UCategory> pCategory(new UCategory(nOpt, nParentCat));
+    qtd::unique_ptr<UCategory> pCategory(new UCategory(nOpt, nParentCat));
     int nIdent = 0;
     UCategory* pParent = getCategoryById(nParentCat);
     if (pParent) {

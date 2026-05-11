@@ -1,6 +1,7 @@
 #include "typeInfoBase.h"
 #include <qd/typeSystem/typeInfo.h>
 #include <qd/typeSystem/typeInfoAttrBase.h>
+#include "qd/stl/algorithm.h"
 
 
 namespace qd {
@@ -26,7 +27,7 @@ void TypeInfoBase::broadcastReflectionEventMsg(TypeInfoMsgBase* in_msg)
 
 void TypeInfoBase::deleteCustomAttribute(const TypeInfoAttribute* pAttr)
 {
-    TAttrList::iterator Iter = eastl::find(m_pAttributes.begin(), m_pAttributes.end(), pAttr);
+    TAttrList::iterator Iter = qtd::find(m_pAttributes.begin(), m_pAttributes.end(), pAttr);
     if (Iter != m_pAttributes.end())
     {
         m_pAttributes.erase(Iter);
@@ -46,7 +47,7 @@ const TypeInfoAttribute* TypeInfoBase::findAttribute(const StdTypeId& rfAttrType
 
     if (find_in_inherit)
     {
-        eastl::vector<const TypeInfoBase* > providers;
+        qtd::vector<const TypeInfoBase* > providers;
         getInheritedProviders(providers);
         for (auto i = providers.begin(); i != providers.end(); ++i)
         {

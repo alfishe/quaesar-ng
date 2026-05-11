@@ -1,7 +1,7 @@
 #pragma once
 #include "qd/base/base.h"
 #include "qd/stl/string.h"
-#include <EASTL/fixed_set.h>
+#include "qd/stl/set.h"
 
 typedef int ImGuiKeyChord;
 enum ImGuiKey : int;
@@ -43,7 +43,7 @@ class Shortcut
 {
 public:
     ShortcutId m_id = 0;
-    typedef eastl::fixed_set<qd::Key, 4, false> Keys;
+    typedef qtd::set<qd::Key> Keys;
     Shortcut::Keys m_keys;
     bool m_bRepeat = false;
     ImGuiKeyChord m_keyChord = 0;

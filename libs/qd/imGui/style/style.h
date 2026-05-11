@@ -13,7 +13,7 @@ public:
         qd::Color colorU32;
         ImVec4 colorF;
     };
-    eastl::array<ColorRec, MAX_COLORS_COUNT> mColors = {};
+    qtd::array<ColorRec, MAX_COLORS_COUNT> mColors = {};
 
 public:
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "limits"
-#include <EASTL/type_traits.h>
+#include <type_traits>
 #include <qd/debug/assert.h>
 #include <stdint.h>
 
@@ -37,7 +37,7 @@ public:
     inline FixedPoint_() = default;
 
     // For integral types only:
-    template<typename TVal, class = typename eastl::enable_if<std::is_integral<TVal>::value>::type>
+    template<typename TVal, class = typename std::enable_if<std::is_integral<TVal>::value>::type>
     inline constexpr FixedPoint_(TVal Value)
         : mV(myself::_fromIntVal<TVal>(Value)) {}
 

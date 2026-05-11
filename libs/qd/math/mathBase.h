@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cmath>
 
 #define M_FPI  3.14159265358979323846f
 #define M_F2PI 6.28318530717958647692f
@@ -162,5 +163,16 @@ template<class T, class T1, class T2>
 [[nodiscard]] inline float mix(float x, float y, float a) {
     return x * (1.0f - a) + y * a;
 }
+
+
+// Asymptotic move from `from` toward `to` over time `dt`. `viscosity` is the
+// time (seconds) to cover ~63% of the remaining distance — small viscosity
+// means fast catch-up. Same formula as Dagor's math/dag_mathBase.h::approach.
+[[nodiscard]] inline float approach(float from, float to, float dt, float viscosity) {
+    if (viscosity < 1e-9f)
+        return to;
+    return from + (1.0f - expf(-dt / viscosity)) * (to - from);
+}
+
 
 }; // namespace qd

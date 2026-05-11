@@ -1,7 +1,14 @@
 #pragma once
-#include <EASTL/algorithm.h>
+#include <qtdDefines.h>
+#include "algorithm.h"
+#include "vector.h"
+
+#if QTD_IS_EASTL
 #include <EASTL/iterator.h>
 #include <EASTL/bonus/adaptors.h>
+#else
+#include <iterator>
+#endif
 
 
 namespace qd {
@@ -16,19 +23,19 @@ namespace qd {
 	// CHECK IF STD::CONTAINER HAS ITEM
 	template<typename T, class TList>
 	inline bool is_has(const T& Inst, const TList& List) {
-		return eastl::find(eastl::begin(List), eastl::end(List), (typename TList::value_type)Inst ) != List.end();
+		return qtd::find(List.begin(), List.end(), (typename TList::value_type)Inst ) != List.end();
 	}
 
 
 	template< typename T >
-	inline typename eastl::vector<T>::iterator insert_sorted( eastl::vector<T> & Vec, T&& /*const&*/ Item ) {
-		return Vec.insert(eastl::upper_bound( Vec.begin(), Vec.end(), Item ), eastl::move(Item) );
+	inline typename qtd::vector<T>::iterator insert_sorted( qtd::vector<T> & Vec, T&& /*const&*/ Item ) {
+		return Vec.insert(qtd::upper_bound( Vec.begin(), Vec.end(), Item ), qtd::move(Item) );
 	};
 
 
 	template<typename T, typename TPred>
-	inline typename eastl::vector<T>::iterator insert_sorted( eastl::vector<T>& Vec, T&& /*const&*/ Item, TPred pred ) {
-		return Vec.insert( eastl::upper_bound( Vec.begin(), Vec.end(), Item, pred ), eastl::move(Item) );
+	inline typename qtd::vector<T>::iterator insert_sorted( qtd::vector<T>& Vec, T&& /*const&*/ Item, TPred pred ) {
+		return Vec.insert( qtd::upper_bound( Vec.begin(), Vec.end(), Item, pred ), qtd::move(Item) );
 	}
 
 

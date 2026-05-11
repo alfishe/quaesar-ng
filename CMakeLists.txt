@@ -66,9 +66,11 @@ add_subdirectory(external/dear_imgui)
 add_subdirectory(external/EASTL)
 add_subdirectory(external/capstone)
 add_subdirectory(external/nativefiledialog-extended) #nfd
-add_subdirectory(libs/qd)
 add_subdirectory(libs/amDebugger)
 add_subdirectory(libs/exprParser)
+
+set(QD_USE "EASTL;SDL2;IMGUI")
+add_subdirectory(libs/qd)
 
 option(VAMIGA "Enable VAmiga support" ON)
 if (VAMIGA)

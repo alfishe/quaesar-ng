@@ -17,10 +17,10 @@ TypeInfoBuilder::TypeInfoBuilder(const StdTypeId& type_info, TypeRegistry* p_reg
 }
 
 
-void split_qualified_name(const string_view& full_name, string_view& out_type_name, string_view& out_namespace)
+void split_qualified_name(const qtd::string_view& full_name, qtd::string_view& out_type_name, qtd::string_view& out_namespace)
 {
     int templ = 0;
-    size_t lastSplitPoint = string::npos;
+    size_t lastSplitPoint = qtd::string_view::npos;
     size_t j = 0;
 
     size_t nLen = full_name.size();
@@ -37,7 +37,7 @@ void split_qualified_name(const string_view& full_name, string_view& out_type_na
         }
     }
 
-    if (lastSplitPoint == string::npos)
+    if (lastSplitPoint == qtd::string::npos)
     {
         out_type_name = full_name;
         out_namespace = "";
@@ -50,8 +50,8 @@ void split_qualified_name(const string_view& full_name, string_view& out_type_na
 }
 
 
-void TypeInfoBuilder::declareType(const char* full_name) const
-{
+void TypeInfoBuilder::declareType(const char* full_name) const {
+
     assert(!m_pType->isDefined() && "Builded type_info already registered!");
     m_pType->m_cid = qd::fnv1aHash(full_name);
     m_pType->m_fullName = full_name;

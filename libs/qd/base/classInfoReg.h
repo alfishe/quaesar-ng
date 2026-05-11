@@ -1,8 +1,9 @@
 #pragma once
-#include <EASTL/string.h>
-#include <EASTL/vector_map.h>
+#include <typeinfo>
+#include <utility>
+#include <qd/stl/string.h>
+#include <qd/stl/vector_map.h>
 #include <qd/base/base.h>
-//#include <qd/imGui/imgui_eastl.h>
 #include <qd/debug/assert.h>
 
 namespace qd {
@@ -22,8 +23,8 @@ public:
         void registerClass();
     };  // MetaInfo
 
-    eastl::vector_map<uint32_t, TThis::MetaInfo> mClassInfoMap;
-    typedef eastl::vector_map<uint32_t, TThis::MetaInfo> TClassInfoMap;
+    qtd::vector_map<uint32_t, TThis::MetaInfo> mClassInfoMap;
+    typedef qtd::vector_map<uint32_t, TThis::MetaInfo> TClassInfoMap;
 
 public:
     static TThis* get() {
@@ -36,7 +37,7 @@ public:
     ~ClassInfoRegistry_(void) = default;
 
     void registerClass(TThis::MetaInfo&& meta) {
-        auto insIt = mClassInfoMap.insert(eastl::make_pair(meta.classId, eastl::move(meta)));
+        auto insIt = mClassInfoMap.insert(std::make_pair(meta.classId, std::move(meta)));
         if (insIt.second == false) {
             ASSERT_F(0, "Registered classId:%u already exists", meta.classId);
         }
@@ -68,8 +69,8 @@ public:
 
 template <class TBaseClass>
 inline void ClassInfoRegistry_<TBaseClass>::MetaInfo::registerClass() {
-    TThis* pClassMgr = TThis::get();
-    pClassMgr->registerClass(eastl::move(*this));
+TThis* pClassMgr = TThis::get();
+pClassMgr->registerClass(std::move(*this));
 }
 
 };  // namespace qd

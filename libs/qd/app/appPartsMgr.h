@@ -22,7 +22,7 @@ class AppPartsManager : public qd::IModuleInterface
     TS_REFLECT_CLASS(qd::AppPartsManager, qd::IModuleInterface);
 
 private:
-    qd::vector<ref_ptr<ApplicationPart>> m_pParts;
+    qtd::vector<ref_ptr<ApplicationPart>> m_pParts;
     Application* m_pApp = nullptr;
     TTime64 m_timeNowFrame = 0;
 

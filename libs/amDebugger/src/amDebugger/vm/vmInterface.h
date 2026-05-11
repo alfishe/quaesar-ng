@@ -5,6 +5,7 @@
 #include <qd/typeSystem/typeDeclare.h>
 #include <qd/stl/span.h>
 #include <qd/stl/array.h>
+#include <qd/stl/string.h>
 #include <qd/qui/uiOperation.h>
 
 
@@ -110,8 +111,8 @@ public:
     virtual void setEnabled(bool v) = 0;
     virtual bool getWriteProtect() = 0;
     virtual void setWriteProtect(bool v) = 0;
-    virtual qd::string getAdfPath() = 0;
-    virtual void setAdfPath(const qd::string& v) = 0;
+    virtual qtd::string getAdfPath() = 0;
+    virtual void setAdfPath(const qtd::string& v) = 0;
     virtual ~Floppy() = default;
 
 }; // class Floppy
@@ -147,7 +148,7 @@ public:
             return &m_banks[ind];
         return nullptr;
     }
-    eastl::span<const IVm::MemBank> getBanks() const { return m_banks; }
+    qtd::span<const IVm::MemBank> getBanks() const { return m_banks; }
     virtual uint8_t* getRealAddr(AddrRef ptr) = 0;
     virtual bool getU16(AddrRef addr, uint16_t* out) = 0;
     virtual uint16_t getU16(AddrRef addr) = 0;

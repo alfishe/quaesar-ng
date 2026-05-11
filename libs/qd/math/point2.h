@@ -1,5 +1,6 @@
 #pragma once
-#include "qd/base/base.h"
+#include "qd/math/mathBase.h"
+#include <cmath>
 #include <initializer_list>
 
 
@@ -14,20 +15,23 @@ class TPoint2 {
 public:
     TInt x, y;
 
-    inline TPoint2() : x((TInt)0), y((TInt)0) {}
+    inline constexpr TPoint2() : x((TInt)0), y((TInt)0) {}
 
     template <typename TInt2>
-    inline TPoint2(const TPoint2<TInt2>& p) : x((TInt)p.x), y((TInt)p.y) {}
+    inline constexpr TPoint2(const TPoint2<TInt2>& p) : x((TInt)p.x), y((TInt)p.y) {}
 
     template <typename T0, typename T1>
-    inline TPoint2(T0 _x, T1 _y) : x((TInt)_x), y((TInt)_y) {}
+    inline constexpr TPoint2(T0 _x, T1 _y) : x((TInt)_x), y((TInt)_y) {}
 
     template <typename TInt2>
-    inline constexpr TPoint2(std::initializer_list<TInt2> il) {
-        if (il.size() >= 1) x = (TInt)*(il.begin());
-        else x = 0;
-        if (il.size() >= 2) y = (TInt)*(il.begin() + 1);
-        else y = x;
+    constexpr TPoint2(std::initializer_list<TInt2> il) : x(0), y(0) {
+        const TInt2* p = il.begin();
+        switch (il.size()) {
+            default: [[fallthrough]];
+            case 2: y = (TInt)p[1]; [[fallthrough]];
+            case 1: x = (TInt)p[0]; [[fallthrough]];
+            case 0: break;
+        }
     }
 
     inline void zero() { x = 0; y = 0; }
@@ -78,12 +82,12 @@ template<class T> TPoint2<T> cross(const TPoint2<T>& a, const TPoint2<T>& b) { r
 template<class T> TPoint2<T> operator*(float a, const TPoint2<T>& p) { return TPoint2<T>(p.x * a, p.y * a); }
 template<class T> float lengthSq(const TPoint2<T>& a) { return a.x * a.x + a.y * a.y; }
 template<class T> float length(const TPoint2<T>& a) { return sqrtf(lengthSq(a)); }
-template<class T> TPoint2<T> normalize(const TPoint2<T>& a) { return safeinv(length(a)) * a; }
+template<class T> TPoint2<T> normalize(const TPoint2<T>& a) { return qd::safeinv(length(a)) * a; }
 template<class T> TPoint2<T> mul(const TPoint2<T>& a, const TPoint2<T>& b) { return TPoint2<T>(a.x * b.x, a.y * b.y); }
 template<class T> TPoint2<T> div(const TPoint2<T>& a, const TPoint2<T>& b) { return TPoint2<T>(a.x / b.x, a.y / b.y); }
 template<class T> TPoint2<T> floor(const TPoint2<T>& a) { return TPoint2<T>(::floorf(a.x), ::floorf(a.y)); }
-template<class T> TPoint2<T> max(const TPoint2<T>& a, const TPoint2<T>& b) { return TPoint2<T>(max(a.x, b.x), max(a.y, b.y)); }
-template<class T> TPoint2<T> min(const TPoint2<T>& a, const TPoint2<T>& b) { return TPoint2<T>(min(a.x, b.x), min(a.y, b.y)); }
+template<class T> TPoint2<T> (max)(const TPoint2<T>& a, const TPoint2<T>& b) { return TPoint2<T>(a.x > b.x ? a.x : b.x, a.y > b.y ? a.y : b.y); }
+template<class T> TPoint2<T> (min)(const TPoint2<T>& a, const TPoint2<T>& b) { return TPoint2<T>(a.x < b.x ? a.x : b.x, a.y < b.y ? a.y : b.y); }
 
 
 

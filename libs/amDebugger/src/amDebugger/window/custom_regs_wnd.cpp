@@ -1,6 +1,9 @@
 #include "custom_regs_wnd.h"
 #include "amDebugger/debuggerWndApp.h"
 #include "qd/imGui/imGui.h"
+#include "qd/stl/fixed_vector.h"
+#include "qd/stl/string.h"
+#include "qd/stl/utility.h"
 #include "amDebugger/ui/uiStyle.h"
 
 
@@ -63,12 +66,12 @@ void FlagsTooltipContent::_drawRegCols(const CustomFlagsDesc* fd, int b, uint16_
 
 
 struct DrawCustomRegColumn {
-    eastl::fixed_string<char, 128, false> stReg;
-    eastl::fixed_string<char, 128, false> stVal, stCmd, stId;
+    qd::InlineString stReg;
+    qd::InlineString stVal, stCmd, stId;
     IVm::CustomRegs* custRegs = nullptr;
 
     void drawColumn(CustReg reg_id) {
-        stReg.assign(reg_id.toString().begin(), reg_id.toString().end());
+        stReg.assign(reg_id.toString().data(), reg_id.toString().size());
         ImGui::TextColored(uiGetColorF(UiStyle::CustomRegsWnd_RegName), "%s", stReg.c_str());
 
         if (ImGui::BeginItemTooltip()) {
@@ -83,7 +86,7 @@ struct DrawCustomRegColumn {
 
         uint16_t regVal = custRegs->getRegVal(reg_id);
 
-        stVal.sprintf("%04X", regVal);
+        stVal = qd::string_format("%04X", regVal).data();
         stId.assign("##") += stReg;
         ImGui::SetNextItemWidth(ImGui::GetColumnWidth());
         ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::CustomRegsWnd_RegValue));
@@ -106,12 +109,12 @@ void CustomRegsWnd::drawContentImp() {
 
     mRegsFilter.Draw();
 
-    eastl::fixed_vector<eastl::pair<CustReg, const char*>, CustReg::_COUNT_> regsList;
+    qtd::fixed_vector<qtd::pair<CustReg, const char*>, CustReg::_COUNT_> regsList;
     for (int i = (CustReg)0; i != CustReg::_COUNT_; ++i) {
-        eastl::string_view strReg = CustReg(i).toString();
-        if (!mRegsFilter.PassFilter(strReg.begin(), strReg.end()))
+        qtd::string_view strReg = CustReg(i).toString();
+        if (!mRegsFilter.PassFilter(strReg.data(), strReg.data() + strReg.size()))
             continue;
-        regsList.emplace_back(CustReg(i), strReg.begin());
+        regsList.emplace_back(CustReg(i), strReg.data());
     }
 
     if (!regsList.empty()) {

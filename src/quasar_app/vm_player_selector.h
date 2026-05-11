@@ -9,10 +9,10 @@ namespace qsr {
 class VmPlayersSelector {
     struct ProviderItem {
         BaseVmServerAppPart* pServerApp = nullptr;
-        qd::string id;
-        qd::string title;
+        qtd::string id;
+        qtd::string title;
     };
-    qd::vector<ProviderItem> m_vmServerAppParts;
+    qtd::vector<ProviderItem> m_vmServerAppParts;
 
 public:
     void init() {

@@ -10,15 +10,15 @@ namespace amD
 {
 	class ExprValStr
 	{
-	qd::string m_strVal;
-    ParserOop::Expr *m_pParsedExpr = nullptr;
+	qtd::string m_strVal;
+		ParserOop::Expr *m_pParsedExpr = nullptr;
 	
 	public:
 	
-	    const qd::string& getStrVal() const {
+	    const qtd::string& getStrVal() const {
 	        return m_strVal;
 	    }
-	    void setStrVal(const qd::string_view& Val) {
+	    void setStrVal(const qtd::string_view& Val) {
 	        if (m_strVal == Val)
 	            return;
 	        m_strVal = Val;

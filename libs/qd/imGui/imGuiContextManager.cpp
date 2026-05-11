@@ -1,8 +1,13 @@
 #include "qd/imGui/imGuiContextManager.h"
-#include "qd/imGui/backends/imgui_impl_sdl2.h"
-#include "qd/imGui/backends/imgui_impl_sdlrenderer2.h"
-#include "qd/stl/algorithm.h"
+#if QD_USE_SDL
 #include "SDL.h"
+#include "qd/imGui/backends/sdl2/imgui_impl_sdl2.h"
+#include "qd/imGui/backends/sdl2/imgui_impl_sdlrenderer2.h"
+#else
+#include "qd/imGui/backends/win32/imgui_impl_win32.h"
+#include "qd/imGui/backends/win32/imgui_impl_dx11.h"
+#endif
+#include "qd/stl/algorithm.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
@@ -50,7 +55,7 @@ QImGuiContext* ImGuiContextManager::createContextImGui(SDL_Window* window, SDL_R
 
 void ImGuiContextManager::destroyImContext(QImGuiContext* pQContext) {
 
-    auto It = qd::find(m_pImContexts.begin(), m_pImContexts.end(), pQContext);
+    auto It = qtd::find(m_pImContexts.begin(), m_pImContexts.end(), pQContext);
     if (It != m_pImContexts.end()) {
         pQContext->m_pParentModule = nullptr;
         ImGuiContext* pPrevCtx = pQContext->useCurrent();

@@ -1,7 +1,6 @@
 #pragma once
-#include <EASTL/fixed_vector.h>
-#include <EASTL/string.h>
-#include <EASTL/string_view.h>
+#include "qd/stl/fixed_vector.h"
+#include "qd/stl/string.h"
 #include <amDebugger/vm/customRegsList.h>
 #include <amDebugger/vm/memory.h>
 #include <cstdint>
@@ -19,7 +18,7 @@ struct CustReg {
 #undef REG_TO_ENUM
     };
     struct Data {
-        eastl::string_view name;
+        qtd::string_view name;
         uint32_t addr;
         int special;
         uint16_t mask[3];
@@ -38,7 +37,7 @@ public:
     operator uint16_t() const {
         return (uint16_t)mV;
     }
-    const eastl::string_view& toString() const {
+    const qtd::string_view& toString() const {
         return CustReg::cust_reg_data[mV].name;
     }
     const char* toStringC() const {
@@ -57,15 +56,15 @@ public:
 
 struct CustomFlagsDesc {
     struct Bits {
-        eastl::string_view name;
+        qtd::string_view name;
         uint8_t noBeg = 0;
         uint8_t noEnd = 0;
         uint16_t shiftL = 0x0;
         uint16_t mask = 0xFFFFu;
-        eastl::string_view description;
+        qtd::string_view description;
     };
     CustReg reg;
-    eastl::fixed_vector<Bits, 16, false> bits;
+    qtd::fixed_vector<Bits, 16, false> bits;
 
     CustomFlagsDesc(CustReg p_reg) : reg(p_reg) {
     }

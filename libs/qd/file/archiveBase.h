@@ -3,7 +3,7 @@
 #include "fileBase.h"
 #include "qd/base/base.h"
 #include "qd/base/baseTypes.h" // SINGLETON
-#include "qd/base/Tribool.h"
+#include "qd/base/tribool.h"
 #include "qd/debug/assert.h"
 #include "qd/debug/exception.h"
 #include "qd/stl/string.h"
@@ -277,7 +277,7 @@ public:
 
     inline void checkSafe(CArchive& ar) const;
 
-    void _setChunkStrID(string_view src);
+    void _setChunkStrID(qtd::string_view src);
 
     inline uint8_t _getChunkStrLen() const
     {
@@ -287,7 +287,7 @@ public:
     qtd::string_view getChunkStrIDRef() const { return qtd::string_view(&m_pIDStr[0], m_ChunkStrIDLen); }
 
     void _serializeChunkID32(qd::CArchive& ar, uint32_t ID, uint32_t nVersion = 0, bool bCheckId = true);
-    void _serializeChunkStr(qd::CArchive& ar, string_view pStrID, uint32_t nVersion /*= 0*/);
+    void _serializeChunkStr(qd::CArchive& ar, qtd::string_view pStrID, uint32_t nVersion /*= 0*/);
 
 }; // class IFileChunk
 //////////////////////////////////////////////////////////////////////////
@@ -1272,7 +1272,7 @@ class ChunkScope_S_V8 : public qd::IFileChunkScope
     typedef qd::IFileChunkScope TSuper;
 
 public:
-    ChunkScope_S_V8(qd::CArchive& ar, string_view pStrID, uint8_t nVersion = 0)
+    ChunkScope_S_V8(qd::CArchive& ar, qtd::string_view pStrID, uint8_t nVersion = 0)
         : TSuper(&ar, qd::Arc::EChunkType::STR_U8_U32)
     {
         _serializeChunkStr(ar, pStrID, nVersion);
@@ -1293,7 +1293,7 @@ struct CArchiveNamedArgScope {
     qd::IFileChunk m_Chunk;
 
 public:
-    CArchiveNamedArgScope(CArchive* pAR, string_view attrName)
+    CArchiveNamedArgScope(CArchive* pAR, qtd::string_view attrName)
         : m_pAR(pAR)
         , m_Chunk(qd::Arc::EChunkType::STR_U0_U8)
     {

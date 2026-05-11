@@ -4,8 +4,8 @@
 #include <amDebugger/vm/customRegs.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vmInterface.h>
-#include <EASTL/fixed_string.h>
-#include <EASTL/fixed_vector.h>
+#include "qd/stl/string.h"
+#include "qd/stl/fixed_vector.h"
 #include <qd/base/color.h>
 #include <qd/imGui/imGui.h>
 
@@ -45,7 +45,7 @@ struct DeclareDmaSrcUiArgs {
 
 void DeclareDmaSrcUiArgs::declareDmaSrcUi()
 {
-    eastl::fixed_string<char, 64, false> strTmp;
+    qd::InlineString strTmp;
     ImGui::PushID((int)dmaLetter);
     strTmp = "##DMA_EN_";
     strTmp += dmaLetter;
@@ -70,11 +70,11 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi()
             ImGuiInputTextFlags_CharsHexadecimal);
 
         int modVal = custRegs->getRegVal(bltXMod);
-        ImGui::TextUnformatted(bltXMod.toString().begin(), bltXMod.toString().end());
+        ImGui::TextUnformatted(bltXMod.toString().data(), bltXMod.toString().data() + bltXMod.toString().size());
         ImGui::SameLine();
         ImGui::SetNextItemWidth(-1.f);
         strTmp = "##";
-        strTmp.append(bltXMod.toString().begin(), bltXMod.toString().end());
+        strTmp.append(bltXMod.toString().data(), bltXMod.toString().size());
         ImGui::InputInt(strTmp.c_str(), &modVal, 0);
 
         // SHIFT
@@ -91,11 +91,11 @@ void DeclareDmaSrcUiArgs::declareDmaSrcUi()
 
         // BLTxDAT
         int datVal = custRegs->getRegVal(bltXDat);
-        ImGui::TextUnformatted(bltXDat.toString().begin(), bltXDat.toString().end());
+        ImGui::TextUnformatted(bltXDat.toString().data(), bltXDat.toString().data() + bltXDat.toString().size());
         ImGui::SameLine();
         ImGui::SetNextItemWidth(-1.f);
         strTmp = "##";
-        strTmp.append(bltXDat.toString().begin(), bltXDat.toString().end());
+        strTmp.append(bltXDat.toString().data(), bltXDat.toString().size());
         ImGui::InputScalar(strTmp.c_str(), ImGuiDataType_U32, &datVal, nullptr, nullptr, "%04X",
             ImGuiInputTextFlags_CharsHexadecimal);
 
@@ -114,8 +114,8 @@ void BlitterWnd::drawContentImp()
     custRegs->fetch();
 
 
-    eastl::fixed_string<char, 30, false> strAddr;
-    eastl::fixed_string<char, 255, false> strTmp;
+    qd::InlineString strAddr;
+    qd::InlineString strTmp;
 
     uint16_t bltCon0 = custRegs->getRegVal(CustReg::BLTCON0);
     uint16_t bltCon1 = custRegs->getRegVal(CustReg::BLTCON1);

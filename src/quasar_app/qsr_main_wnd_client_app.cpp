@@ -283,7 +283,7 @@ qd::EFlow QsrMainClientWndApp::applyOperationMsgProcImp(qd::operation::BaseOpArg
     // send operation to UAE thread
     if (IVmClientPlayer* pUaeThread = getVmProvider()) {
         qd::operation::BaseOpArgs* pClonedArgs = args->clone();
-        pUaeThread->pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs>(pClonedArgs));
+        pUaeThread->pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs>(pClonedArgs));
     }
     return qd::EFlow::STOP;
 }

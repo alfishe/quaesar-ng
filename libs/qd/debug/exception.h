@@ -3,6 +3,7 @@
 #include "qd/debug/exceptTryCatch.h"
 #include "qd/enum/enumBase.h"
 #include "qd/stl/string.h"
+#include <exception>
 
 
 namespace qd {
@@ -27,10 +28,11 @@ struct EException {
 
 
 #if !defined(RELEASE)
-#define QDASSERT_EX(Val, ...)           \
-    qd::Exception::debugBreakPoint();   \
-    if (qd::Exception::isDebugAssert()) \
-        assert2(Val, __VA_ARGS__);
+#define QDASSERT_EX(Val, ...)             \
+    qd::Exception::debugBreakPoint();     \
+    if (qd::Exception::isDebugAssert()) { \
+        ASSERT_F(Val, __VA_ARGS__);       \
+    }
 #else
 #define QDASSERT_EX(Val, ...)
 #endif
@@ -54,18 +56,18 @@ public:
     explicit Exception(bool bAssert = true)
         : m_ErrType(EException::DEFAULT) {
         if (bAssert) {
-            QDASSERT_EX(0, "Unnamed Exception Found!");
+            assert(0 && "Unnamed Exception Found!");
         }
     }
 
     explicit Exception(EException::eType errType)
         : m_ErrType(errType) {
-        QDASSERT_EX(0, "Base Exception ERROR");
+        assert(0 && "Base Exception ERROR");
     }
 
     explicit Exception(EException::eType errType, const char* pError, ...);
 
-    explicit Exception(EException::eType errType, const string& Error)
+    explicit Exception(EException::eType errType, const qtd::string& Error)
         : m_ErrType(errType)
         , m_Error(Error) {
         QDASSERT_EX(0, "%s", m_Error.c_str());
@@ -90,9 +92,9 @@ public:
         : m_ErrType(EException::DEFAULT)
         , m_Error(Exception.what()) {}
 
-    virtual ~Exception() throw() {}
+    virtual ~Exception() throw() override {}
 
-    const string& getError() const { return m_Error; }
+    const qtd::string& getError() const { return m_Error; }
 
     virtual const char* what() const throw() override { return m_Error.c_str(); }
 

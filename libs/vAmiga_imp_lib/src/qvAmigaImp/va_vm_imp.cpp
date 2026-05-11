@@ -7,6 +7,7 @@
 #include "Memory/Memory.h"
 //clang-format on
 #include <SDL_log.h>
+#include "qd/base/compiler.h"
 
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/debuggerWndApp.h"
@@ -64,9 +65,9 @@ void VAmVmImp::init() { TSuper::init(); }
 VAmVmImp::~VAmVmImp() { SAFE_DELETE(m_vaAccess); }
 
 qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
-  EA_DISABLE_VC_WARNING(
-      4456) /*declaration of 'x' hides previous local declaration*/
-  VAmVmImp* vm = this;
+QD_PUSH_VC_WARNING(
+    4456) /*declaration of 'x' hides previous local declaration*/
+VAmVmImp* vm = this;
   VAmServerThread* pVAm = m_pVAmThread;
   bool r = false;
   if constexpr (0) {
@@ -98,10 +99,9 @@ qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     pVAm->execConsoleCmd("ot");
 
   } else if (auto p = args->cast_<amD::operation::DisasmToggleBreakpoint>()) {
-    eastl::string cmd;
-    cmd.sprintf("f %08x", (uint32_t)p->address);
-    if (p->nBreakpoint >= 0) cmd.append_sprintf(" %i", p->nBreakpoint);
-    pVAm->execConsoleCmd(eastl::move(cmd));
+    qtd::string cmd = qd::string_format("f %08x", (uint32_t)p->address);
+    if (p->nBreakpoint >= 0) cmd += qd::string_format(" %i", p->nBreakpoint);
+    pVAm->execConsoleCmd(std::move(cmd));
     return qd::EFlow::SUCCESS;
 
   } else if (args->cast_<amD::operation::ToggleTurboEmulation>()) {
@@ -118,15 +118,13 @@ qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 
   } else if (auto p = args->cast_<amD::operation::CopperToggleBreakpoint>()) {
     r = true;
-    eastl::string cmd;
-    cmd.sprintf("ob %08x", (uint32_t)p->address);
-    pVAm->execConsoleCmd(eastl::move(cmd));
+    qtd::string cmd = qd::string_format("ob %08x", (uint32_t)p->address);
+    pVAm->execConsoleCmd(std::move(cmd));
     return qd::EFlow::SUCCESS;
 
   } else if (auto p = args->cast_<amD::operation::DebugWaitScanLines>()) {
-    eastl::string cmd;
-    cmd.sprintf("fs %i", p->waitScanLines);
-    pVAm->execConsoleCmd(eastl::move(cmd));
+    qtd::string cmd = qd::string_format("fs %i", p->waitScanLines);
+    pVAm->execConsoleCmd(std::move(cmd));
     return qd::EFlow::SUCCESS;
   } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
     r = true;
@@ -136,6 +134,7 @@ qd::EFlow VAmVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     //             pVAm->setWndAlwaysOnTop(true);
     //         }
   }
+  QD_POP_VC_WARNING()
   return r ? EFlow::STOP : EFlow::NO_RESULT;
 }
 
@@ -237,14 +236,14 @@ void VAmVmImp::Floppy::setEnabled(bool v) {
 }
 
 
-void VAmVmImp::Floppy::setAdfPath(const qd::string &v)
+void VAmVmImp::Floppy::setAdfPath(const qtd::string &v)
 {
     vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
     df->insert(v.c_str(), m_writeProtect);
 }
 
 
-qd::string VAmVmImp::Floppy::getAdfPath()
+qtd::string VAmVmImp::Floppy::getAdfPath()
 {
     //vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
     return "";

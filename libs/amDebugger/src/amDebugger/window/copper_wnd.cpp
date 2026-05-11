@@ -93,8 +93,8 @@ void CopperDbgWnd::drawContentImp() {
     st.pushFloat(&ImGui::GetStyle().CellPadding.y, 2);
     static float row_min_height = 0.0f;  // for auto height
 
-    eastl::fixed_string<char, 30, false> strAddr;
-    eastl::fixed_string<char, 255, false> strTmp;
+    qd::InlineString strAddr;
+    qd::InlineString strTmp;
 
     uint16_t rDmaCon = custRegs->getRegVal(CustReg::DMACONR);
 

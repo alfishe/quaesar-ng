@@ -24,7 +24,7 @@ struct CfgQsrMain : public CfgBase {
     int mainWndSizeX = 754;
     int mainWndSizeY = 576;
 
-    std::string vmPlayerId = "vamiga";
+    std::string vmPlayerId = "uae";  // "vamiga";
 };
 inline static CfgQsrMain& g_cfg_vm_wnd = CfgQsrMain::get();
 

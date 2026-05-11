@@ -1,11 +1,13 @@
 #include "qd/typeSystem/typeRegistry.h"
-#include "EASTL/fixed_vector.h"
-#include "EASTL/sort.h"
-#include "EASTL/vector.h"
-#include "typeInfo.h"
+#include "qd/stl/fixed_vector.h"
+// #include "qd/stl/sort.h"
 #include "qd/debug/assert.h"
-#include "qd/mem/fnvHash.h"
 #include "qd/debug/exception.h"
+#include "qd/mem/fnvHash.h"
+#include "qd/stl/algorithm.h"
+#include "qd/stl/utility.h"
+#include "qd/stl/vector.h"
+#include "typeInfo.h"
 #include "typeInfoBuilder.h"
 
 
@@ -14,10 +16,8 @@
 namespace qd {
 
 
-TypeRegistry::SharedData::~SharedData()
-{
-    for (TypeInfoMap::iterator Iter = m_TypeMap.begin(); Iter != m_TypeMap.end(); ++Iter)
-    {
+TypeRegistry::SharedData::~SharedData() {
+    for (TypeInfoMap::iterator Iter = m_TypeMap.begin(); Iter != m_TypeMap.end(); ++Iter) {
         TypeInfo* pTypeInfo = Iter->second;
         delete pTypeInfo;
     }
@@ -30,64 +30,69 @@ TypeRegistry::SharedData::~SharedData()
 TypeRegistry::TypeRegistry() {}
 
 
-TypeRegistry::~TypeRegistry()
-{
+TypeRegistry::~TypeRegistry() {
     delete m_pSharedData;
 }
 
 
-qd::TypeRegistry* TypeRegistry::get()
-{
+qd::TypeRegistry* TypeRegistry::get() {
     static TypeRegistry instance;
     return &instance;
 }
 
 
-const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti, bool /*bReplaceIfDefined*/ /*= false*/) const
-{
+const TypeInfo& TypeRegistry::getTypeInfo(const std::type_info& ti, int i_size_of /*= -1*/) const {
+
     const TypeInfoMap& typeMap = getSharedData()->m_TypeMap;
-    const std::type_info* typePtr = ti.getTypePtr();
+    const std::type_info* typePtr = &ti;
     TypeInfoMap::const_iterator Iter = typeMap.find(typePtr);
-    if (Iter != typeMap.end())
-        return *Iter->second;
-    return const_cast<TypeRegistry*>(this)->_createUnNamedTypeInfoByStdType(ti);
+    if (Iter != typeMap.end()) {
+        const TypeInfo& res = *Iter->second;
+        return res;
+    }
+    return const_cast<TypeRegistry*>(this)->_createUnNamedTypeInfoByStdType(qd::StdTypeId(ti, i_size_of));
 }
 
 
-void TypeRegistry::bindNamedTypeInfo(const TypeInfo& ti)
-{
+const TypeInfo& TypeRegistry::getTypeInfo(const StdTypeId& ti) const {
+    const std::type_info* typePtr = ti.getTypePtr();
+    if (!typePtr)
+        return *m_pVoidType;
+    return getTypeInfo(*typePtr);
+}
+
+
+void TypeRegistry::bindNamedTypeInfo(const qd::TypeInfo& ti) {
+
     assert(ti.isDefined());
     SharedData* pSharedData = getSharedData();
 
-    assert(& getTypeInfo(ti.getStdTypeId()) == &ti && "Type not registered yet");
+    assert(&getTypeInfo(ti.getStdTypeId()) == &ti && "Type not registered yet");
 
-    const string& name = ti.getFullName();
+    const qtd::string& name = ti.getFullName();
     THash32 nameHash = hash_type_info_name(name.c_str(), (uint32_t)name.size());
     auto it = pSharedData->m_TypeByFullName.find(nameHash);
 
-    if (it != pSharedData->m_TypeByFullName.end())
-    {
+    if (it != pSharedData->m_TypeByFullName.end()) {
         if (it->second->getStdTypeId() == ti.getStdTypeId())
             return;
-        G_THROW_OR_DO(Exception("Duplicate type name found: " + name), return);
+        QD_THROW_OR_DO(Exception("Duplicate type name found: " + name), return);
     };
-    pSharedData->m_TypeByFullName.insert(eastl::make_pair(nameHash, &ti));
+    pSharedData->m_TypeByFullName.insert(qtd::make_pair(nameHash, &ti));
 }
 
 
-const TypeInfo& TypeRegistry::_createUnNamedTypeInfoByStdType(const qd::StdTypeId& ti)
-{
+const TypeInfo& TypeRegistry::_createUnNamedTypeInfoByStdType(const qd::StdTypeId& ti) {
     SharedData* pSharedData = getSharedData();
     TypeInfoMap& typeMap = pSharedData->m_TypeMap;
     assert(typeMap.find(ti.getTypePtr()) == typeMap.end());
-    TypeInfo* pType = new TypeInfo(ti);
+    qd::TypeInfo* pType = new qd::TypeInfo(ti);
     typeMap[ti.getTypePtr()] = pType;
     return *pType;
 }
 
 
-void TypeRegistry::_createSharedData() const
-{
+void TypeRegistry::_createSharedData() const {
     TypeRegistry* pThis = const_cast<TypeRegistry*>(this);
     assert(pThis == TypeRegistry::get());
     pThis->m_pSharedData = new TypeRegistry::SharedData();
@@ -98,41 +103,36 @@ void TypeRegistry::_createSharedData() const
 
 
 
-TypeRegistry::SharedData* TypeRegistry::getSharedData() const
-{
+TypeRegistry::SharedData* TypeRegistry::getSharedData() const {
     if (!m_pSharedData)
         _createSharedData();
     return m_pSharedData;
 }
 
-const TypeInfoMap& TypeRegistry::getTypesMap()
-{
+const TypeInfoMap& TypeRegistry::getTypesMap() {
     return getSharedData()->m_TypeMap;
 }
 
 
-eastl::vector<const TypeInfo*> TypeRegistry::findAllDerivedFromTypes(const TypeInfo& rBaseType, bool bIncludeBaseInList)
-{
+qtd::vector<const TypeInfo*> TypeRegistry::findAllDerivedFromTypes(const TypeInfo& rBaseType, bool bIncludeBaseInList) {
     // TODO: too slow to iterate all types in the system
     // It's better to store index of all Inherited types to separate types
-    eastl::vector<const TypeInfo*> result;
+    qtd::vector<const TypeInfo*> result;
 
     if (bIncludeBaseInList)
         result.push_back(&rBaseType);
 
     const TypeInfoMap& Types = this->getTypesMap();
-    for (TypeInfoMap::const_iterator it = Types.begin(); it != Types.end(); ++it)
-    { // iterates all
+    for (TypeInfoMap::const_iterator it = Types.begin(); it != Types.end(); ++it) { // iterates all
         const TypeInfo* pCurType = it->second;
         if (pCurType->isDerivedFrom(rBaseType) && pCurType != &rBaseType)
             result.push_back(pCurType);
     }
-    return eastl::move(result);
+    return result;
 }
 
 
-const qd::TypeInfo* TypeRegistry::findTypeByName(const char* type_name) const
-{
+const qd::TypeInfo* TypeRegistry::findTypeByName(const char* type_name) const {
     const SharedData::TTypeByFullNameMap& TypeMap = getSharedData()->m_TypeByFullName;
     THash32 nameHash = hash_type_info_name(type_name);
     auto iter = TypeMap.find(nameHash);
@@ -142,18 +142,15 @@ const qd::TypeInfo* TypeRegistry::findTypeByName(const char* type_name) const
 }
 
 
-const qd::TypeInfo& TypeRegistry::getTypeByName(const char* pName) const
-{
+const qd::TypeInfo& TypeRegistry::getTypeByName(const char* pName) const {
     const TypeInfo* pResType = findTypeByName(pName);
     if (!pResType)
-        G_THROW_OR_DO(Exception(EException::NOT_FOUND, "ERROR: Reflected type:'%s' - not declared!", CC(pName)),
-            return *m_pVoidType);
+        QD_THROW_OR_DO(Exception(EException::NOT_FOUND, "ERROR: Reflected type:'%s' - not declared!", CC(pName)), return *m_pVoidType);
     return *pResType;
 }
 
 
-const qd::TypeInfo& get_type_info(const StdTypeId& ti)
-{
+const qd::TypeInfo& get_type_info(const StdTypeId& ti) {
     const TypeRegistry* pRegistry = TypeRegistry::get();
     const qd::TypeInfo& pTypeInfo = pRegistry->getTypeInfo(ti);
     return pTypeInfo;

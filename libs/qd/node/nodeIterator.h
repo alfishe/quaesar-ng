@@ -19,8 +19,7 @@ class NodeIterator
 {
 protected:
     static constexpr size_t IteratorBufferSize = 256;
-    static constexpr size_t IteratorBufferAlignment = alignof(std::max_align_t);
-    std::aligned_storage_t<IteratorBufferSize, IteratorBufferAlignment> m_inplaceBuf = {};
+    alignas(std::max_align_t) std::byte m_inplaceBuf[IteratorBufferSize] = {};
     INodeIterator* m_pIter = nullptr;
 
 public:

@@ -4,9 +4,8 @@
 #include <amDebugger/ui/uiStyle.h>
 #include <amDebugger/vm/vmInterface.h>
 #include <capstone/capstone.h>
-#include <EASTL/fixed_string.h>
-#include <EASTL/string.h>
-#include <EASTL/vector.h>
+#include "qd/stl/string.h"
+#include "qd/stl/vector.h"
 #include <qd/imGui/imGui.h>
 #include "qd/base/variant16.h"
 #include "amDebugger/codeAnalyzer/cdaServer.h"
@@ -18,7 +17,7 @@ namespace amD {
 namespace window {
 
 
-int find_disasm_addr_line_idx(const qd::vector<amD::cda::Item*> &disasm_lines, AddrRef addr)
+int find_disasm_addr_line_idx(const qtd::vector<amD::cda::Item*> &disasm_lines, AddrRef addr)
 {
     int idx = -1;
     for (const cda::Item* pCurItem : disasm_lines)
@@ -111,7 +110,7 @@ void DisassemblyView::drawContentImp()
         ImGui::TableSetupColumn(nullptr/*"##OpCodes"*/);
         ImGui::TableHeadersRow();
 
-        eastl::fixed_string<char, 255, false> strAddr, strTmp;
+        qd::InlineString strAddr, strTmp;
 
         const BreakpointsSortedList& bpList = dbg->getBreakpointsSorted();
 
@@ -150,7 +149,7 @@ void DisassemblyView::drawContentImp()
 
             // col:addr
             bool isRowSelected = false;
-            strAddr.sprintf("%08X", (uint32_t)curAddr);
+            qd::string_format_inplace(strAddr, "%08X", (uint32_t)curAddr);
             ImGuiSelectableFlags selectableFlags =
                 ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
             ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::DisasmWnd_Addr));

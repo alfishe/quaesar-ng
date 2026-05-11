@@ -6,14 +6,14 @@
 #include "qd/stl/string.h"
 #include "qd/stl/unique_ptr.h"
 #include "qd/stl/vector_map.h"
-#include <EASTL/fixed_function.h>
+#include "qd/stl/fixed_function.h"
 
 
 /* Declares struct that register class module creation */
 #define QD_MODULE_REGISTRATION(ClassName) \
-    inline static qd::ModuleRegistrator_<ClassName> PASTE(gModuleImp_, __COUNTER__)(/**/ STRINGIFY(ClassName));
+    inline static qd::ModuleRegistrator_<ClassName> QD_PASTE(gModuleImp_, __COUNTER__)(/**/ QD_STRINGIFY(ClassName));
 #define QD_MODULE_REGISTRATION_NOCREATE(ClassName) \
-    inline static qd::ModuleRegistratorNoCreate_<ClassName> PASTE(gModuleImp_, __COUNTER__)(/**/ STRINGIFY(ClassName));
+    inline static qd::ModuleRegistratorNoCreate_<ClassName> QD_PASTE(gModuleImp_, __COUNTER__)(/**/ QD_STRINGIFY(ClassName));
 
 
 namespace qd {
@@ -28,8 +28,8 @@ class ModuleInfo
 public:
     const qd::TypeInfo* m_ModuleId;
     IModuleInterface* m_pInstance;
-    eastl::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> m_CreateFunc;
-    typedef eastl::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> TCreateFunc;
+    qtd::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> m_CreateFunc;
+    typedef qtd::fixed_function<8, IModuleInterface*(const qd::ModuleCreateParams&)> TCreateFunc;
     uint32_t m_nInstanceRef;
     qtd::string m_ModuleName;
 
@@ -91,12 +91,12 @@ class ModuleManager
 
     struct InfoItem {
         const qd::TypeInfo* m_pType = nullptr;
-        qd::unique_ptr<ModuleInfo> m_pModuleInfo;
+        qtd::unique_ptr<ModuleInfo> m_pModuleInfo;
     };
-    qd::vector<ModuleManager::InfoItem> m_pModuleInfoMap;
+    qtd::vector<ModuleManager::InfoItem> m_pModuleInfoMap;
 
 public:
-    typedef qd::vector<ModuleManager::InfoItem> TModuleInfoMap;
+    typedef qtd::vector<ModuleManager::InfoItem> TModuleInfoMap;
 
 private:
     static TThis* m_pSingleInstance;
@@ -117,14 +117,11 @@ public:
 
 public:
     ModuleManager(void);
+    virtual ~ModuleManager(void);
 
     void cleanUp();
 
-    virtual ~ModuleManager(void);
-
-
     const ModuleManager::TModuleInfoMap& getModuleInfoMap() const { return m_pModuleInfoMap; }
-
 
     ModuleInfo* overrideModule(const qd::TypeInfo& ModuleId, const ModuleInfo::TCreateFunc& createFunc);
 

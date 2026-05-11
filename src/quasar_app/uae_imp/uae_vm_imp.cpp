@@ -107,11 +107,10 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
         pUae->execConsoleCmd("ot");
 
     } else if (auto p = args->cast_<amD::operation::DisasmToggleBreakpoint>()) {
-        eastl::string cmd;
-        cmd.sprintf("f %08x", (uint32_t)p->address);
+        qtd::string cmd = qd::string_format("f %08x", (uint32_t)p->address);
         if (p->nBreakpoint >= 0)
-            cmd.append_sprintf(" %i", p->nBreakpoint);
-        pUae->execConsoleCmd(eastl::move(cmd));
+            cmd += qd::string_format(" %i", p->nBreakpoint);
+        pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
 
     } else if (args->cast_<amD::operation::ToggleTurboEmulation>()) {
@@ -128,15 +127,13 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 
     } else if (auto p = args->cast_<amD::operation::CopperToggleBreakpoint>()) {
         r = true;
-        eastl::string cmd;
-        cmd.sprintf("ob %08x", (uint32_t)p->address);
-        pUae->execConsoleCmd(eastl::move(cmd));
+        qtd::string cmd = qd::string_format("ob %08x", (uint32_t)p->address);
+        pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
 
     } else if (auto p = args->cast_<amD::operation::DebugWaitScanLines>()) {
-        eastl::string cmd;
-        cmd.sprintf("fs %i", p->waitScanLines);
-        pUae->execConsoleCmd(eastl::move(cmd));
+        qtd::string cmd = qd::string_format("fs %i", p->waitScanLines);
+        pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
     } else if (args->cast_<qsr::operations::QuitQuasarApp>()) {
         ::quit_program = UAE_QUIT;
@@ -273,15 +270,15 @@ void UaeVmImp::Floppy::setWriteProtect(bool v) {
 }
 
 
-qd::string UaeVmImp::Floppy::getAdfPath() {
+qtd::string UaeVmImp::Floppy::getAdfPath() {
     ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
     return cfgFloppy.df;
 }
 
 
-void UaeVmImp::Floppy::setAdfPath(const qd::string& v) {
+void UaeVmImp::Floppy::setAdfPath(const qtd::string& v) {
     ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
-    SDL_strlcpy(cfgFloppy.df, v.c_str(), EAArrayCount(cfgFloppy.df));
+    SDL_strlcpy(cfgFloppy.df, v.c_str(), sizeof(cfgFloppy.df));
 }
 
 

@@ -5,6 +5,7 @@
 #include "qd/stl/vector_map.h"
 #include "qd/qui/shortcutHnd.h"
 #include "qd/stl/span.h"
+#include "qd/stl/algorithm.h"
 
 
 FORWARD_DECLARATION_3(qd, operation, BaseOpArgs);
@@ -49,12 +50,10 @@ public:
 class OperationsRegistry : public qd::RefCounted
 {
     friend class OperationMgrOperationsListImp;
-    //qd::vector<ref_ptr<UiOperation>> m_pOperations;
-    using TOpList = qd::vector<ref_ptr<UiOperation>>;
+    using TOpList = qtd::vector<ref_ptr<UiOperation>>;
     qtd::vector_map<const qd::TypeInfo*, qd::UiOperation*> m_operationByOperationTypeMap;
-    // qd::vector_map<const qd::TypeInfo*, qd::vector<qd::UiOperation*>> m_operationsByMsgTypeMap;
 
-    qd::vector<qd::operation::OpDesc> m_OpDescList;
+    qtd::vector<qd::operation::OpDesc> m_OpDescList;
     qtd::vector_map<THash32, uint32_t /*OpDescIndex*/> m_opsCidToDescIdx;
 
     bool mInit = false;
@@ -113,7 +112,7 @@ public:
     {
         const qd::operation::OpDesc* opDescs[] = {(&getOpDesc_<TOpClass>())...};
         qtd::span<qd::operation::OpDesc* const> spanOpDescs((qd::operation::OpDesc**)opDescs,
-            EAArrayCount(opDescs));
+            qtd::size(opDescs));
         testOperationsShortcuts(pEnv, spanOpDescs);
     }
 

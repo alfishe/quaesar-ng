@@ -15,17 +15,15 @@ static constexpr int64_t TTime64_MAX = INT64_MAX;
 
 
 //////////////////////////////////////////////////////////////////////////
-#define SINGLETON_DECLARATION(TClassName)  \
+#define QD_SINGLETON_DECLARE(TClassName)   \
 public:                                    \
-    static TClassName& getSingleton()      \
-    {                                      \
+    static TClassName& getSingleton() {    \
         static TClassName Instance;        \
         return Instance;                   \
     };                                     \
                                            \
 public:                                    \
-    inline static TClassName& get()        \
-    {                                      \
+    inline static TClassName& get() {      \
         return TClassName::getSingleton(); \
     }
 

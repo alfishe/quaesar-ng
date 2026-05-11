@@ -6,6 +6,7 @@
 #include "qd/mem/ptrMath.h"
 #include "qd/stl/unique_ptr.h"
 #include "qd/typeSystem/typeInfo.h"
+#include "qd/stl/algorithm.h"
 
 
 namespace qd {
@@ -20,7 +21,7 @@ ModuleInfo* ModuleManager::registerModule(const ModuleInfo& moduleInfo) {
 
     ModuleInfo* pModule = findModuleInfo(moduleId);
     if (!pModule) {
-        qd::unique_ptr<ModuleInfo> pNewModule = qd::make_unique<ModuleInfo>(moduleId);
+        qtd::unique_ptr<ModuleInfo> pNewModule = qtd::make_unique<ModuleInfo>(moduleId);
         pModule = pNewModule.get();
         ModuleManager::InfoItem item;
         item.m_pType = &moduleId;
@@ -66,7 +67,7 @@ qd::IModuleInterface* ModuleManager::createModuleInstance(const qd::TypeInfo& Mo
     qd::ModuleCreateParams* pCreateParam) {
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(ModuleId);
     if (!pModuleInfo)
-        G_THROW_OR_DO(Exception("Module Manger can't Create module: '%s' - module not registered", ModuleId.getFullName().c_str()),
+        QD_THROW_OR_DO(Exception("Module Manger can't Create module: '%s' - module not registered", ModuleId.getFullName().c_str()),
             return nullptr);
 
     if (!pCreateParam)
@@ -85,7 +86,7 @@ qd::IModuleInterface* ModuleManager::loadModule(const qd::TypeInfo& moduleId, qd
 
     ModuleInfo* pModuleInfo = getOrCreateModuleInfo(moduleId);
     if (!pModuleInfo)
-        G_THROW_OR_DO(Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0), return nullptr);
+        QD_THROW_OR_DO(Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0), return nullptr);
 
     pModuleInfo->retainInstance();
 
@@ -105,7 +106,7 @@ void ModuleManager::unloadModule(const qd::TypeInfo& ModuleId, bool /*bIsShutdow
 
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
-        G_THROW_OR_DO(Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0), return);
+        QD_THROW_OR_DO(Exception("Module Manager: Can't Destroy Module. Module : %u Not Declare", (uint32_t)0), return);
     pModuleInfo->releaseInstance();
 }
 
@@ -114,7 +115,7 @@ qd::IModuleInterface* ModuleManager::getModuleInstance(const qd::TypeInfo& modul
 
     ModuleInfo* pModuleInfo = findModuleInfo(moduleId);
     if (!pModuleInfo)
-        G_THROW_OR_DO(Exception(EException::NOT_FOUND, "Module:'%s' not registered", moduleId.getFullName().c_str()), return nullptr);
+        QD_THROW_OR_DO(Exception(EException::NOT_FOUND, "Module:'%s' not registered", moduleId.getFullName().c_str()), return nullptr);
     IModuleInterface* pExistInst = pModuleInfo->getInstance();
     if (pExistInst || !bMakeInst)
         return pExistInst;
@@ -144,7 +145,7 @@ qd::IModuleInterface* ModuleManager::getOrCreateModule(const qd::TypeInfo& Modul
 
     ModuleInfo* pModuleInfo = findModuleInfo(ModuleId);
     if (!pModuleInfo)
-        G_THROW_OR_DO(Exception("Module Manger can't Create module: '%s' - module not registered", CC(ModuleId.getFullName())),
+        QD_THROW_OR_DO(Exception("Module Manger can't Create module: '%s' - module not registered", CC(ModuleId.getFullName())),
             return nullptr);
 
     IModuleInterface* pInstance = pModuleInfo->getInstance();
@@ -206,9 +207,9 @@ ModuleManager::~ModuleManager(void) {
 
     // DESTROY MODULE INFO
     while (!m_pModuleInfoMap.empty()) {
-        auto It = m_pModuleInfoMap.rbegin();
-        qd::unique_ptr<ModuleInfo> pModuleInfo = eastl::move(It->m_pModuleInfo);
-        m_pModuleInfoMap.erase(It);
+        ModuleManager::InfoItem& it = m_pModuleInfoMap.back();
+        qtd::unique_ptr<ModuleInfo> pModuleInfo(qtd::move(it.m_pModuleInfo));
+        m_pModuleInfoMap.pop_back();
         if (pModuleInfo) {
             // assert2( !pModuleInfo->m_pInstance, "Not deleted module \"%s\" found", CC(pModuleInfo->m_ModuleName) );
             if (pModuleInfo->m_pInstance) {
@@ -263,7 +264,7 @@ void ModuleInfo::setInstance(IModuleInterface* pInstance) {
     // 			return;
     // 		}
     if (m_pInstance) {
-        assert2(0, "Instance already Set", 0);
+        ASSERT_F(0, "Instance already Set", 0);
         return;
     }
     // 		++ m_nInstanceRef; // REGISTER

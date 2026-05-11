@@ -10,7 +10,7 @@
 #include "qsr_app_interfaces.h"
 
 
-FORWARD_DECLARATION_2(qd, ThreadEvent);
+#include "qd/thread/thread.h"
 FORWARD_DECLARATION_3(IVm, imp, UaeVmImp);
 FORWARD_DECLARATION_2(qsr, UaeServerAppPart);
 
@@ -25,7 +25,7 @@ class UaeServerThread : public qsr::IVmClientPlayer {
     qd::Mutex m_eventMutex;
     std::deque<SDL_Event> m_sdlEventsQueue;
     class UaeConsoleQueue* m_pConsoleQueue = nullptr;
-    std::deque<qd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
+    std::deque<qtd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
 
 public:
     int m_scrWidth = 754;
@@ -49,10 +49,10 @@ public:
     virtual bool lockDisplayTexBuf(int* width, int* height, uint32_t** out_pixels) override;
     virtual void unlockDisplayTexBuf() override;
     virtual void pushSdlEvent(const SDL_Event& event) override;
-    virtual void pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args) override;
+    virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) override;
     bool onUaeHandleEvents();
 
-    void execConsoleCmd(qd::string&& cmd);
+    void execConsoleCmd(qtd::string&& cmd);
     int uaeWaitConsoleCmdImpl(char* out, int maxlen);
 
 public:
@@ -68,7 +68,7 @@ public:
 
 protected:
     void applySdlEventProc(const SDL_Event& event);
-    void applyImmediateConsoleCmd(qd::string&& cmd);
+    void applyImmediateConsoleCmd(qtd::string&& cmd);
 
 };  // class UaeServerThread
 //////////////////////////////////////////////////////////////////////////

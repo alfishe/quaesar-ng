@@ -14,8 +14,7 @@ class ptr;
 
 
 template<class T>
-inline static ptr<T> make_ptr(const T* pPtr)
-{
+inline static ptr<T> make_ptr(const T* pPtr){
     return ptr<T>(pPtr);
 }
 

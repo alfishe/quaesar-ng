@@ -14,7 +14,7 @@ public:
     virtual IVm::VM* getVm() const = 0;
     virtual int getScrFrameNo() = 0;
     virtual void pushSdlEvent(const SDL_Event&) = 0;
-    virtual void pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs>) = 0;
+    virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs>) = 0;
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) = 0;
     virtual void unlockDisplayTexBuf() = 0;
     virtual ~IVmClientPlayer() = default;

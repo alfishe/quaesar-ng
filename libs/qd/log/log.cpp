@@ -1,6 +1,9 @@
+#include "qtdDefines.h"
 #include "log.h"
 #include <qd/base/base.h>
+#if QD_USE_SDL
 #include <SDL_log.h>
+#endif // 
 
 #ifdef _WINDOWS
 #include <windows.h>
@@ -16,7 +19,7 @@ Log::~Log() {
 
 
 void Log::registerWriter(LogWriter_ptr p_writer) {
-    mpLogWriters.push_back(eastl::move(p_writer));
+    mpLogWriters.push_back(qtd::move(p_writer));
 }
 
 
@@ -46,7 +49,7 @@ void Log::done() {
 void Log::logV(LogEntry::ELevel level, const char* message, va_list arguments) {
     LogEntry rec;
     rec.level = level;
-    rec.message.append_sprintf_va_list(message, arguments);
+    rec.message = qd::string_format_v(message, arguments);
     rec.timeStamp = std::time(nullptr);
 
     for (LogWriter_ptr& curWriter : mpLogWriters) {
@@ -100,13 +103,15 @@ TermMsg logErr(const char* fmt, ...) {
 
 
 qd::TermMsg::TThis* TermMsg::setMsgV(const char* pFormat, va_list arguments) {
-    m_logStr.sprintf_va_list(pFormat, arguments);
+    m_logStr = qd::string_format_v(pFormat, arguments);
     return this;
 }
 
 
 void TermMsg::_flushLogMsg() {
+#if QD_USE_SDL
     SDL_LogMessage(0, (SDL_LogPriority)m_nMsgType, "%s", m_logStr.c_str());
+#endif // 
 
 #ifdef _WINDOWS
     OutputDebugStringA(m_logStr.c_str());

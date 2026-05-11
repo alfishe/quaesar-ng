@@ -1,7 +1,6 @@
 #pragma once
 #include "qd/base/base.h"
 #include "qd/debug/assert.h"
-#include "qd/platform/compiler.h"
 #include "qd/stl/atomic.h"
 #include <typeinfo>
 
@@ -23,24 +22,8 @@ class ref_ptr;
 template<typename T>
 class wref_ptr;
 class RefCounted;
-// Helper class as Base
-#define vv(T, B) T
 
 
-
-template<class T>
-inline static ptr<T> make_ptr(const T* pPtr) {
-    return ptr<T>(pPtr);
-}
-
-template<class T>
-inline static ptr<T> make_ptr(const ref_ptr<T>& pPtr) {
-    return ptr<T>(pPtr);
-}
-template<class T>
-inline static ptr<T> make_ptr(const wref_ptr<T>& pPtr) {
-    return ptr<T>(pPtr);
-}
 
 template<typename T>
 inline static T* get_ptr(const T* pPtr) {
@@ -247,15 +230,15 @@ private:
         return _ref_ptr_RefCount != 0;
     }
 
-    EA_FORCE_INLINE void _ref_ptr_retain() const {
+    QD_FORCE_INLINE void _ref_ptr_retain() const {
         assert((int)_ref_ptr_RefCount >= 0 && "BAD ref_ptr<T> POINTER");
         TRefInt r = ++_ref_ptr_RefCount;
         assert((int)r > 0);
-        EA_UNUSED(r);
+        QD_UNUSED(r);
     }
 
 
-    EA_FORCE_INLINE TRefInt _ref_ptr_release() const {
+    QD_FORCE_INLINE TRefInt _ref_ptr_release() const {
         assert((int)_ref_ptr_RefCount > 0);
         TRefInt r = (--_ref_ptr_RefCount);
         assert((int)r >= 0);
@@ -516,6 +499,7 @@ public:
 
     // C++20 compatible comparison operators - specific overloads instead of greedy template
     inline bool operator== (const T* p) const { return get() == p; }
+    inline bool operator== (T* p) const { return get() == p; }
     inline bool operator== (std::nullptr_t) const { return get() == nullptr; }
     
     template<class T2>
@@ -604,11 +588,7 @@ void referenced_static_delete(T* pThis) {
 //////////////////////////////////////////////////////////////////////////
 
 
-template<typename T>
-class wref_ptr;
 
-template<typename T>
-class ptr;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -643,7 +623,6 @@ public:
         return *TSuper::get();
     }
 
-#ifdef RVALUE_REFERENCES_SUPPORTED
     inline ref_ptr(TThis&& rv) {
         this->_ptr = rv._ptr;
         rv._ptr = nullptr;
@@ -654,8 +633,6 @@ public:
         this->_ptr = pt.template get_<T>(&rv); // rv.get_<T>();
         pt.set_raw(&rv, nullptr); // rv._ptr = nullptr;
     }
-
-#endif // RVALUE_REFERENCES_SUPPORTED
 
     inline ref_ptr() {}
 
@@ -787,6 +764,10 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 
+template<typename T, typename... Args>
+inline ref_ptr<T> make_ref(Args&&... args) {
+    return ref_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -931,6 +912,7 @@ inline T* ref_retain_(T* pObj) {
     pObj->ref_ptr_retain();
     return pObj;
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////

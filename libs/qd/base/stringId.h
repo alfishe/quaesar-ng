@@ -1,5 +1,6 @@
 #pragma once
 #include <qd/stl/string.h>
+#include "qd/stl/utility.h"
 
 
 //-------------------------------------------------------------------------
@@ -25,7 +26,7 @@ class StringID
     uint32_t m_ID = 0;
 
 public:
-    using StringIDHashNode = eastl::hash_node<eastl::pair<const uint32_t, string>, false>;
+    using StringIDHashNode = eastl::hash_node<qtd::pair<const uint32_t, qtd::string>, false>;
 
     // Initialize global state for StringID system
     static void Initialize();
@@ -42,8 +43,7 @@ public:
     explicit StringID(uint32_t ID)
         : m_ID(ID)
     {}
-    explicit StringID(string const& str);
-    explicit StringID(InlineString const& str);
+    explicit StringID(qtd::string const& str);
 
     inline bool IsValid() const { return m_ID != 0; }
     inline uint32_t ToUint() const { return m_ID; }

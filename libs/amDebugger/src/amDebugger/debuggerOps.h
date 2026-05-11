@@ -70,7 +70,7 @@ struct VmEmuReset : public amD::operation::OperationArgs {
 
 struct ExecConsoleCmd : public amD::operation::OperationArgs {
     DECLARE_OPERATION_1(amD::operation::ExecConsoleCmd);
-    qd::string cmd;
+    qtd::string cmd;
     static void setup(qd::operation::OpDesc& d)
     {
         d.m_id = "console";

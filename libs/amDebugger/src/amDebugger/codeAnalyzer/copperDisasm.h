@@ -15,10 +15,10 @@ struct DecodedCopperList {
     struct Entry : public CopInst {
         int vpos = -1;
         int hpos = -1;
-        eastl::fixed_string<char, 16, false> strInsn;
-        eastl::fixed_string<char, 128, false> comment;
+        qd::InlineString strInsn;
+        qd::InlineString comment;
     };
-    qd::vector<DecodedCopperList::Entry> decoded;
+    qtd::vector<DecodedCopperList::Entry> decoded;
 
 public:
     void decodeInstr(Entry& ent)
@@ -49,9 +49,9 @@ public:
             AddrRef addr = ((insn >> 16) & 0x1fe) + 0xdff000;
             CustReg crg = CustReg::getRegByAddr(addr);
             if (crg.isValid())
-                ent.comment.sprintf("0x%04x -> %s", insn & 0xffff, crg.toStringC());
+                qd::string_format_inplace(ent.comment, "0x%04x -> %s", insn & 0xffff, crg.toStringC());
             else
-                ent.comment.sprintf("%04x := 0x%04x", addr, insn & 0xffff);
+                qd::string_format_inplace(ent.comment, "%04x := 0x%04x", addr, insn & 0xffff);
         }
         break;
 
@@ -82,9 +82,9 @@ public:
             out.comment.append("vpos ");
             if (ve != 0x7f)
             {
-                out.comment.append_sprintf("& 0x%02x ", ve);
+                out.comment += qd::string_format("& 0x%02x ", ve).c_str();
             }
-            out.comment.append_sprintf(">= 0x%02x", v_mask);
+            out.comment += qd::string_format(">= 0x%02x", v_mask).c_str();
         }
         if (he > 0)
         {
@@ -95,9 +95,9 @@ public:
             out.comment.append(" hpos ");
             if (he != 0xfe)
             {
-                out.comment.append_sprintf("& 0x%02x ", he);
+                out.comment += qd::string_format("& 0x%02x ", he).c_str();
             }
-            out.comment.append_sprintf(">= 0x%02x", h_mask);
+            out.comment += qd::string_format(">= 0x%02x", h_mask).c_str();
         }
         else
         {
@@ -106,7 +106,7 @@ public:
             out.comment.append(", ignore horizontal");
         }
 
-        out.comment.append_sprintf(", VP %02x, VE %02x; HP %02x, HE %02x; BFD %d", vp, ve, hp, he, bfd);
+        out.comment += qd::string_format(", VP %02x, VE %02x; HP %02x, HE %02x; BFD %d", vp, ve, hp, he, bfd).c_str();
     }
 
 
@@ -117,7 +117,8 @@ public:
         decoded.reserve(num_lines);
         for (int i = 0; i < num_lines; ++i)
         {
-            Entry& curEnt = decoded.push_back();
+            decoded.emplace_back();
+            Entry& curEnt = decoded.back();
             curEnt.addr = addr;
             if (vm->mem->getU16(addr, &curEnt.w1) && vm->mem->getU16(addr + 2, &curEnt.w2))
             {

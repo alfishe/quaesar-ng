@@ -1,5 +1,5 @@
 #include "vmInterface.h"
-#include "EASTL/span.h"
+#include "qd/stl/span.h"
 
 namespace IVm {
 
@@ -16,7 +16,7 @@ VM::~VM() {}
 
 void VM::init()
 {
-    for (IModule* curModule : eastl::span<IModule *>(&m_modSectBeg, &m_modSectEnd))
+    for (IModule* curModule : qtd::span<IModule *>(&m_modSectBeg, &m_modSectEnd))
     {
         IModule* pCurMod = curModule;
         if (pCurMod)
@@ -28,7 +28,7 @@ void VM::init()
 
 void VM::fetchStateFromEmu()
 {
-    for (IModule* curModule : eastl::span<IModule *>(&m_modSectBeg, &m_modSectEnd))
+    for (IModule* curModule : qtd::span<IModule *>(&m_modSectBeg, &m_modSectEnd))
     {
         IModule* pCurMod = curModule;
         if (pCurMod)

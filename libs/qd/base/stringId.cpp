@@ -1,3 +1,5 @@
+#if QTD_IS_EASTL
+
 #include "stringId.h"
 #include "qd/stl/string.h"
 #include <EASTL/fixed_string.h>
@@ -104,3 +106,6 @@ StaticStringID::StaticStringID(char const* pStr)
 }
 
 }; // namespace qd
+
+
+#endif

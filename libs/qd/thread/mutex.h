@@ -1,42 +1,72 @@
 #pragma once
+#include "qd/base/base.h"
+#include "qd/debug/assert.h"
+
+#if QD_USE_SDL
 #include <SDL_mutex.h>
-#include <SDL_log.h>
+#else
+#include <mutex>
+#endif
+#include <type_traits>
 
 
 namespace qd {
 
 
-class Mutex
+#if QD_USE_SDL
+//------------------------------------------------------------------------
+class ImpMutexSdl2
 {
     SDL_mutex* mpMutex;
 
 public:
-    Mutex()
-    {
+    ImpMutexSdl2() {
         mpMutex = SDL_CreateMutex();
-        if (!mpMutex)
-        {
-            SDL_Log("cannot create mutex");
+        if (!mpMutex) {
+            assert(0 && "cannot create mutex");
             return;
         }
     }
 
-    Mutex(const Mutex&) = delete;
-    void operator= (const Mutex&) = delete;
+    ImpMutexSdl2(const ImpMutexSdl2&) = delete;
+    void operator= (const ImpMutexSdl2&) = delete;
 
-    ~Mutex() { SDL_DestroyMutex(mpMutex); }
+    ~ImpMutexSdl2() { SDL_DestroyMutex(mpMutex); }
 
     void lock() { SDL_LockMutex(mpMutex); }
 
     void unlock() { SDL_UnlockMutex(mpMutex); }
 
-    bool tryLock()
-    {
+    bool tryLock() {
         int r = SDL_TryLockMutex(mpMutex);
         return r == 0;
     }
+}; // class ImpMutexSdl2
 
-}; // class Mutex
+using Mutex = ImpMutexSdl2;
+#else // #if QD_USE_SDL
+
+//------------------------------------------------------------------------
+class ImpMutexPosix
+{
+    std::mutex m_mutex;
+
+public:
+    ImpMutexPosix() = default;
+
+    ImpMutexPosix(const ImpMutexPosix&) = delete;
+    void operator= (const ImpMutexPosix&) = delete;
+
+    ~ImpMutexPosix() = default;
+
+    void lock() { m_mutex.lock(); }
+
+    void unlock() { m_mutex.unlock(); }
+
+    bool tryLock() { return m_mutex.try_lock(); }
+}; // class ImpMutexPosix
+using Mutex = ImpMutexPosix;
+#endif // #if QD_USE_SDL
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -53,11 +83,11 @@ public:
 template<class TMutex>
 class MutexLock
 {
-    TMutex* m_pMutex;
+    std::remove_const_t<TMutex>* m_pMutex;
 
 public:
     explicit MutexLock(TMutex& mutex)
-        : m_pMutex(&mutex) {
+        : m_pMutex(const_cast<std::remove_const_t<TMutex>*>(&mutex)) {
         m_pMutex->lock();
     }
     MutexLock(MutexLock&& rh) noexcept
@@ -80,22 +110,23 @@ public:
 template<class TMutex>
 class Locker_
 {
-    TMutex* m_pMutex;
+    std::remove_const_t<TMutex>* m_pMutex;
 
 public:
     inline Locker_(TMutex& Mutex, bool bLockNow = true)
-        : m_pMutex(&Mutex)
-    {
+        : m_pMutex(const_cast<std::remove_const_t<TMutex>*>(&Mutex)) {
         if (bLockNow)
             m_pMutex->lock();
     }
     Locker_(Locker_&& rh) noexcept
-        : m_pMutex(rh.m_pMutex)
-    {
+        : m_pMutex(rh.m_pMutex) {
         rh.m_pMutex = nullptr;
     }
 
-    inline ~Locker_() { if (m_pMutex) m_pMutex->unlock(); }
+    inline ~Locker_() {
+        if (m_pMutex)
+            m_pMutex->unlock();
+    }
 
     Locker_(const Locker_&) = delete;
     Locker_& operator= (const Locker_&) = delete;

@@ -117,7 +117,7 @@ void DebuggerDesktop::onUiNodeCreated(qd::UiNodeCreator* mk)
     m_pOperationMgr = &qd::OperationsRegistry::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
     m_pShortcutMgr->createPredefinedShortcuts(
-        eastl::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
+        qtd::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
 
     // create all m_pChilds
     createAllUiWndows();
@@ -136,7 +136,7 @@ void DebuggerDesktop::createAllUiWndows()
     for (size_t i = 0; i < windowTypes.size(); ++i)
     {
         const qd::TypeInfo* pCurWindowType = windowTypes[i];
-        auto* pCreateAttr = pCurWindowType->getAttribute_<qd::tsAttr::CreateClassCb>();
+        auto* pCreateAttr = pCurWindowType->findAttribute_<qd::tsAttr::CreateClassCb>();
         if (!pCreateAttr)
         {
             logErr("Creator not defined in class:'%s'", pCurWindowType->getFullName().c_str());
@@ -212,7 +212,7 @@ void DebuggerDesktop::_drawToolBar()
         window->DC.LayoutType = ImGuiLayoutType_Horizontal;
 
         Debugger* dbg = getDbg();
-        qd::string hint;
+        qtd::string hint;
 
         bool isDbgMode = dbg->isDebugActivated();
         if (ImGui::Checkbox("Trace", &isDbgMode))
@@ -253,7 +253,7 @@ void DebuggerDesktop::_drawToolBar()
                 qd::clamp_min_inplace(nScanLines, 1);
                 dbg->setWaitScanLines(nScanLines);
             }
-            hint.sprintf("Scanlines number(%s)", pOpDesc->getShortcutGuiStr());
+            hint = qd::string_format("Scanlines number(%s)", pOpDesc->getShortcutGuiStr());
             ImGui::SetItemTooltipV(hint.c_str(), nullptr);
         }
         // wait button

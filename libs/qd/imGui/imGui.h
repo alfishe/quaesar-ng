@@ -1,9 +1,9 @@
 #pragma once
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-#include <EASTL/fixed_vector.h>
-#include <EASTL/string.h>
-#include <EASTL/utility.h>
+#include "qd/stl/fixed_vector.h"
+#include "qd/stl/string.h"
+#include "qd/stl/utility.h"
 #include "qd/stl/eastl.h"
 #include "qd/imGui/imGuiHelperClass.h"
 
@@ -25,15 +25,16 @@
 
 namespace ImGui {
 
-// ImGui::InputText() with eastl::string
+// ImGui::InputText() with qtd::string
 // Because text input needs dynamic resizing, we need to setup a callback to grow the capacity
-bool InputText(const char* label, eastl::string* str, ImGuiInputTextFlags flags = 0);
+bool InputText(const char* label, qtd::string* str, ImGuiInputTextFlags flags = 0);
 
-bool InputTextMultiline(const char* label, eastl::string* str, const ImVec2& size = ImVec2(0, 0),
+bool InputTextMultiline(const char* label, qtd::string* str, const ImVec2& size = ImVec2(0, 0),
                         ImGuiInputTextFlags flags = 0);
 
-bool InputTextWithHint(const char* label, const char* hint, eastl::string* str, ImGuiInputTextFlags flags = 0);
+bool InputTextWithHint(const char* label, const char* hint, qtd::string* str, ImGuiInputTextFlags flags = 0);
 
+#if QTD_IS_EASTL
 struct FixedStringInputTextCallback {
     void* str;
 };
@@ -64,12 +65,13 @@ bool InputText(const char* label, eastl::fixed_string<char, S, OV, A>* str, ImGu
     return ImGui::InputText(label, str->data(), str->capacity() + 1, flags,
                             _inputFixedStringCallback<typename TString::allocator_type>, &data);
 }
+#endif // QTD_IS_EASTL
 
 }  // namespace ImGui
 //////////////////////////////////////////////////////////////////////////
 
 class QImPushFloatLock {
-    eastl::fixed_vector<eastl::pair<float*, float>, 8, false> stack;
+    qtd::fixed_vector<qtd::pair<float*, float>, 8, false> stack;
 
 public:
     void pushFloat(float* p_val, float new_val) {

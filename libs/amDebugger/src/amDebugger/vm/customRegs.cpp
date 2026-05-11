@@ -1,10 +1,11 @@
 #include "customRegs.h"
-#include <EASTL/array.h>
+#include "qd/stl/array.h"
+#include <EASTL/algorithm.h>
 #include "customRegsList.h"
 
 namespace IVm {
 
-eastl::array<const CustomFlagsDesc*, CustReg::_COUNT_> cust_flags_desc = {};
+qtd::array<const CustomFlagsDesc*, CustReg::_COUNT_> cust_flags_desc = {};
 
 
 static constexpr int CD_WO = 1;
@@ -81,7 +82,8 @@ CustomFlagsDesc& CustomFlagsDesc::addBit(const char* p_name, uint8_t bits_count,
     if (!bits.empty()) {
         nextNo = bits.back().noEnd;
     }
-    Bits& cb = bits.push_back();
+    bits.emplace_back();
+    Bits& cb = bits.back();
     cb.name = p_name;
     cb.shiftL = shift_l;
     cb.mask = (1u << bits_count) - 1u;

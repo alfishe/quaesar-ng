@@ -31,7 +31,7 @@ extern void do_console_cmd_immediate(const char* cmd);
 
 class UaeConsoleQueue {
 public:
-    std::queue<qd::string> m_consoleCmdQueue;
+    std::queue<qtd::string> m_consoleCmdQueue;
     qd::ThreadEvent* m_pThreadEvent;
     qd::Mutex* m_pMutex;
 
@@ -41,22 +41,22 @@ public:
         m_pMutex = new qd::Mutex();
     }
 
-    void addCmdToQueue(eastl::string cmd) {
+    void addCmdToQueue(qtd::string cmd) {
         if (cmd.empty())
             return;
         m_pMutex->lock();
-        m_consoleCmdQueue.push(eastl::move(cmd));
+        m_consoleCmdQueue.push(std::move(cmd));
         m_pMutex->unlock();
         m_pThreadEvent->set();
     }
 
-    bool popConsoleCmdWait(eastl::string& out_cmd) {
+    bool popConsoleCmdWait(qtd::string& out_cmd) {
         m_pThreadEvent->wait(100);
         qd::MutexLock ml(*m_pMutex);
         if (m_consoleCmdQueue.empty())
             return false;
-        const eastl::string& cmd = m_consoleCmdQueue.front();
-        out_cmd = eastl::move(cmd);
+        const qtd::string& cmd = m_consoleCmdQueue.front();
+        out_cmd = std::move(cmd);
         m_consoleCmdQueue.pop();
         return true;
     }
@@ -221,9 +221,9 @@ void UaeServerThread::pushSdlEvent(const SDL_Event& event) {
 }
 
 
-void UaeServerThread::pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args) {
+void UaeServerThread::pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) {
     qd::MutexLock ml(m_eventMutex);
-    m_pClientOpsStack.push_back(std::move(args));
+    m_pClientOpsStack.push_back(qtd::move(args));
 }
 
 
@@ -290,18 +290,18 @@ void UaeServerThread::applySdlEventProc(const SDL_Event& event) {
 }
 
 
-void UaeServerThread::applyImmediateConsoleCmd(qd::string&& cmd) {
+void UaeServerThread::applyImmediateConsoleCmd(qtd::string&& cmd) {
     amD::uae::do_console_cmd_immediate(cmd.c_str());
 }
 
 
-void UaeServerThread::execConsoleCmd(qd::string&& cmd) {
+void UaeServerThread::execConsoleCmd(qtd::string&& cmd) {
     m_pConsoleQueue->addCmdToQueue(std::move(cmd));
 }
 
 
 int UaeServerThread::uaeWaitConsoleCmdImpl(char* out, int maxlen) {
-    eastl::string cmd;
+    qtd::string cmd;
     if (!m_pConsoleQueue->popConsoleCmdWait(cmd))
         return -1;
 
@@ -309,6 +309,6 @@ int UaeServerThread::uaeWaitConsoleCmdImpl(char* out, int maxlen) {
     if (len < maxlen)
         strcpy(out, cmd.data());
     else
-        EASTL_ASSERT(0);
+        assert(0);
     return len;
 }

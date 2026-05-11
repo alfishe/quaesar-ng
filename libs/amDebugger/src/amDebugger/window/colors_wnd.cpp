@@ -1,6 +1,6 @@
 #include "colors_wnd.h"
 #include "amDebugger/debuggerWndApp.h"
-#include <EASTL/fixed_vector.h>
+#include "qd/stl/fixed_vector.h"
 #include <amDebugger/vm/vmInterface.h>
 #include "qd/base/color.h"
 #include "qd/imGui/imGui.h"
@@ -11,7 +11,7 @@ namespace window {
 void ColorsWnd::drawContentImp() {
     IVm::VM* vm = getDbg()->getVm();
 
-    eastl::fixed_vector<qd::Color, 256> palette;
+    qtd::fixed_vector<qd::Color, 256> palette;
 
     vm->custom->fetch();
 

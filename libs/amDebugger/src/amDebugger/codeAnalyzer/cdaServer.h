@@ -4,6 +4,7 @@
 #include "amDebugger/codeAnalyzer/quadTreeAddrMap.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "qd/base/baseTypes.h"
+#include "qd/base/compiler.h"
 #include "qd/stl/vector.h"
 
 typedef size_t csh;
@@ -24,11 +25,11 @@ static constexpr uint32_t g_maxPages = 64;
 
 struct CodeChunk : public eastl::intrusive_list_node {
     AddrRef m_addr = 0;
-    qd::array<uint8_t, cda::g_chunkSize> m_bytes = {}; // copy of memory for comparison
-    qd::array<cda::CodeItem*, cda::g_chunkSize / 2> m_codeItems = {};
+    qtd::array<uint8_t, cda::g_chunkSize> m_bytes = {}; // copy of memory for comparison
+    qtd::array<cda::CodeItem*, cda::g_chunkSize / 2> m_codeItems = {};
     uint16_t m_idx = 0;
+    QD_PUSH_VC_WARNING(4201) // nameless struct/union
     union {
-        EA_DISABLE_VC_WARNING(4201) // nameless struct/union
         uint16_t m_flags = 0;
         struct {
             bool m_bAddrValid :1;
@@ -36,6 +37,7 @@ struct CodeChunk : public eastl::intrusive_list_node {
             bool m_bBytesValid :1;
         };
     };
+    QD_POP_VC_WARNING()
 
     bool isValid() const { return m_bCodeValid; }
     bool isIn(AddrRef addr) const { return addr >= m_addr && (uint64_t)addr < ((uint64_t)m_addr + cda::g_chunkSize); }
@@ -59,11 +61,11 @@ struct CodeChunk : public eastl::intrusive_list_node {
 
 class M68CodeDisassembler
 {
-    SINGLETON_DECLARATION(M68CodeDisassembler);
+    QD_SINGLETON_DECLARE(M68CodeDisassembler);
 
 public:
     csh* m_pCapstone = nullptr;
-    qd::array<CodeChunk, g_maxPages> m_disasmChunkStorage; // Cached storage disasm lines as pages
+    qtd::array<CodeChunk, g_maxPages> m_disasmChunkStorage; // Cached storage disasm lines as pages
     eastl::intrusive_list<CodeChunk> m_chunkUseHistory;
     amD::QuadTreeAddrMap<uint16_t, (32 - g_chunkSizeInBits) / g_minOpSize> m_chunksQuadTree;
 
@@ -76,7 +78,7 @@ public:
 
     void init();
     void destroy();
-    void requestM68DisasmLines(IVm::VM* vm, AddrRef addr, int nItems, qd::vector<amD::cda::Item*>* outItems,
+    void requestM68DisasmLines(IVm::VM* vm, AddrRef addr, int nItems, qtd::vector<amD::cda::Item*>* outItems,
         const AddrRef* pCheckAddr = nullptr);
 
 protected:

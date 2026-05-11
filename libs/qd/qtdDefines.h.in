@@ -1,0 +1,14 @@
+#pragma once
+
+// Auto-generated file from qtdDefines.h.in
+// Do not edit directly
+
+#cmakedefine01 QD_IS_SDL2
+#cmakedefine01 QD_IS_IMGUI
+#cmakedefine01 QD_IS_STD
+#cmakedefine01 QD_IS_EASTL
+
+// Legacy aliases used in source files
+#define QTD_IS_EASTL QD_IS_EASTL
+#define QTD_IS_STD   QD_IS_STD
+#define QD_USE_SDL   QD_IS_SDL2

@@ -30,6 +30,7 @@ class INodeElement : public qd::RefCounted
     using TThis = INodeElement;
 public:
     using Ptr = qd::ref_ptr<INodeElement>;
+    inline static qtd::string NullStr;
 
     virtual qtd::string getName() { return ""; }
 
@@ -37,19 +38,18 @@ public:
     virtual int getColumn() { return -1; }
 
     virtual bool getStrTry(const qtd::string_view& /*pKey*/, qtd::string& /*outVal*/) { return false; }
-    virtual bool getIntValue(const qtd::string_view& /*pKey*/, int& /*outVal*/) { return false; }
-    virtual bool getU32Try(const qtd::string_view& /*pKey*/, uint32_t* /*outVal*/ = nullptr) { return false; }
-    virtual bool getFloatValue(const qtd::string_view& /*pKey*/, float& /*outVal*/) { return false; }
-    virtual bool getBoolValue(const qtd::string_view& /*pKey*/, bool& /*outVal*/) { return false; }
-    virtual bool getPointValue(const qtd::string_view& /*pKey*/, int& /*outX*/, int& /*outY*/) { return false; }
-    virtual bool getVectorValue(const qtd::string_view& /*pKey*/, float& x, float& y) { return false; }
+    virtual bool getIntTry(const qtd::string_view& /*pKey*/, int& /*outVal*/) { return false; }
+    virtual bool getU32Try(const qtd::string_view& /*pKey*/, uint32_t& /*outVal*/) { return false; }
+    virtual bool getFloatTry(const qtd::string_view& /*pKey*/, float& /*outVal*/) { return false; }
+    virtual bool getBoolTry(const qtd::string_view& /*pKey*/, bool& /*outVal*/) { return false; }
+    virtual bool getInt2Try(const qtd::string_view& /*pKey*/, int& /*outX*/, int& /*outY*/) { return false; }
+    virtual bool getFloat2Try(const qtd::string_view& /*pKey*/, float& x, float& y) { return false; }
 
-    template<class TString>
-    qtd::string getStrDef(const qtd::string_view& key, const TString& defVal) {
+    qtd::string getStrOr(const qtd::string_view& key, const qtd::string_view& defVal = {}) {
         qtd::string tmpVal;
-        if (this->getStrTry(key, tmpVal))
-            return tmpVal;
-        return defVal;
+        if (!this->getStrTry(key, tmpVal))
+            tmpVal = defVal;
+        return tmpVal;
     }
 
     template<class TString>
@@ -63,56 +63,72 @@ public:
         return false;
     }
 
-
-    inline int getIntValue(const qtd::string_view& pKey) {
+    int getInt(const qtd::string_view& pKey) {
         int Val;
-        if (!getIntValue(pKey, Val))
-            G_THROW_OR_DO(Exception("Node can't parse value for Attr:\"%s\"", pKey), return 0);
+        if (!getIntTry(pKey, Val))
+            QD_THROW_OR_DO(Exception("Node can't parse value for Attr:\"%s\"", pKey), return 0);
         return Val;
     }
-
-
-    inline uint32_t getU32Def(const qtd::string_view& key, uint32_t defVal) {
-        uint32_t Val;
-        if (getU32Try(key, &Val))
+    int getIntOr(const qtd::string_view& pKey, int defVal) {
+        int Val;
+        if (getIntTry(pKey, Val))
             return Val;
         return defVal;
     }
 
+    uint32_t getUIntOr(const qtd::string_view& key, uint32_t defVal) {
+        uint32_t Val;
+        if (getU32Try(key, Val))
+            return Val;
+        return defVal;
+    }
 
-    inline float getFloatValue(const qtd::string_view& pKey) {
+    float getFloat(const qtd::string_view& pKey) {
         float Val;
-        if (!getFloatValue(pKey, Val))
-            G_THROW_OR_DO(Exception("Node can't parse value for Attr:\"%s\"", pKey), return 0.f);
+        if (!getFloatTry(pKey, Val))
+            QD_THROW_OR_DO(Exception("Node can't parse value for Attr:\"%s\"", pKey), return 0.f);
         return Val;
     }
 
-    inline bool getBoolValue(const qtd::string_view& pKey) {
+    float getFloatOr(const qtd::string_view& pKey, float defVal) {
+        float Val;
+        if (getFloatTry(pKey, Val))
+            return Val;
+        return defVal;
+    }
+
+    bool getBool(const qtd::string_view& pKey) {
         bool Val;
-        if (!getBoolValue(pKey, Val))
-            G_THROW_OR_DO(Exception("Node can't parse value for Attr:\"%s\"", pKey), return false);
+        if (!getBoolTry(pKey, Val))
+            QD_THROW_OR_DO(Exception("Node can't parse value for Attr:\"%s\"", pKey), return false);
         return Val;
     }
+    bool getBoolOr(const qtd::string_view& pKey, bool defVal) {
+        bool Val;
+        if (getBoolTry(pKey, Val))
+            return Val;
+        return defVal;
+    }
 
-    inline qtd::string getStrTry(const qtd::string_view& pKey) {
+    qtd::string getStrTry(const qtd::string_view& pKey) {
         qtd::string Res;
         if (!getStrTry(pKey, Res))
             return qtd::string();
         return Res;
     }
 
-    virtual qtd::string getNodeText() { return qtd::string(); }
+    virtual qtd::string getNodeText() { return NullStr; }
 
     // Keys access by Index
     // Get Num Keys
     virtual int getNumKeys() const { return 0; }
     // GET Key By Index
-    virtual qtd::string getKeyByInd(int /*nKey*/) { return qtd::string(); }
+    virtual qtd::string getKeyByInd(int /*nKey*/) { return NullStr; }
 
     // = HAS KEY
     virtual bool isKeyExists(const qtd::string_view& /*pKey*/) { return false; }
 
-    // Childs By indexe
+    // Child By index
     virtual int getNumChilds() const { return 0; }
 
     virtual INodeElement::Ptr getChildByInd(int /*i*/) { return nullptr; }
@@ -125,7 +141,7 @@ public:
     // Finds child by his attributes NAME and VALUE in this Attribute
     virtual INodeElement::Ptr findChildByKeyVal(const qtd::string_view& /*pKeyName*/, const qtd::string_view& /*pKeyValue*/) { return nullptr; }
 
-    // Iteratable API
+    // Iterable API
     virtual qd::INodeIterator::Ptr itBegin() { return nullptr; }
     virtual void itNext(qd::INodeIterator* /*pIt*/) {}
     virtual bool itEnd(qd::INodeIterator* /*pIt*/) { return true; }
@@ -171,10 +187,10 @@ public:
         return true;
     }
     // TODO:
-    //virtual bool getIntValue(const qtd::string_view&, int& Value) override { return m_Value.parseInt(Value); }
+    //virtual bool getInt(const qtd::string_view&, int& Value) override { return m_Value.parseInt(Value); }
     //virtual bool getUIntValue(const qtd::string_view&, uint32_t& Value) override { return m_Value.parseUInt(Value); }
-    //virtual bool getFloatValue(const qtd::string_view&, float& Value) override { return m_Value.parseFloat(Value); }
-    //virtual bool getBoolValue(const qtd::string_view&, bool& Value) override { return m_Value.parseBool(Value); }
+    //virtual bool getFloat(const qtd::string_view&, float& Value) override { return m_Value.parseFloat(Value); }
+    //virtual bool getBool(const qtd::string_view&, bool& Value) override { return m_Value.parseBool(Value); }
 
     virtual int getNumChilds() const override { return 0; }
     virtual int getNumKeys() const override { return 0; }

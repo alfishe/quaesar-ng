@@ -11,7 +11,7 @@
 #include "quasar_app/qsr_app_interfaces.h"
 
 
-FORWARD_DECLARATION_2(qd, ThreadEvent);
+#include "qd/thread/thread.h"
 FORWARD_DECLARATION_3(IVm, imp, VAmVmImp);
 FORWARD_DECLARATION_2(qsr, VAmServerAppPart);
 FORWARD_DECLARATION_2(vamiga, VAmiga);
@@ -28,11 +28,11 @@ class VAmServerThread : public qsr::IVmClientPlayer {
     qd::Mutex m_eventMutex;
     std::deque<SDL_Event> m_sdlEventsQueue;
     class VAmConsoleQueue* m_pConsoleQueue = nullptr;
-    std::deque<qd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
+    std::deque<qtd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
     vamiga::VAmiga* m_pVAmiga = nullptr;
     bool m_bRequestToQuit = false;
     bool power_is_on_ = true;
-    qd::string m_threadErrStr;
+    qtd::string m_threadErrStr;
 
 public:
     int m_scrWidth = 754;
@@ -58,14 +58,14 @@ public:
     virtual IVm::VM* getVm() const override;
     virtual int getScrFrameNo() override;
     virtual void pushSdlEvent(const SDL_Event& event) override;
-    virtual void pushOperationMsg(qd::unique_ptr<qd::operation::BaseOpArgs> args) override;
+    virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) override;
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) override;
     virtual void unlockDisplayTexBuf() override;
 
     void vAmigaMsgQueueProc(const vamiga::MessageFwd& msg);
     bool onVAmHandleEvents();
 
-    void execConsoleCmd(qd::string&& cmd);
+    void execConsoleCmd(qtd::string&& cmd);
     int uaeWaitConsoleCmdImpl(char* out, int maxlen);
 
 public:
@@ -77,7 +77,7 @@ public:
 
 protected:
     void applySdlEventProc(const SDL_Event& event);
-    void applyImmediateConsoleCmd(qd::string&& cmd);
+    void applyImmediateConsoleCmd(qtd::string&& cmd);
 
 private:
     void fetchScreenBufferToTexture(const uint32_t* pCurDisplayTexBuf, bool lof);

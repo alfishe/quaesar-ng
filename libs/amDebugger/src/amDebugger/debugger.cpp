@@ -67,7 +67,7 @@ void Debugger::setDbgServiceBridge(ref_ptr<IVmDbgServiceBridge> pCon)
 }
 
 
-void Debugger::execConsoleCmd(qd::string&& cmd)
+void Debugger::execConsoleCmd(qtd::string&& cmd)
 {
     amD::operation::ExecConsoleCmd exec;
     exec.cmd = std::move(cmd);

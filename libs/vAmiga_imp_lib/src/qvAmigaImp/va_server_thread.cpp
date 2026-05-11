@@ -23,7 +23,7 @@ struct MessageFwd : vamiga::Message {};
 
 class VAmConsoleQueue {
 public:
-    std::queue<qd::string> m_consoleCmdQueue;
+    std::queue<qtd::string> m_consoleCmdQueue;
     qd::ThreadEvent *m_pThreadEvent;
     qd::Mutex *m_pMutex;
 
@@ -33,20 +33,20 @@ public:
         m_pMutex = new qd::Mutex();
     }
 
-    void addCmdToQueue(eastl::string cmd) {
+    void addCmdToQueue(qtd::string cmd) {
         if (cmd.empty()) return;
         m_pMutex->lock();
-        m_consoleCmdQueue.push(eastl::move(cmd));
+        m_consoleCmdQueue.push(std::move(cmd));
         m_pMutex->unlock();
         m_pThreadEvent->set();
     }
 
-    bool popConsoleCmdWait(eastl::string &out_cmd) {
+    bool popConsoleCmdWait(qtd::string &out_cmd) {
         m_pThreadEvent->wait(100);
         qd::MutexLock ml(*m_pMutex);
         if (m_consoleCmdQueue.empty()) return false;
-        const eastl::string &cmd = m_consoleCmdQueue.front();
-        out_cmd = eastl::move(cmd);
+        const qtd::string &cmd = m_consoleCmdQueue.front();
+        out_cmd = std::move(cmd);
         m_consoleCmdQueue.pop();
         return true;
     }
@@ -143,7 +143,7 @@ void VAmServerThread::pushSdlEvent(const SDL_Event &event) {
 }
 
 void VAmServerThread::pushOperationMsg(
-    qd::unique_ptr<qd::operation::BaseOpArgs> args) {
+    qtd::unique_ptr<qd::operation::BaseOpArgs> args) {
     qd::MutexLock ml(m_eventMutex);
     m_pClientOpsStack.push_back(std::move(args));
 }
@@ -191,7 +191,7 @@ void VAmServerThread::applySdlEventProc(const SDL_Event &event) {
     }
 }
 
-void VAmServerThread::applyImmediateConsoleCmd(qd::string &&cmd) {
+void VAmServerThread::applyImmediateConsoleCmd(qtd::string &&cmd) {
   // amD::uae::do_console_cmd_immediate(cmd.c_str());
 }
 
@@ -240,7 +240,7 @@ void VAmServerThread::fetchScreenBufferToTexture(
 #endif  //
 }
 
-void VAmServerThread::execConsoleCmd(qd::string &&cmd) {
+void VAmServerThread::execConsoleCmd(qtd::string &&cmd) {
     m_pConsoleQueue->addCmdToQueue(std::move(cmd));
 }
 

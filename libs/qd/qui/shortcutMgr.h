@@ -1,8 +1,8 @@
 #pragma once
-#include <EASTL/fixed_function.h>
-#include <EASTL/span.h>
-#include <EASTL/string.h>
-#include <EASTL/fixed_map.h>
+#include <qd/stl/fixed_function.h>
+#include <qd/stl/span.h>
+#include <qd/stl/string.h>
+#include <qd/stl/vector_map.h>
 #include "qd/qui/shortcut.h"
 #include "qd/base/classInfoReg.h"
 #include "qd/node/node.h"
@@ -26,14 +26,14 @@ class ShortcutsMgr : public qd::RefCounted
 {
     TS_REFLECT_CLASS(qd::ShortcutsMgr, qd::RefCounted);
     constexpr static size_t MAX_SHORTCUTS = 512;
-    eastl::fixed_map<ShortcutId, qd::unique_ptr<qd::Shortcut>, MAX_SHORTCUTS, false> m_shortcuts;
+    qtd::vector_map<ShortcutId, qtd::unique_ptr<qd::Shortcut>> m_shortcuts;
 
 public:
     ShortcutsMgr() {}
 
     static ShortcutsMgr* get();
 
-    void createPredefinedShortcuts(eastl::span<qd::ShortcutInitItem> shortcuts_list);
+    void createPredefinedShortcuts(qtd::span<qd::ShortcutInitItem> shortcuts_list);
     void done();
 
     qd::Shortcut& getShortcut(qd::ShortcutId shortcut_id);

@@ -18,11 +18,17 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Find and optionally link zlib
-find_package(ZLIB QUIET)
-if(ZLIB_FOUND)
-  message(STATUS "Found ZLIB: ${ZLIB_LIBRARIES}")
+# Prefer the zlibstatic target built as a subproject over a system install
+if(TARGET zlibstatic)
+  set(ZLIB_FOUND TRUE)
+  message(STATUS "Found ZLIB: zlibstatic (subproject)")
 else()
-  message(STATUS "ZLIB not found. Compression support will be disabled.")
+  find_package(ZLIB QUIET)
+  if(ZLIB_FOUND)
+    message(STATUS "Found ZLIB: ${ZLIB_LIBRARIES}")
+  else()
+    message(STATUS "ZLIB not found. Compression support will be disabled.")
+  endif()
 endif()
 
 # Add the emulator library
@@ -78,9 +84,14 @@ target_link_libraries(VACore xdms Threads::Threads)
 
 # Link zlib if available
 if(ZLIB_FOUND)
-  target_link_libraries(VACore ZLIB::ZLIB)
-  target_link_libraries(VAHeadless ZLIB::ZLIB)
-  target_compile_definitions(VACore PUBLIC USE_ZLIB=1)  # Optional define for conditional compilation
+  if(TARGET zlibstatic)
+    target_link_libraries(VACore zlibstatic)
+    target_link_libraries(VAHeadless zlibstatic)
+  else()
+    target_link_libraries(VACore ZLIB::ZLIB)
+    target_link_libraries(VAHeadless ZLIB::ZLIB)
+  endif()
+  target_compile_definitions(VACore PUBLIC USE_ZLIB=1)
 endif()
 
 target_link_libraries(VACore lz4)

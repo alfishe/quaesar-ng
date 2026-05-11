@@ -15,7 +15,7 @@ class DisassemblyView : public amD::AmDbgWindow {
 
     amD::ExprValStr m_addrInputStr;
     qd::optional<AddrRef> m_viewBaseAddr;
-    qd::vector<amD::cda::Item *> m_vDisasmLines;
+    qtd::vector<amD::cda::Item *> m_vDisasmLines;
     AddrRef m_mustViewAddr = 0;
     int m_nMustViewAddrDesiredLine = 0;
     bool m_bSnapViewPc = true;

@@ -1,9 +1,9 @@
 #pragma once
 #include "qd/base/base.h"
 #include "qd/thread/mutex.h"
-#include <EABase/config/eacompilertraits.h>
-#include <qd/debug/assert.h>
+#include "qd/debug/assert.h"
 #include "qd/debug/exception.h"
+#include "qd/stl/algorithm.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@ public:
 	}
 
 	/*Force inline required*/
-	EA_FORCE_INLINE void* alloc(const size_t& sz);
+	QD_FORCE_INLINE void* alloc(const size_t& sz);
 
 }; // class CSmallObjectAllocator
 //////////////////////////////////////////////////////////////////////////
@@ -399,7 +399,7 @@ T* mkNewSelf_(T** pObj, Args&&... args)
 	//MemAlloc::CSmallObjectAllocator* pAlloc = MemAlloc::CSmallObjectAllocator::get();
 	//T* pObj = new (pAlloc->alloc(sizeof(T))) T(eastl::forward<Args>(args)...);
 	if (!*pObj)
-		*pObj = new T(eastl::forward<Args>(args)...);
+		*pObj = new T(qtd::forward<Args>(args)...);
 	return *pObj;
 }
 

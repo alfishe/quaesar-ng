@@ -1,11 +1,10 @@
 #pragma once
-#include <EASTL/fixed_vector.h>
-#include <EASTL/vector.h>
-
+#include <qd/stl/fixed_vector.h>
+#include <qd/stl/vector.h>
 #include <qd/stl/ref_ptr.h>
 #include <qd/base/baseTypes.h>
 #include <qd/typeSystem/typeDeclare.h>
-#include "qd/base/eFlow.h"
+#include "qd/base/EFlow.h"
 
 
 namespace qd {
@@ -56,7 +55,7 @@ class Node : public qd::RefCounted
  public:
     qd::Node* const m_pParent = nullptr;
     INodesChildList* m_pChildList = nullptr;
-    eastl::fixed_vector<qd::NodeComp*, 6, true> m_pComps;
+    qtd::fixed_vector<qd::NodeComp*, 6, true> m_pComps;
 
 public:
     Node(ObjectID _uid = qd::INVALID_OBJECT_ID)
@@ -224,7 +223,7 @@ public:
 class NodesChildList : public qd::INodesChildList
 {
     TS_REFLECT_CLASS(qd::NodesChildList, qd::INodesChildList);
-    qd::vector<Node*> m_ChildNodes;
+    qtd::vector<Node*> m_ChildNodes;
 
 public:
     virtual ~NodesChildList() override;

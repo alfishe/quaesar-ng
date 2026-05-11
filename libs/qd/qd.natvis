@@ -26,21 +26,25 @@
 	</Type>
 
 
-	<Type Name="ref_ptr&lt;*&gt;">
+	<Type Name="qd::ref_ptr&lt;*&gt;">
 		<SmartPointer Usage="Minimal">_ptr</SmartPointer>
-		<DisplayString Condition="_ptr->_ref_ptr_RefCount.m_Value == 0">empty</DisplayString>
-		<DisplayString Condition="_ptr->_ref_ptr_RefCount.m_Value != 0">{_ptr} {*_ptr}</DisplayString>
+		<DisplayString Condition="_ptr == 0">empty</DisplayString>
+		<DisplayString Condition="_ptr != 0 &amp;&amp; _ptr->_ref_ptr_RefCount._Storage._Value == 0">empty (ref=0)</DisplayString>
+		<DisplayString Condition="_ptr != 0 &amp;&amp; _ptr->_ref_ptr_RefCount._Storage._Value != 0">{_ptr} refs={_ptr->_ref_ptr_RefCount._Storage._Value}</DisplayString>
 		<Expand>
 			<Item Name="[ptr]">_ptr</Item>
+			<Item Name="[refcount]" Condition="_ptr != 0">_ptr->_ref_ptr_RefCount._Storage._Value</Item>
 		</Expand>
 	</Type>
 
-	<Type Name="wref_ptr&lt;*&gt;">
+	<Type Name="qd::wref_ptr&lt;*&gt;">
 		<SmartPointer Usage="Minimal">_ptr</SmartPointer>
-		<DisplayString Condition="_ptr->_ref_ptr_WeakRefCount.m_Value == 0">empty</DisplayString>
-		<DisplayString Condition="_ptr->_ref_ptr_WeakRefCount.m_Value != 0">{_ptr} {*_ptr}</DisplayString>
+		<DisplayString Condition="_ptr == 0">empty</DisplayString>
+		<DisplayString Condition="_ptr != 0 &amp;&amp; _ptr->_ref_ptr_WeakRefCount._Storage._Value == 0">empty (wref=0)</DisplayString>
+		<DisplayString Condition="_ptr != 0 &amp;&amp; _ptr->_ref_ptr_WeakRefCount._Storage._Value != 0">{_ptr} wrefs={_ptr->_ref_ptr_WeakRefCount._Storage._Value}</DisplayString>
 		<Expand>
 			<Item Name="[ptr]">_ptr</Item>
+			<Item Name="[weak refcount]" Condition="_ptr != 0">_ptr->_ref_ptr_WeakRefCount._Storage._Value</Item>
 		</Expand>
 	</Type>
 

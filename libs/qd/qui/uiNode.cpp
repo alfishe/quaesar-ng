@@ -1,4 +1,5 @@
 #include "uiNode.h"
+#include <algorithm>
 #include "qd/debug/exception.h"
 #include "qd/mem/ptrMath.h"
 #include "qd/qui/uiMessages.h"
@@ -63,7 +64,7 @@ UiNode* UiNode::getChildById(uint32_t ID) const
         return nullptr;
     UiNode* pChild = findChildById(ID);
     if (!pChild)
-        G_THROW_OR_DO(
+        QD_THROW_OR_DO(
             Exception(EException::NOT_FOUND, "UiNode::getChildById(...) : FAILED : Can't find child by id '%d'", ID),
             return nullptr);
     return pChild;
@@ -87,7 +88,7 @@ int UiNode::getChildIndex(UiNode* pChild) const
     int nChild = findChildIndex(pChild);
     assert(nChild >= 0);
     if (nChild < 0)
-        G_THROW_OR_DO(Exception("Can't find child with ID=%u", pChild->getId()), return -1);
+        QD_THROW_OR_DO(Exception("Can't find child with ID=%u", pChild->getId()), return -1);
     return nChild;
 }
 
@@ -124,7 +125,7 @@ qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
     {
         qtd::string err =
             qd::string_format("AddChild - Exception: Child already added to Parent Control! id=\"%i\" ", id);
-        G_THROW_OR_DO(Exception(EException::INVALID_ARGUMENT, err), return nullptr);
+        QD_THROW_OR_DO(Exception(EException::INVALID_ARGUMENT, err), return nullptr);
     }
 
     if (findChildById(id))
@@ -132,7 +133,7 @@ qd::UiNode* UiNode::addChild(ref_ptr<UiNode> pChild)
         // DUPLICATE id's FOUND
         qtd::string err =
             qd::string_format("AddChild - Exception: Child already added to Parent Control! id=\"%i\" ", id);
-        G_THROW_OR_DO(Exception(EException::INVALID_ARGUMENT, err), return nullptr);
+        QD_THROW_OR_DO(Exception(EException::INVALID_ARGUMENT, err), return nullptr);
     }
 
     // ADD CHILD
@@ -277,7 +278,7 @@ void UiNode::destroy()
 }
 
 
-void UiNode::addComp(qd::unique_ptr<qd::UiNodeComp> pNewComp)
+void UiNode::addComp(qtd::unique_ptr<qd::UiNodeComp> pNewComp)
 {
     // const qd::TypeInfo& typeInfo = pNewComp->getTypeInfo();
     m_pComps.push_back(std::move(pNewComp));
@@ -286,7 +287,7 @@ void UiNode::addComp(qd::unique_ptr<qd::UiNodeComp> pNewComp)
 
 UiNodeComp* UiNode::findComp(const qd::TypeInfo& comp) const
 {
-    auto it = eastl::find_if(m_pComps.begin(), m_pComps.end(), [comp](const qd::unique_ptr<qd::UiNodeComp>& pCurComp) {
+    auto it = std::find_if(m_pComps.begin(), m_pComps.end(), [comp](const qtd::unique_ptr<qd::UiNodeComp>& pCurComp) {
         return pCurComp ? pCurComp->getTypeInfo().isDerivedFrom(comp) : false;
     });
     if (it != m_pComps.end())

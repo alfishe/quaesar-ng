@@ -1,6 +1,6 @@
 #pragma once
 #include "imgui/imgui.h"
-#include "qd/math/point2.h"
+#include "qd/math/Point2.h"
 #include "qd/qui/uiNode.h"
 #include "qd/stl/vector.h"
 

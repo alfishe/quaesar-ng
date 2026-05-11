@@ -1,6 +1,6 @@
 #pragma once
+#include "qd/base/stringId.h"
 #include "qd/stl/string.h"
-#include <qd/base/stringId.h>
 
 
 namespace qd {
@@ -11,18 +11,14 @@ class TypeId
 
 public:
     TypeId() {}
-    TypeId(const string& type)
-        : m_ID(type)
-    {}
+    TypeId(const qtd::string& type)
+        : m_ID(type) {}
     TypeId(char const* pType)
-        : m_ID(pType)
-    {}
+        : m_ID(pType) {}
     TypeId(const StringID& ID)
-        : m_ID(ID)
-    {}
+        : m_ID(ID) {}
     TypeId(uint32_t ID)
-        : m_ID(ID)
-    {}
+        : m_ID(ID) {}
 
     bool IsValid() const { return m_ID.IsValid(); }
 
@@ -39,6 +35,7 @@ public:
 }; // class TypeId
 
 } // namespace qd
+//////////////////////////////////////////////////////////////////////////
 
 
 //-------------------------------------------------------------------------

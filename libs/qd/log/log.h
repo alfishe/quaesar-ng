@@ -5,6 +5,7 @@
 #include "qd/stl/string.h"
 #include <cstdarg>
 #include <ctime>
+#include "qd/stl/algorithm.h"
 
 
 namespace qd {
@@ -51,7 +52,7 @@ public:
     template<class TWriter>
     TWriter* createWriter_() {
         TWriter* pInst = new TWriter();
-        registerWriter(eastl::move(pInst));
+        registerWriter(qtd::move(pInst));
         return pInst;
     }
 

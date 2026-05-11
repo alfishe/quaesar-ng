@@ -1,5 +1,5 @@
 #pragma once
-#include "memFile.h"
+#include "qd/file/memFile.h"
 #include "qd/base/base.h"
 #include "qd/file/archiveBase.h"
 #include "qd/file/fileBase.h"
@@ -26,7 +26,7 @@ class CArchiveBin
             : m_FileChunk(_ch)
             , m_nChunkPos(filePos) {}
     };
-    eastl::fixed_vector<ChunkItem_t, 8, true> m_ChunkStack;
+    qtd::fixed_vector<ChunkItem_t, 8, true> m_ChunkStack;
     qd::CArchive& m_ar; // put it lower (due to it not very well looking in the VS Debug window)
 
 public:
@@ -70,7 +70,7 @@ protected:
     virtual void _arWrite_String(const char* pString, uint32_t Length) override;
     virtual void _arRead_String(qtd::string& String) override;
 
-    virtual qtd::string_view _arGetFileName() override { return string_view(m_pFile->getFileName()); }
+    virtual qtd::string_view _arGetFileName() override { return qtd::string_view(m_pFile->getFileName()); }
 
     virtual void _arSkip(const qd::IFileChunk& Chunk) override;
     virtual void _arUndo(const qd::IFileChunk& Chunk) override;

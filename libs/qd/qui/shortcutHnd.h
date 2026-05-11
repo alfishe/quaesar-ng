@@ -3,7 +3,8 @@
 #include "qd/stl/fixed_vector.h"
 #include "qd/stl/vector.h"
 #include "qd/typeSystem/typeDeclare.h"
-#include <EASTL/span.h>
+#include <qd/stl/span.h>
+#include <cassert>
 
 
 namespace qd {
@@ -15,21 +16,21 @@ class ShortcutsHnd : public qd::RefCounted
     TS_REFLECT_CLASS(qd::ShortcutsHnd, qd::RefCounted);
 
 public:
-    qd::fixed_vector<const Shortcut*, 2, false> m_pShortcuts;
+    qtd::fixed_vector<const Shortcut*, 2, false> m_pShortcuts;
 
 public:
     virtual ~ShortcutsHnd() {}
 
-    eastl::span<const Shortcut* const> getShortcuts() const
+    qtd::span<const Shortcut* const> getShortcuts() const
     {
         const Shortcut* const* ptrBeg = m_pShortcuts.data();
-        eastl::span<const Shortcut* const> sp(ptrBeg, m_pShortcuts.size());
+        qtd::span<const Shortcut* const> sp(ptrBeg, m_pShortcuts.size());
         return sp;
     }
 
     void addShortcut(const Shortcut* sh)
     {
-        EASTL_ASSERT(sh);
+        assert(sh);
         if (!sh)
             return;
         m_pShortcuts.push_back(sh);

@@ -1,16 +1,8 @@
 #pragma once
-#include "EABase/config/eacompilertraits.h"
+#include "qd/base/base.h"
 #include "qd/typeSystem/stdTypeId.h"
 #include "qd/typeSystem/typeInfoBuilder.h"
 
-
-#if defined(EA_COMPILER_CLANG) || defined(EA_COMPILER_CLANG_CL)
-#define QD_DISABLE_CLANG_WARNING(w)   \
-    _Pragma("clang diagnostic push"); \
-    _Pragma(EACLANGWHELP1(w));
-#else
-#define QD_DISABLE_CLANG_WARNING(w)
-#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -47,39 +39,36 @@ private:                                                                        
 public:                                                                             \
     inline static const qd::TypeInfo* s_pTypeInfo = qd::_regTypeInfo_<ClassMeta>(); \
     constexpr static THash32 CID = qd::hash_type_info_name(#ObjectClass);           \
-    QD_DISABLE_CLANG_WARNING("-Winconsistent-missing-override");                    \
-    virtual inline THash32 getCid() const /*override*/                              \
-    {                                                                               \
+    QD_PUSH_CLANG_WARNING("-Winconsistent-missing-override");                       \
+    virtual inline THash32 getCid() const /*override*/ {                            \
         return ObjectClass::CID; /* constexpr ID from fnv1hhash of type name */     \
     }                                                                               \
-    static const qd::TypeInfo& getStaticTypeInfo()                                  \
-    {                                                                               \
+    static const qd::TypeInfo& getStaticTypeInfo() {                                \
         validateStaticTypeInfoPtr(ObjectClass::s_pTypeInfo);                        \
         return *ObjectClass::s_pTypeInfo;                                           \
     }                                                                               \
-    virtual const qd::TypeInfo& getTypeInfo() const /*override*/                    \
-    {                                                                               \
+    virtual const qd::TypeInfo& getTypeInfo() const /*override*/ {                  \
         validateStaticTypeInfoPtr(ObjectClass::s_pTypeInfo);                        \
         return *ObjectClass::s_pTypeInfo;                                           \
     }                                                                               \
-    EA_RESTORE_CLANG_WARNING()                                                      \
+    QD_POP_CLANG_WARNING()                                                          \
 private:                                                                            \
     struct ClassMeta : public qd::TypeInfoBuilderObject_<ObjectClass> {             \
                                                                                     \
         ClassMeta()                                                                 \
-            : qd::TypeInfoBuilderObject_<ObjectClass>(#ObjectClass)                 \
-        {                                                                           \
+            : qd::TypeInfoBuilderObject_<ObjectClass>(#ObjectClass) {               \
             qd::TypeInfo* pCurTypeInfo = m_pType;                                   \
             (void)(pCurTypeInfo);
+//////////////////////////////////////////////////////////////////////////
 
 
-
+//------------------------------------------------------------------------
 #define TS_END()                    \
     }                               \
     }                               \
     ; /*struct TObject::ClassMeta*/ \
 public:
-
+//////////////////////////////////////////////////////////////////////////
 
 
 //------------------------------------------------------------------------
@@ -99,7 +88,7 @@ public:
 
 
 // WARNING: 'TS_ATTRIBUTE(...)' MUST BE SITUATED BELOW OF BEGIN_OBJECT_REFLECTOR(...), NO AFTER CONSTRUCTOR
-// DECLARATION 'AttrClass' MUST BE INHERITED FROM 'TypeInfoAttribute'
+// DECLARATION 'AttrClass' MUST BE INHERITED FROM 'qd::TypeInfoAttribute'
 #define TS_ATTRIBUTE(AttrClass) addAttribute_((qd::TypeInfoBase*)pCurTypeInfo, new AttrClass);
 //////////////////////////////////////////////////////////////////////////
 
@@ -148,8 +137,7 @@ namespace qd {
 class TypeInfo;
 
 template<typename TMetaClassReg>
-const qd::TypeInfo* _regTypeInfo_()
-{
+const qd::TypeInfo* _regTypeInfo_() {
     TMetaClassReg registrator;
     return registrator.m_pType;
 }

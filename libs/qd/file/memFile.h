@@ -70,7 +70,7 @@ public:
                 m_bMemDataWasRetained = false;
             }
         }
-        m_pMemData = eastl::move(pNewMemData);
+        m_pMemData = qtd::move(pNewMemData);
         m_Position = nPos;
     }
 

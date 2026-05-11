@@ -8,7 +8,7 @@ void MemBuf::expandBuffer(uint32_t newSize) {
 
     assert((int)newSize >= 0 && "CMemBuf() has Size greater then INT, overflow maybe");
     if (m_pBuffer) {
-        if (m_nCapacity >= newSize)
+        if (m_bufSize >= newSize)
             return;
 
         // REDUCE BUFFER SIZE
@@ -29,7 +29,7 @@ void MemBuf::expandBuffer(uint32_t newSize) {
             }
         }
     }
-    m_nCapacity = newSize;
+    m_bufSize = newSize;
     m_bNeedFree = true;
 }
 
@@ -38,7 +38,7 @@ void MemBuf::memMove(uint32_t srcOffset, uint32_t destOffset, uint32_t nBytes) {
 
     uint8_t* pSrcBuf = (uint8_t*)m_pBuffer + srcOffset;
     uint8_t* pDestBuf = (uint8_t*)m_pBuffer + destOffset;
-    if (srcOffset + nBytes > m_nCapacity)
+    if (srcOffset + nBytes > m_bufSize)
         throw Exception(EException::OUT_OF_RANGE, "CMemBuf::MemMove - Buffer overflow");
     memmove(pDestBuf, pSrcBuf, nBytes);
 }

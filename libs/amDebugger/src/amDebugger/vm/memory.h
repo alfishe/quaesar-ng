@@ -76,8 +76,8 @@ public:
     EMemSrc m_id = EMemSrc::NONE;
     uint32_t m_size = 0;
     uint32_t m_mask = 0;
-    eastl::string m_name;
-    eastl::string m_label;
+    qtd::string m_name;
+    qtd::string m_label;
     AddrRef m_startAddr = 0;
     uint8_t* m_realAddr = nullptr;
     bool m_bEnabled = false;

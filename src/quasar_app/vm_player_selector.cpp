@@ -6,10 +6,10 @@ namespace qsr {
 
 namespace plugin_api {
 class AppPartServerFactoryListMgr {
-    SINGLETON_DECLARATION(AppPartServerFactoryListMgr);
+    QD_SINGLETON_DECLARE(AppPartServerFactoryListMgr);
 
 public:
-    qd::vector<std::unique_ptr<IAppPartServerProviderFactory>> m_appPartServerFactoryList;
+    qtd::vector<std::unique_ptr<IAppPartServerProviderFactory>> m_appPartServerFactoryList;
 
 public:
     AppPartServerFactoryListMgr() = default;
@@ -55,7 +55,8 @@ int VmPlayersSelector::activateVmPlayerByIdStr(QuaesarApplication* pApp, const c
     if (pFactory->createServerAppPart(ctx)) {
         qsr::BaseVmServerAppPart* pPart = ctx.outPartPtr;
 
-        ProviderItem& item = m_vmServerAppParts.push_back();
+        m_vmServerAppParts.emplace_back();
+        ProviderItem& item = m_vmServerAppParts.back();
         item.pServerApp = pPart;
         item.title = pFactory->guiName.c_str();
         item.id = pFactory->id.c_str();

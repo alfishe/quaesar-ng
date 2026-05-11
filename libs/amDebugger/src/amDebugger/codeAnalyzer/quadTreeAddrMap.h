@@ -35,7 +35,7 @@ public:
 
     void insert(AddrRef addr, const TItem& item) { insertImp(m_root, addr, item, 0); }
 
-    //void query(AddrRef start, AddrRef end, qd::vector<TItem>& outItems) const { queryImp(m_root, start, end, outItems); }
+    //void query(AddrRef start, AddrRef end, qtd::vector<TItem>& outItems) const { queryImp(m_root, start, end, outItems); }
     bool querySingle(AddrRef start, TItem *outItem) const
     {
         return querySingleImp(m_root, start, outItem);

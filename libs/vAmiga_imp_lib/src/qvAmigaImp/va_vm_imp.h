@@ -169,12 +169,12 @@ public:
         }
         virtual void setWriteProtect(bool v) override {
         }
-        virtual qd::string getAdfPath() override;
-        virtual void setAdfPath(const qd::string& v) override;
+        virtual qtd::string getAdfPath() override;
+        virtual void setAdfPath(const qtd::string& v) override;
 
         virtual void init(IVm::VM *) override;
     };
-    qd::array<Floppy, IVm::MAX_FLOPPIES> instFloppies = {};
+    qtd::array<Floppy, IVm::MAX_FLOPPIES> instFloppies = {};
 
 };  // class VAmVmImp
 //////////////////////////////////////////////////////////////////////////

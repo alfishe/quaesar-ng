@@ -1,6 +1,6 @@
 #include "cdaServer.h"
 #include <capstone/capstone.h>
-#include "EASTL/optional.h"
+#include "qd/stl/optional.h"
 #include "qd/math/mathBase.h"
 #include "cdaTypes.h"
 #include "qd/stl/fixed_vector.h"
@@ -144,8 +144,11 @@ struct InstructionProcessor
         pCodeInfo->m_text += insn.op_str;
 
         pCodeInfo->m_bytesString.clear();
-        for (uint16_t b = 0; b < insn.size; ++b)
-            pCodeInfo->m_bytesString.append_sprintf("%02X", insn.bytes[b]);
+        for (uint16_t b = 0; b < insn.size; ++b) {
+            char buf[4];
+            snprintf(buf, sizeof(buf), "%02X", insn.bytes[b]);
+            pCodeInfo->m_bytesString += buf;
+        }
 
         int ind = (pCodeInfo->m_addr - pCurPage->m_addr) / 2;
         assert(!pCurPage->m_codeItems[ind]);
@@ -155,7 +158,7 @@ struct InstructionProcessor
 
 
 void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, int nLines,
-    qd::vector<amD::cda::Item*>* outItems, const AddrRef* pProvedInstructionStart)
+    qtd::vector<amD::cda::Item*>* outItems, const AddrRef* pProvedInstructionStart)
 {
     outItems->clear();
 
@@ -167,7 +170,7 @@ void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, 
     DisasmContext dc;
     dc.setMinMaxAddr(qd::clamp_max(startAddr - algn, startAddr), startAddr + nLines * 2 + algn);
 
-    eastl::optional<AddrRef> optAnchorAddr;
+    qd::optional<AddrRef> optAnchorAddr;
     if (*pProvedInstructionStart && qd::is_in_10(*pProvedInstructionStart, begAddr, endAddr))
         optAnchorAddr = *pProvedInstructionStart;
 

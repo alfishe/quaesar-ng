@@ -37,7 +37,7 @@ public:
     DECLARE_CDA_ITEM_TYPE(EItemType::Unknown);
     AddrRef m_addr = 0; // optional operand address
     uint16_t m_bytesCount = 0;
-    qd::string m_bytesString;
+    qtd::string m_bytesString;
 
 public:
     Item(EItemType type_ = EItemType::Unknown)
@@ -64,7 +64,7 @@ class CodeItem : public Item
     DECLARE_CDA_ITEM_TYPE(EItemType::Code);
 public:
     EOperandType m_operandType = EOperandType::Unknown;
-    qd::string m_text; // Disassembly text
+    qtd::string m_text; // Disassembly text
 
 public:
     CodeItem() : Item(EItemType::Code) {}

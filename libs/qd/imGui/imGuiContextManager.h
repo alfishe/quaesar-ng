@@ -2,7 +2,7 @@
 #include "qd/app/moduleManager.h"
 #include "qd/base/base.h"
 #include "qd/base/color.h"
-#include "qd/base/eFlow.h"
+#include "qd/base/EFlow.h"
 #include "qd/math/fixedPoint.h"
 #include <imgui/imgui.h>
 

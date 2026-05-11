@@ -1,5 +1,5 @@
 #include "memory_graph_wnd.h"
-#include <EASTL/span.h>
+#include "qd/stl/span.h"
 #include <SDL.h>
 #include "amDebugger/debuggerWndApp.h"
 #include <amDebugger/vm/vmInterface.h>
@@ -56,18 +56,17 @@ void MemoryGraphWnd::drawContentImp() {
     }
 
     qd::InlineString selBankName = "null";
-    if (pCurBank) {
-        selBankName.assign(pCurBank->m_name.begin(), pCurBank->m_name.end());
-        selBankName.append_sprintf(" (%06Xh - %06Xh)", (uint32_t)pCurBank->m_startAddr,
-                                   (uint32_t)pCurBank->m_startAddr + pCurBank->m_size);
+    if (pCurBank)
+    {
+        qd::string_format_inplace(selBankName, "%s (%06Xh - %06Xh)", pCurBank->m_name.c_str(),
+            (uint32_t)pCurBank->m_startAddr, (uint32_t)pCurBank->m_startAddr + pCurBank->m_size);
     }
     if (ImGui::BeginCombo("Memory bank", selBankName.c_str(), ImGuiComboFlags_None)) {
-        eastl::span<const IVm::MemBank> banks = vm->mem->m_banks;
+        qtd::span<const IVm::MemBank> banks = vm->mem->m_banks;
         for (size_t nBank = 0; nBank < banks.size(); ++nBank) {
             const IVm::MemBank& curBank = banks[nBank];
-            selBankName.assign(curBank.m_name.begin(), curBank.m_name.end());
-            selBankName.append_sprintf(" (%06Xh-%06Xh)", (uint32_t)curBank.m_startAddr,
-                                       (uint32_t)curBank.m_startAddr + curBank.m_size);
+            qd::string_format_inplace(selBankName, "%s (%06Xh-%06Xh)", curBank.m_name.c_str(),
+                (uint32_t)curBank.m_startAddr, (uint32_t)curBank.m_startAddr + curBank.m_size);
             if (ImGui::Selectable(selBankName.c_str(), nBank == (size_t)m_curBank)) {
                 m_curBank = (int)nBank;
                 m_textureMod = 0;
@@ -81,7 +80,7 @@ void MemoryGraphWnd::drawContentImp() {
         for (int nb = 0; nb < 5; ++nb) {
             AddrRef bplPtr = vm->custom->getRegVal(CustReg::BPL1PTH + nb * 2) << 16 |
                              vm->custom->getRegVal(CustReg::BPL1PTH + nb * 2 + 1);
-            selBankName.sprintf("BPL %i (%06Xh)###BPL%i", nb + 1, bplPtr, nb);
+            qd::string_format_inplace(selBankName, "BPL %i (%06Xh)###BPL%i", nb + 1, bplPtr, nb);
             if (ImGui::Selectable(selBankName.c_str())) {
                 m_curBank = IVm::EMemSrc::CHIP;
                 pCurBank = vm->mem->getBankByInd(m_curBank);

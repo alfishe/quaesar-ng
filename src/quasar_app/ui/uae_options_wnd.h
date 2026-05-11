@@ -1,8 +1,8 @@
 #pragma once
-#include "EASTL/fixed_function.h"
 #include "qd/enum/enumBase.h"
 #include "qd/qui/controls/dialog.h"
 #include "qd/stl/array.h"
+#include "qd/stl/fixed_function.h"
 #include "qd/stl/unique_ptr.h"
 #include "qd/stl/vector.h"
 
@@ -49,7 +49,7 @@ struct OptionDrawCtx {
 struct UOption {
 public:
     UCategory* parentCat = nullptr;
-    using TDrawOptionCb = eastl::fixed_function<2 * sizeof(void*), void(OptionDrawCtx*)>;
+    using TDrawOptionCb = qtd::fixed_function<2 * sizeof(void*), void(OptionDrawCtx*)>;
     TDrawOptionCb drawOptionCb;
 
     UOption() = default;
@@ -66,10 +66,10 @@ struct UCategory {
 public:
     EOptionCat id;
     EOptionCat parentId;
-    qd::string title;
+    qtd::string title;
     UCategory* parentCat = nullptr;
-    qd::vector<UCategory*> childCats;
-    qd::vector<UOption*> options;
+    qtd::vector<UCategory*> childCats;
+    qtd::vector<UOption*> options;
     int ident = 0;
 
     UCategory(EOptionCat id, EOptionCat parent_id) : id(id), parentId(parent_id) {
@@ -81,8 +81,8 @@ public:
 class BaseOptionsDlg : public qd::UiDialog {
     TS_REFLECT_CLASS(BaseOptionsDlg, qd::UiDialog);
 
-    qd::array<qd::unique_ptr<UCategory>, EOptionCat::MAX_COUNT> m_pCategories = {};
-    qd::vector<qd::unique_ptr<UOption>> m_pOptions;
+    qtd::array<qtd::unique_ptr<UCategory>, EOptionCat::MAX_COUNT> m_pCategories = {};
+    qtd::vector<qtd::unique_ptr<UOption>> m_pOptions;
     UCategory* m_pSelectedCat = nullptr;
     IVm::VM* m_pVm = nullptr;
 
@@ -103,7 +103,7 @@ public:
     UOption* createOption(UCategory* pCategory, TArgs&&... args) {
         assert(pCategory);
         UOption* pOpt = new UOption(args...);
-        m_pOptions.push_back(qd::unique_ptr<UOption>(pOpt));
+        m_pOptions.push_back(qtd::unique_ptr<UOption>(pOpt));
         pOpt->parentCat = pCategory;
         pCategory->options.push_back(pOpt);
         return pOpt;

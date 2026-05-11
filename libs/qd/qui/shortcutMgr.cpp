@@ -110,7 +110,7 @@ qd::ShortcutsMgr* ShortcutsMgr::get()
 }
 
 
-void ShortcutsMgr::createPredefinedShortcuts(eastl::span<qd::ShortcutInitItem> shortcuts_list)
+void ShortcutsMgr::createPredefinedShortcuts(qtd::span<qd::ShortcutInitItem> shortcuts_list)
 {
     for (int i = 0; i < (int)shortcuts_list.size(); ++i)
     {
@@ -140,7 +140,7 @@ qd::Shortcut& ShortcutsMgr::getShortcut(qd::ShortcutId shortcut_id)
     {
         // return reference for later binding
         qd::Shortcut* pShortcut = new qd::Shortcut(shortcut_id);
-        m_shortcuts[shortcut_id] = qd::unique_ptr<qd::Shortcut>(pShortcut);
+        m_shortcuts[shortcut_id] = qtd::unique_ptr<qd::Shortcut>(pShortcut);
         return *pShortcut;
     }
     return *it->second;

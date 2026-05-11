@@ -7,7 +7,7 @@ namespace qd {
 #undef False
 #undef True
 
-EA_DISABLE_VC_WARNING(26813) // Use 'bitwise and' to check if a flag is set
+QD_PUSH_VC_WARNING(26813) // Use 'bitwise and' to check if a flag is set
 class Tribool
 {
 public:
@@ -125,7 +125,7 @@ public:
     }
 
 }; // Tribool
-EA_RESTORE_VC_WARNING()
+QD_POP_VC_WARNING()
 
 
 }; // namespace qd

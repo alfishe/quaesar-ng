@@ -6,8 +6,8 @@
 #include "qd/base/classIdCC.h"
 #include "qd/qui/uiOperation.h"
 #include <EASTL/fixed_set.h>
-#include <EASTL/fixed_vector.h>
-#include <EASTL/string.h>
+#include "qd/stl/fixed_vector.h"
+#include "qd/stl/string.h"
 
 struct SDL_Window;
 struct SDL_Renderer;

@@ -3,8 +3,8 @@
 #include "qd/stl/ref_ptr.h"
 #include "qd/typeSystem/typeDeclare.h"
 #include "qd/typeSystem/typeInfo.h"
-#include "qd/base/eFlow.h"
-#include "EASTL/fixed_vector.h"
+#include "qd/base/EFlow.h"
+#include "qd/stl/fixed_vector.h"
 #include "qd/stl/unique_ptr.h"
 
 
@@ -72,7 +72,7 @@ class UiNode : public qd::RefCounted
 
 protected:
     uint32_t m_id = 0;
-    eastl::fixed_vector<qd::unique_ptr<qd::UiNodeComp>, 4, true> m_pComps;
+    qtd::fixed_vector<qtd::unique_ptr<qd::UiNodeComp>, 4, true> m_pComps;
     UiNode* m_pParent = nullptr;
 
     struct ChildItem {
@@ -86,7 +86,7 @@ protected:
             return *typeInfo;
         }
     };
-    qd::vector<ChildItem> m_pChilds;
+    qtd::vector<ChildItem> m_pChilds;
 
 protected:
     bool m_bVisible = true;
@@ -180,7 +180,7 @@ public:
     template<class TComp, typename... TArgs>
     TComp* createComp_(TArgs&&... args);
 
-    void addComp(qd::unique_ptr<qd::UiNodeComp> newComp);
+    void addComp(qtd::unique_ptr<qd::UiNodeComp> newComp);
     qd::UiNodeComp* findComp(const qd::TypeInfo& id) const;
 
     template<class TComp>

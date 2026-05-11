@@ -2,7 +2,8 @@
 #include "amDebugger/vm/memory.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "dbgConnection.h"
-#include "EASTL/fixed_set.h"
+#include <EASTL/fixed_set.h>
+#include "qd/stl/fixed_vector.h"
 #include "qd/qui/uiOperation.h"
 
 
@@ -28,7 +29,7 @@ public:
 class BreakpointsSortedList
 {
 public:
-    eastl::fixed_vector<Breakpoint, amD::BREAKPOINTS_MAX, false> mBreakpoints;
+    qtd::fixed_vector<Breakpoint, amD::BREAKPOINTS_MAX, false> mBreakpoints;
 
     struct OneAddrBp {
         AddrRef addr = 0;
@@ -71,7 +72,7 @@ public:
 
     void setDbgServiceBridge(ref_ptr<IVmDbgServiceBridge> pCon);
 
-    void execConsoleCmd(qd::string&& cmd);
+    void execConsoleCmd(qtd::string&& cmd);
 
     int getWaitScanLines() const { return g_opt.traceWaitScanLines; }
     void setWaitScanLines(int waitScanLines) { g_opt.traceWaitScanLines = waitScanLines; }

@@ -1,14 +1,14 @@
-#include <EASTL/fixed_function.h>
+#include "qd/stl/algorithm.h"
+#include <qd/stl/fixed_function.h>
 #include "qd/node/node.h"
 #include "qd/node/nodeIterator.h"
 #include "qd/typeSystem/typeInfo.h"
-#include "qd/stl/algorithm.h"
 
 
 namespace qd {
 
 struct NodeMsgProcVisitor {
-    void reg(uint32_t /*msg_id*/, eastl::fixed_function<8, void(Node*, NodeMessage*)>) {}
+    void reg(uint32_t /*msg_id*/, qtd::fixed_function<8, void(Node*, NodeMessage*)>) {}
 };
 
 
@@ -31,7 +31,7 @@ void Node::addComp(NodeComp* pNewComp)
 
 NodeComp* Node::findComp(const qd::TypeInfo& comp) const
 {
-    auto it = eastl::find_if(m_pComps.begin(), m_pComps.end(),
+    auto it = qtd::find_if(m_pComps.begin(), m_pComps.end(),
         [comp](const NodeComp* pCurComp) { return pCurComp ? pCurComp->getTypeInfo().isDerivedFrom(comp) : false; });
     if (it != m_pComps.end())
         return *it;
@@ -120,10 +120,10 @@ void Node::onNodeCreated(qd::NodeCreator* mk)
 bool NodesChildList::beginIter(NodeIterator& buf)
 {
     struct VecIterator : public INodeIterator {
-        qd::vector<Node*>::iterator m_Current;
-        qd::vector<Node*>::iterator m_End;
+        qtd::vector<Node*>::iterator m_Current;
+        qtd::vector<Node*>::iterator m_End;
 
-        VecIterator(qd::vector<Node*>& children)
+        VecIterator(qtd::vector<Node*>& children)
             : m_Current(children.begin())
             , m_End(children.end())
         {}
@@ -145,7 +145,7 @@ bool NodesChildList::beginIter(NodeIterator& buf)
 
 bool NodesChildList::addChild(Node* child)
 {
-    if (child && qd::find(m_ChildNodes.begin(), m_ChildNodes.end(), child) == m_ChildNodes.end())
+    if (child && qtd::find(m_ChildNodes.begin(), m_ChildNodes.end(), child) == m_ChildNodes.end())
     {
         m_ChildNodes.push_back(child);
         return true;
@@ -157,7 +157,7 @@ bool NodesChildList::addChild(Node* child)
 
 bool NodesChildList::removeChild(Node* child)
 {
-    auto it = qd::find(m_ChildNodes.begin(), m_ChildNodes.end(), child);
+    auto it = qtd::find(m_ChildNodes.begin(), m_ChildNodes.end(), child);
     if (it == m_ChildNodes.end())
         return false;
     m_ChildNodes.erase(it);

@@ -1,4 +1,5 @@
 #pragma once
+#include "qd/stl/algorithm.h"
 #include "qd/base/base.h"
 #include "qd/debug/assert.h"
 #include "qd/mem/ptrMath.h"
@@ -14,25 +15,23 @@ class MemSpan : public qd::RefCounted
     typedef MemSpan TThis;
 
 public:
-    uint8_t* m_pBuffer;
-    uint32_t m_nCapacity;
+    uint8_t* m_pBuffer = nullptr;
+    uint32_t m_bufSize = 0;
 
 public:
-    inline MemSpan()
-        : m_pBuffer(nullptr)
-        , m_nCapacity(0) {}
+    MemSpan() = default;
 
     inline MemSpan(void* pData, uint32_t size)
         : m_pBuffer((uint8_t*)pData)
-        , m_nCapacity(size) {}
+        , m_bufSize(size) {}
 
     inline MemSpan(const void* pData, uint32_t size)
         : m_pBuffer((uint8_t*)pData)
-        , m_nCapacity(size) {}
+        , m_bufSize(size) {}
 
     inline explicit MemSpan(void* pDataBegin, void* pDataEnd)
         : m_pBuffer((uint8_t*)pDataBegin)
-        , m_nCapacity((uint32_t)qd::ptrDiff(pDataEnd, pDataBegin)) {
+        , m_bufSize((uint32_t)qd::ptrDiff(pDataEnd, pDataBegin)) {
         assert(pDataEnd >= pDataBegin);
     }
 
@@ -43,64 +42,64 @@ public:
     uint8_t* data() { return (uint8_t*)m_pBuffer; }
     const uint8_t* data() const { return (uint8_t*)m_pBuffer; }
 
-    uint32_t getSize() const { return m_nCapacity; }
-    uint32_t size() const { return m_nCapacity; }
-    uint32_t getCapacity() const { return m_nCapacity; }
-    uint32_t capacity() const { return m_nCapacity; }
+    uint32_t getSize() const { return m_bufSize; }
+    uint32_t size() const { return m_bufSize; }
+    uint32_t getCapacity() const { return m_bufSize; }
+    uint32_t capacity() const { return m_bufSize; }
 
     uint8_t* begin() const { return m_pBuffer; }
     uint8_t* end() const { return m_pBuffer + getCapacity(); }
 
 
     inline uint8_t* getBuffer(uint32_t nPos) const {
-        assert((uint32_t)(nPos * 1) <= m_nCapacity); // may return end() pointer
+        assert((uint32_t)(nPos * 1) <= m_bufSize); // may return end() pointer
         uint8_t* v = (uint8_t*)m_pBuffer + nPos;
         return v;
     }
     inline uint32_t getU32(uint32_t nPos = 0) const {
-        assert((uint32_t)(nPos * 4) <= m_nCapacity);
+        assert((uint32_t)(nPos * 4) <= m_bufSize);
         uint32_t* pBuf = (uint32_t*)m_pBuffer;
         uint32_t v = pBuf[nPos];
         return v;
     }
     inline uint16_t getU16(uint32_t nPos = 0) const {
-        assert((uint32_t)(nPos * 2) <= m_nCapacity);
+        assert((uint32_t)(nPos * 2) <= m_bufSize);
         uint16_t* pBuf = (uint16_t*)m_pBuffer;
         uint16_t v = pBuf[nPos];
         return v;
     }
     inline uint8_t getU8(uint32_t nPos = 0) const {
-        assert((uint32_t)(nPos * 1) <= m_nCapacity);
+        assert((uint32_t)(nPos * 1) <= m_bufSize);
         uint8_t v = ((uint8_t*)m_pBuffer)[nPos];
         return v;
     }
     inline void setU32(uint32_t nPos, uint32_t v) const {
-        assert((uint32_t)(nPos * 4) <= m_nCapacity);
+        assert((uint32_t)(nPos * 4) <= m_bufSize);
         uint32_t* pBuf = (uint32_t*)m_pBuffer;
         pBuf[nPos] = v;
     }
     inline void setU16(uint32_t nPos, unsigned short v) const {
-        assert((uint32_t)(nPos * 2) <= m_nCapacity);
+        assert((uint32_t)(nPos * 2) <= m_bufSize);
         ((unsigned short*)m_pBuffer)[nPos] = v;
     }
     inline void setU8(uint32_t nPos, uint8_t v) const {
-        assert((uint32_t)(nPos * 1) < m_nCapacity);
+        assert((uint32_t)(nPos * 1) < m_bufSize);
         ((uint8_t*)m_pBuffer)[nPos] = v;
     }
     inline uint32_t* getU32Ptr(uint32_t nPos = 0) const {
-        assert((uint32_t)(nPos * 4) < m_nCapacity);
+        assert((uint32_t)(nPos * 4) < m_bufSize);
         uint32_t* pBuf = (uint32_t*)m_pBuffer;
         uint32_t* v = pBuf + nPos;
         return v;
     }
     inline uint16_t* getU16Ptr(uint32_t nPos = 0) const {
-        assert((uint32_t)(nPos * 2) < m_nCapacity);
+        assert((uint32_t)(nPos * 2) < m_bufSize);
         uint16_t* pBuf = (uint16_t*)m_pBuffer;
         uint16_t* v = pBuf + nPos;
         return v;
     }
     inline uint8_t* getU8Ptr(uint32_t nPos = 0) const {
-        assert((uint32_t)(nPos * 1) < m_nCapacity);
+        assert((uint32_t)(nPos * 1) < m_bufSize);
         uint8_t* v = ((uint8_t*)m_pBuffer) + nPos;
         return v;
     }
@@ -111,7 +110,8 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////
-// SOME ALOCATED MEMORY BUFFER - without used size
+// A memory buffer of a specific size, without 'usedSize'
+//
 class MemBuf : public MemSpan
 {
     typedef MemBuf TThis;
@@ -123,7 +123,7 @@ public:
     inline explicit MemBuf(uint32_t size) {
         m_bNeedFree = true;
         m_pBuffer = new uint8_t[size];
-        m_nCapacity = size;
+        m_bufSize = size;
     }
 
     inline explicit MemBuf(void* pData, uint32_t size, bool takeOwnership = true)
@@ -137,19 +137,19 @@ public:
             delete[] m_pBuffer;
         m_pBuffer = rh.m_pBuffer;
         m_bNeedFree = rh.m_bNeedFree;
-        m_nCapacity = rh.m_nCapacity;
+        m_bufSize = rh.m_bufSize;
 
         rh.m_pBuffer = nullptr;
-        rh.m_nCapacity = 0;
+        rh.m_bufSize = 0;
     }
 
-    MemBuf(TThis&& r) { // REFERENCED COPY
+    MemBuf(TThis&& r)  noexcept { // REFERENCED COPY
         m_pBuffer = nullptr;
-        moveFrom(eastl::move(r));
+        moveFrom(qtd::move(r));
     }
 
-    inline TThis& operator= (TThis&& r) {
-        moveFrom(eastl::move(r));
+    inline TThis& operator= (TThis&& r) noexcept {
+        moveFrom(qtd::move(r));
         return *this;
     }
 
@@ -161,15 +161,15 @@ public:
         ASSERT_F(!takeOwnership || ((pBuffer && (int)size > 0)), "CMemBuf Size overflow");
         m_pBuffer = (uint8_t*)const_cast<void*>(pBuffer);
         m_bNeedFree = takeOwnership;
-        m_nCapacity = size;
+        m_bufSize = size;
     }
 
 
     void cloneTo(MemBuf*& pDest) const {
         if (m_pBuffer == pDest->m_pBuffer)
             return;
-        pDest->expandBuffer(m_nCapacity);
-        ::memcpy(pDest->m_pBuffer, m_pBuffer, (size_t)m_nCapacity);
+        pDest->expandBuffer(m_bufSize);
+        ::memcpy(pDest->m_pBuffer, m_pBuffer, (size_t)m_bufSize);
     }
 
     uint8_t* releaseBuffer() {
@@ -185,7 +185,7 @@ public:
         if (m_pBuffer && m_bNeedFree)
             delete[] m_pBuffer;
         m_pBuffer = nullptr;
-        m_nCapacity = 0;
+        m_bufSize = 0;
         m_bNeedFree = true;
     }
 
@@ -193,24 +193,18 @@ public:
 
     void copyFrom(const void* pSrc, uint32_t nBytes, uint32_t nToOffset = 0);
 
-    inline void _copyFrom(const void* pSrc, uint32_t nBytes, uint32_t nToOffset = 0) {
-        assert(m_pBuffer);
-        assert((nToOffset + nBytes) <= m_nCapacity);
-        memcpy(m_pBuffer + nToOffset, pSrc, (size_t)nBytes);
-    }
-
 
     void fillU8(uint8_t byteFill, uint32_t nBytes = ~0u, uint32_t offset = 0) {
         assert(m_pBuffer);
-        if((offset + nBytes) > m_nCapacity)
-            nBytes = m_nCapacity - offset;
+        if((offset + nBytes) > m_bufSize)
+            nBytes = m_bufSize - offset;
         memset(m_pBuffer + offset, byteFill, (size_t)nBytes);
     }
 
     void memMove(uint32_t srcOffset, uint32_t destOffset, uint32_t nBytes);
 
 
-    /*virtual*/ ~MemBuf() { freeBuf(); }
+    virtual /*virtual*/ ~MemBuf() /*override*/ { freeBuf(); }
 
 private:
     MemBuf(const MemBuf&) = delete;
@@ -275,7 +269,7 @@ public:
 
     void setSize(uint32_t size) {
         if (size > getCapacity()) {
-            assert2(0, "ERROR: CMemoryData Size:%u is greater then Capacity:%u", size, getCapacity());
+            ASSERT_F(0, "ERROR: CMemoryData Size:%u is greater then Capacity:%u", size, getCapacity());
         }
         m_nUsedSize = size;
     }
@@ -303,7 +297,7 @@ public:
     uint32_t getRemCapacity() const {
         uint32_t nCapacity = m_pMemBuf->getCapacity();
         if (m_nUsedSize > nCapacity) {
-            assert2(0, "Bad size", 0);
+            ASSERT_F(0, "Bad size", 0);
             return 0;
         }
         return nCapacity - m_nUsedSize;

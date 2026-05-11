@@ -1,4 +1,4 @@
-#include "memFile.h"
+#include "qd/file/memFile.h"
 #include "qd/debug/exception.h"
 
 
@@ -17,7 +17,7 @@ MemFile::MemFile(qd::IFile* pFile, uint32_t nSize) {
         m_pMemData = new MemData(nMaxBytes);
 
         if (pFile->read(m_pMemData->getBuffer(), nSize) != nSize)
-            G_THROW_OR_DO(Exception(EException::IO_ERROR, "CMemoryFile: Can't Read \"%d\" bytes from AbstractFile:%s", nMaxBytes,
+            QD_THROW_OR_DO(Exception(EException::IO_ERROR, "CMemoryFile: Can't Read \"%d\" bytes from AbstractFile:%s", nMaxBytes,
                 CC(pFile->getFileName())), return);
     }
     _setOpened(true);
@@ -124,11 +124,14 @@ void MemData::write(const void* pSrc, uint32_t nBytes) {
 }
 
 
+void MemBuf::copyFrom(const void* pSrc, uint32_t nBytes, uint32_t nToOffset /*= 0 */) {
 
-void MemBuf::copyFrom(const void* pSrc, uint32_t nBytes, uint32_t Offset /*= 0 */) {
-    ASSERT_F((Offset + nBytes) <= m_nCapacity, "MemBuf - Out of buffer!");
+    if ((nToOffset + nBytes) <= m_bufSize) {
+        assert(0 && "MemBuf - Out of buffer!");
+        return;
+    }
     ASSERT_F(m_pBuffer, "MemBuf - buffer is Null");
 
-    _copyFrom(pSrc, nBytes, Offset);
+    memcpy(m_pBuffer + nToOffset, pSrc, (size_t)nBytes);
 }
 } // namespace qd

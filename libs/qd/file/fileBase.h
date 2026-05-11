@@ -1,4 +1,5 @@
 #pragma once
+#include "qd/stl/algorithm.h"
 #include "qd/base/base.h"
 #include "qd/debug/assert.h"
 #include "qd/enum/enumBase.h"
@@ -136,7 +137,7 @@ public:
         return size;
     };
 
-    virtual qd::string_view getFileName() const { return ""; }
+    virtual qtd::string_view getFileName() const { return ""; }
     virtual int getNumChunks() const { return 0; }
     virtual int addNumChunks(int /*add*/) { return 0; };
 
@@ -155,7 +156,7 @@ protected:
 
 public:
     IFile() = default;
-    virtual ~IFile() { assert(m_nChunks == 0); }
+    virtual ~IFile() override { assert(m_nChunks == 0); }
 
     virtual int getNumChunks() const override { return m_nChunks; }
     virtual int addNumChunks(int Chunks) override {
@@ -174,21 +175,21 @@ protected:
 using HndFile = size_t;
 
 
-class StdFile : public qd::IFile
+class ImpFileSdl2 : public qd::IFile
 {
-    using TThis = StdFile;
+    using TThis = ImpFileSdl2;
     using TSuper = qd::IFile;
     qd::HndFile m_pFileHnd = {};
     uint32_t m_curPos = ~0u;
     uint32_t m_nFileSize = ~0u;
-    qd::string m_Name;
+    qtd::string m_Name;
 
 public:
-    StdFile() = default;
-    StdFile(const char* fileName, const char* pMode) { openSafe(fileName, pMode); }
-    StdFile(TThis&& r) { *this = eastl::move(r); }
+    ImpFileSdl2() = default;
+    ImpFileSdl2(const char* fileName, const char* pMode) { openSafe(fileName, pMode); }
+    ImpFileSdl2(TThis&& r) noexcept { *this = qtd::move(r); }
 
-    StdFile(qd::HndFile pFile)
+    ImpFileSdl2(qd::HndFile pFile)
         : m_pFileHnd(pFile) {
         if (!m_pFileHnd)
             return;
@@ -196,8 +197,8 @@ public:
         _setOpened(true);
     }
 
-    virtual qd::string_view getFileName() const override { return m_Name; }
-    void setFileName(const qd::string& Name) { m_Name = Name; }
+    virtual qtd::string_view getFileName() const override { return m_Name; }
+    void setFileName(const qtd::string& Name) { m_Name = Name; }
 
     // MODE can be: "rb", "wb", "rt", "wt"
     bool open(const char* path, const char* pMode, qd::EIOErrorCode* pErr = nullptr);
@@ -213,12 +214,10 @@ public:
 
     inline qd::HndFile getFile() const { return m_pFileHnd; }
 
-    // COPY WITH MOVE
-    StdFile& operator= (StdFile&& rf) {
+    ImpFileSdl2& operator= (ImpFileSdl2&& rf) noexcept {
         m_nFileSize = rf.m_nFileSize;
         m_curPos = rf.m_curPos;
         m_bAOpened = rf.m_bAOpened;
-        // m_Name = rf.m_Name;
         m_nChunks = rf.m_nChunks;
         m_pFileHnd = rf.release();
         return (*this);
@@ -233,10 +232,102 @@ public:
         return pFile;
     }
 
-    virtual ~StdFile() override { TThis::close(); }
+    virtual ~ImpFileSdl2() override { TThis::close(); }
 
-}; /// class CStdioFile
+}; /// class ImpFileSdl2
 //////////////////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////////////
+class ImpStdFilePosix : public qd::IFile
+{
+    using TThis = ImpStdFilePosix;
+    using TSuper = qd::IFile;
+    qd::HndFile m_pFileHnd = {};
+    uint32_t m_curPos = ~0u;
+    uint32_t m_nFileSize = ~0u;
+    qtd::string m_Name;
+
+public:
+    ImpStdFilePosix() = default;
+    ImpStdFilePosix(const char* fileName, const char* pMode) { openSafe(fileName, pMode); }
+    ImpStdFilePosix(TThis&& r)  noexcept { *this = qtd::move(r); }
+
+    ImpStdFilePosix(qd::HndFile pFile)
+        : m_pFileHnd(pFile) {
+        if (!m_pFileHnd)
+            return;
+        m_curPos = tell();
+        _setOpened(true);
+    }
+
+    virtual qtd::string_view getFileName() const override { return m_Name; }
+    void setFileName(const qtd::string& Name) { m_Name = Name; }
+
+    // MODE can be: "rb", "wb", "rt", "wt"
+    bool open(const char* path, const char* pMode, qd::EIOErrorCode* pErr = nullptr);
+    virtual void close() override;
+
+    void openSafe(const char* path, const char* mode);
+
+    virtual uint32_t read(void* pDest, uint32_t nBytes) override;
+    virtual uint32_t write(const void* pSrc, uint32_t nBytes) override;
+    virtual uint32_t getSize() override;
+    virtual uint32_t seek(uint32_t Position, qd::EFileSeek Where = EFileSeek::SET) override;
+    virtual uint32_t tell() override;
+
+    inline qd::HndFile getFile() const { return m_pFileHnd; }
+
+    ImpStdFilePosix& operator= (ImpStdFilePosix&& rf)  noexcept {
+        m_nFileSize = rf.m_nFileSize;
+        m_curPos = rf.m_curPos;
+        m_bAOpened = rf.m_bAOpened;
+        m_nChunks = rf.m_nChunks;
+        m_pFileHnd = rf.release();
+        return (*this);
+    }
+
+    qd::HndFile release() {
+        qd::HndFile pFile = m_pFileHnd;
+        m_pFileHnd = {};
+        m_nFileSize = ~0u;
+        m_curPos = ~0u;
+        _setOpened(false);
+        return pFile;
+    }
+
+    virtual ~ImpStdFilePosix() override { TThis::close(); }
+
+}; /// class ImpStdFilePosix
+//////////////////////////////////////////////////////////////////////////
+
+
+#if QD_USE_SDL
+using StdFile = ImpFileSdl2;
+#else
+using StdFile = ImpStdFilePosix;
+#endif
+
+
+namespace file {
+
+template<typename TFileImpl, typename TOutput>
+uint32_t readAll(TFileImpl& file, TOutput& outContent, qd::EIOErrorCode* pErr = nullptr) {
+    if (!file.isOpened()) {
+        if (pErr) *pErr = EIOErrorCode::NotExist;
+        return 0;
+    }
+    uint32_t fileSize = file.getSize();
+    outContent.resize(fileSize);
+    uint32_t bytesRead = file.read(outContent.data(), fileSize);
+    if (bytesRead != fileSize) {
+        if (pErr) *pErr = EIOErrorCode::ReadFault;
+        return bytesRead;
+    }
+    if (pErr) *pErr = EIOErrorCode::Success;
+    return bytesRead;
+};
+
+}; // namespace file
 
 }; // namespace qd

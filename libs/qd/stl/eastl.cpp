@@ -1,8 +1,11 @@
-// fix '_vsnprintf': This function or variable may be unsafe. Consider using _vsnprintf_s instead.
+// must be before any CRT headers to suppress _vsnprintf/_vsnwprintf deprecation
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
+#include "eastl.h"
+
+#if QTD_IS_EASTL
 #include <EASTL/allocator.h>
 #include <stdio.h>
 #include <wchar.h>
@@ -80,3 +83,5 @@ int Vsnprintf(wchar_t* EA_RESTRICT pDestination, size_t n, const wchar_t* EA_RES
 }; // namespace StdC
 }; // namespace EA
 #endif // EASTL_EASTDC_VSNPRINTF
+
+#endif // QTD_IS_EASTL

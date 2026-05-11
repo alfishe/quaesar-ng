@@ -1,19 +1,22 @@
 #pragma once
+#include "qtdDefines.h"
+#include "qd/base/compiler.h"
 #include <cstdint>
+
+#if QTD_IS_EASTL
 #include <EABase/eabase.h>
 #include <EASTL/internal/config.h>
+#endif
 
 using THash32 = uint32_t;
 
 // clang-format off
 
-#define SIDENT(x)      x
-#ifndef STRINGIFY
-#  define STRINGIFY(x)   _STRINGIFY2(x) /* #x */
-#  define _STRINGIFY2(x) #x
-#endif
-#define CON(a, b)      a##b
-#define PASTE(a, b)    CON(a, b)
+#define SIDENT(x)            x
+#define QD_STRINGIFY(...)    _QD_STRINGIFY2(__VA_ARGS__) /* #x */
+#define _QD_STRINGIFY2(...)  #__VA_ARGS__
+#define QD_CONCAT(a, b)      a##b
+#define QD_PASTE(a, b)       QD_CONCAT(a, b)
 
 #define SAFE_DELETE(p)          { delete (p); (p) = nullptr; }
 #define SAFE_FREE(p)            { free(p); (p) = nullptr; }
@@ -52,10 +55,10 @@ template<typename T> T c_def(T v) { return v; }
 template<typename T> constexpr inline T c_expr(T value) { return value; }
 
 
-EA_DISABLE_VC_WARNING(4100) // unreferenced formal parameter
+QD_PUSH_VC_WARNING(4100) // unreferenced formal parameter
     template<typename... T> inline void unused(T&&... x) { (void(sizeof...(x))); }
 #define QD_UNUSED(...) qd::unused(__VA_ARGS__)
-EA_RESTORE_VC_WARNING()
+QD_POP_VC_WARNING()
 
 }; // namespace qd
 
@@ -74,3 +77,5 @@ EA_RESTORE_VC_WARNING()
 
 // clang-format on
 //////////////////////////////////////////////////////////////////////////
+
+
