@@ -96,6 +96,7 @@ public:
 
     //------------------------------------------------------------------------
     struct Blitter final : public IVm::Blitter {
+        VAmVmImp* m_pVm = nullptr;
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
@@ -126,6 +127,8 @@ public:
     //------------------------------------------------------------------------
     class Copper final : public IVm::Copper {
     public:
+        VAmVmImp* m_pVm = nullptr;
+        vamiga::CopperInfo m_copInfo = {};
         virtual void fetch() override;
         virtual AddrRef getCopperAddr(IVm::ECopperAddr_ copno) override;
     };  // class Copper
@@ -141,8 +144,8 @@ public:
         bool isDebugActivatedFull() const;
         bool isDebugActivated() const;
         virtual void getScreenSize(int* out_w, int* out_h) const override {
-            *out_w = 754;
-            *out_h = 576;
+            *out_w = (int)vamiga::HPIXELS;   // 912
+            *out_h = (int)vamiga::VPIXELS;   // 313
         }
         virtual void initBreakPoints(amD::BreakpointsSortedList& bpList) override;
     };  // class Emu
@@ -153,14 +156,12 @@ public:
     class Floppy : public IVm::Floppy {
         VAmVmImp *m_pVm = nullptr;
         bool m_writeProtect = false;
+        qtd::string m_adfPath;
     public:
         virtual bool getEnabled() override;
         virtual void setEnabled(bool v) override;
-        virtual bool getWriteProtect() override {
-            return false;
-        }
-        virtual void setWriteProtect(bool v) override {
-        }
+        virtual bool getWriteProtect() override;
+        virtual void setWriteProtect(bool v) override;
         virtual qtd::string getAdfPath() override;
         virtual void setAdfPath(const qtd::string& v) override;
 

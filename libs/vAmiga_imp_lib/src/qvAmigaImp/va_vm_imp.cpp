@@ -50,7 +50,9 @@ VAmVmImp::VAmVmImp(VAmServerThread* pVAmThread, vamiga::VAmiga* pVAmiga) {
   TSuper::custom = &instCustomRegs;
   instCustomRegs.m_pVm = this;
   TSuper::copper = &instCopper;
+  instCopper.m_pVm = this;
   TSuper::blitter = &instBlitter;
+  instBlitter.m_pVm = this;
   {
     instEmu.vm = this;
     TSuper::emu = &instEmu;
@@ -147,22 +149,18 @@ VAmVmImp* vm = this;
 
 void* VAmVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w,
                                          int* out_size_h, int* pitch) {
-  return nullptr;
-#if 0
-    vidbuf_description* vidinfo = &adisplays[mon_id].gfxvidinfo;
-    vidbuffer* vb = &vidinfo->drawbuffer;
-    if (!vb || !vb->bufmem)
-        return nullptr;
-    *out_size_w = vb->outwidth;
-    *out_size_h = vb->outheight;
-    *pitch = vb->rowbytes;
-    return vb->bufmem;
-#endif  //
+  // Access the display texture buffer from VAmServerThread
+  VAmServerThread* pThread = m_pVm->m_pVAmThread;
+  if (!pThread || !pThread->m_pAmigaBuffer) return nullptr;
+
+  *out_size_w = pThread->m_scrWidth;   // HPIXELS (912)
+  *out_size_h = pThread->m_scrHeight;  // VPIXELS (313)
+  *pitch = pThread->m_scrWidth * sizeof(uint32_t);
+  return pThread->m_pAmigaBuffer;
 }
 
 bool VAmVmImp::Blitter::isBlitterActive() const {
-  return false;  // blt_info.blit_main || blt_info.blit_finald ||
-                 // blt_info.blit_queued;
+  return m_pVm->m_vAmiga->agnus.blitter.getInfo().bbusy;
 }
 
 void VAmVmImp::CustomRegs::fetch() {
@@ -188,10 +186,18 @@ void VAmVmImp::CustomRegs::commit() {
 }
 
 amD::AddrRef VAmVmImp::Copper::getCopperAddr(IVm::ECopperAddr_ copno) {
-  return 0;  // ::get_copper_address(copno);
+  switch (copno) {
+    case IVm::CopperAddr_cop1lc: return m_copInfo.cop1lc;
+    case IVm::CopperAddr_cop2lc: return m_copInfo.cop2lc;
+    case IVm::CopperAddr_ip:     return m_copInfo.coppc0;
+    case IVm::CopperAddr_vblankip: return m_copInfo.cop1lc;  // vblank starts copper list 1
+    default: return 0;
+  }
 }
 
-void VAmVmImp::Copper::fetch() {}
+void VAmVmImp::Copper::fetch() {
+  m_copInfo = m_pVm->m_vAmiga->agnus.copper.getInfo();
+}
 
 int VAmVmImp::Emu::getDebugDmaMode() {
   return 0;  // ::debug_dma;
@@ -235,54 +241,74 @@ void VAmVmImp::setVmDebugMode(EVmDebugMode debug_mode) {
   }
 }
 
-int VAmVmImp::getVPos() { return 0; }
+int VAmVmImp::getVPos() {
+  return (int)m_vAmiga->amiga.getInfo().vpos;
+}
 
 int VAmVmImp::getHPos() {
-  return 0;  // ::current_hpos_safe();  // ::current_hpos();
+  return (int)m_vAmiga->amiga.getInfo().hpos;
 }
 
 int VAmVmImp::getCurCycle() {
-  // int c = (int)((::get_cycles() - ::vsync_cycles) / CYCLE_UNIT);
-  return 0;  // c;
+  // Return horizontal position as the cycle count within the current scanline
+  return (int)m_vAmiga->amiga.getInfo().hpos;
 }
 
 bool VAmVmImp::Emu::isDebugActivated() const {
-  return 0;  //::debugging > 0 && (::debugger_active > 0);
+  // Debugger is active when the emulator is paused (breakpoint hit, manual break)
+  return vm->m_vAmiga->isPaused();
 }
 
 bool VAmVmImp::Emu::isDebugActivatedFull() const {
-  return 0;  //::debugging > 0 && (::debugger_active > 0 && ::regs.spcflags &
-             //: SPCFLAG_BRK);
+  // Fully activated = paused AND debugger is in Break mode
+  return vm->m_vAmiga->isPaused() && vm->getVmDebugMode() == EVmDebugMode::Break;
 }
 
 bool VAmVmImp::Floppy::getEnabled() {
-  //::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
-  return 0;  // cfgFloppy.dfxtype >= 0;
+  return m_pVm->m_vAmiga->df[m_nFloppy]->getConfig().connected;
 }
 
 void VAmVmImp::Floppy::setEnabled(bool v) {
-  //     ::floppyslot& cfgFloppy = ::changed_prefs.floppyslots[m_nFloppy];
-  //     cfgFloppy.dfxtype = v ? 0 : -1;
+  try {
+    m_pVm->m_vAmiga->emu->set(vamiga::Opt::DRIVE_CONNECT, v ? 1 : 0, {m_nFloppy});
+  } catch (...) {
+    // Ignore config errors (e.g., cannot disconnect drive 0)
+  }
 }
 
 
 void VAmVmImp::Floppy::setAdfPath(const qtd::string &v)
 {
-    vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
-    df->insert(v.c_str(), m_writeProtect);
+    m_adfPath = v;
+    if (v.empty()) {
+        m_pVm->m_vAmiga->df[m_nFloppy]->ejectDisk();
+    } else {
+        vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
+        df->insert(v.c_str(), m_writeProtect);
+    }
 }
 
 
 qtd::string VAmVmImp::Floppy::getAdfPath()
 {
-    //vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
-    return "";
+    return m_adfPath;
 }
 
 
 void VAmVmImp::Floppy::init(IVm::VM *vm)
 {
     m_pVm = static_cast<VAmVmImp *>(vm);
+}
+
+bool VAmVmImp::Floppy::getWriteProtect()
+{
+    return m_pVm->m_vAmiga->df[m_nFloppy]->getInfo().hasProtectedDisk;
+}
+
+void VAmVmImp::Floppy::setWriteProtect(bool v)
+{
+    m_writeProtect = v;
+    m_pVm->m_vAmiga->df[m_nFloppy]->setFlag(vamiga::DiskFlags::PROTECTED, v);
 }
 
 
