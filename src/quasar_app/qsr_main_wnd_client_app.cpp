@@ -104,7 +104,7 @@ void QsrMainClientWndApp::renderAppPart() {
             m_renderedFrameNo = curFrame;
 
             int curWndSizeX, curWndSizeY;
-            SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
+            SDL_GetRendererOutputSize(m_hWndRenderer, &curWndSizeX, &curWndSizeY);
 
             int bufWidth, bufHeight;
             uint32_t* pSrcDisplayBuf = nullptr;

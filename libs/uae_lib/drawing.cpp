@@ -4666,6 +4666,8 @@ static void draw_frame2(struct vidbuffer *vbin, struct vidbuffer *vbout)
 	bool firstline = true;
 	int lastline = thisframe_y_adjust_real - (1 << linedbl);
 	for (int i = 0; i < max_ypos_thisframe1; i++) {
+		if (!amiga2aspect_line_map)
+			break;
 		int i1 = i + min_ypos_for_screen;
 		int line = i + thisframe_y_adjust_real;
 		int whereline = amiga2aspect_line_map[i1];

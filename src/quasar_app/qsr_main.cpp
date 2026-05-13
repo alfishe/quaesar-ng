@@ -35,7 +35,11 @@ int SDL_main(int argc, char* argv[]) {
     cliApp.add_option("-s", g_cfg_startup.uaeExtArgs,
                       "key followed by the original WinUAE commands. Example:\n"
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
-    cliApp.parse(argc, argv);
+    try {
+        cliApp.parse(argc, argv);
+    } catch (const CLI::ParseError& e) {
+        return cliApp.exit(e);
+    }
 
     // initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
