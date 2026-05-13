@@ -592,11 +592,9 @@ void console_flush() {
 }
 
 int console_get(char* out, int maxlen) {
-    for (;;) {
-        int len = qsr_waitConsoleCmd(out, maxlen);
-        if (len > 0)
-            return len;
-    }
+    int len = qsr_waitConsoleCmd(out, maxlen);
+    if (len > 0)
+        return len;
     return -1;
 }
 

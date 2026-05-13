@@ -6540,10 +6540,13 @@ void m68k_go (int may_quit)
 	cpu_prefs_changed_flag = 0;
 	in_m68k_go++;
 	for (;;) {
+		if (quit_program < 0)
+			quit_program = -quit_program;
+		if (quit_program == UAE_QUIT)
+			break;
+
 		int restored = 0;
 		void (*run_func)(void);
-
-		printf("rununing\n");
 
 		cputrace.state = -1;
 
@@ -6747,11 +6750,6 @@ void m68k_go (int may_quit)
 #endif
 		run_func();
 
-		if (quit_program < 0) {
-			quit_program = -quit_program;
-		}
-		if (quit_program == UAE_QUIT)
-			break;
 	}
 	protect_roms(false);
 	mman_set_barriers(true);

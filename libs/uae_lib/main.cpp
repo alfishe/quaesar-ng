@@ -842,6 +842,7 @@ void uae_quit (void)
 #endif
 	if (quit_program != -UAE_QUIT)
 		quit_program = -UAE_QUIT;
+	set_special(SPCFLAG_MODE_CHANGE);
 	target_quit ();
 }
 

@@ -26,6 +26,7 @@ class UaeServerThread : public qsr::IVmClientPlayer {
     std::deque<SDL_Event> m_sdlEventsQueue;
     class UaeConsoleQueue* m_pConsoleQueue = nullptr;
     std::deque<qtd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
+    bool m_isDestroying = false;
 
 public:
     int m_scrWidth = 754;
