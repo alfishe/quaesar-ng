@@ -11,6 +11,7 @@
 
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/debuggerWndApp.h"
+#include "amDebugger/debugger.h"
 #include "amDebugger/vm/vmInterface.h"
 #include "qd/base/endian.h"
 #include "qd/qui/operationsRegistry.h"
@@ -47,6 +48,7 @@ VAmVmImp::VAmVmImp(VAmServerThread* pVAmThread, vamiga::VAmiga* pVAmiga) {
   TSuper::cpu = &instCpu;
   TSuper::mem = &instMemory;
   TSuper::custom = &instCustomRegs;
+  instCustomRegs.m_pVm = this;
   TSuper::copper = &instCopper;
   TSuper::blitter = &instBlitter;
   {
@@ -106,15 +108,16 @@ VAmVmImp* vm = this;
 
   } else if (args->cast_<amD::operation::ToggleTurboEmulation>()) {
     r = true;
-    //         if (::currprefs.turbo_emulation != 0) {
-    //             ::warpmode(0);  // off
-    //         } else {
-    //             ::warpmode(2);  // on
-    //         }
+    vamiga::VAmiga* pVAmiga = vm->m_vAmiga;
+    if (pVAmiga->isWarping()) {
+      pVAmiga->warpOff(1);  // source=1 (non-zero, 0 is reserved for config)
+    } else {
+      pVAmiga->warpOn(1);
+    }
 
   } else if (args->cast_<amD::operation::VmEmuReset>()) {
     r = true;
-    //::uae_reset(1, 1);
+    vm->m_vAmiga->hardReset();
 
   } else if (auto p = args->cast_<amD::operation::CopperToggleBreakpoint>()) {
     r = true;
@@ -126,6 +129,10 @@ VAmVmImp* vm = this;
     qtd::string cmd = qd::string_format("fs %i", p->waitScanLines);
     pVAm->execConsoleCmd(std::move(cmd));
     return qd::EFlow::SUCCESS;
+  } else if (auto p = args->cast_<amD::operation::ExecConsoleCmd>()) {
+    r = true;
+    pVAm->execConsoleCmd(qtd::string(p->cmd));
+
   } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
     r = true;
     //         if (pVAm->isWndAlwaysOnTop()) {
@@ -159,22 +166,25 @@ bool VAmVmImp::Blitter::isBlitterActive() const {
 }
 
 void VAmVmImp::CustomRegs::fetch() {
-  //     size_t dump_len;
-  //     ::save_custom(&dump_len, (uae_u8*)regsData.data(), 1);
-  //     for (size_t i = 0; i < regsData.size(); ++i)
-  //         qd::swapBytes_<2>(&regsData[i]);
+  // Read each custom register via vAmiga's spypeek16 API
+  // cust_reg_data maps each CustReg enum to its hardware address (0xDFFxxx)
+  for (size_t i = 0; i < CustReg::_COUNT_; ++i) {
+    uint32_t addr = CustReg::cust_reg_data[i].addr;
+    regsData[i + data_offset] =
+        m_pVm->m_vAmiga->mem.debugger.spypeek16(vamiga::Accessor::CPU, addr);
+  }
 }
 
 void VAmVmImp::CustomRegs::commit() {
-  //     eastl::fixed_vector<uint16_t, CustReg::_COUNT_ + data_offset, false>
-  //     dst = {regsData.begin(), regsData.end()}; uint8_t* beg =
-  //     (uint8_t*)dst.begin(); dst.erase((uint16_t*)(beg + 0x120),
-  //     (uint16_t*)(beg + 0x180)); dst.erase((uint16_t*)(beg + 0x0A0),
-  //     (uint16_t*)(beg + 0x0E0));
-  //
-  //     for (size_t i = 0; i < dst.size(); ++i)
-  //         qd::swapBytes_<2>(&dst[i]);
-  //     ::restore_custom((uae_u8*)dst.data());
+  // Write modified register values back through vAmiga's memory subsystem.
+  // Note: Many custom registers are read-only (e.g., VPOSR, DMACONR).
+  // Writing to read-only addresses is harmless — the hardware ignores writes.
+  // Only write registers that differ from their fetched values.
+  for (size_t i = 0; i < CustReg::_COUNT_; ++i) {
+    uint32_t addr = CustReg::cust_reg_data[i].addr;
+    // Use the memory write path — writes to custom registers go through Agnus
+    m_pVm->mem->setU16(addr, regsData[i + data_offset]);
+  }
 }
 
 amD::AddrRef VAmVmImp::Copper::getCopperAddr(IVm::ECopperAddr_ copno) {
@@ -187,22 +197,42 @@ int VAmVmImp::Emu::getDebugDmaMode() {
   return 0;  // ::debug_dma;
 }
 
+void VAmVmImp::Emu::initBreakPoints(amD::BreakpointsSortedList& bpList) {
+  bpList.mBreakpoints.clear();
+
+  vamiga::VAmiga* pVAmiga = vm->m_vAmiga;
+  long count = (long)pVAmiga->cpu.breakpoints.elements();
+
+  for (long i = 0; i < count; ++i) {
+    auto guardInfo = pVAmiga->cpu.breakpoints.guardNr(i);
+    if (!guardInfo.has_value()) continue;
+    if (!guardInfo->enabled) continue;
+
+    amD::Breakpoint& curBp = bpList.mBreakpoints.emplace_back();
+    curBp.addr1 = guardInfo->addr;
+    curBp.addr2 = 0;
+    curBp.enabled = guardInfo->enabled;
+    curBp.reg = IVm::EReg::PC;  // vAmiga breakpoints are address-based
+
+    amD::BreakpointsSortedList::OneAddrBp bp;
+    bp.addr = curBp.addr1;
+    bp.bpIdx = (int)bpList.mBreakpoints.size() - 1;
+    bpList.mOneAddrBps.insert(bp);
+  }
+}
+
 void VAmVmImp::Emu::setDebugDmaMode(int p_mode) {
   //::debug_dma = p_mode;
 }
 
 void VAmVmImp::setVmDebugMode(EVmDebugMode debug_mode) {
   TSuper::setVmDebugMode(debug_mode);
-//   if (debug_mode == EVmDebugMode::Break) {
-//     while (!instEmu.isDebugActivatedFull()) {
-//       //             ::debugger_active = 0;
-//       //             ::debugging = 0;
-//       //             ::activate_debugger_new();
-//     }
-//   } else if (debug_mode == EVmDebugMode::Live) {
-//     if (m_pVAmThread) m_pVAmThread->execConsoleCmd("g");
-//     //        ::debugger_active = 0;
-//   }
+  vamiga::VAmiga* pVAmiga = m_vAmiga;
+  if (debug_mode == EVmDebugMode::Break) {
+    pVAmiga->pause();
+  } else if (debug_mode == EVmDebugMode::Live) {
+    pVAmiga->run();
+  }
 }
 
 int VAmVmImp::getVPos() { return 0; }
@@ -306,6 +336,34 @@ uint8_t* VAmVmImp::Memory::getRealAddr(AddrRef ptr) {
     default:
       return nullptr;
   }
+}
+
+uint16_t VAmVmImp::Memory::getU16(AddrRef addr) {
+  return m_pVm->m_vAmiga->mem.debugger.spypeek16(vamiga::Accessor::CPU, (uint32_t)addr);
+}
+
+bool VAmVmImp::Memory::getU16(AddrRef addr, uint16_t* out) {
+  *out = getU16(addr);
+  return true;
+}
+
+void VAmVmImp::Memory::setU16(AddrRef addr, uint16_t v) {
+  // Find the bank for this address and write directly
+  const IVm::MemBank* pBank = findBankByAddr(addr);
+  if (!pBank || !pBank->m_realAddr) return;
+  // Write in big-endian (Amiga is 68000 big-endian)
+  uint8_t* ptr = pBank->m_realAddr + (addr - pBank->m_startAddr);
+  ptr[0] = (uint8_t)(v >> 8);
+  ptr[1] = (uint8_t)(v & 0xFF);
+}
+
+uint32_t VAmVmImp::Memory::getU32(AddrRef addr) {
+  return ((uint32_t)getU16(addr) << 16) | (uint32_t)getU16(addr + 2);
+}
+
+void VAmVmImp::Memory::setU32(AddrRef addr, uint32_t v) {
+  setU16(addr, (uint16_t)(v >> 16));
+  setU16(addr + 2, (uint16_t)(v & 0xFFFF));
 }
 
 void VAmVmImp::Memory::init(IVm::VM* p_vm) {

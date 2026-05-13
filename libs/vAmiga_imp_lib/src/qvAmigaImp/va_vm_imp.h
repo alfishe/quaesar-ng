@@ -66,7 +66,7 @@ public:
 
         virtual bool getFlg(ECpuFlg_ f) const override;
         virtual int getIntMask() const override {
-            return 0;  //regs.intmask;
+            return (m_pCpuInfo->sr >> 8) & 7;  // IPL bits from SR
         }
 
         virtual void fetch() override {
@@ -85,22 +85,11 @@ public:
     public:
         virtual void init(IVm::VM* p_vm) override;
         virtual uint8_t* getRealAddr(AddrRef ptr) override;
-        virtual bool getU16(AddrRef addr, uint16_t* out) override {
-            *out = false;  //(uint16_t)::memory_get_word(addr);
-            return true;
-        }
-        virtual uint16_t getU16(AddrRef addr) override {
-            return 0;  //(uint16_t)::memory_get_word(addr);
-        }
-        virtual void setU16(AddrRef addr, uint16_t v) override {
-            //::memory_put_word(addr, v);
-        }
-        virtual uint32_t getU32(AddrRef addr) override {
-            return 0;  //(uint32_t)::memory_get_long(addr);
-        }
-        virtual void setU32(AddrRef addr, uint32_t v) override {
-            //::memory_put_long(addr, v);
-        }
+        virtual bool getU16(AddrRef addr, uint16_t* out) override;
+        virtual uint16_t getU16(AddrRef addr) override;
+        virtual void setU16(AddrRef addr, uint16_t v) override;
+        virtual uint32_t getU32(AddrRef addr) override;
+        virtual void setU32(AddrRef addr, uint32_t v) override;
     };  // struct Memory
     Memory instMemory;
 
@@ -117,6 +106,8 @@ public:
     class CustomRegs final : public IVm::CustomRegs {
         static constexpr size_t data_offset = 2;
         eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
+    public:
+        VAmVmImp* m_pVm = nullptr;
 
     public:
         void fetch() override;
@@ -153,6 +144,7 @@ public:
             *out_w = 754;
             *out_h = 576;
         }
+        virtual void initBreakPoints(amD::BreakpointsSortedList& bpList) override;
     };  // class Emu
     Emu instEmu;
 
