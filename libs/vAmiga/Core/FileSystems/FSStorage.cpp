@@ -68,7 +68,7 @@ FSStorage::sortedKeys() const
     result.reserve(blocks.size());
 
     for (const auto& [key, _] : blocks) result.push_back(key);
-    std::ranges::sort(result);
+    std::sort(result.begin(), result.end());
 
     return result;
 }
