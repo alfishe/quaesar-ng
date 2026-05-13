@@ -293,6 +293,9 @@ void VAmServerThread::onVAmigaThreadMain() {
         for (;;) {
             if (m_bRequestToQuit) break;
 
+            // Process debugger operations and keyboard events
+            onVAmHandleEvents();
+
             vamiga::VAmiga *pVAmiga = m_pVAmiga;
             vamiga::VideoPortAPI &vVideoPort = pVAmiga->videoPort;
             bool lof, prevlof;
