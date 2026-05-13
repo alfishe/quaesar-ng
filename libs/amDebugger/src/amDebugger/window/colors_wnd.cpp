@@ -2,7 +2,7 @@
 #include "amDebugger/debuggerWndApp.h"
 #include "qd/stl/fixed_vector.h"
 #include <amDebugger/vm/vmInterface.h>
-#include "qd/base/color.h"
+#include "qd/base/Color.h"
 #include "qd/imGui/imGui.h"
 
 namespace amD {

@@ -1,7 +1,7 @@
 #pragma once
 #include "amDebugger/ui/uiDefs.h"
 #include "qd/base/classInfoReg.h"
-#include "qd/base/color.h"
+#include "qd/base/Color.h"
 #include "qd/imGui/imGui.h"
 #include "qd/typeSystem/attributesCommon.h"
 #include "qd/qui/controls/window.h"

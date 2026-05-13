@@ -1,5 +1,5 @@
 #include "qd/file/archiveSerializer.h"
-#include "qd/base/color.h"
+#include "qd/base/Color.h"
 #include "qd/debug/assert.h"
 #include "qd/file/fileBase.h"
 #include "qd/file/memFile.h"

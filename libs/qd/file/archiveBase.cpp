@@ -1,6 +1,6 @@
 #include "qd/file/archiveBase.h"
 #include "qd/file/archiveSerializer.h"
-#include "qd/base/color.h"
+#include "qd/base/Color.h"
 #include "qd/base/endian.h"
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"

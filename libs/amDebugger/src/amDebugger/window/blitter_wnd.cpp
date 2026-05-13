@@ -6,7 +6,7 @@
 #include <amDebugger/vm/vmInterface.h>
 #include "qd/stl/string.h"
 #include "qd/stl/fixed_vector.h"
-#include <qd/base/color.h>
+#include <qd/base/Color.h>
 #include <qd/imGui/imGui.h>
 
 

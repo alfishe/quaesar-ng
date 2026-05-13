@@ -4,7 +4,7 @@
 #include <qd/stl/ref_ptr.h>
 #include <qd/base/baseTypes.h>
 #include <qd/typeSystem/typeDeclare.h>
-#include "qd/base/EFlow.h"
+#include "qd/base/eFlow.h"
 
 
 namespace qd {

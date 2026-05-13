@@ -5,7 +5,7 @@
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/vm/memory.h"
 #include "amDebugger/vm/vmInterface.h"
-#include "qd/base/color.h"
+#include "qd/base/Color.h"
 #include <qd/imGui/imGui.h>
 #include "amDebugger/ui/uiStyle.h"
 #include "amDebugger/ui/uiView.h"

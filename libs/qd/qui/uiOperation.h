@@ -2,7 +2,7 @@
 #include "qd/base/base.h"
 #include "qd/base/baseTypes.h"
 #include "qd/base/classInfoReg.h"
-#include "qd/base/EFlow.h"
+#include "qd/base/eFlow.h"
 #include "qd/debug/assert.h"
 #include "qd/qui/operationsRegistry.h"
 #include "qd/stl/fixed_vector.h"
