@@ -5,6 +5,7 @@
 #include "qd/stl/vector.h"
 #include "qd/base/base.h"
 #include "qd/node/node.h"
+#include <imgui/imgui.h>
 
 FORWARD_DECLARATION_2(amD, UiView);
 FORWARD_DECLARATION_2(qd, ShortcutsMgr);
@@ -47,6 +48,7 @@ private:
     void createAllUiWndows();
     void _drawMainMenuBar();
     void _drawToolBar();
+    void _buildDefaultDockLayout(ImGuiID dockspaceId);
 
 }; // class GUIManager
 

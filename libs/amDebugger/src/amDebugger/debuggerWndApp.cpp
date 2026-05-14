@@ -16,12 +16,58 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <SDL.h>
+#include <filesystem>
 
 
 namespace amD {
 
 constexpr uint32_t g_nDebuggerWndSizeX = 1368;
 constexpr uint32_t g_nDebuggerWndSizeY = 800;
+
+
+// Persistent storage for the ini filename (must outlive the ImGui context).
+static char g_iniFilename[2048] = "";
+
+
+// If the user has no saved imgui.ini yet, copy the bundled default layout next to the executable
+// so that ImGui's own NewFrame() loader picks it up.  This avoids calling LoadIniSettingsFromMemory()
+// before the first frame, which can't properly rebuild dock nodes because no windows exist yet.
+static void ensureDebuggerLayoutFile()
+{
+    char* base = SDL_GetBasePath();
+    if (!base)
+    {
+        SDL_Log("Debugger layout: SDL_GetBasePath() returned NULL");
+        return;
+    }
+
+    char iniPath[2048];
+    char defaultPath[2048];
+    SDL_snprintf(iniPath, sizeof(iniPath), "%simgui.ini", base);
+    SDL_snprintf(defaultPath, sizeof(defaultPath), "%sdefault_layout.ini", base);
+    SDL_strlcpy(g_iniFilename, iniPath, sizeof(g_iniFilename));
+    SDL_free(base);
+
+    if (std::filesystem::exists(iniPath))
+    {
+        SDL_Log("Debugger layout: user ini exists at \"%s\"", iniPath);
+        return;
+    }
+
+    if (!std::filesystem::exists(defaultPath))
+    {
+        SDL_Log("Debugger layout: no default layout at \"%s\" — first launch will show empty dockspace", defaultPath);
+        return;
+    }
+
+    std::error_code ec;
+    std::filesystem::copy_file(defaultPath, iniPath,
+        std::filesystem::copy_options::overwrite_existing, ec);
+    if (ec)
+        SDL_Log("Debugger layout: failed to copy \"%s\" -> \"%s\" (%s)", defaultPath, iniPath, ec.message().c_str());
+    else
+        SDL_Log("Debugger layout: copied default layout to \"%s\"", iniPath);
+}
 
 
 DebuggerApp::DebuggerApp()
@@ -94,6 +140,13 @@ void DebuggerApp::initImGui()
 
     // Setup Dear ImGui style
     qd::imGuiApplyStyleDark();
+
+    // First-launch bootstrap: if the user has no saved layout yet, copy the bundled default
+    // layout next to the executable.  ImGui's own NewFrame() will load it on the first frame.
+    // Point IniFilename to a full path (next to exe) instead of the default CWD-relative "imgui.ini".
+    ensureDebuggerLayoutFile();
+    if (g_iniFilename[0] != '\0')
+        io.IniFilename = g_iniFilename;
 }
 
 

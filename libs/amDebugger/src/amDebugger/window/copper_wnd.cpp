@@ -49,7 +49,11 @@ public:
 
 void CopperDbgWnd::drawContentImp() {
     Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
 
     IVm::CustomRegs* custRegs = vm->custom;
     custRegs->fetch();

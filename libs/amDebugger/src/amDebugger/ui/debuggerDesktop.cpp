@@ -14,6 +14,7 @@
 #include <amDebugger/window/disassembly_wnd.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
+#include <SDL.h>
 
 
 
@@ -160,6 +161,50 @@ DebuggerDesktop::~DebuggerDesktop()
 }
 
 
+void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
+{
+    // Programmatically build the default debugger dock layout using DockBuilder API.
+    // This is called once on the first frame when the dockspace has no children.
+    ImGuiID idLeft, idRight;
+    ImGui::DockBuilderSplitNode(dockspaceId, ImGuiDir_Left, 0.48f, &idLeft, &idRight);
+
+    // Left side: Disassembly (full height)
+    ImGui::DockBuilderDockWindow("Disassembly", idLeft);
+    ImGui::DockBuilderDockWindow("Copper debug", idLeft);
+
+    // Right side: split vertically into top and bottom
+    ImGuiID idRightTop, idRightBottom;
+    ImGui::DockBuilderSplitNode(idRight, ImGuiDir_Up, 0.66f, &idRightTop, &idRightBottom);
+
+    // Right top: Screen / Memory graph
+    ImGui::DockBuilderDockWindow("Screen", idRightTop);
+    ImGui::DockBuilderDockWindow("Memory graph", idRightTop);
+
+    // Right bottom: Console / Memory
+    ImGui::DockBuilderDockWindow("Console", idRightBottom);
+    ImGui::DockBuilderDockWindow("Memory", idRightBottom);
+
+    // Split left into left-main and left-middle columns
+    ImGuiID idLeftMain, idLeftMid;
+    ImGui::DockBuilderSplitNode(idLeft, ImGuiDir_Left, 0.59f, &idLeftMain, &idLeftMid);
+
+    // Re-dock left-main
+    ImGui::DockBuilderDockWindow("Disassembly", idLeftMain);
+    ImGui::DockBuilderDockWindow("Copper debug", idLeftMain);
+
+    // Middle column: split vertically into Registers/Palette/Blitter and Custom regs
+    ImGuiID idMidTop, idMidBottom;
+    ImGui::DockBuilderSplitNode(idLeftMid, ImGuiDir_Up, 0.5f, &idMidTop, &idMidBottom);
+
+    ImGui::DockBuilderDockWindow("Registers", idMidTop);
+    ImGui::DockBuilderDockWindow("Palette", idMidTop);
+    ImGui::DockBuilderDockWindow("Blitter", idMidTop);
+    ImGui::DockBuilderDockWindow("Custom regs", idMidBottom);
+
+    ImGui::DockBuilderFinish(dockspaceId);
+}
+
+
 void DebuggerDesktop::drawImGuiMainFrame()
 {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -176,7 +221,30 @@ void DebuggerDesktop::drawImGuiMainFrame()
     {
         _drawMainMenuBar();
         _drawToolBar();
-        ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+        ImGuiID dockspaceId = ImGui::GetID("DockSpace");
+        ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+        // On the first frame, check if the dockspace has child nodes.
+        // If the .ini layout failed to load (or dock nodes were pruned), build it programmatically.
+        static bool s_layoutChecked = false;
+        if (!s_layoutChecked)
+        {
+            s_layoutChecked = true;
+            ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
+            bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
+            SDL_Log("Debugger dockspace: root=%p hasChildren=%d IniFilename='%s'",
+                (void*)rootNode, hasChildren ? 1 : 0,
+                ImGui::GetIO().IniFilename ? ImGui::GetIO().IniFilename : "(null)");
+            if (!hasChildren)
+            {
+                SDL_Log("Debugger dockspace: building default layout via DockBuilder");
+                _buildDefaultDockLayout(dockspaceId);
+            }
+            else
+            {
+                SDL_Log("Debugger dockspace: loaded layout from ini, nodes exist");
+            }
+        }
 
         // draw static nodes
         this->drawContentImp();

@@ -78,7 +78,9 @@ void ConsoleWnd::drawContentImp() {
     ImGui::SameLine();
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     if (ImGui::InputText("##input", &m_inputStr, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        getDbg()->execConsoleCmd(std::move(m_inputStr));
+        Debugger* dbg = getDbg();
+        if (dbg)
+            dbg->execConsoleCmd(std::move(m_inputStr));
         m_inputStr.clear();
     }
 }

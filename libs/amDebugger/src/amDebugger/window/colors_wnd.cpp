@@ -9,7 +9,12 @@ namespace amD {
 namespace window {
 
 void ColorsWnd::drawContentImp() {
-    IVm::VM* vm = getDbg()->getVm();
+    Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
+    IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
 
     qtd::fixed_vector<qd::Color, 256> palette;
 

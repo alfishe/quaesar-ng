@@ -85,6 +85,8 @@ static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
     if (!pBank->isAddrIn((AddrRef)addr))
     {
         IVm::VM* vm = pMemView->getVm();
+        if (!vm)
+            return 0xff;
         pBank = vm->mem->findBankByAddr((AddrRef)addr);
         pMemView->m_pLastBank = pBank;
     }
@@ -526,11 +528,13 @@ void MemoryHexViewWnd::draw_options_line(const Sizes& s, void* mem_data, size_t 
     ImGui::SameLine();
     ImGui::SetNextItemWidth((s.addr_digits_count + 10) * s.glyph_width + style.FramePadding.x * 2.0f);
 
-    qd::InlineString addrStr(m_exprAddr.getStrVal().begin(), m_exprAddr.getStrVal().end());
+    qd::InlineString_<32> addrStr(m_exprAddr.getStrVal().begin(), m_exprAddr.getStrVal().end());
     if (ImGui::InputText("##addr", &addrStr, ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
         m_exprAddr.setStrVal(addrStr);
         qd::Var16 val;
-        if (m_exprAddr.evaluate(getDbg()->getVm(), val))
+        Debugger* dbg = getDbg();
+        IVm::VM* vm = dbg ? dbg->getVm() : nullptr;
+        if (vm && m_exprAddr.evaluate(vm, val))
         {
             size_t goto_addr = val.getU32();
             goto_address = goto_addr - base_display_addr;

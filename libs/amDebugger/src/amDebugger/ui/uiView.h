@@ -55,10 +55,7 @@ public:
         ui = cp->gui;
     }
 
-    virtual void drawImp() override
-    {
-        TSuper::drawImp();
-    }
+    virtual void drawImp() override;
     Debugger* getDbg() const;
     DebuggerDesktop* getUi() {
         return ui;

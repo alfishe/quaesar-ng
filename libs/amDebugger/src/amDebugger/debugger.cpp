@@ -24,6 +24,10 @@ IVm::VM* Debugger::getVm() const
 
 qd::EFlow Debugger::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args)
 {
+    // VM may be null when the debugger is opened before the emulator instance is created
+    // (or after it has been torn down). Forwarding to a null VM would crash menu/toolbar handlers.
+    if (!m_pVm)
+        return qd::EFlow::NO_RESULT;
     qd::EFlow r = m_pVm->applyOperationMsgProcImp(args);
     return r;
 }
@@ -84,6 +88,9 @@ bool Debugger::isDebugActivated() const
 
 void Debugger::setDebugMode(EVmDebugMode debug_mode)
 {
+    // No-op when no VM is bound (dummy connection / emulator not running).
+    if (!m_pVm)
+        return;
     m_pVm->setVmDebugMode(debug_mode);
 }
 

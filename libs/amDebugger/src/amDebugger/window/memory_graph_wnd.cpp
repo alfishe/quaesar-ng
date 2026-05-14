@@ -13,7 +13,11 @@ namespace window {
 void MemoryGraphWnd::drawContentImp() {
 
     amD::Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
 
     m_newTextureSize.y = (int)ImGui::GetWindowHeight() - 150;
 
@@ -104,6 +108,10 @@ void MemoryGraphWnd::drawContentImp() {
         int pitch;
         if (SDL_LockTexture(scrTexture, nullptr, &pixels, &pitch) == 0) {
             uint8_t* memPtr = (uint8_t*)vm->mem->getRealAddr(m_bankOffset + pCurBank->m_startAddr);
+            if (!memPtr) {
+                SDL_UnlockTexture(scrTexture);
+                return;
+            }
 
             // Change pixels
             uint32_t* dest = ((uint32_t*)pixels);

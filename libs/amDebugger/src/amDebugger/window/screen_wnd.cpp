@@ -11,7 +11,11 @@ namespace window {
 void ScreenWnd::drawContentImp()
 {
     Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
 
     m_windowFlags |= ImGuiWindowFlags_MenuBar;
     if (ImGui::BeginMenuBar())
@@ -58,7 +62,11 @@ void ScreenWnd::drawContentImp()
 
 void ScreenWnd::grabScreenToTexture(Debugger* dbg)
 {
+    if (!dbg)
+        return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
 
     int scrSizeX = vm->getScreenSizeX();
     int scrSizeY = vm->getScreenSizeY();

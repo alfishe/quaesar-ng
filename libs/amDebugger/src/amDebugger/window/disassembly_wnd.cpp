@@ -41,11 +41,20 @@ AddrRef DisassemblyView::getCursorAddr() const
 void DisassemblyView::drawContentImp()
 {
     Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
     ImGuiContext& g = *ImGui::GetCurrentContext();
 
+    // Read CPU state before using vm. Note: InlineString (255-byte buffer) on
+    // the stack can overlap vm pointer in the compiler's stack layout; using a
+    // smaller fixed_string for the address input avoids the corruption.
+    const AddrRef regPc = vm->cpu->getPC();
+
     // btn: goto addr
-    qd::InlineString addrStr(m_addrInputStr.getStrVal().begin(), m_addrInputStr.getStrVal().end());
+    qd::InlineString_<32> addrStr(m_addrInputStr.getStrVal().begin(), m_addrInputStr.getStrVal().end());
     if (ImGui::InputText("##disAddr", &addrStr,
             ImGuiInputTextFlags_EscapeClearsAll | ImGuiInputTextFlags_EnterReturnsTrue |
                 ImGuiInputTextFlags_AutoSelectAll))
@@ -63,11 +72,16 @@ void DisassemblyView::drawContentImp()
         else
             m_viewBaseAddr.reset();
     }
+
+    // Re-derive vm pointer after ImGui::InputText, as the InlineString's
+    // inline buffer may have corrupted the stack-local vm pointer.
+    vm = dbg->getVm();
+    if (!vm)
+        return;
+
     ImGui::SameLine();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
     ImGui::SameLine();
-
-    AddrRef regPc = vm->cpu->getPC();
     if (ImGui::Button("PC") || (m_prevRegPc != regPc))
     {
         m_viewBaseAddr.reset();
@@ -229,7 +243,9 @@ qd::EFlow DisassemblyView::applyOperationMsgProcImp(qd::operation::BaseOpArgs* a
     {
         p->address = getCursorAddr();
         p->reg = EReg::PC;
-        getDbg()->applyOperationMsgProcImp(p);
+        Debugger* dbg = getDbg();
+        if (dbg)
+            dbg->applyOperationMsgProcImp(p);
     }
     return EFlow::NO_RESULT;
 }

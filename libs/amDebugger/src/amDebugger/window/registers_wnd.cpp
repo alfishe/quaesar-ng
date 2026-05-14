@@ -40,7 +40,11 @@ static const FlagDef s_flagDefs[] = {
 
 void RegistersView::drawContentImp() {
     Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
     IVm::Cpu* cpu = vm->cpu;
 
     QImPushFloatLock st;
