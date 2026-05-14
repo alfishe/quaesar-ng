@@ -5,8 +5,10 @@
 #include <qd/thread/thread.h>
 #include <cstdarg>
 #include <cstdio>
+#include <memory>
 #include "amDebugger/debuggerWndApp.h"
 #include "cli11/CLI11.hpp"
+#include "crashhandler/crashhandler.h"
 #include "qsr_application.h"
 #include "qsr_config.h"
 #include "quaesar.h"
@@ -23,6 +25,10 @@
 
 // Quaesar main
 int SDL_main(int argc, char* argv[]) {
+    // Install crash handler as early as possible
+    auto crashHandler = std::unique_ptr<CrashHandler>(CrashHandler::create());
+    crashHandler->install();
+
     // read options from CLI
 
     CLI::App cliApp{"Quaesar"};

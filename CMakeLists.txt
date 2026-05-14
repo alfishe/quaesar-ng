@@ -217,6 +217,19 @@ endif()
 # file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
 #endif()
 
+# Bundle the bundled default debugger dock layout next to the binary.
+# DebuggerApp::initImGui() resolves it via SDL_GetBasePath() (the dir of the running executable)
+# and loads it on first launch when no user imgui.ini exists, so the debugger window
+# does not come up as an empty (red) dockspace.
+# Using a POST_BUILD custom command + $<TARGET_FILE_DIR:quaesar> ensures the layout
+# lands next to the actual exe on every platform/generator (incl. multi-config VS/Xcode).
+add_custom_command(TARGET quaesar POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_LIST_DIR}/resources/default_layout.ini"
+        "$<TARGET_FILE_DIR:quaesar>/default_layout.ini"
+    VERBATIM
+)
+
 
 add_option_edit_and_continue(quaesar)
 add_option_edit_and_continue(qd)
