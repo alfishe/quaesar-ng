@@ -37,14 +37,20 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
     qd::ModuleManager::get()->getModuleInstOrCreate_<qd::ImGuiContextManager>();
 
     m_pVmPlayerWndAppPart = getAppParts()->createPart_<qsr::QsrMainClientWndApp>("VM client app");
-    //m_pVmPlayerWndAppPart->setVmPlayer(pVmIO);
 
     m_pDebuggerApp = getAppParts()->createPart_<amD::DebuggerApp>("Quaesar Debugger");
     m_pDebuggerApp->init();
 
-    //     ref_ptr<amD::IVmDbgServiceBridge> pDbgConnect = pFactory->createVmDebuggerConnection();
-    //     amD::Debugger* pDbg = m_pDebuggerApp->getDbg();
-    //     pDbg->setDbgServiceBridge(pDbgConnect);
+    // Wire the debugger to the real UAE VM via the shared-memory connection bridge.
+    // The main client window's init() has already called activateVmPlayerByIdStr()
+    // which created the UaeServerThread and its UaeVmImp.
+    qsr::VmPlayersSelector& vmSel = m_pVmPlayerWndAppPart->getVmSelector();
+    int vmPlayerId = m_pVmPlayerWndAppPart->getCurVmPlayerId();
+    if (auto pBridge = vmSel.createVmDebuggerConnection(vmPlayerId)) {
+        m_pDebuggerApp->getDbg()->setDbgServiceBridge(pBridge);
+    } else {
+        SDL_Log("Quaesar: no VM debugger connection available — debugger uses dummy connection");
+    }
 
     m_pVmPlayerWndAppPart->bringWndToFront();
 }

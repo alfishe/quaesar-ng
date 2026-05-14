@@ -77,6 +77,10 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     EA_DISABLE_VC_WARNING(4456) /*declaration of 'x' hides previous local declaration*/
     UaeVmImp* vm = this;
     UaeServerThread* pUae = m_pUaeThread;
+    // No live UAE thread bound (e.g. dummy debugger connection before emulator is started).
+    // All operations below talk to live UAE state, so bail out cleanly instead of crashing.
+    if (!pUae)
+        return EFlow::NO_RESULT;
     bool r = false;
     if (qd::c_def(0)) {
     } else if (args->cast_<amD::operation::DebugTraceContinue>()) {
@@ -321,6 +325,20 @@ int UaeVmImp::Cpu::getIntMask() const {
 
 
 uint8_t* UaeVmImp::Memory::getRealAddr(AddrRef ptr) {
+    // Safety: validate the address is in an allocated memory bank before
+    // calling memory_get_real_address(), which dereferences mem_banks[].
+    // If UAE memory hasn't been initialized yet (mem_banks[] are NULL),
+    // or the address maps to a bank without allocated memory, return nullptr.
+    const uint32_t addr = (uint32_t)ptr;
+    const uint32_t bankIdx = addr >> 16;
+    if (bankIdx >= MEMORY_BANKS)
+        return nullptr;
+    addrbank* ab = mem_banks[bankIdx];
+    if (!ab)
+        return nullptr;
+    // Check if the bank has allocated memory
+    if (!ab->allocated_size)
+        return nullptr;
     return (uint8_t*)::memory_get_real_address(ptr);
 }
 

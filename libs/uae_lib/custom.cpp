@@ -12040,7 +12040,7 @@ static bool framewait(void)
 			t = read_processor_time() - start;
 		}
 		if (!currprefs.cpu_thread) {
-			while (!currprefs.turbo_emulation) {
+			while (!currprefs.turbo_emulation && !quit_program) {
 				float v = rpt_vsync(clockadjust) / (syncbase / 1000.0f);
 				if (v >= -FRAMEWAIT_MIN_MS)
 					break;
@@ -12049,7 +12049,7 @@ static bool framewait(void)
 				if (cpu_sleep_millis(1) < 0)
 					break;
 			}
-			while (rpt_vsync(clockadjust) < 0) {
+			while (rpt_vsync(clockadjust) < 0 && !quit_program) {
 				rtg_vsynccheck();
 				if (audio_is_pull_event()) {
 					maybe_process_pull_audio();
@@ -12240,7 +12240,7 @@ static void vsync_handler_render(void)
 	frame_shown = false;
 	frame_rendered = false;
 
-	if (quit_program > 0) {
+	if (quit_program != 0) {
 		/* prevent possible infinite loop at wait_cycles().. */
 		ad->framecnt = 0;
 		reset_decisions_scanline_start();
@@ -14186,7 +14186,7 @@ static void hsync_handler_post(bool onvsync)
 			if (regs.stopped && currprefs.cpu_idle) {
 				// CPU in STOP state: sleep if enough time left.
 				frame_time_t rpt = read_processor_time();
-				while (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase) {
+				while (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase && !quit_program) {
 					maybe_process_pull_audio();
 //					if (!execute_other_cpu(rpt + vsynctimebase / 10)) {
 						if (cpu_sleep_millis(1) < 0)
@@ -14251,7 +14251,7 @@ static void hsync_handler_post(bool onvsync)
 		if (audio_is_pull() > 0 && !currprefs.turbo_emulation) {
 			maybe_process_pull_audio();
 			frame_time_t rpt = read_processor_time();
-			while (audio_pull_buffer() > 1 && (!isvsync() || (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase))) {
+			while (audio_pull_buffer() > 1 && (!isvsync() || (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase)) && !quit_program) {
 				cpu_sleep_millis(1);
 				maybe_process_pull_audio();
 				rpt = read_processor_time();
@@ -14263,7 +14263,7 @@ static void hsync_handler_post(bool onvsync)
 			if (vsync_isdone(NULL) <= 0 && !currprefs.turbo_emulation) {
 				frame_time_t rpt = read_processor_time();
 				// sleep if more than 2ms "free" time
-				while (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase) {
+				while (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase && !quit_program) {
 					maybe_process_pull_audio();
 //					if (!execute_other_cpu(rpt + vsynctimebase / 10)) {
 						if (cpu_sleep_millis(1) < 0)

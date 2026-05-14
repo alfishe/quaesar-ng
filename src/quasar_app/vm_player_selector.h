@@ -1,4 +1,5 @@
 #pragma once
+#include "amDebugger/dbgConnection.h"
 #include "qd/base/base.h"
 #include "qd/stl/vector.h"
 #include "qsr_application.h"
@@ -26,6 +27,8 @@ public:
         pVmIO = provItem->pServerApp->getVmPlayer();
         return pVmIO;
     }
+
+    ref_ptr<amD::IVmDbgServiceBridge> createVmDebuggerConnection(int hIdx);
 };  // class VmPlayersSelector
 //////////////////////////////////////////////////////////////////////////
 

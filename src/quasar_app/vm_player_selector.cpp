@@ -73,4 +73,16 @@ int VmPlayersSelector::activateVmPlayerByIdStr(QuaesarApplication* pApp, const c
 }
 
 
+ref_ptr<amD::IVmDbgServiceBridge> VmPlayersSelector::createVmDebuggerConnection(int hIdx) {
+    if (hIdx < 0 || hIdx >= (int)m_vmServerAppParts.size())
+        return nullptr;
+    const ProviderItem& item = m_vmServerAppParts[hIdx];
+    const plugin_api::AppPartServerFactoryListMgr& plugins = plugin_api::AppPartServerFactoryListMgr::get();
+    IAppPartServerProviderFactory* pFactory = plugins.findFactoryByIdStr(item.id.c_str());
+    if (!pFactory)
+        return nullptr;
+    return pFactory->createVmDebuggerConnection();
+}
+
+
 };  // namespace qsr

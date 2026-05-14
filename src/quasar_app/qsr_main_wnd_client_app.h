@@ -92,6 +92,8 @@ public:
         return const_cast<qsr::VmPlayersSelector&>(m_vmSelector);
     }
 
+    int getCurVmPlayerId() const { return m_nCurVmPlayterId; }
+
 private:
     void _drawGuiMenus();
     SDL_Texture* tryRecreateEmuScreenTexture(int newWidth, int newHeight);
