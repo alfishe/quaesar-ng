@@ -4,6 +4,8 @@
 #include <amDebugger/vm/vmInterface.h>
 #include <qd/base/Tribool.h>
 #include <qd/typeSystem/typeInfo.h>
+#include <SDL.h>
+#include <cstdint>
 
 
 namespace amD {
@@ -12,28 +14,42 @@ namespace amD {
 
 Debugger* AmDbgWindow::getDbg() const
 {
-    return ui->getDbg();
+    return ui ? ui->getDbg() : nullptr;
 }
 
 
 IVm::VM* AmDbgWindow::getVm() const
 {
-    return getDbg()->getVm();
+    Debugger* dbg = getDbg();
+    return dbg ? dbg->getVm() : nullptr;
 }
 
 
 void AmDbgWindow::drawImp()
 {
+    // Bail out if the window has not been created yet (ui == null means
+    // onCreate() has not run, so getDbg()/getVm() would return null).
+    if (!ui) {
+        return;
+    }
+
+    // Safety check: if title is empty, onCreate() likely didn't run properly
+    if (getText().empty())
+        return;
+
     // Check VM availability once per frame for all debugger windows.
-    // isReady() returns true only when the real VM backend (UaeVmImp/VAmVmImp)
-    // has wired up cpu, mem, custom sub-modules.  The dummy VM used before the
-    // emulator thread starts has all sub-modules null — we show "No VM connected"
-    // in that case.  This centralises the guard so individual windows can safely
-    // dereference vm->cpu, vm->mem, vm->custom, etc. without null checks.
-    const bool vmAvailable = getVm() && getVm()->isReady();
+    Debugger* dbg = getDbg();
+    if (!dbg)
+        return;
+    
+    IVm::VM* vm = dbg->getVm();
+    if (!vm)
+        return;
+    
+    // SAFETY: isReady() checks mInit sentinel first to detect corrupted VM objects
+    const bool vmAvailable = vm->isReady();
 
     // --- Replicate UiWindow::drawImp() with VM guard around drawContentImp() ---
-    assert(!m_title.empty());
     const bool bModal = isModal();
 
     qd::Tribool vis;

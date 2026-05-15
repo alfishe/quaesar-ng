@@ -31,6 +31,7 @@ class IVmConnectionsManager
     TS_REFLECT_CLASS(amD::IVmConnectionsManager, void);
 
 public:
+    bool m_bFullyInitialized = false;
     virtual uint32_t getNumConnections() = 0;
     virtual ref_ptr<amD::IVmDbgServiceBridge> createVmProvider(const char* conn_id) = 0;
 }; // class IVmConnectionsManager
@@ -51,6 +52,7 @@ private:
     int m_init = false;
 
 public:
+    bool m_bFullyInitialized = false;
     ref_ptr<amD::Debugger> m_pDebugger = nullptr; // current debugger client
     ref_ptr<amD::DebuggerDesktop> m_pGui;
     qd::OperationsRegistry* m_pOperationMgr = nullptr;
@@ -65,6 +67,13 @@ public:
     virtual void destroy() override;
     virtual void updateAppPart(float dt, float time) override;
     virtual void renderAppPart() override;
+    
+    // CRITICAL: Prevent AppPartsManager::update() from calling us before real VM is bound
+    virtual bool isReadyToActivate() const override { return m_bFullyInitialized; }
+    
+    // Called when the real VM connection replaces the dummy connection
+    void onVmBound();
+    
     bool isWndVisible() const;
     void setWndVisible(bool v);
     virtual qd::EFlow onSdlEventProc(SDL_Event& event) override;

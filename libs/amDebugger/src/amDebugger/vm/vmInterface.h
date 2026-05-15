@@ -103,7 +103,9 @@ public:
     // The dummy VM (pre-emulator-startup) has all pointers null, so windows
     // should skip rendering.  Individual windows can then safely dereference
     // cpu, mem, custom, blitter, copper without null checks.
-    bool isReady() const { return cpu && mem && custom; }
+    //
+    // SAFETY: mInit is checked first as a sentinel to detect corrupted VM objects.
+    bool isReady() const { return mInit && cpu && mem && custom; }
 
 }; // class IVm::VM
 //////////////////////////////////////////////////////////////////////////

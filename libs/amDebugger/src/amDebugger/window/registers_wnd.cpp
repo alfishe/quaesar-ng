@@ -43,6 +43,8 @@ void RegistersView::drawContentImp() {
     if (!dbg)
         return;
     IVm::VM* vm = dbg->getVm();
+    if (!vm || !vm->isReady())
+        return;
     IVm::Cpu* cpu = vm->cpu;
 
     QImPushFloatLock st;

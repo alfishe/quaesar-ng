@@ -91,6 +91,7 @@ void DebuggerApp::init()
     createRenderWindow();
     initImGui();
 
+    // Create dummy connection initially - will be replaced with real VM later
     m_pDebugger->setDbgServiceBridge(create_dummy_connection());
 
     assert(m_pDebugger);
@@ -98,6 +99,16 @@ void DebuggerApp::init()
     m_pGui = mk.make_<amD::DebuggerDesktop>(this, m_pDebugger);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
+    // m_bFullyInitialized will be set to true when real VM is bound (see onVmBound)
+}
+
+
+void DebuggerApp::onVmBound()
+{
+    // This is called AFTER the real emulator VM is wired up via setDbgServiceBridge().
+    // At this point the VM's sub-modules (cpu, mem, custom) are initialized.
+    m_bFullyInitialized = true;
+    SDL_Log("DebuggerApp: Real VM bound, debugger windows can now render");
 }
 
 
@@ -173,6 +184,7 @@ void DebuggerApp::destroy()
     m_pGui = nullptr;
 
     SAFE_DESTROY(m_pQimGuiCtx);
+
     SDL_DestroyRenderer(m_pWndRenderer);
     m_pWndRenderer = nullptr;
     SDL_DestroyWindow(m_pWindow);
@@ -186,6 +198,14 @@ void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
 {
     if (isWndVisible())
     {
+        // Wait for full initialization before first render to avoid race conditions
+        if (!m_bFullyInitialized)
+            return;
+
+        // Safety: ensure GUI and debugger are fully initialized before rendering
+        if (!m_pGui || !m_pDebugger)
+            return;
+
         m_pQimGuiCtx->newFrame();
         getDbg()->fetchVmState();
         m_pGui->drawImGuiMainFrame();

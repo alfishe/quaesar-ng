@@ -48,6 +48,8 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
     int vmPlayerId = m_pVmPlayerWndAppPart->getCurVmPlayerId();
     if (auto pBridge = vmSel.createVmDebuggerConnection(vmPlayerId)) {
         m_pDebuggerApp->getDbg()->setDbgServiceBridge(pBridge);
+        // Signal that the real VM is now bound - debugger windows can start rendering
+        m_pDebuggerApp->onVmBound();
     } else {
         SDL_Log("Quaesar: no VM debugger connection available — debugger uses dummy connection");
     }

@@ -11,6 +11,7 @@
 #include "qd/stl/span.h"
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/shortcutsList.h>
+#include <amDebugger/vm/vmInterface.h>
 #include <amDebugger/window/disassembly_wnd.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -67,7 +68,9 @@ void DebuggerDesktop::_drawMainMenuBar()
         if (auto pm = qIm::LockMenu("Debug"))
         {
             IVm::VM* vm = pDbg->getVm();
-            IVm::EVmDebugMode debugMode = vm ? vm->getVmDebugMode().get() : IVm::EVmDebugMode::Live;
+            IVm::EVmDebugMode debugMode = (vm && vm->isReady())
+                ? vm->getVmDebugMode().get()
+                : IVm::EVmDebugMode::Live;
             qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(pDbg, "", false,
                 debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
@@ -81,7 +84,7 @@ void DebuggerDesktop::_drawMainMenuBar()
             ImGui::Separator();
 
             amD::operation::DebugDmaOption debugDmaOp;
-            if (vm)
+            if (vm && vm->isReady())
             {
                 qd::OperationsRegistry& opMgr = qd::OperationsRegistry::get();
                 const qd::operation::OpDesc& opDesc = opMgr.getOpDesc_(&debugDmaOp);

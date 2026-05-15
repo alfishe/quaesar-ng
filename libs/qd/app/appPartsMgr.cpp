@@ -145,15 +145,55 @@ AppPartsManager::~AppPartsManager() {
 
 
 void AppPartsManager::update(float dt, float time) {
+    // ┌─────────────────────────────────────────────────────────────────────┐
+    // │ FRAME UPDATE ENTRY POINT                                            │
+    // │ Called from: Application::doMainLoop() → onFrameUpdate()            │
+    // │ Frequency: ~60 FPS (every 16ms via SDL_WaitEventTimeout)            │
+    // └─────────────────────────────────────────────────────────────────────┘
+    
     m_timeNowFrame = (TTime64)std::time(nullptr);
+    
+    // ⚠️ CRITICAL: Iterates through ALL registered application parts
+    // Each part is an independent subsystem (debugger, emulator UI, etc.)
     for (int i = 0; i < getNumAppParts(); i++) {
         ApplicationPart* pCurPart = getPartByInd(i);
-
+        
+        // ┌───────────────────────────────────────────────────────────────┐
+        // │ PART VALIDATION CHECK                                         │
+        // │ pCurPart could be:                                            │
+        // │   - Valid pointer to initialized part                         │
+        // │   - nullptr (if part was destroyed but not removed from list) │
+        // │   - DANGLING POINTER (freed memory, not null!) ← CRASH RISK   │
+        // └───────────────────────────────────────────────────────────────┘
         if (pCurPart && pCurPart->hasMtd(EAppPartMtd::UPDATE)) {
             pCurPart->updateActivateTime();
+            
+            // ┌──────────────────────────────────────────────────────────┐
+            // │ READINESS GATE                                           │
+            // │ Virtual method - each part can defer activation          │
+            // │ Default: returns true (always ready)                     │
+            // │ DebuggerApp: NOT overridden, always returns true!        │
+            // │ ⚠️ THIS IS THE PROBLEM - no readiness check!             │
+            // └──────────────────────────────────────────────────────────┘
             if (!pCurPart->isReadyToActivate())
                 continue;
-
+            
+            // ┌──────────────────────────────────────────────────────────┐
+            // │ ACTUAL UPDATE CALL                                       │
+            // │ For DebuggerApp, this calls:                             │
+            // │   DebuggerApp::updateAppPart(dt, time)                   │
+            // │     ↓                                                    │
+            // │   if (isWndVisible())                                    │
+            // │     if (!m_bFullyInitialized) return;  ← Should protect  │
+            // │     if (!m_pGui || !m_pDebugger) return;                 │
+            // │     m_pGui->drawImGuiMainFrame()  ← CRASH HAPPENS HERE   │
+            // │       ↓                                                  │
+            // │     DebuggerDesktop::drawImGuiMainFrame()                │
+            // │       ↓                                                  │
+            // │     child->drawImp()  ← AmDbgWindow::drawImp()           │
+            // │       ↓                                                  │
+            // │     getVm()->isReady()  ← BAD ACCESS on corrupted VM!    │
+            // └──────────────────────────────────────────────────────────┘
             pCurPart->updateAppPart(dt, time);
         }
     }
