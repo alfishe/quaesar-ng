@@ -35,6 +35,7 @@ add_source_group("codeAnalyzer")
 add_library(${PROJECT_NAME} ${AM_SRC})
 
 #Whole archive option is needed to ensure that all windows are linked in the final binary
+# (debugger windows use static-initializer-based auto-registration via TS_BEGIN_REFLECT_CLASS)
 if(MSVC)
 target_link_options(${PROJECT_NAME} INTERFACE "/WHOLEARCHIVE:${PROJECT_NAME}")
 endif()

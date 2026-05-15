@@ -201,6 +201,17 @@ target_link_libraries(quaesar PRIVATE
     ${QUAESAR_EXTRA_LIBS}
 )
 
+# Force-load the entire amDebugger static library so that auto-registered debugger
+# windows (TS_BEGIN_REFLECT_CLASS static initializers) are not stripped by the linker.
+# MSVC uses WHOLEARCHIVE (set in amDebugger CMakeLists.txt INTERFACE option).
+# macOS uses -force_load; Linux uses --whole-archive.
+if(APPLE)
+    target_link_options(quaesar PRIVATE "-Wl,-force_load,$<TARGET_FILE:amDebugger>")
+elseif(LINUX OR UNIX)
+    target_link_options(quaesar PRIVATE
+        "-Wl,--whole-archive" "$<TARGET_FILE:amDebugger>" "-Wl,--no-whole-archive")
+endif()
+
 
 #if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
 # file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
