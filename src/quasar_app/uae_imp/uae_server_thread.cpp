@@ -200,8 +200,8 @@ uint32_t *UaeServerThread::_lockUaeScreenTexBuf(int amiga_width,
 }
 
 void UaeServerThread::_unlockUaeScreenTexBuf() {
+  SDL_AtomicIncRef(&m_scrFrameNo);  // signal completion while still locked
   m_UaeScrTextureMutex.unlock();
-  SDL_AtomicIncRef(&m_scrFrameNo);
 }
 
 int UaeServerThread::getScrFrameNo() {

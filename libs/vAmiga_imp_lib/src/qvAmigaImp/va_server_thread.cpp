@@ -79,6 +79,7 @@ VAmServerThread::VAmServerThread(qsr::VAmServerAppPart *pServerApp)
 
     m_scrWidth = vamiga::HPIXELS;
     m_scrHeight = vamiga::VPIXELS;
+    m_pStableBuffer = new uint32_t[m_scrWidth * m_scrHeight];
 }
 
 void VAmServerThread::initialize() {
@@ -121,6 +122,8 @@ void VAmServerThread::destroy() {
     }
     delete[] m_pAmigaBuffer;
     m_pAmigaBuffer = nullptr;
+    delete[] m_pStableBuffer;
+    m_pStableBuffer = nullptr;
 }
 
 VAmServerThread::~VAmServerThread() {
@@ -311,7 +314,15 @@ void VAmServerThread::onVAmigaThreadMain() {
             else {
                 //pPrevDispTexBuf = pCurDisplayTexBuf;
                 m_pAmigaBuffer = const_cast<uint32_t *>(pCurDisplayTexBuf);
+
+                // Copy frame into stable buffer under mutex so main thread
+                // never reads a buffer that vAmiga is actively writing to
+                m_VAmScrTextureMutex.lock();
+                memcpy(m_pStableBuffer, pCurDisplayTexBuf,
+                    m_scrWidth * m_scrHeight * sizeof(uint32_t));
                 SDL_AtomicSet(&m_scrFrameNo, (int)nr);
+                m_VAmScrTextureMutex.unlock();
+
                 vVideoPort.unlockTexture();
                 pVAmiga->wakeUp();
             }
@@ -332,7 +343,7 @@ bool VAmServerThread::lockDisplayTexBuf(int *out_width, int *out_height,
     if (m_VAmScrTextureMutex.tryLock()) {
         *out_width = m_scrWidth;
         *out_height = m_scrHeight;
-        *out_pixels = m_pAmigaBuffer;
+        *out_pixels = m_pStableBuffer;
         return true;
     }
     return false;

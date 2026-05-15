@@ -61,7 +61,7 @@ void QsrMainClientWndApp::_createMainOsWindow() {
         return;
     }
 
-    m_hWndRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED);
+    m_hWndRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!m_hWndRenderer) {
         SDL_Log("Could not create renderer: %s", SDL_GetError());
         SDL_DestroyWindow(m_pWindow);
@@ -96,12 +96,18 @@ void QsrMainClientWndApp::_drawGuiMenus() {
 
 
 void QsrMainClientWndApp::renderAppPart() {
+    // Always clear the backbuffer first (SDL docs: backbuffer is undefined after Present)
+    SDL_RenderClear(m_hWndRenderer);
+
+    bool hasNewEmuFrame = false;
+
     // render VM display texture screen
     IVmClientPlayer* pVmPlayer = getVmProvider();
     if (pVmPlayer) {
         uint32_t curFrame = pVmPlayer->getScrFrameNo();
         if (curFrame != m_renderedFrameNo) {
             m_renderedFrameNo = curFrame;
+            hasNewEmuFrame = true;
 
             int curWndSizeX, curWndSizeY;
             SDL_GetRendererOutputSize(m_hWndRenderer, &curWndSizeX, &curWndSizeY);
@@ -109,14 +115,19 @@ void QsrMainClientWndApp::renderAppPart() {
             int bufWidth, bufHeight;
             uint32_t* pSrcDisplayBuf = nullptr;
             if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
-                if (!bufWidth || !bufHeight)
+                if (!bufWidth || !bufHeight) {
+                    pVmPlayer->unlockDisplayTexBuf();
                     return;
+                }
 
-                if (bufHeight < 350)
-                    bufHeight *= 2;
+                // Amiga PAL non-interlaced produces ~288 visible lines (half-frame).
+                // Double the source lines to fill the display properly.
+                const bool bNeedsLineDoubling = (bufHeight < 350);
+                const int srcHeight = bNeedsLineDoubling ? bufHeight : bufHeight;
+                const int dstHeight = bNeedsLineDoubling ? bufHeight * 2 : bufHeight;
 
                 // Maintain aspect ratio
-                float image_aspect = (float)bufWidth / (float)bufHeight;
+                float image_aspect = (float)bufWidth / (float)dstHeight;
                 float window_aspect = (float)curWndSizeX / (float)curWndSizeY;
                 int new_width = 0, new_height = 0;
 
@@ -128,16 +139,26 @@ void QsrMainClientWndApp::renderAppPart() {
                     new_width = (int)(curWndSizeY * image_aspect);
                 }
                 SDL_Rect rect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
-                SDL_RenderClear(m_hWndRenderer);
 
                 SDL_Texture* hDisplayTex =
-                    tryRecreateEmuScreenTexture(bufWidth, bufHeight);  // Recreate texture if needed
+                    tryRecreateEmuScreenTexture(bufWidth, dstHeight);
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                    for (int curY = 0; curY < bufHeight; curY++) {
-                        uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
-                        memcpy(dest, &pSrcDisplayBuf[curY / 2 * bufWidth], bufWidth * 4);
+                    if (bNeedsLineDoubling) {
+                        // Line-doubling: each source line is written twice
+                        for (int curY = 0; curY < srcHeight; curY++) {
+                            uint8_t* dest1 = (uint8_t*)texture_pixels + (curY * 2 * pitch);
+                            uint8_t* dest2 = (uint8_t*)texture_pixels + ((curY * 2 + 1) * pitch);
+                            memcpy(dest1, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
+                            memcpy(dest2, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
+                        }
+                    } else {
+                        // 1:1 copy
+                        for (int curY = 0; curY < srcHeight; curY++) {
+                            uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
+                            memcpy(dest, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
+                        }
                     }
                     SDL_UnlockTexture(hDisplayTex);
                 }
@@ -151,6 +172,9 @@ void QsrMainClientWndApp::renderAppPart() {
     if (m_bShowGui)
         m_pQimGuiCtx->render();
 
+    // Always present — with VSync enabled, SDL_RenderPresent blocks until the
+    // next vertical blank (~16ms at 60Hz), providing natural frame-rate limiting.
+    // Skipping it would cause a busy-spin consuming 100% of one CPU core.
     SDL_RenderPresent(m_hWndRenderer);
 }
 

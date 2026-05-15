@@ -4,6 +4,7 @@
 #include "qd/typeSystem/typeInfoBuilder.h"
 #if QD_USE_SDL
 #include "SDL_events.h"
+#include "SDL_timer.h"
 #endif // QD_USE_SDL
 
 namespace qd {
@@ -94,6 +95,7 @@ void Application::doMainLoop() {
 
         onFrameUpdate(0, 0); // todo delta-time
         onFrameRender();
+        SDL_Delay(1);  // yield to OS, prevent busy-spin
     }
 #endif
 }

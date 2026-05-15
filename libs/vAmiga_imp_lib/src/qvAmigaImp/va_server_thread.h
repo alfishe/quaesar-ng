@@ -39,6 +39,7 @@ public:
     int m_scrHeight = 576;
     qd::Mutex m_VAmScrTextureMutex;
     uint32_t* m_pAmigaBuffer = nullptr;
+    uint32_t* m_pStableBuffer = nullptr;  // double-buffer copy for main thread reads
     qd::ThreadEvent* m_onVAmInitialized = nullptr;  // event to wait for VAMIGA initialization
     SDL_atomic_t m_scrFrameNo = {};
     ref_ptr<IVm::imp::VAmVmImp> m_pVm;  // create shared VM
