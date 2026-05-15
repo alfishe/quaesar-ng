@@ -99,6 +99,12 @@ public:
     IVm::Emu* emu = nullptr;
     IVm::IModule* m_modSectEnd = nullptr;
 
+    // Returns true when the real VM implementation has wired up core sub-modules.
+    // The dummy VM (pre-emulator-startup) has all pointers null, so windows
+    // should skip rendering.  Individual windows can then safely dereference
+    // cpu, mem, custom, blitter, copper without null checks.
+    bool isReady() const { return cpu && mem && custom; }
+
 }; // class IVm::VM
 //////////////////////////////////////////////////////////////////////////
 

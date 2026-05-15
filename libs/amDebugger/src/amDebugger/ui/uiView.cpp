@@ -25,11 +25,12 @@ IVm::VM* AmDbgWindow::getVm() const
 void AmDbgWindow::drawImp()
 {
     // Check VM availability once per frame for all debugger windows.
-    // When no VM is attached (dummy connection or before emulator starts),
-    // we still render the ImGui window chrome but skip content and show
-    // a disabled-state message. This centralises the null-VM guard so
-    // individual windows can assume vm != nullptr in drawContentImp().
-    const bool vmAvailable = (getVm() != nullptr);
+    // isReady() returns true only when the real VM backend (UaeVmImp/VAmVmImp)
+    // has wired up cpu, mem, custom sub-modules.  The dummy VM used before the
+    // emulator thread starts has all sub-modules null — we show "No VM connected"
+    // in that case.  This centralises the guard so individual windows can safely
+    // dereference vm->cpu, vm->mem, vm->custom, etc. without null checks.
+    const bool vmAvailable = getVm() && getVm()->isReady();
 
     // --- Replicate UiWindow::drawImp() with VM guard around drawContentImp() ---
     assert(!m_title.empty());

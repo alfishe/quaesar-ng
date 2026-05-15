@@ -193,6 +193,15 @@ if (MSVC)
 else()
     target_compile_options(uae_lib PRIVATE "-Wno-conversion" "-Wno-sign-conversion")
     target_compile_options(uae_lib PRIVATE "-Wno-unused-variable" "-Wno-unused-but-set-variable")
+    if (APPLE)
+        # Clang on macOS warns about volatile increment/decrement/assignment,
+        # deprecated sprintf, and char-vs-constant comparisons in the UAE codebase.
+        target_compile_options(uae_lib PRIVATE
+            "-Wno-deprecated-volatile"
+            "-Wno-deprecated-declarations"
+            "-Wno-tautological-constant-out-of-range-compare"
+            "-Wno-format")
+    endif()
 endif()
 #-------------------------------------------------------------------------------------------
 

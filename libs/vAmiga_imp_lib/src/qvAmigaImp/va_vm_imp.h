@@ -8,7 +8,7 @@
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vmInterface.h>
 #include <qd/base/baseTypes.h>
-#include <qd/base/color.h>
+#include <qd/base/Color.h>
 #include "VAmiga.h"
 //#include "qd/typeSystem/typeDeclare.h"
 

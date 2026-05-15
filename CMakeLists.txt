@@ -206,7 +206,9 @@ target_link_libraries(quaesar PRIVATE
 # MSVC uses WHOLEARCHIVE (set in amDebugger CMakeLists.txt INTERFACE option).
 # macOS uses -force_load; Linux uses --whole-archive.
 if(APPLE)
-    target_link_options(quaesar PRIVATE "-Wl,-force_load,$<TARGET_FILE:amDebugger>")
+    target_link_options(quaesar PRIVATE
+        "-Wl,-force_load,$<TARGET_FILE:amDebugger>"
+        "-Wl,-no_warn_duplicate_libraries")
 elseif(LINUX OR UNIX)
     target_link_options(quaesar PRIVATE
         "-Wl,--whole-archive" "$<TARGET_FILE:amDebugger>" "-Wl,--no-whole-archive")
