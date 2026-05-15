@@ -4,7 +4,6 @@
 #include "qd/typeSystem/typeInfoBuilder.h"
 #if QD_USE_SDL
 #include "SDL_events.h"
-#include "SDL_timer.h"
 #endif // QD_USE_SDL
 
 namespace qd {
@@ -84,14 +83,16 @@ void Application::onFrameRender() {
 
 void Application::doMainLoop() {
 #if QD_USE_SDL
-    const Uint64 perfFreq = SDL_GetPerformanceFrequency();
-    const Uint64 frameDuration = perfFreq / 60;  // target 60fps cap
-    Uint64 nextFrameTime = SDL_GetPerformanceCounter();
-
     SDL_Event event;
     for (;;) {
-        while (SDL_PollEvent(&event) != 0) {
-            onSdlEventProc(event);
+        // Block until event OR 16ms elapsed (~60fps cap).
+        // This is the idiomatic SDL approach: the OS scheduler puts the
+        // thread to sleep, so CPU usage drops to near-zero between frames.
+        int gotEvent = SDL_WaitEventTimeout(&event, 16);
+        if (gotEvent) {
+            do {
+                onSdlEventProc(event);
+            } while (SDL_PollEvent(&event) != 0);
         }
 
         if (hasQuitRequest())
@@ -99,19 +100,6 @@ void Application::doMainLoop() {
 
         onFrameUpdate(0, 0); // todo delta-time
         onFrameRender();
-
-        // Frame pacing: sleep until next 60Hz boundary.
-        // This caps CPU usage regardless of whether VSync actually engages.
-        nextFrameTime += frameDuration;
-        Uint64 now = SDL_GetPerformanceCounter();
-        if (now < nextFrameTime) {
-            Uint32 msWait = (Uint32)((nextFrameTime - now) * 1000ULL / perfFreq);
-            if (msWait > 0)
-                SDL_Delay(msWait);
-        } else {
-            // Fell behind — reset to avoid spiral of catch-up frames
-            nextFrameTime = now;
-        }
     }
 #endif
 }

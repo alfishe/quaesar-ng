@@ -147,13 +147,12 @@ void QsrMainClientWndApp::renderAppPart() {
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                    // Ensure prev frame buffer matches dimensions
+                    // Ensure prev frame buffer matches source dimensions
                     const bool bPrevValid = (m_prevBufWidth == bufWidth && m_prevBufHeight == srcHeight && m_pPrevFrameBuf);
 
                     if (bNeedsLineDoubling) {
-                        // Line-doubling with temporal blending:
+                        // Line-doubling with temporal blending for non-interlaced:
                         // odd lines = current frame, even lines = blend(prev, current)
-                        // This simulates CRT phosphor persistence, reducing flicker
                         for (int curY = 0; curY < srcHeight; curY++) {
                             const uint32_t* srcRow = &pSrcDisplayBuf[curY * bufWidth];
                             uint8_t* dest1 = (uint8_t*)texture_pixels + (curY * 2 * pitch);
@@ -163,18 +162,32 @@ void QsrMainClientWndApp::renderAppPart() {
                                 const uint32_t* prevRow = &m_pPrevFrameBuf[curY * bufWidth];
                                 for (int x = 0; x < bufWidth; x++) {
                                     ((uint32_t*)dest1)[x] = srcRow[x];
-                                    // 50/50 temporal blend for even lines
                                     ((uint32_t*)dest2)[x] = ((srcRow[x] >> 1) & 0x7F7F7F7F)
                                                            + ((prevRow[x] >> 1) & 0x7F7F7F7F);
                                 }
                             } else {
-                                // No prev frame — simple duplicate
                                 memcpy(dest1, srcRow, bufWidth * 4);
                                 memcpy(dest2, srcRow, bufWidth * 4);
                             }
                         }
+                    } else if (bPrevValid) {
+                        // Full-resolution interlaced mode: blend 75% current + 25% previous
+                        // This simulates CRT phosphor persistence, hiding the interlace
+                        // flicker caused by alternating odd/even fields each frame
+                        for (int curY = 0; curY < srcHeight; curY++) {
+                            const uint32_t* srcRow = &pSrcDisplayBuf[curY * bufWidth];
+                            const uint32_t* prevRow = &m_pPrevFrameBuf[curY * bufWidth];
+                            uint32_t* dest = (uint32_t*)((uint8_t*)texture_pixels + (curY * pitch));
+                            for (int x = 0; x < bufWidth; x++) {
+                                uint32_t s = srcRow[x];
+                                uint32_t p = prevRow[x];
+                                // 75% current + 25% previous: (s*3 + p) / 4
+                                // Equivalent to: (s - (s>>2)) + (p>>2)
+                                dest[x] = s - (s >> 2) + (p >> 2);
+                            }
+                        }
                     } else {
-                        // 1:1 copy (no blending needed for full-res frames)
+                        // First frame — straight copy
                         for (int curY = 0; curY < srcHeight; curY++) {
                             uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
                             memcpy(dest, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
@@ -182,16 +195,14 @@ void QsrMainClientWndApp::renderAppPart() {
                     }
                     SDL_UnlockTexture(hDisplayTex);
 
-                    // Store current frame for next frame's temporal blend
-                    if (bNeedsLineDoubling) {
-                        if (!m_pPrevFrameBuf || m_prevBufWidth != bufWidth || m_prevBufHeight != srcHeight) {
-                            delete[] m_pPrevFrameBuf;
-                            m_pPrevFrameBuf = new uint32_t[bufWidth * srcHeight];
-                            m_prevBufWidth = bufWidth;
-                            m_prevBufHeight = srcHeight;
-                        }
-                        memcpy(m_pPrevFrameBuf, pSrcDisplayBuf, bufWidth * srcHeight * sizeof(uint32_t));
+                    // Always store current frame for next frame's temporal blend
+                    if (!m_pPrevFrameBuf || m_prevBufWidth != bufWidth || m_prevBufHeight != srcHeight) {
+                        delete[] m_pPrevFrameBuf;
+                        m_pPrevFrameBuf = new uint32_t[bufWidth * srcHeight];
+                        m_prevBufWidth = bufWidth;
+                        m_prevBufHeight = srcHeight;
                     }
+                    memcpy(m_pPrevFrameBuf, pSrcDisplayBuf, bufWidth * srcHeight * sizeof(uint32_t));
                 }
 
                 SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
