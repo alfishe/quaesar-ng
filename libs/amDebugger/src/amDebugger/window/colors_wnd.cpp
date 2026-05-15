@@ -13,11 +13,6 @@ void ColorsWnd::drawContentImp() {
     if (!dbg)
         return;
     IVm::VM* vm = dbg->getVm();
-    if (!vm)
-        return;
-
-    if (!vm->custom)
-        return;
 
     qtd::fixed_vector<qd::Color, 256> palette;
 

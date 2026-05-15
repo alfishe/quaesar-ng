@@ -102,12 +102,8 @@ void CustomRegsWnd::drawContentImp() {
     if (!dbg)
         return;
     IVm::VM* vm = dbg->getVm();
-    if (!vm)
-        return;
 
     IVm::CustomRegs* custRegs = vm->custom;
-    if (!custRegs)
-        return;
     custRegs->fetch();
 
     QImPushFloatLock st;

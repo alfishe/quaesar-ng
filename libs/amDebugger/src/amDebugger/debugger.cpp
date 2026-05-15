@@ -53,7 +53,7 @@ qd::EFlow Debugger::setupDefaultOperationArgsImp(qd::operation::BaseOpArgs* args
 
 void Debugger::fetchVmState()
 {
-    if (m_pVm)
+    if (m_pVm && m_pVm->isReady())
         m_pVm->fetchStateFromEmu();
 }
 
@@ -99,7 +99,8 @@ void Debugger::setDebugMode(EVmDebugMode debug_mode)
 void BreakpointsSortedList::init(IVm::VM* vm)
 {
     mBreakpoints.clear();
-    vm->emu->initBreakPoints(*this);
+    if (vm && vm->emu)
+        vm->emu->initBreakPoints(*this);
 }
 
 

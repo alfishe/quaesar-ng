@@ -111,12 +111,8 @@ void BlitterWnd::drawContentImp()
     if (!dbg)
         return;
     IVm::VM* vm = dbg->getVm();
-    if (!vm)
-        return;
 
     IVm::CustomRegs* custRegs = vm->custom;
-    if (!custRegs)
-        return;
     custRegs->fetch();
 
 
@@ -128,7 +124,7 @@ void BlitterWnd::drawContentImp()
     uint16_t bltSize = custRegs->getRegVal(CustReg::BLTSIZE);
     uint16_t rDmaCon = custRegs->getRegVal(CustReg::DMACONR);
 
-    bool bBltEn = rDmaCon & (DMAC::BLTEN | DMAC::DMAEN) && vm->blitter && vm->blitter->isBlitterActive();
+    bool bBltEn = rDmaCon & (DMAC::BLTEN | DMAC::DMAEN) && vm->blitter->isBlitterActive();
     ImGui::Checkbox("##DMAEN", &bBltEn);
     ImGui::SameLine(30);
 
