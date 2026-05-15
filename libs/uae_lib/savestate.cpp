@@ -1311,7 +1311,7 @@ void savestate_quick (int slot, int save)
 	}
 	_tcscpy (savestate_fname + i, _T(".uss"));
 	if (slot > 0)
-		_stprintf (savestate_fname + i, _T("_%d.uss"), slot);
+		_sntprintf (savestate_fname + i, MAX_DPATH - i, _T("_%d.uss"), slot);
 	if (save) {
 		write_log (_T("saving '%s'\n"), savestate_fname);
 		savestate_docompress = 1;

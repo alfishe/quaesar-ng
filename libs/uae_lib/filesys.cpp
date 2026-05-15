@@ -8310,7 +8310,7 @@ static void dumprdbblock(const uae_u8 *buf, int block)
 		TCHAR outbuf[81];
 		for (int j = 0; j < w; j++) {
 			uae_u8 v = buf[i + j];
-			_stprintf(outbuf + 2 * j, _T("%02X"), v);
+			_sntprintf(outbuf + 2 * j, sizeof(outbuf) - 2 * j, _T("%02X"), v);
 			outbuf[2 * w + 1 + j] = (v >= 32 && v <= 126) ? v : '.';
 		}
 		outbuf[2 * w] = ' ';
@@ -10366,9 +10366,9 @@ static uae_u32 filesys_shellexecute2_process(int mode, TrapContext *ctx)
 		if (se2->bin) {
 			xfree(se2->file);
 			if (oldks) {
-				sprintf(tmp, "cd \"%s\"\nT:__uae_out_%08X_%08x", se2->currentdir, se2->process, se2->id);
+				snprintf(tmp, sizeof(tmp), "cd \"%s\"\nT:__uae_out_%08X_%08x", se2->currentdir, se2->process, se2->id);
 			} else {
-				sprintf(tmp, "T:__uae_bin_%08X_%08x", se2->process, se2->id);
+				snprintf(tmp, sizeof(tmp), "T:__uae_bin_%08X_%08x", se2->process, se2->id);
 			}
 			se2->file = strdup(tmp);
 		}
@@ -10406,7 +10406,7 @@ static uae_u32 filesys_shellexecute2_process(int mode, TrapContext *ctx)
 		trap_put_long(ctx, se2->buffer + 4, dptr);
 		if (se2->bin) {
 			xfree(se2->file);
-			sprintf(tmp, "T:__uae_bin_%08X_%08x", se2->process, se2->id);
+			snprintf(tmp, sizeof(tmp), "T:__uae_bin_%08X_%08x", se2->process, se2->id);
 			se2->file = strdup(tmp);
 			trap_put_long(ctx, se2->buffer + 52, dptr);
 		}
@@ -10418,7 +10418,7 @@ static uae_u32 filesys_shellexecute2_process(int mode, TrapContext *ctx)
 
 		trap_put_long(ctx, se2->buffer + 16, dptr);
 		if (oldks) {
-			sprintf(tmp, "cd \"%s\"\n%s", se2->currentdir, se2->file);
+			snprintf(tmp, sizeof(tmp), "cd \"%s\"\n%s", se2->currentdir, se2->file);
 		} else {
 			strcpy(tmp, se2->file);
 		}
@@ -10430,7 +10430,7 @@ static uae_u32 filesys_shellexecute2_process(int mode, TrapContext *ctx)
 
 		if (se2->flags & 2) {
 			trap_put_long(ctx, se2->buffer + 44, dptr);
-			sprintf(tmp, "T:__uae_out_%08X_%08x", se2->process, se2->id);
+			snprintf(tmp, sizeof(tmp), "T:__uae_out_%08X_%08x", se2->process, se2->id);
 			dptr += trap_put_string(ctx, tmp, dptr, -1) + 1;
 			se2->aoutbuf = dptr;
 			trap_put_long(ctx, se2->buffer + 48, dptr);

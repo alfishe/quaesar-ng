@@ -1401,7 +1401,7 @@ static void initsramattr (int size, int readonly)
 		strcpy ((char*)p, "68000");
 	}
 	p += strlen ((char*)p) + 1;
-	sprintf ((char*)p, "Generic Emulated %dKB PCMCIA SRAM Card", size >> 10);
+	snprintf ((char*)p, 256, "Generic Emulated %dKB PCMCIA SRAM Card", size >> 10);
 	p += strlen ((char*)p) + 1;
 	*p++= 0xff;
 	*rp = addrdiff(p, rp) - 1;

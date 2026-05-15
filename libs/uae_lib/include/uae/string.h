@@ -23,7 +23,6 @@
 #define _istspace isspace
 #define _istupper isupper
 #define _sntprintf snprintf
-#define _stprintf sprintf
 #define _strtoui64 strtoll
 #define _tcscat strcat
 #define _tcschr strchr
@@ -55,6 +54,12 @@
 #define _tstol atol
 #define _vsnprintf vsnprintf
 #define _vsntprintf vsnprintf
+
+// Replace _stprintf (unbounded sprintf) with snprintf using sizeof(buf).
+// Works correctly for stack arrays (covers 95%+ of UAE usage). For the few
+// call sites that use pointer-offset expressions like (buf + strlen(buf)),
+// those should be converted to _sntprintf with explicit size calculation.
+#define _stprintf(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
 #endif
 
 static inline size_t uae_tcslcpy(TCHAR *dst, const TCHAR *src, size_t size)
