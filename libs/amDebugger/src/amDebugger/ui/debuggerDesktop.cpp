@@ -118,7 +118,7 @@ void DebuggerDesktop::onUiNodeCreated(qd::UiNodeCreator* mk)
     m_pOperationMgr = &qd::OperationsRegistry::get(); // createComp_<qd::UiOperationMgrComp>()->m_pOpMgr;
     m_pShortcutMgr = qd::ShortcutsMgr::get(); // createComp_<qd::UiShortcutsMgrComp>();
     m_pShortcutMgr->createPredefinedShortcuts(
-        qtd::span(&amD::shortcut::g_shortcuts_list[0], (size_t)amD::shortcut::EId::MAX_COUNT));
+        qtd::span(amD::shortcut::g_shortcuts_list));
 
     // create all m_pChilds
     createAllUiWndows();
