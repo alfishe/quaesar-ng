@@ -67,6 +67,8 @@ void QsrMainClientWndApp::_createMainOsWindow() {
         SDL_DestroyWindow(m_pWindow);
         return;
     }
+    // Belt-and-suspenders: ensure VSync is actually on (SDL flag may silently fail)
+    SDL_RenderSetVSync(m_hWndRenderer, 1);
 
     m_hVmDisplayTx =
         SDL_CreateTexture(m_hWndRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, wndWidth, wndHeight);
@@ -145,22 +147,51 @@ void QsrMainClientWndApp::renderAppPart() {
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
+                    // Ensure prev frame buffer matches dimensions
+                    const bool bPrevValid = (m_prevBufWidth == bufWidth && m_prevBufHeight == srcHeight && m_pPrevFrameBuf);
+
                     if (bNeedsLineDoubling) {
-                        // Line-doubling: each source line is written twice
+                        // Line-doubling with temporal blending:
+                        // odd lines = current frame, even lines = blend(prev, current)
+                        // This simulates CRT phosphor persistence, reducing flicker
                         for (int curY = 0; curY < srcHeight; curY++) {
+                            const uint32_t* srcRow = &pSrcDisplayBuf[curY * bufWidth];
                             uint8_t* dest1 = (uint8_t*)texture_pixels + (curY * 2 * pitch);
                             uint8_t* dest2 = (uint8_t*)texture_pixels + ((curY * 2 + 1) * pitch);
-                            memcpy(dest1, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
-                            memcpy(dest2, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
+
+                            if (bPrevValid) {
+                                const uint32_t* prevRow = &m_pPrevFrameBuf[curY * bufWidth];
+                                for (int x = 0; x < bufWidth; x++) {
+                                    ((uint32_t*)dest1)[x] = srcRow[x];
+                                    // 50/50 temporal blend for even lines
+                                    ((uint32_t*)dest2)[x] = ((srcRow[x] >> 1) & 0x7F7F7F7F)
+                                                           + ((prevRow[x] >> 1) & 0x7F7F7F7F);
+                                }
+                            } else {
+                                // No prev frame — simple duplicate
+                                memcpy(dest1, srcRow, bufWidth * 4);
+                                memcpy(dest2, srcRow, bufWidth * 4);
+                            }
                         }
                     } else {
-                        // 1:1 copy
+                        // 1:1 copy (no blending needed for full-res frames)
                         for (int curY = 0; curY < srcHeight; curY++) {
                             uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
                             memcpy(dest, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
                         }
                     }
                     SDL_UnlockTexture(hDisplayTex);
+
+                    // Store current frame for next frame's temporal blend
+                    if (bNeedsLineDoubling) {
+                        if (!m_pPrevFrameBuf || m_prevBufWidth != bufWidth || m_prevBufHeight != srcHeight) {
+                            delete[] m_pPrevFrameBuf;
+                            m_pPrevFrameBuf = new uint32_t[bufWidth * srcHeight];
+                            m_prevBufWidth = bufWidth;
+                            m_prevBufHeight = srcHeight;
+                        }
+                        memcpy(m_pPrevFrameBuf, pSrcDisplayBuf, bufWidth * srcHeight * sizeof(uint32_t));
+                    }
                 }
 
                 SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
@@ -319,6 +350,10 @@ IVm::VM* QsrMainClientWndApp::getVm() const {
 
 
 void QsrMainClientWndApp::destroyUaeWindow() {
+    delete[] m_pPrevFrameBuf;
+    m_pPrevFrameBuf = nullptr;
+    m_prevBufWidth = m_prevBufHeight = 0;
+
     SDL_DestroyTexture(m_hVmDisplayTx);
     m_hVmDisplayTx = nullptr;
     SDL_DestroyRenderer(m_hWndRenderer);

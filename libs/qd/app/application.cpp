@@ -84,6 +84,10 @@ void Application::onFrameRender() {
 
 void Application::doMainLoop() {
 #if QD_USE_SDL
+    const Uint64 perfFreq = SDL_GetPerformanceFrequency();
+    const Uint64 frameDuration = perfFreq / 60;  // target 60fps cap
+    Uint64 nextFrameTime = SDL_GetPerformanceCounter();
+
     SDL_Event event;
     for (;;) {
         while (SDL_PollEvent(&event) != 0) {
@@ -95,7 +99,19 @@ void Application::doMainLoop() {
 
         onFrameUpdate(0, 0); // todo delta-time
         onFrameRender();
-        SDL_Delay(1);  // yield to OS, prevent busy-spin
+
+        // Frame pacing: sleep until next 60Hz boundary.
+        // This caps CPU usage regardless of whether VSync actually engages.
+        nextFrameTime += frameDuration;
+        Uint64 now = SDL_GetPerformanceCounter();
+        if (now < nextFrameTime) {
+            Uint32 msWait = (Uint32)((nextFrameTime - now) * 1000ULL / perfFreq);
+            if (msWait > 0)
+                SDL_Delay(msWait);
+        } else {
+            // Fell behind — reset to avoid spiral of catch-up frames
+            nextFrameTime = now;
+        }
     }
 #endif
 }

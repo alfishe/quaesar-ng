@@ -49,6 +49,11 @@ private:
     VmPlayersSelector m_vmSelector;
     int m_nCurVmPlayterId = -1;
 
+    // Temporal blending buffer for scandoubler flicker reduction
+    uint32_t* m_pPrevFrameBuf = nullptr;
+    int m_prevBufWidth = 0;
+    int m_prevBufHeight = 0;
+
 public:
     QsrMainClientWndApp(qsr::IVmClientPlayer* pVmProvider = nullptr);
     virtual ~QsrMainClientWndApp() override;
