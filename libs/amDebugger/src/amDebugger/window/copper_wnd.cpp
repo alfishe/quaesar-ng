@@ -56,6 +56,8 @@ void CopperDbgWnd::drawContentImp() {
         return;
 
     IVm::CustomRegs* custRegs = vm->custom;
+    if (!custRegs || !vm->copper)
+        return;
     custRegs->fetch();
 
     // btn: goto addr

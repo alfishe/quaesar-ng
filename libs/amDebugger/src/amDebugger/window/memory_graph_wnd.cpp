@@ -44,6 +44,9 @@ void MemoryGraphWnd::drawContentImp() {
         }
     }
 
+    if (!vm->mem)
+        return;
+
     const MemBank* pCurBank = vm->mem->getBankByInd(m_curBank);
     if (!pCurBank) {
         m_curBank = EMemSrc::CHIP;

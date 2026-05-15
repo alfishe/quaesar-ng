@@ -16,6 +16,9 @@ void ColorsWnd::drawContentImp() {
     if (!vm)
         return;
 
+    if (!vm->custom)
+        return;
+
     qtd::fixed_vector<qd::Color, 256> palette;
 
     vm->custom->fetch();

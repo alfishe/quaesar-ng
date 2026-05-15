@@ -46,6 +46,8 @@ void RegistersView::drawContentImp() {
     if (!vm)
         return;
     IVm::Cpu* cpu = vm->cpu;
+    if (!cpu)
+        return;
 
     QImPushFloatLock st;
     st.pushFloat(&ImGui::GetStyle().CellPadding.y, 0);

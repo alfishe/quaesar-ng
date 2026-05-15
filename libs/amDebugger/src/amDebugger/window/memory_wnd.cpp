@@ -85,7 +85,7 @@ static uint8_t read_mem_imp(const uint8_t *data, size_t addr)
     if (!pBank->isAddrIn((AddrRef)addr))
     {
         IVm::VM* vm = pMemView->getVm();
-        if (!vm)
+        if (!vm || !vm->mem)
             return 0xff;
         pBank = vm->mem->findBankByAddr((AddrRef)addr);
         pMemView->m_pLastBank = pBank;

@@ -100,7 +100,7 @@ void ScreenWnd::grabScreenToTexture(Debugger* dbg)
             int vbSizeX = 0;
             int vbSizeY = 0;
             int vbPitch = 0;
-            void* scrBuf = vm->blitter->getScreenPixBuf(0, &vbSizeX, &vbSizeY, &vbPitch);
+            void* scrBuf = vm->blitter ? vm->blitter->getScreenPixBuf(0, &vbSizeX, &vbSizeY, &vbPitch) : nullptr;
 
             if (scrBuf)
             {
