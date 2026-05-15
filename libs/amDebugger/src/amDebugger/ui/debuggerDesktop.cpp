@@ -225,55 +225,41 @@ void DebuggerDesktop::drawImGuiMainFrame()
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
-        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: A - Begin OK");
-        _drawMainMenuBar();
-        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: B - menu done");
-        _drawToolBar();
-        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: C - toolbar done");
         ImGuiID dockspaceId = ImGui::GetID("DockSpace");
         ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: D - dockspace done");
 
-        // On the first frame, check if the dockspace has child nodes.
-        // If the .ini layout failed to load (or dock nodes were pruned), build it programmatically.
-        static bool s_layoutChecked = false;
-        if (!s_layoutChecked)
+        // Build default layout on first frame if needed
+        static bool s_layoutBuilt = false;
+        if (!s_layoutBuilt)
         {
-            s_layoutChecked = true;
+            s_layoutBuilt = true;
             ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
             bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
-            SDL_Log("Debugger dockspace: root=%p hasChildren=%d IniFilename='%s'",
-                (void*)rootNode, hasChildren ? 1 : 0,
-                ImGui::GetIO().IniFilename ? ImGui::GetIO().IniFilename : "(null)");
             if (!hasChildren)
-            {
-                SDL_Log("Debugger dockspace: building default layout via DockBuilder");
                 _buildDefaultDockLayout(dockspaceId);
-            }
-            else
-            {
-                SDL_Log("Debugger dockspace: loaded layout from ini, nodes exist");
-            }
         }
 
-        // draw static nodes
-        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: E - before drawContentImp, numChildren=%d", getNumChild());
-        this->drawContentImp();
-        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: F - after drawContentImp");
+        // Only draw content when VM is fully bound - avoids layout jumps during init
+        if (m_pDbgApp && m_pDbgApp->m_bFullyInitialized)
+        {
+            _drawMainMenuBar();
+            _drawToolBar();
+            this->drawContentImp();
 
-        qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
-        pOpMgr->testOperationsShortcuts_<
-            // clang-format off
-              amD::operation::DisasmTraceStepInto
-            , amD::operation::DebugWaitScanLines
-            , amD::operation::VmPlayerWndAlwaysOnTop
-            , amD::operation::DebugTraceContinue
-            , amD::operation::DebugTraceStart
-            , amD::operation::DisasmToggleBreakpoint
-            , amD::operation::CopperTraceStep
-            , amD::operation::CopperToggleBreakpoint
-            // clang-format on
-            >(this);
+            qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
+            pOpMgr->testOperationsShortcuts_<
+                // clang-format off
+                  amD::operation::DisasmTraceStepInto
+                , amD::operation::DebugWaitScanLines
+                , amD::operation::VmPlayerWndAlwaysOnTop
+                , amD::operation::DebugTraceContinue
+                , amD::operation::DebugTraceStart
+                , amD::operation::DisasmToggleBreakpoint
+                , amD::operation::CopperTraceStep
+                , amD::operation::CopperToggleBreakpoint
+                // clang-format on
+                >(this);
+        }
     }
     ImGui::End();
 }

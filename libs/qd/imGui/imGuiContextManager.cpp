@@ -134,6 +134,11 @@ void QImGuiContext::render(qd::Color clear_color) {
 
     ImGuiIO& io = getIO();
     ImGui::Render();
+
+    ImDrawData* drawData = ImGui::GetDrawData();
+    if (!drawData || drawData->TotalVtxCount == 0)
+        return; // No content - keep previous frame visible
+
     SDL_RenderSetScale(m_pRenderer, io.DisplayFramebufferScale.x, io.DisplayFramebufferScale.y);
 
     if (clear_color.a) {
@@ -141,7 +146,7 @@ void QImGuiContext::render(qd::Color clear_color) {
         SDL_RenderClear(m_pRenderer);
     }
 
-    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), m_pRenderer);
+    ImGui_ImplSDLRenderer2_RenderDrawData(drawData, m_pRenderer);
     SDL_RenderPresent(m_pRenderer);
 }
 

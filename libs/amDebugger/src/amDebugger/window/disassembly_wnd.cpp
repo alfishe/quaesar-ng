@@ -113,6 +113,7 @@ void DisassemblyView::drawContentImp()
         ImGuiTableFlags_SizingFixedFit; // | ImGuiTableFlags_ScrollY;
 
     int nReqLine = find_disasm_addr_line_idx(m_vDisasmLines, m_mustViewAddr);
+    int nDrawStartLine = (nReqLine >= 0) ? nReqLine : 0;
 
     // Disasm Ctrl
     if (ImGui::BeginTable("##disassembly", 4, flags, ImVec2(0, disWndSizeY)))
@@ -128,7 +129,7 @@ void DisassemblyView::drawContentImp()
 
         const BreakpointsSortedList& bpList = dbg->getBreakpointsSorted();
 
-        for (size_t i = (size_t)nReqLine; i < m_vDisasmLines.size(); ++i)
+        for (size_t i = (size_t)nDrawStartLine; i < m_vDisasmLines.size(); ++i)
         {
             const cda::Item& entry = *m_vDisasmLines[i];
             ImGui::TableNextRow(ImGuiTableRowFlags_None, row_min_height);

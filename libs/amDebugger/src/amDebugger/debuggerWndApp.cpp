@@ -135,6 +135,11 @@ void DebuggerApp::createRenderWindow()
         return;
     }
     m_pWindow = window;
+
+    // Clear framebuffer to gray immediately to avoid red/garbage flash
+    SDL_SetRenderDrawColor(m_pWndRenderer, 128, 128, 128, 255);
+    SDL_RenderClear(m_pWndRenderer);
+    SDL_RenderPresent(m_pWndRenderer);
 }
 
 
@@ -196,23 +201,28 @@ void DebuggerApp::destroy()
 
 void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
 {
-    if (isWndVisible())
+    if (!isWndVisible())
     {
-        // Wait for full initialization before first render to avoid race conditions
-        if (!m_bFullyInitialized)
-            return;
+        m_pQimGuiCtx->skipFrame();
+        return;
+    }
 
-        // Safety: ensure GUI and debugger are fully initialized before rendering
-        if (!m_pGui || !m_pDebugger)
-            return;
+    // Throttle to ~15 FPS to reduce flickering
+    uint64_t now = SDL_GetTicks64();
+    if (now - m_lastRenderTimeMs < kMinFrameIntervalMs)
+    {
+        m_pQimGuiCtx->skipFrame();
+        return;
+    }
+    m_lastRenderTimeMs = now;
 
-        m_pQimGuiCtx->newFrame();
+    m_pQimGuiCtx->newFrame();
+    if (m_bFullyInitialized && m_pGui && m_pDebugger)
+    {
         getDbg()->fetchVmState();
         m_pGui->drawImGuiMainFrame();
-        m_pQimGuiCtx->endFrame();
     }
-    else
-        m_pQimGuiCtx->skipFrame();
+    m_pQimGuiCtx->endFrame();
 }
 
 
@@ -236,6 +246,11 @@ void DebuggerApp::setWndVisible(bool v)
 {
     if (v)
     {
+        // Clear to gray before showing to avoid uninitialized framebuffer flash
+        SDL_SetRenderDrawColor(m_pWndRenderer, 128, 128, 128, 255);
+        SDL_RenderClear(m_pWndRenderer);
+        SDL_RenderPresent(m_pWndRenderer);
+
         SDL_ShowWindow(m_pWindow);
         setPartRenderable(true);
     }
