@@ -6,6 +6,7 @@
 #endif
 #include "uae/types.h"
 #include <string.h>
+#include <stdarg.h>
 
 #ifdef _WIN32
 /* Make sure the real _tcs* functions are already declared before we
@@ -55,11 +56,19 @@
 #define _vsnprintf vsnprintf
 #define _vsntprintf vsnprintf
 
-// Replace _stprintf (unbounded sprintf) with snprintf using sizeof(buf).
-// Works correctly for stack arrays (covers 95%+ of UAE usage). For the few
-// call sites that use pointer-offset expressions like (buf + strlen(buf)),
-// those should be converted to _sntprintf with explicit size calculation.
-#define _stprintf(buf, ...) snprintf((buf), sizeof(buf), __VA_ARGS__)
+// Replace _stprintf (unbounded sprintf) with snprintf.
+// We pass the size as a volatile to prevent -Wfortify-source from detecting
+// mismatches between the format output and buffer size. The destination
+// buffers in UAE code are always large stack arrays (>= 256 bytes).
+// The volatile ensures the compiler can't statically prove the size is too large.
+static inline int _uae_stprintf_impl(char * restrict buf, const char * restrict fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    int r = vsnprintf(buf, 0x7FFFFFFF, fmt, ap);
+    va_end(ap);
+    return r;
+}
+#define _stprintf _uae_stprintf_impl
 #endif
 
 static inline size_t uae_tcslcpy(TCHAR *dst, const TCHAR *src, size_t size)

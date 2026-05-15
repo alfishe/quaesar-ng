@@ -1446,7 +1446,7 @@ static void audio_event_reset (void)
 	for (i = 0; i < AUDIO_CHANNELS_PAULA; i++)
 		zerostate (i);
 	for (i = 0; i < audio_total_extra_streams; i++)
-		audio_stream[i].evtime = MAX_EV;
+		audio_stream[i].evtime = (int)MAX_EV;
 	schedule_audio ();
 	events_schedule ();
 	samplecnt = 0;
@@ -1758,7 +1758,7 @@ static bool audio_state_channel2 (int nr, bool perfin)
 	{
 	case 0:
 		if (chan_ena) {
-			cdp->evtime = MAX_EV;
+			cdp->evtime = (int)MAX_EV;
 			cdp->state = 1;
 			setdr(nr, true);
 			cdp->wlen = cdp->len;
@@ -2012,12 +2012,12 @@ void audio_reset (void)
 		for (i = 0; i < AUDIO_CHANNELS_PAULA; i++) {
 			cdp = &audio_channel[i];
 			memset (cdp, 0, sizeof *audio_channel);
-			cdp->per = PERIOD_MAX - 1;
+			cdp->per = (int)(PERIOD_MAX - 1);
 			cdp->data.mixvol = 0;
-			cdp->evtime = MAX_EV;
+			cdp->evtime = (int)MAX_EV;
 		}
 		for (i = 0; i < AUDIO_CHANNEL_STREAMS; i++) {
-			audio_stream[i].evtime = MAX_EV;
+			audio_stream[i].evtime = (int)MAX_EV;
 		}
 	}
 	audio_total_extra_streams = 0;
@@ -2780,7 +2780,7 @@ uae_u8 *restore_audio (int nr, uae_u8 *src)
 	acd->len = restore_u16 ();
 	acd->wlen = restore_u16 ();
 	uae_u16 p = restore_u16 ();
-	acd->per = p ? p * CYCLE_UNIT : PERIOD_MAX;
+	acd->per = p ? p * CYCLE_UNIT : (int)PERIOD_MAX;
 	acd->dat = acd->dat2 = restore_u16 ();
 	acd->lc = restore_u32 ();
 	acd->pt = restore_u32 ();

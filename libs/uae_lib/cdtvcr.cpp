@@ -244,7 +244,8 @@ static void cdtvcr_4510_reset(uae_u8 v)
 	cdtvcr_4510_ram[CDTVCR_PLAYLIST_TIME_MODE] = 2;
 	uae_sem_wait (&sub_sem);
 	memset (subcodebufferinuse, 0, sizeof subcodebufferinuse);
-	subcodebufferoffsetw = subcodebufferoffset = 0;
+	subcodebufferoffset = 0;
+	subcodebufferoffsetw = 0;
 	uae_sem_post (&sub_sem);
 
 	if (ismedia())
@@ -404,7 +405,8 @@ static void subfunc(uae_u8 *data, int cnt)
 	uae_sem_wait(&sub_sem);
 	if (subcodebufferinuse[subcodebufferoffsetw]) {
 		memset (subcodebufferinuse, 0,sizeof (subcodebufferinuse));
-		subcodebufferoffsetw = subcodebufferoffset = 0;
+		subcodebufferoffset = 0;
+	subcodebufferoffsetw = 0;
 	} else {
 		int offset = subcodebufferoffsetw;
 		while (cnt > 0) {
@@ -943,9 +945,9 @@ static void CDTVCR_hsync_handler (void)
 				d[cdtvcr_4510_ram[CDTVCR_SUBBANK] + i] = subcodebuffer[subcodebufferoffset * SUB_CHANNEL_SIZE + i] & 0x3f;
 			}
 			subcodebufferinuse[subcodebufferoffset] = 0;
-			subcodebufferoffset++;
+			subcodebufferoffset = subcodebufferoffset + 1;
 			if (subcodebufferoffset >= MAX_SUBCODEBUFFER)
-				subcodebufferoffset -= MAX_SUBCODEBUFFER;
+				subcodebufferoffset = subcodebufferoffset - MAX_SUBCODEBUFFER;
 			uae_sem_post (&sub_sem);
 			if (cdtvcr_4510_ram[CDTVCR_CD_SUBCODES])
 				cdtvcr_4510_ram[CDTVCR_INTREQ] |= 2;
