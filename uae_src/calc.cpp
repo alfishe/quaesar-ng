@@ -101,9 +101,9 @@ static unsigned int op_arg_count(const TCHAR c)
     return 0;
 }
  
-#define is_operator(c)  (c == '+' || c == '-' || c == '/' || c == '*' || c == '!' || c == '%' || c == '=' || \
-                         c == '|' || c == '&' || c == '^' || c == '@' || c == ('@' | 0x80) || c == '>' || c == '<' || c == ('>' | 0x80) || c == ('<' | 0x80) || \
-                         c == '?' || c == ':' || c == 0xf0 || c == 0xf1 || c == 0xf2)
+#define is_operator(c)  ((c) == '+' || (c) == '-' || (c) == '/' || (c) == '*' || (c) == '!' || (c) == '%' || (c) == '=' || \
+                         (c) == '|' || (c) == '&' || (c) == '^' || (c) == '@' || (unsigned char)(c) == ('@' | 0x80) || (c) == '>' || (c) == '<' || (unsigned char)(c) == ('>' | 0x80) || (unsigned char)(c) == ('<' | 0x80) || \
+                         (c) == '?' || (c) == ':' || (unsigned char)(c) == 0xf0 || (unsigned char)(c) == 0xf1 || (unsigned char)(c) == 0xf2)
 #define is_function(c)  (c >= 'A' && c <= 'Z')
 #define is_ident(c)     ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z'))
  
@@ -419,7 +419,7 @@ static bool docalcx(TCHAR op, double v1, double v2, double *valp)
 
 static bool docalc2(TCHAR op, struct calcstack *sv1, struct calcstack *sv2, double *valp, TCHAR *sp)
 {
-    *sp = NULL;
+    *sp = 0;
     *valp = 0;
     if (isstackstring(sv1) || isstackstring(sv2)) {
         TCHAR *v1 = stacktostring(sv1);
@@ -583,10 +583,10 @@ static bool execution_order(const TCHAR *input, double *outval, TCHAR *outstring
 				if (outval)
 					*outval = val;
                 if (outstring) {
-                    if (vals && _tcslen(vals) >= maxlen) {
+                    if (_tcslen(vals) >= maxlen) {
                         vals[maxlen] = 0;
                     }
-                    _tcscpy(outstring, vals ? vals : _T(""));
+                    _tcscpy(outstring, vals);
                 }
 				ok = true;
 		}
@@ -647,10 +647,10 @@ static bool parse_values(const TCHAR *ins, TCHAR *out)
             in[0] = 0xf0;
             in[1] = ' ';
         } else if (in[0] == '>' && in[1] == '>') {
-            in[0] = '>' | 0x80;
+            in[0] = (TCHAR)('>' | 0x80);
             in[1] = ' ';
         } else if (in[0] == '<' && in[1] == '<') {
-            in[0] = '<' | 0x80;
+            in[0] = (TCHAR)('<' | 0x80);
             in[1] = ' ';
         } else if (in[0] == '"' || in[0] == '\'') {
             TCHAR *quoted = in;
@@ -677,7 +677,7 @@ static bool parse_values(const TCHAR *ins, TCHAR *out)
             *(in + 1) = ' ';
         }
         if (*in == '!' && *(in + 1) == '=') {
-            *in = '@' | 0x80;
+            *in = (TCHAR)('@' | 0x80);
             *(in + 1) = ' ';
         }
         if (_totupper (*in) == 'R') {

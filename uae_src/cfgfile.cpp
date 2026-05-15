@@ -831,10 +831,10 @@ static void cfg_dowrite(struct zfile *f, const TCHAR *option, const TCHAR *optio
 		char *opt = ua(optionp);
 		if (target) {
 			char *tna = ua(TARGET_NAME);
-			sprintf(tmpa, "%s.%s.utf8=%s", tna, opt, tmp2);
+			snprintf(tmpa, sizeof(tmpa), "%s.%s.utf8=%s", tna, opt, tmp2);
 			xfree(tna);
 		} else {
-			sprintf(tmpa, "%s.utf8=%s", opt, tmp2);
+			snprintf(tmpa, sizeof(tmpa), "%s.utf8=%s", opt, tmp2);
 		}
 		xfree(opt);
 		zfile_fwrite(tmpa, strlen (tmpa), 1, f);
@@ -1273,7 +1273,7 @@ static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 			}
 		}
 		if (ci->controller_type_unit > 0)
-			_stprintf(hdcs + _tcslen(hdcs), _T("-%d"), ci->controller_type_unit + 1);
+			_sntprintf(hdcs + _tcslen(hdcs), sizeof(hdcs) - _tcslen(hdcs), _T("-%d"), ci->controller_type_unit + 1);
 
 		str1b = cfgfile_escape (str1, _T(":,"), true, false);
 		str1c = cfgfile_escape_min(str1);
@@ -2586,7 +2586,7 @@ void cfgfile_save_options (struct zfile *f, struct uae_prefs *p, int type)
 				if (tmp[0]) {
 					_tcscat(tmp, _T(","));
 				}
-				_stprintf(tmp + _tcslen(tmp), _T("%d"), i);
+				_sntprintf(tmp + _tcslen(tmp), MAX_DPATH - _tcslen(tmp), _T("%d"), i);
 			}
 		}
 		for (int i = 0; i < 8; i++) {
@@ -2594,7 +2594,7 @@ void cfgfile_save_options (struct zfile *f, struct uae_prefs *p, int type)
 				if (tmp[0]) {
 					_tcscat(tmp, _T(","));
 				}
-				_stprintf(tmp + _tcslen(tmp), _T("p%d"), i);
+				_sntprintf(tmp + _tcslen(tmp), MAX_DPATH - _tcslen(tmp), _T("p%d"), i);
 			}
 		}
 		cfgfile_dwrite_str(f, _T("genlock_effects"), tmp);
@@ -2870,7 +2870,7 @@ void cfgfile_save_options (struct zfile *f, struct uae_prefs *p, int type)
 			if (rbc->monitor_id) {
 				if (tmp2)
 					_tcscat(tmp2, _T(","));
-				_stprintf(tmp2 + _tcslen(tmp2), _T("monitor=%d"), rbc->monitor_id);
+				_sntprintf(tmp2 + _tcslen(tmp2), MAX_DPATH - _tcslen(tmp2), _T("monitor=%d"), rbc->monitor_id);
 			}
 			if (tmp2[0]) {
 				if (i > 0)

@@ -1951,19 +1951,19 @@ static void scan_library_list(uaecptr v, int *cntp)
 		for (int i = 0; i < libnamecnt; i++) {
 			struct libname *name = &libnames[i];
 			char n[256];
-			sprintf(n, "%s.library", name->aname);
+			snprintf(n, sizeof(n), "%s.library", name->aname);
 			if (!strcmp((char*)p, n)) {
 				name->base = v;
 				found = name;
 				break;
 			}
-			sprintf(n, "%s.device", name->aname);
+			snprintf(n, sizeof(n), "%s.device", name->aname);
 			if (!strcmp((char*)p, n)) {
 				name->base = v;
 				found = name;
 				break;
 			}
-			sprintf(n, "%s.resource", name->aname);
+			snprintf(n, sizeof(n), "%s.resource", name->aname);
 			if (!strcmp((char*)p, n)) {
 				name->base = v;
 				found = name;

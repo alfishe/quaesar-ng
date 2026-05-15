@@ -203,7 +203,7 @@ struct ini_data *ini_load(const TCHAR *path, bool sort)
 				struct ini_line *il = ini.inidata[c];
 				if (il && !_tcscmp(il->section, section)) {
 					section_id++;
-					_stprintf(section + _tcslen(section), _T("|%d"), section_id);
+					_sntprintf(section + _tcslen(section), MAX_DPATH - _tcslen(section), _T("|%d"), section_id);
 					break;
 				}
 			}

@@ -1093,9 +1093,9 @@ static void fp_from_pack (fpdata *src, uae_u32 *wrd, int kfactor)
 	fp_to_native(&fp, src);
 
 #ifdef USE_LONG_DOUBLE
-	sprintf (str, "%#.17Le", fp);
+	snprintf (str, sizeof(str), "%#.17Le", fp);
 #else
-	sprintf (str, "%#.17e", fp);
+	snprintf (str, sizeof(str), "%#.17e", fp);
 #endif
 	
 	// get exponent

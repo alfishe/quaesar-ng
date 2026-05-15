@@ -918,7 +918,7 @@ static void do_tod_hack(bool dotod)
 	if (rate <= 0)
 		return;
 	if (rate != oldrate || (cia[0].tod & 0xfff) != (tod_hack_tod_last & 0xfff)) {
-		write_log(_T("TOD HACK reset %d,%d %ld,%lld\n"), rate, oldrate, cia[0].tod, tod_hack_tod_last);
+		write_log(_T("TOD HACK reset %d,%d %d,%lld\n"), rate, oldrate, (int)cia[0].tod, (long long)tod_hack_tod_last);
 		tod_hack_reset();
 		oldrate = rate;
 		docount = 1;
@@ -2032,7 +2032,7 @@ static void WriteCIAA(uae_u16 addr, uae_u8 val, uae_u32 *flags)
 			if (kblostsynccnt > 0 && currprefs.cs_kbhandshake) {
 				evt_t len = get_cycles() - kbhandshakestart;
 				if (len < currprefs.cs_kbhandshake * CYCLE_UNIT) {
-					write_log(_T("Keyboard handshake pulse length %d < %d (CCKs)\n"), len / CYCLE_UNIT, currprefs.cs_kbhandshake);
+					write_log(_T("Keyboard handshake pulse length %lld < %d (CCKs)\n"), (long long)(len / CYCLE_UNIT), currprefs.cs_kbhandshake);
 				}
 			}
 			kblostsynccnt = 0;

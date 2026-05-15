@@ -2228,7 +2228,7 @@ static int get_acorn_filename(struct iso_directory_record *de, char *retname, st
 		*retname = '!';
 	if (((de->flags[0] & 2) == 0) && (chr[13] == 0xff) && ((chr[12] & 0xf0) == 0xf0)) {
 		retname[retnamlen] = ',';
-		sprintf(retname+retnamlen+1, "%3.3x",
+		snprintf(retname+retnamlen+1, 4, "%3.3x",
 			((chr[12] & 0xf) << 8) | chr[11]);
 		retnamlen += 4;
 	}
