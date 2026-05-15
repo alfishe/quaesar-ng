@@ -193,13 +193,17 @@ if (MSVC)
 else()
     target_compile_options(uae_lib PRIVATE "-Wno-conversion" "-Wno-sign-conversion")
     target_compile_options(uae_lib PRIVATE "-Wno-unused-variable" "-Wno-unused-but-set-variable")
-    if (APPLE)
-        # Clang on macOS warns about volatile increment/decrement/assignment,
-        # deprecated sprintf, and char-vs-constant comparisons in the UAE codebase.
+    # GCC and Clang share some warning names; others are Clang-only.
+    # Gate by compiler detection so both Linux Clang and macOS Clang are covered.
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         target_compile_options(uae_lib PRIVATE
             "-Wno-deprecated-volatile"
             "-Wno-deprecated-declarations"
             "-Wno-tautological-constant-out-of-range-compare"
+            "-Wno-format")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_compile_options(uae_lib PRIVATE
+            "-Wno-deprecated-declarations"
             "-Wno-format")
     endif()
 endif()
