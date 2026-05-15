@@ -147,9 +147,12 @@ void DebuggerDesktop::createAllUiWndows()
             continue;
         }
         UiViewCreateCtx cv(this);
-        amD::AmDbgWindow* pCurWnd = pCreateAttr->makeInstance_<amD::AmDbgWindow>(cv);
+        amD::AmDbgWindow* pCurWnd = pCreateAttr->makeInstance_<amD::AmDbgWindow>(&cv);
         assert(pCurWnd);
         addChild(pCurWnd);
+        SDL_Log("createAllUiWndows: child[%zu]=%p class='%s' title='%s'",
+                i, (void*)pCurWnd, pCurWindowType->getFullName().c_str(),
+                pCurWnd->getText().c_str());
     }
 }
 
@@ -222,10 +225,14 @@ void DebuggerDesktop::drawImGuiMainFrame()
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
+        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: A - Begin OK");
         _drawMainMenuBar();
+        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: B - menu done");
         _drawToolBar();
+        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: C - toolbar done");
         ImGuiID dockspaceId = ImGui::GetID("DockSpace");
         ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: D - dockspace done");
 
         // On the first frame, check if the dockspace has child nodes.
         // If the .ini layout failed to load (or dock nodes were pruned), build it programmatically.
@@ -250,7 +257,9 @@ void DebuggerDesktop::drawImGuiMainFrame()
         }
 
         // draw static nodes
+        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: E - before drawContentImp, numChildren=%d", getNumChild());
         this->drawContentImp();
+        SDL_Log("DebuggerDesktop::drawImGuiMainFrame: F - after drawContentImp");
 
         qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
         pOpMgr->testOperationsShortcuts_<
