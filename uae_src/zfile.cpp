@@ -10,6 +10,12 @@
 #define RECURSIVE_ARCHIVES 1
 //#define ZFILE_DEBUG
 
+// Suppress warnings for legacy UAE zfile code
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#pragma clang diagnostic ignored "-Wsign-compare"
+
 #include "sysconfig.h"
 #include "sysdeps.h"
 
