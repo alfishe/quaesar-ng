@@ -1701,7 +1701,7 @@ static bool load_extendedkickstart (const TCHAR *romextfile, int type)
 		} else if (currprefs.cs_cdtvcd || currprefs.cs_cdtvram) {
 			extendedkickmem_type = EXTENDED_ROM_CDTV;
 		} else if (size > 300000) {
-			uae_u8 data[2] = { 0 };
+			uae_u8 data[2] = {}; 
 			zfile_fseek(f, off, SEEK_SET);
 			zfile_fread(data, sizeof(data), 1, f);
 			if (data[0] == 0x11 && data[1] == 0x11) {
@@ -1935,7 +1935,7 @@ static int load_kickstart (void)
 		int extpos = 0;
 		bool singlebigrom = false;
 
-		uae_u8 tmp[8] = { 0 };
+		uae_u8 tmp[8] = {}; 
 		zfile_fread(tmp, sizeof tmp, 1, f);
 
 		maxsize = ROM_SIZE_512;
@@ -2215,7 +2215,7 @@ bool mapped_malloc (addrbank *ab)
 		}
 	}
 
-	struct uae_mman_data md = { 0 };
+	struct uae_mman_data md = {}; 
 	uaecptr start = ab->start;
 	if (uae_mman_info(ab, &md)) {
 		start = md.start;
@@ -2926,7 +2926,7 @@ bool read_kickstart_version(struct uae_prefs *p)
 	struct zfile *z = get_kickstart_filehandle(p);
 	if (!z)
 		return false;
-	uae_u8 mem[32] = { 0 };
+	uae_u8 mem[32] = {}; 
 	read_kickstart(z, mem, sizeof mem, 0, 0);
 	zfile_fclose(z);
 	kickstart_version = (mem[12] << 8) | mem[13];

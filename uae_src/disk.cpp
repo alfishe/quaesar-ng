@@ -139,7 +139,7 @@ static int indexdecay;
 static uae_u8 prev_data;
 static int prev_step;
 static bool initial_disk_statusline;
-static struct diskinfo disk_info_data = { 0 };
+static struct diskinfo disk_info_data = {}; 
 static bool amax_enabled;
 static bool disk_strobe;
 
@@ -778,6 +778,9 @@ static void drive_image_free (drive *drv)
 		fdi2raw_header_free(drv->fdi);
 		drv->fdi = 0;
 #endif
+		break;
+	default:
+		// Other file types (ADF_NONE, ADF_NORMAL, ADF_EXT1, etc.) don't need cleanup
 		break;
 	}
 	drv->filetype = ADF_NONE;
@@ -1830,7 +1833,7 @@ static void drive_step(drive *drv, int step_direction)
 #endif
 
 	if (drv->steplimit && get_cycles() - drv->steplimitcycle < MIN_STEPLIMIT_CYCLE) {
-		write_log (_T(" step ignored drive %ld, %lu\n"),
+		write_log (_T(" step ignored drive %ld, %lld\n"),
 			drv - floppy, (get_cycles() - drv->steplimitcycle) / CYCLE_UNIT);
 		return;
 	}
@@ -2953,6 +2956,9 @@ static void drive_write_data (drive * drv)
 		}
 		break;
 #endif
+	default:
+		// Other file types don't need special handling
+		break;
 	}
 	drv->tracktiming[0] = 0;
 }
@@ -3878,6 +3884,9 @@ static void fetchnextrevolution (drive *drv)
 		drv->trackspeed = get_floppy_speed_from_image(drv);
 		break;
 #endif
+	default:
+		// Other file types don't need revolution loading
+		break;
 	}
 }
 
@@ -5660,7 +5669,7 @@ int DISK_examine_image(struct uae_prefs *p, int num, struct diskinfo *di, bool d
 	drive *drv = &floppy[num];
 	uae_u32 dos, crc, crc2;
 	int wasdelayed = drv->dskchange_time;
-	int sectable[MAX_SECTORS] = { 0 };
+	int sectable[MAX_SECTORS] = {}; 
 	int oldcyl, oldside, mfmpos;
 	uae_u32 v = 0;
 #ifdef FLOPPYBRIDGE
@@ -6315,7 +6324,7 @@ bool disk_reserved_getinfo(int num, struct floppy_reserved *fr)
 				drv->cyl = cyl;
 				side = side2;
 				if (ok) {
-					write_log(_T("Created  internal PC disk image cyl=%d secs=%d size=%d\n"), drv->num_tracks / 2, drv->num_secs, zfile_size(z));
+					write_log(_T("Created  internal PC disk image cyl=%d secs=%d size=%lld\n"), drv->num_tracks / 2, drv->num_secs, zfile_size(z));
 					drv->pcdecodedfile = z;
 				} else {
 					write_log(_T("Failed to create internal PC disk image\n"));

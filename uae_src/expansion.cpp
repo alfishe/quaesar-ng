@@ -264,8 +264,8 @@ uaecptr expamem_z3_highram_real, expamem_z3_highram_uae;
 uaecptr expamem_highmem_pointer;
 uae_u32 expamem_board_size;
 uaecptr expamem_board_pointer;
-static uae_u8 slots_e8[8] = { 0 };
-static uae_u8 slots_20[(8 * 1024 * 1024) / 65536] = { 0 };
+static uae_u8 slots_e8[8] = {}; 
+static uae_u8 slots_20[(8 * 1024 * 1024) / 65536] = {}; 
 
 static int z3hack_override;
 
@@ -610,7 +610,7 @@ void expamem_next(addrbank *mapped, addrbank *next)
 			break;
 		}
 		if (ec->initrc && isnonautoconfig(ec->zorro)) {
-			struct autoconfig_info aci = { 0 };
+			struct autoconfig_info aci = {}; 
 			aci.doinit = true;
 			aci.prefs = &currprefs;
 			aci.rc = cards[ecard]->rc;
@@ -1614,7 +1614,7 @@ static bool fastmem_autoconfig(struct uae_prefs *p, struct autoconfig_info *aci,
 	uae_u8 flags = 0;
 	DEVICE_MEMORY_CALLBACK dmc = NULL;
 	struct romconfig *dmc_rc = NULL;
-	uae_u8 ac[16] = { 0 };
+	uae_u8 ac[16] = {}; 
 	int boardnum = aci->devnum;
 	bool canforceac = false;
 
@@ -2967,7 +2967,7 @@ static void set_order(struct uae_prefs *p, struct card_data *cd, int order)
 	if (!cd)
 		return;
 	if (cd->aci.set_params) {
-		struct expansion_params parms = { 0 };
+		struct expansion_params parms = {}; 
 		parms.device_order = order;
 		if (cd->aci.set_params(p, &parms))
 			return;
@@ -5015,7 +5015,7 @@ static void fastlane_memory_callback(struct romconfig *rc, uae_u8 *ac, int size)
 	struct zfile *z = read_device_from_romconfig(rc, NULL);
 	if (z) {
 		// load autoconfig data from rom file
-		uae_u8 act[16] = { 0 };
+		uae_u8 act[16] = {}; 
 		zfile_fseek(z, 0x80, SEEK_SET);
 		zfile_fread(act, 1, 16, z);
 		zfile_fclose(z);

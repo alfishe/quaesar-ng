@@ -1696,7 +1696,7 @@ static TCHAR *tochar (uae_u8 *s, int len)
 
 struct zvolume *archive_directory_rdb (struct zfile *z)
 {
-	uae_u8 buf[512] = { 0 };
+	uae_u8 buf[512] = {}; 
 	int partnum, bs;
 	TCHAR *devname;
 	struct zvolume *zv;
@@ -1784,7 +1784,7 @@ static struct zfile *archive_access_rdb (struct znode *zn)
 {
 	struct zfile *z = zn->volume->archive;
 	struct zfile *zf;
-	uae_u8 buf[512] = { 0 };
+	uae_u8 buf[512] = {}; 
 	int surf, spb, spt, lowcyl, highcyl;
 	int block, blocksize;
 	uae_s64 size;
@@ -2022,7 +2022,7 @@ static void fatdirectory (struct zfile *z, struct zvolume *zv, const TCHAR *name
 
 struct zvolume *archive_directory_fat (struct zfile *z)
 {
-	uae_u8 buf[512] = { 0 };
+	uae_u8 buf[512] = {}; 
 	int fatbits = 12;
 	struct zvolume *zv;
 	int rootdir, reserved, sectorspercluster;
@@ -2050,7 +2050,7 @@ struct zvolume *archive_directory_fat (struct zfile *z)
 
 static struct zfile *archive_access_fat (struct znode *zn)
 {
-	uae_u8 buf[512] = { 0 };
+	uae_u8 buf[512] = {}; 
 	int fatbits = 12;
 	uae_s64 size = zn->size;
 	struct zfile *sz, *dz;

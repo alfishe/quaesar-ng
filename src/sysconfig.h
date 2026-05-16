@@ -12,9 +12,12 @@
 #include "winuae_compat.h"
 #endif
 
+// MSVC-specific pragma warnings
+#ifdef _MSC_VER
 #pragma warning(disable : 4761)
 #pragma warning(disable : 4996)
 #pragma warning(disable : 4018)
+#endif
 
 #define DIRECTINPUT_VERSION 0x0800
 #define DIRECT3D_VERSION 0x0900

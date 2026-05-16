@@ -1430,7 +1430,7 @@ void apollo_add_scsi_unit(int ch, struct uaedev_config_info *ci, struct romconfi
 	if (ch < 0) {
 		generic_soft_scsi_add(-1, ci, rc, NONCR_APOLLO, -1, -1, ROMTYPE_APOLLO);
 		// make sure IDE side is also initialized
-		struct uaedev_config_info ci2 = { 0 };
+		struct uaedev_config_info ci2 = {}; 
 		apollo_add_ide_unit(-1, &ci2, rc);
 	} else {
 		if (ci->controller_type < HD_CONTROLLER_TYPE_SCSI_FIRST) {

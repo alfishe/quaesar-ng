@@ -582,7 +582,7 @@ int hdf_hd_open (struct hd_hardfiledata *hfd)
 	hfd->secspertrack_def = hfd->secspertrack;
 	hfd->heads_def = hfd->heads;
 	if (ci->surfaces && ci->sectors) {
-		uae_u8 buf[512] = { 0 };
+		uae_u8 buf[512] = {}; 
 		hdf_read (&hfd->hfd, buf, 0, 512, &error);
 		if (!error && buf[0] != 0 && memcmp (buf, _T("RDSK"), 4)) {
 			ci->highcyl = (int)((hfd->hfd.virtsize / ci->blocksize) / (ci->sectors * ci->surfaces));
@@ -1070,7 +1070,7 @@ int vhd_create (const TCHAR *name, uae_u64 size, uae_u32 dostype)
 	zf = NULL;
 
 	if (dostype) {
-		uae_u8 bootblock[512] = { 0 };
+		uae_u8 bootblock[512] = {}; 
 		bootblock[0] = dostype >> 24;
 		bootblock[1] = dostype >> 16;
 		bootblock[2] = dostype >>  8;

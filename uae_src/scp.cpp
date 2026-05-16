@@ -70,7 +70,7 @@ static struct scpdrive drive[4];
 int scp_open(struct zfile *zf, int drv, int *num_tracks)
 {
     struct scpdrive *d = &drive[drv];
-	uint8_t header[0x10] = { 0 };
+	uint8_t header[0x10] = {}; 
 
     scp_close(drv);
 

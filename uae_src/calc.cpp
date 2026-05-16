@@ -583,7 +583,7 @@ static bool execution_order(const TCHAR *input, double *outval, TCHAR *outstring
 				if (outval)
 					*outval = val;
                 if (outstring) {
-                    if (_tcslen(vals) >= maxlen) {
+                    if (_tcslen(vals) >= (size_t)maxlen) {
                         vals[maxlen] = 0;
                     }
                     _tcscpy(outstring, vals);
@@ -794,7 +794,7 @@ int calc(const TCHAR *input, double *outval, TCHAR *outstring, int maxlen)
 
 bool iscalcformula (const TCHAR *formula)
 {
-	for (int i = 0; i < _tcslen (formula); i++) {
+	for (size_t i = 0; i < _tcslen (formula); i++) {
 		TCHAR c = formula[i];
 		if (is_operator (c))
 			return true;

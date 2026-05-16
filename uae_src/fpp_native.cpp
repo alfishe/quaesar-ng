@@ -1372,9 +1372,9 @@ void fp_init_native(void)
 double softfloat_tan(double v)
 {
 #if SOFTFLOAT_CONVERSIONS
-	struct float_status f = { 0 };
+	struct float_status f = {}; 
 	uae_u32 w1, w2;
-	fpdata fpd = { 0 };
+	fpdata fpd = {}; 
 
 	fpd.fp = v;
 	set_floatx80_rounding_precision(80, &f);

@@ -281,7 +281,7 @@ static int needs_dbentry (a_inode *aino)
 
 static void write_aino (FILE *f, a_inode *aino)
 {
-	uae_u8 buf[1 + 4 + 257 + 257 + 81] = { 0 };
+	uae_u8 buf[1 + 4 + 257 + 257 + 81] = {}; 
 
 	buf[0] = aino->needs_dbentry ? 1 : 0;
 	do_put_mem_long ((uae_u32 *)(buf + 1), aino->amigaos_mode);

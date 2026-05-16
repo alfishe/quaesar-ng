@@ -1280,7 +1280,7 @@ static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 		str2b = cfgfile_escape (str2, _T(":,"), true, false);
 		if (ci->type == UAEDEV_DIR) {
 			_stprintf (tmp, _T("%s,%s:%s:%s,%d"), ci->readonly ? _T("ro") : _T("rw"),
-				ci->devname ? ci->devname : _T(""), ci->volname, str1c, bp);
+				ci->devname[0] ? ci->devname : _T(""), ci->volname, str1c, bp);
 			cfgfile_write_str (f, _T("filesystem2"), tmp);
 			_tcscpy (tmp3, tmp);
 #if 0
@@ -1295,12 +1295,12 @@ static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 			TCHAR *sgeometry = cfgfile_escape(ci->geometry, NULL, true, false);
 			_stprintf (tmp, _T("%s,%s:%s,%d,%d,%d,%d,%d,%s,%s"),
 				ci->readonly ? _T("ro") : _T("rw"),
-				ci->devname ? ci->devname : _T(""), str1c,
+				ci->devname[0] ? ci->devname : _T(""), str1c,
 				ci->sectors, ci->surfaces, ci->reserved, ci->blocksize,
 				bp, ci->filesys[0] ? sfilesys : _T(""), hdcs);
 			_stprintf (tmp3, _T("%s,%s:%s%s%s,%d,%d,%d,%d,%d,%s,%s"),
 				ci->readonly ? _T("ro") : _T("rw"),
-				ci->devname ? ci->devname : _T(""), str1b, str2b[0] ? _T(":") : _T(""), str2b,
+				ci->devname[0] ? ci->devname : _T(""), str1b, str2b[0] ? _T(":") : _T(""), str2b,
 				ci->sectors, ci->surfaces, ci->reserved, ci->blocksize,
 				bp, ci->filesys[0] ? sfilesys : _T(""), hdcs);
 			if (ci->highcyl || ci->physical_geometry || ci->geometry[0]) {
@@ -2080,7 +2080,7 @@ void cfgfile_save_options (struct zfile *f, struct uae_prefs *p, int type)
 		if (p->floppyslots[i].dfxsubtype) {
 			_stprintf(tmp, _T("floppy%dsubtype"), i);
 			cfgfile_dwrite(f, tmp, _T("%d"), p->floppyslots[i].dfxsubtype);
-			if (p->floppyslots[i].dfxsubtypeid) {
+			if (p->floppyslots[i].dfxsubtypeid[0]) {
 				_stprintf(tmp, _T("floppy%dsubtypeid"), i);
 				cfgfile_dwrite_escape(f, tmp, _T("%s"), p->floppyslots[i].dfxsubtypeid);
 			}
@@ -2868,7 +2868,7 @@ void cfgfile_save_options (struct zfile *f, struct uae_prefs *p, int type)
 				_stprintf(tmp2, _T("order=%d"), rbc->device_order);
 			}
 			if (rbc->monitor_id) {
-				if (tmp2)
+				if (tmp2[0])
 					_tcscat(tmp2, _T(","));
 				_sntprintf(tmp2 + _tcslen(tmp2), MAX_DPATH - _tcslen(tmp2), _T("monitor=%d"), rbc->monitor_id);
 			}
@@ -4459,7 +4459,7 @@ static int cfgfile_parse_host (struct uae_prefs *p, TCHAR *option, TCHAR *value)
 		bool cmdmode = false, defaultdata = false;
 		float rate = -1;
 		int rpct = 0;
-		TCHAR cmd[MAX_DPATH], filter[64] = { 0 }, label[16] = { 0 };
+		TCHAR cmd[MAX_DPATH], filter[64] = { 0 }, label[16] = {}; 
 		TCHAR *tmpp = tmpbuf;
 		TCHAR *end = tmpbuf + _tcslen (tmpbuf);
 		cmd[0] = 0;
@@ -4739,9 +4739,9 @@ struct uaedev_config_data *add_filesys_config (struct uae_prefs *p, int index, s
 	struct uaedev_config_data *uci;
 	int i;
 
-	if (index < 0 && (ci->type == UAEDEV_DIR || ci->type == UAEDEV_HDF) && ci->devname && _tcslen (ci->devname) > 0) {
+	if (index < 0 && (ci->type == UAEDEV_DIR || ci->type == UAEDEV_HDF) && ci->devname[0] && _tcslen (ci->devname) > 0) {
 		for (i = 0; i < p->mountitems; i++) {
-			if (p->mountconfig[i].ci.devname && !_tcscmp (p->mountconfig[i].ci.devname, ci->devname))
+			if (p->mountconfig[i].ci.devname[0] && !_tcscmp (p->mountconfig[i].ci.devname, ci->devname))
 				return NULL;
 		}
 	}
@@ -5464,7 +5464,7 @@ static int cfgfile_parse_filesys (struct uae_prefs *p, const TCHAR *option, TCHA
 			return 1;
 		} else if (!_tcsncmp (option, tmp, _tcslen (tmp)) && option[_tcslen (tmp)] == '_') {
 			struct uaedev_config_info *uci = &currprefs.mountconfig[i].ci;
-			if (uci->devname) {
+			if (uci->devname[0]) {
 				const TCHAR *s = &option[_tcslen (tmp) + 1];
 				if (!_tcscmp (s, _T("bootpri"))) {
 					getintval (&value, &uci->bootpri, 0);
@@ -5564,7 +5564,7 @@ invalid_fs:
 			*tmpp++ = 0;
 			if (idx == 0) {
 				for (i = 0; i < p->mountitems; i++) {
-					if (p->mountconfig[i].ci.devname && !_tcscmp (p->mountconfig[i].ci.devname, s)) {
+					if (p->mountconfig[i].ci.devname[0] && !_tcscmp (p->mountconfig[i].ci.devname, s)) {
 						ci = &p->mountconfig[i].ci;
 						break;
 					}
@@ -6579,7 +6579,7 @@ void cfgfile_compatibility_rtg(struct uae_prefs *p)
 			}
 		}
 	}
-	int rtgs[MAX_RTG_BOARDS] = { 0 };
+	int rtgs[MAX_RTG_BOARDS] = {}; 
 	for (int i = 0; i < MAX_RTG_BOARDS; i++) {
 		if (p->rtgboards[i].rtgmem_size && !rtgs[i]) {
 			uae_u32 romtype = gfxboard_get_romtype(&p->rtgboards[i]);
@@ -6987,7 +6987,7 @@ static int getconfigstoreline (const TCHAR *option, TCHAR *value)
 
 bool cfgfile_createconfigstore(struct uae_prefs *p)
 {
-	uae_u8 zeros[4] = { 0 };
+	uae_u8 zeros[4] = {}; 
 	zfile_fclose (configstore);
 	configstore = zfile_fopen_empty (NULL, _T("configstore"), 50000);
 	if (!configstore)

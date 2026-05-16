@@ -2251,7 +2251,7 @@ struct zfile *read_rom_name(const TCHAR *filename, bool rw)
 	}
 	f = rom_fopen2(filename, rw ? _T("rb+") : _T("rb"), ZFD_NORMAL);
 	if (f) {
-		uae_u8 tmp[11] = { 0 };
+		uae_u8 tmp[11] = {}; 
 		zfile_fread(tmp, sizeof tmp, 1, f);
 		if (!memcmp(tmp, "AMIROMTYPE1", sizeof tmp)) {
 			struct zfile *df;

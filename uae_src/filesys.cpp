@@ -22,6 +22,17 @@
 * modified at the same time by another process while UAE is running.
 */
 
+// Suppress warnings for legacy UAE filesystem emulation code
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wsign-compare"
+#pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wformat"
+#pragma clang diagnostic ignored "-Wunused-value"
+#pragma clang diagnostic ignored "-Wunused-function"
+#pragma clang diagnostic ignored "-Wpointer-bool-conversion"
+
 #include "sysconfig.h"
 #include "sysdeps.h"
 
@@ -1263,7 +1274,7 @@ static void add_cpuboard_unit_init(void)
 		if (cbt->subtypes) {
 			if (cbt->subtypes[currprefs.cpuboard_subtype].add) {
 				const struct cpuboardsubtype *cst = &cbt->subtypes[currprefs.cpuboard_subtype];
-				struct uaedev_config_info ci = { 0 };
+				struct uaedev_config_info ci = {}; 
 				write_log(_T("Initializing CPUBoard '%s' %s controller\n"),
 					cst->name, (cst->deviceflags & EXPANSIONTYPE_SCSI) ? _T("SCSI") : _T("IDE"));
 				cst->add(-1, &ci, rc);
@@ -1351,7 +1362,7 @@ static void initialize_mountinfo (void)
 		uae_u32 mask = scsi_get_cd_drive_mask ();
 		for (int i = 0; i < 32; i++) {
 			if (mask & (1 << i)) {
-				struct uaedev_config_info ci = { 0 };
+				struct uaedev_config_info ci = {}; 
 				_stprintf (ci.devname, _T("CD%d"), i);
 				cd_unit_number++;
 				_tcscpy (ci.rootdir, _T("/"));
@@ -1389,7 +1400,7 @@ static void initialize_mountinfo (void)
 			struct romconfig *rc = get_device_romconfig(&currprefs, ert->romtype, j);
 			if ((ert->deviceflags & 3) && rc) {
 				if (ert->add) {
-					struct uaedev_config_info ci = { 0 };
+					struct uaedev_config_info ci = {}; 
 					ci.controller_type_unit = j;
 					ert->add(-1, &ci, rc);
 				}
@@ -2106,7 +2117,7 @@ static uae_u32 filesys_media_change_reply (int mode)
 	} else if (u->mount_changed > 0) {
 		if (mode == 0) {
 			// insert
-			struct mytimeval ctime = { 0 };
+			struct mytimeval ctime = {}; 
 			bool emptydrive = false;
 			struct uaedev_config_data *uci = NULL;
 
@@ -2259,11 +2270,11 @@ int filesys_media_change (const TCHAR *rootdir, int inserted, struct uaedev_conf
 	if (nr >= 0 && !inserted)
 		return filesys_eject (nr);
 	if (inserted) {
-		struct uaedev_config_info ci = { 0 };
+		struct uaedev_config_info ci = {}; 
 		if (uci) {
 			volptr = my_strdup (uci->ci.volname);
 		} else {
-			struct uaedev_config_info ci2 = { 0 };
+			struct uaedev_config_info ci2 = {}; 
 			_tcscpy(ci2.rootdir, rootdir);
 			target_get_volume_name (&mountinfo, &ci2, 1, 0, -1);
 			_tcscpy(volname, ci2.volname);
@@ -3354,7 +3365,7 @@ static uae_u32 REGPARAM2 startup_handler(TrapContext *ctx)
 	int ed, ef;
 	uae_u64 uniq = 0;
 	uae_u32 cdays;
-	struct mytimeval ctime = { 0 };
+	struct mytimeval ctime = {}; 
 
 	// 1.3:
 	// dp_Arg1 contains crap (Should be name of device)
@@ -4197,7 +4208,7 @@ static void get_fileinfo(TrapContext *ctx, Unit *unit, dpacket *packet, uaecptr 
 	const TCHAR *xs;
 	char *x, *x2;
 	uae_u8 *buf;
-	uae_u8 buf_array[260] = { 0 };
+	uae_u8 buf_array[260] = {}; 
 
 	if (trap_is_indirect() || !valid_address(info, (sizeof buf_array) - 36) || !real_address_allowed()) {
 		buf = buf_array;
@@ -8412,7 +8423,7 @@ static void get_new_device (TrapContext *ctx, int type, uaecptr parmpacket, TCHA
 
 static int pt_babe(TrapContext *ctx, uae_u8 *bufrdb, UnitInfo *uip, int unit_no, int partnum, uaecptr parmpacket)
 {
-	uae_u8 bufrdb2[FILESYS_MAX_BLOCKSIZE] = { 0 };
+	uae_u8 bufrdb2[FILESYS_MAX_BLOCKSIZE] = {}; 
 	struct hardfiledata *hfd = &uip->hf;
 	struct uaedev_config_info *ci = &uip[unit_no].hf.ci;
 	uae_u32 bad;

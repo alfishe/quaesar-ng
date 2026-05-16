@@ -18,7 +18,7 @@ static uaecptr beginio;
 
 void consolehook_config (struct uae_prefs *p)
 {
-	struct uaedev_config_info ci = { 0 };
+	struct uaedev_config_info ci = {}; 
 	int roms[] = { 15, 31, 16, 46, -1 };
 
 	default_prefs (p, true, 0);

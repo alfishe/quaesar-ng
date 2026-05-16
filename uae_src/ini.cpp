@@ -170,7 +170,7 @@ struct ini_data *ini_load(const TCHAR *path, bool sort)
 	bool utf8 = false;
 	TCHAR section[MAX_DPATH];
 	uae_u8 tmp[3];
-	struct ini_data ini = { 0 };
+	struct ini_data ini = {}; 
 	int section_id = 1;
 
 	if (path == NULL || path[0] == 0)

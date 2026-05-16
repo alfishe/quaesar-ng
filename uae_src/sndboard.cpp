@@ -2484,7 +2484,7 @@ static bool audio_state_sndboard_fm801(int streamid, void *params)
 	if (data->streamid != streamid)
 		return false;
 	if (data->play_on) {
-		uae_u8 sample[2 * 6] = { 0 };
+		uae_u8 sample[2 * 6] = {}; 
 		pci_read_dma(data->pcibs, data->play_dma2[data->dmach], sample, data->bytesperframe);
 		for (int i = 0; i < data->ch; i++) {
 			uae_s16 smp;

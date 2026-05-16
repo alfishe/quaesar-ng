@@ -1729,7 +1729,7 @@ struct ide_hdf *add_ide_unit (struct ide_hdf **idetable, int max, int ch, struct
 
 		if (!ide->byteswap)
 			ata_byteswapidentity(ide->secbuf);
-		struct uaedev_config_info ci = { 0 };
+		struct uaedev_config_info ci = {}; 
 		ata_parse_identity(ide->secbuf, &ci, &ide->lba, &ide->lba48, &ide->max_multiple_mode);
 		ide->hdhfd.cyls = ide->hdhfd.cyls_def = ci.pcyls;
 		ide->hdhfd.heads = ide->hdhfd.heads_def = ci.pheads;
