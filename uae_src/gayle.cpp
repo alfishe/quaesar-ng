@@ -10,6 +10,11 @@
 #define MBRES_LOG 0
 #define PCMCIA_LOG 0
 
+// Suppress warnings for legacy UAE gayle code
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+
 #include "sysconfig.h"
 #include "sysdeps.h"
 

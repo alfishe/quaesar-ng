@@ -7,6 +7,12 @@
  *
  */
 
+// Suppress warnings for legacy UAE isofs code
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wsign-compare"
+
 #include <cstddef>
 
 #include "sysconfig.h"
