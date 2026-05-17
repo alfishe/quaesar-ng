@@ -31,13 +31,6 @@
 * Offset 519, 81 bytes, comment
 */
 
-#define TRACING_ENABLED 0
-#if TRACING_ENABLED
-#define TRACE(x) do { write_log x; } while(0)
-#else
-#define TRACE(x)
-#endif
-
 TCHAR *nname_begin (TCHAR *nname)
 {
 	TCHAR *p = _tcsrchr (nname, FSDB_DIR_SEPARATOR);
