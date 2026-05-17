@@ -60,7 +60,7 @@ static int warned;
 
 static void setlasthsync (void)
 {
-	if (lasthsync / current_maxvpos () != hsync_counter / current_maxvpos ()) {
+	if ((uae_u32)lasthsync / current_maxvpos () != hsync_counter / current_maxvpos ()) {
 		lasthsync = hsync_counter;
 		refreshtitle ();
 	}
@@ -147,6 +147,7 @@ static void inprec_rend (void)
 
 static bool inprec_realtime (bool stopstart)
 {
+	(void)stopstart;
 	if (input_record == INPREC_RECORD_RERECORD)
 		gui_message (_T("INPREC error"));
 	write_log (_T("INPREC: play -> record\n"));
@@ -164,6 +165,7 @@ static bool inprec_realtime (bool stopstart)
 
 static void inprec_event(uae_u32 v)
 {
+	(void)v;
 	inputdevice_playevents();
 }
 
@@ -173,7 +175,7 @@ static int inprec_pstart (uae_u8 type)
 	uae_u32 hc = hsync_counter;
 	uae_u8 hpos = current_hpos ();
 	frame_time_t cycles = get_cycles ();
-	static uae_u8 *lastp;
+	static uae_u8 *lastp; // Only used in #if 0 debug block below
 	uae_u32 hc_orig, hc2_orig;
 	int mvp = current_maxvpos ();
 
@@ -242,7 +244,7 @@ static int inprec_pstart (uae_u8 type)
 					event2_newevent_x_replace(diff, 0, inprec_event);
 				}
 			}
-			lastp = p;
+			// lastp = p; // Only used in #if 0 debug block
 			break;
 		}
 		if (type2 == type) {
@@ -282,7 +284,7 @@ static void inprec_pend (void)
 {
 	uae_u8 *p = inprec_p;
 	uae_u32 hc = hsync_counter;
-	uae_u32 hpos = current_hpos ();
+	// uae_u32 hpos = current_hpos (); // Unused in this function
 
 	if (!input_play || !inprec_zf)
 		return;
@@ -293,7 +295,7 @@ static void inprec_pend (void)
 	inprec_plastptr = NULL;
 	for (;;) {
 		uae_u32 hc2 = (p[3] << 24) | (p[4] << 16) | (p[5] << 8) | p[6];
-		uae_u32 hpos2 = p[7];
+		// uae_u32 hpos2 = p[7]; // Unused
 		if (hc2 != hc)
 			break;
 		if ((p[0] & 0x80) == 0)
@@ -325,12 +327,12 @@ static uae_u32 inprec_pu32 (void)
 	v |= inprec_pu16 ();
 	return v;
 }
-static uae_u64 inprec_pu64(void)
-{
-	uae_u64 v = (uae_u64)inprec_pu32() << 32;
-	v |= inprec_pu32();
-	return v;
-}
+// static uae_u64 inprec_pu64(void) // Unused function - kept for future use
+// {
+// 	uae_u64 v = (uae_u64)inprec_pu32() << 32;
+// 	v |= inprec_pu32();
+// 	return v;
+// }
 static int inprec_pstr (TCHAR *dst)
 {
 	char tmp[MAX_DPATH];
@@ -369,6 +371,7 @@ static void findlast (void)
 
 int inprec_open (const TCHAR *fname, const TCHAR *statefilename)
 {
+	(void)statefilename;
 	int i;
 
 	inprec_close (false);
@@ -500,7 +503,7 @@ void inprec_startup (void)
 bool inprec_prepare_record (const TCHAR *statefilename)
 {
 	TCHAR state[MAX_DPATH];
-	int mode = statefilename ? 2 : 1;
+	// int mode = statefilename ? 2 : 1; // Set but never used
 	state[0] = 0;
 	if (statefilename)
 		_tcscpy (state, statefilename);
@@ -517,7 +520,7 @@ bool inprec_prepare_record (const TCHAR *statefilename)
 		_tcscat (state, _T(".uss"));
 		savestate_initsave (state, 1, 1, true); 
 		save_state (state, _T("input recording test"));
-		mode = 2;
+		// mode = 2; // Set but never used
 	}
 	input_record = INPREC_RECORD_NORMAL;
 	inprec_open (changed_prefs.inprecfile, state);
@@ -620,7 +623,7 @@ void inprec_recorddebug_cia (uae_u32 v1, uae_u32 v2, uae_u32 v3)
 void inprec_playdebug_cia (uae_u32 v1, uae_u32 v2, uae_u32 v3)
 {
 #if INPUTRECORD_DEBUG > 0
-	int err = 0;
+	// int err = 0; // Unused variable
 	if (inprec_pstart (INPREC_CIADEBUG)) {
 		uae_u32 vv1 = inprec_pu32 ();
 		uae_u32 vv2 = inprec_pu32 ();
@@ -645,7 +648,7 @@ void inprec_recorddebug_cpu (int mode, uae_u16 data)
 void inprec_playdebug_cpu (int mode, uae_u16 data)
 {
 #if INPUTRECORD_DEBUG > 0
-	int err = 0;
+	// int err = 0; // Unused variable
 	if (inprec_pstart (INPREC_CPUDEBUG + mode)) {
 		uae_u32 pc1 = m68k_getpc();
 		uae_u32 pc2 = inprec_pu32();
@@ -690,8 +693,8 @@ void inprec_playdebug (uae_u32 val)
 {
 #if INPUTRECORD_DEBUG > 0
 	extern void activate_debugger (void);
-	static uae_u32 pcs[16];
-	int err = 0;
+	// static uae_u32 pcs[16]; // Shadows global pcs - unused local
+	int err = 0; // Used below for sync error tracking
 	if (inprec_pstart (INPREC_DEBUG)) {
 		uae_u32 seed1 = uaerandgetseed ();
 		uae_u32 seed2 = inprec_pu32 ();
