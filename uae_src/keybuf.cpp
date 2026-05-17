@@ -12,10 +12,6 @@
 * Copyright 1995, 1997 Bernd Schmidt
 */
 
-// Suppress warnings for legacy UAE keyboard buffer code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include <assert.h>
