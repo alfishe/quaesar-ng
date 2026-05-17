@@ -1545,7 +1545,7 @@ static int initpcmcia (const TCHAR *path, int readonly, int type, int reset, str
 			pcmcia_card = 1;
 			if (extrasize >= 512 && extrasize < 1 * 1024 * 1024) {
 				hdf_read(&pcmcia_disk->hfd, pcmcia_attrs, pcmcia_common_size, extrasize, &error);
-				write_log(_T("PCMCIA SRAM: Attribute data read %ld bytes\n"), extrasize);
+				write_log(_T("PCMCIA SRAM: Attribute data read %d bytes\n"), extrasize);
 				pcmcia_attrs_full = 1;
 			} else {
 				initsramattr(pcmcia_common_size, readonly);

@@ -403,7 +403,7 @@ static bool check_trace (void)
 		return true;
 	if (!cputrace.readcounter && !cputrace.writecounter && !cputrace.cyclecounter) {
 		if (cpu_tracer != -2) {
-			write_log (_T("CPU trace: dma_cycle() enabled. %08x %08x NOW=%08x\n"),
+			write_log (_T("CPU trace: dma_cycle() enabled. %08x %08x NOW=%08llx\n"),
 				cputrace.cyclecounter_pre, cputrace.cyclecounter_post, get_cycles ());
 			cpu_tracer = -2; // dma_cycle() allowed to work now
 		}

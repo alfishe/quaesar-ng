@@ -147,7 +147,7 @@ def generate_todo_md(original_warnings, current_warnings, output_file='TODO.md')
 
 if __name__ == '__main__':
     original_log = '/tmp/clean_build.log'
-    current_log = '/tmp/latest_build.log'
+    current_log = '/tmp/final_build.log'
     output_file = '/Volumes/TB4-4Tb/Projects/emulators/github/quaesar-ng/TODO.md'
     
     print(f"Parsing original warnings from {original_log}...")
