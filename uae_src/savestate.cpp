@@ -46,12 +46,6 @@
 
 #define OPEN_LOG 0
 
-// Suppress warnings for legacy UAE savestate code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wsign-compare"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 
