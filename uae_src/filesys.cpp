@@ -22,17 +22,6 @@
 * modified at the same time by another process while UAE is running.
 */
 
-// Suppress warnings for legacy UAE filesystem emulation code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wsign-compare"
-#pragma clang diagnostic ignored "-Wmissing-field-initializers"
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wformat"
-#pragma clang diagnostic ignored "-Wunused-value"
-#pragma clang diagnostic ignored "-Wunused-function"
-#pragma clang diagnostic ignored "-Wpointer-bool-conversion"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 

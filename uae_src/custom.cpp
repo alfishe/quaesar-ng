@@ -8,11 +8,6 @@
 * Copyright 2000-2023 Toni Wilen
 */
 
-// Suppress unused function warnings - these are debug/diagnostic utilities
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
-#pragma clang diagnostic ignored "-Wunused-variable"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 

@@ -31,17 +31,6 @@ happening, all ports should restrict window widths to be multiples of 16 pixels.
 #define BG_COLOR_DEBUG 0
 #define EXTBORDER_BLANK 0
 
-// Suppress warnings for legacy UAE drawing code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma clang diagnostic ignored "-Wunused-function"
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
-#pragma clang diagnostic ignored "-Wsign-compare"
-#pragma clang diagnostic ignored "-Wtautological-constant-out-of-range-compare"
-#pragma clang diagnostic ignored "-Wswitch"
-#pragma clang diagnostic ignored "-Wself-assign"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 
