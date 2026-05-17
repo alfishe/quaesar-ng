@@ -2253,7 +2253,7 @@ addrbank cia_bank = {
 	NULL
 };
 
-static int cia_cycles(int delay, int phase, int val, int post)
+static __attribute__((unused)) int cia_cycles(int delay, int phase, int val, int post)
 {
 #ifdef DEBUGGER
 	if (currprefs.cpu_memory_cycle_exact && debug_dma) {
@@ -2717,7 +2717,7 @@ addrbank clock_bank = {
 	NULL
 };
 
-static uae_u8 getclockreg(int addr, struct tm *ct)
+static __attribute__((unused)) uae_u8 getclockreg(int addr, struct tm *ct)
 {
 	uae_u8 v = 0;
 

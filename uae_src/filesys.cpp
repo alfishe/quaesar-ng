@@ -2238,7 +2238,7 @@ int filesys_media_change (const TCHAR *rootdir, int inserted, struct uaedev_conf
 			// inserted >= 2: drag&drop insert, do not replace existing normal drives
 			if (inserted < 2 && ui->rootdir && !memcmp (ui->rootdir, rootdir, uaetcslen (rootdir)) && uaetcslen (rootdir) + 3 >= uaetcslen (ui->rootdir)) {
 				if (filesys_isvolume(u) && inserted) {
-					if (uci)ctx, 
+					if (uci)
 						filesys_delayed_change (u, 50, rootdir, uci->ci.volname, uci->ci.readonly, 0);
 					return 0;
 				}
@@ -5993,7 +5993,7 @@ static void	action_set_file_size(TrapContext *ctx, Unit *unit, dpacket *packet)
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_SET_FILE_SIZE(0x%lx, %d, 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
+	TRACE((_T("ACTION_SET_FILE_SIZE(0x%lx, %lld, 0x%x)\n"), GET_PCK_ARG1 (packet), (long long)offset, mode));
 
 	k = lookup_key (unit, GET_PCK_ARG1 (packet));
 	if (k == 0) {
@@ -10313,7 +10313,7 @@ static void shellexecute2_free(struct ShellExecute2 *se2)
 		return;
 	}
 	if (se2->file) {
-		write_log(_T("filesys_shellexecute2_process slot %d free\n"), se2 - shellexecute2);
+		write_log(_T("filesys_shellexecute2_process slot %d free\n"), (int)(se2 - shellexecute2));
 	}
 	xfree(se2->file);
 	xfree(se2->currentdir);
@@ -10358,7 +10358,7 @@ static uae_u32 filesys_shellexecute2_process(int mode, TrapContext *ctx)
 
 	oldks = kickstart_version < 37 && se2->currentdir[0];
 
-	write_log(_T("filesys_shellexecute2_process. slot %d, state %d, function %d\n"), se2 - shellexecute2, se2->state, mode);
+	write_log(_T("filesys_shellexecute2_process. slot %d, state %d, function %d\n"), (int)(se2 - shellexecute2), se2->state, mode);
 
 	if (mode == 30) {
 		// request Amiga side buffer size

@@ -863,7 +863,7 @@ static addrbank cdtvcr_bank = {
 	default_xlate, default_check, NULL, NULL, _T("CDTV-CR"),
 	cdtvcr_lgeti, cdtvcr_wgeti,
 	ABFLAG_IO | ABFLAG_SAFE, S_READ, S_WRITE,
-	NULL, NULL
+	0, NULL
 };
 
 static void dev_thread (void *p)

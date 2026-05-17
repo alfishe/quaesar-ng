@@ -6626,7 +6626,7 @@ static const struct cpuboardsubtype macrosystem_sub[] = {
 		_T("Falcon 040"),
 		_T("Falcon040"),
 		ROMTYPE_CB_FALCON40, 0,
-		NULL, 0,
+		0, 0,
 		0,
 		128 * 1024 * 1024,
 	},
@@ -6787,7 +6787,7 @@ static const struct cpuboardsubtype hardital_sub[] = {
 		_T("TQM"),
 		_T("tqm"),
 		ROMTYPE_CB_TQM, 0,
-		NULL, 0,
+		0, 0,
 		BOARD_MEMORY_HIGHMEM,
 		128 * 1024 * 1024,
 	},
@@ -7067,7 +7067,7 @@ const struct cpuboardtype cpuboards[] = {
 		harms_sub, 0
 	},
 	{
-		NULL
+		0
 	}
 };
 
