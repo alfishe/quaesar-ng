@@ -666,7 +666,7 @@ bool audio_finish_pull() {
 }
 
 static void handle_reset() {
-    if (sdp->resetframe == timeframes)
+    if ((uae_u32)sdp->resetframe == timeframes)
         return;
     sdp->resetframe = static_cast<int>(timeframes);
     sdp->resetframecnt--;

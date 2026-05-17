@@ -286,6 +286,7 @@ extern int target_get_display(const TCHAR*) {
 }
 
 int target_cfgfile_load(struct uae_prefs* p, const TCHAR* filename, int type, int isdefault) {
+    (void)p; (void)filename; (void)type; (void)isdefault;
     TRACE();
     return 1;
 }
@@ -1070,10 +1071,12 @@ int graphics_init(bool) {
 }
 
 bool render_screen(int monid, int, bool) {
+    (void)monid;
     return true;
 }
 
 void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
+    (void)y_start; (void)y_end;
     SDL_Event e;
 
     if (!s_window)
@@ -1108,7 +1111,6 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
     int pitch = 0;
 
     if (SDL_LockTexture(s_texture, NULL, (void**)&pixels, &pitch) == 0) {
-        struct amigadisplay* ad = &adisplays[vb_in->monitor_id];
         struct vidbuf_description* avidinfo = &adisplays[vb_in->monitor_id].gfxvidinfo;
         struct vidbuffer* vb = avidinfo->outbuffer;
 
@@ -1116,7 +1118,7 @@ void unlockscr(struct vidbuffer* vb_in, int y_start, int y_end) {
             return;
 
         uint8_t* sptr = vb->bufmem;
-        uint8_t* endsptr = vb->bufmemend;
+        // uint8_t* endsptr = vb->bufmemend; // Unused - kept for future bounds checking
 
         int amiga_width = vb->outwidth;
         int amiga_height = vb->outheight;
@@ -2023,6 +2025,7 @@ static int old_w = -1;
 static int old_h = -1;
 
 bool target_graphics_buffer_update(int monid, bool force) {
+    (void)force;
     struct vidbuf_description* avidinfo = &adisplays[monid].gfxvidinfo;
     struct vidbuffer* vb = avidinfo->drawbuffer.tempbufferinuse ? &avidinfo->tempbuffer : &avidinfo->drawbuffer;
 
@@ -2108,11 +2111,13 @@ static void dummy_close_device_func(int deviceID) {
 }
 
 static struct device_info* dummy_info_device_func(int deviceID, struct device_info* info, int size, int flags) {
+    (void)info;
     printf("Dummy info_device_func called with deviceID: %d, size: %d, flags: %d\n", deviceID, size, flags);
     return NULL;
 }
 
 static uae_u8* dummy_execscsicmd_out_func(int deviceID, uae_u8* cmd, int size) {
+    (void)cmd;
     printf("Dummy execscsicmd_out_func called with deviceID: %d, size: %d\n", deviceID, size);
     return NULL;
 }
