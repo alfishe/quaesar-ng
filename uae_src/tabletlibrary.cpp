@@ -208,6 +208,7 @@ void tabletlib_install (void)
 {
 	uae_u32 functable, datatable;
 	uae_u32 initcode, openfunc, closefunc, expungefunc;
+	uae_u32 allocfunc, freefunc, dofunc, unkfunc;
 	TCHAR tmp[100];
 
 	if (!currprefs.tablet_library)
@@ -231,7 +232,8 @@ void tabletlib_install (void)
 	calltrap (deftrap2 (lib_freefunc, TRAPFLAG_EXTRA_STACK, _T("tablet_free"))); dw (RTS);
 	dofunc = here ();
 	calltrap (deftrap (lib_dofunc)); dw (RTS);
-	unkfunc = here ();
+	unkfunc = here (); // Assigned but never used
+	(void)unkfunc;
 	calltrap (deftrap (lib_unkfunc)); dw (RTS);
 
 	/* FuncTable */
