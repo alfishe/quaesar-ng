@@ -134,32 +134,33 @@ void sound_setadjust(float v) {
     }
 }
 
-static void docorrection(struct sound_dp* s, int sndbuf, float sync, int granulaty) {
-    static int tfprev;
-
-    s->avg_correct += sync;
-    s->cnt_correct++;
-
-    if (granulaty < 10)
-        granulaty = 10;
-
-    if (tfprev != timeframes) {
-        const auto avg = s->avg_correct / s->cnt_correct;
-
-        auto skipmode = sync / 100.0f;
-        const auto avgskipmode = avg / (10000.0f / granulaty);
-
-        gui_data.sndbuf = sndbuf;
-
-        if (skipmode > ADJUST_LIMIT2)
-            skipmode = ADJUST_LIMIT2;
-        if (skipmode < -ADJUST_LIMIT2)
-            skipmode = -ADJUST_LIMIT2;
-
-        sound_setadjust(skipmode + avgskipmode);
-        tfprev = static_cast<int>(timeframes);
-    }
-}
+// static void docorrection(struct sound_dp* s, int sndbuf, float sync, int granulaty) // Unused function - kept for future use
+// {
+//     static int tfprev;
+//
+//     s->avg_correct += sync;
+//     s->cnt_correct++;
+//
+//     if (granulaty < 10)
+//         granulaty = 10;
+//
+//     if (tfprev != timeframes) {
+//         const auto avg = s->avg_correct / s->cnt_correct;
+//
+//         auto skipmode = sync / 100.0f;
+//         const auto avgskipmode = avg / (10000.0f / granulaty);
+//
+//         gui_data.sndbuf = sndbuf;
+//
+//         if (skipmode > ADJUST_LIMIT2)
+//             skipmode = ADJUST_LIMIT2;
+//         if (skipmode < -ADJUST_LIMIT2)
+//             skipmode = -ADJUST_LIMIT2;
+//
+//         sound_setadjust(skipmode + avgskipmode);
+//         tfprev = static_cast<int>(timeframes);
+//     }
+// }
 
 static float sync_sound(float m) {
     float skipmode;
