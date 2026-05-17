@@ -810,6 +810,8 @@ static int set_master_volume(int volume, int mute) {
 }
 
 static int get_master_volume(int* volume, int* mute) {
+    (void)volume; // Unused parameter - TODO: implement
+    (void)mute; // Unused parameter - TODO: implement
     return currprefs.sound_volume_master;
 }
 
