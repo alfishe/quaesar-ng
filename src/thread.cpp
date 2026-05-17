@@ -37,6 +37,7 @@ void uae_sem_wait(uae_sem_t* sem) {
 }
 
 void uae_sem_init(uae_sem_t* sem, int manual_reset, int initial_state) {
+    (void)manual_reset;
     if (*sem) {
         SDL_SemPost((SDL_sem*)sem);
     } else {
@@ -87,6 +88,7 @@ int uae_start_thread_fast(void (*fn)(void*), void* arg, uae_thread_id* tid) {
 }
 
 void uae_end_thread(uae_thread_id* thread) {
+    (void)thread;
     /*
    #ifdef _WIN32
        TerminateThread(SDL_GetThreadID(t), 0);
