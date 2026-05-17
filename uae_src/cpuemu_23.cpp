@@ -12,7 +12,7 @@
 /* OR.B #<data>.B,Dn */
 void REGPARAM2 op_0000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -33,7 +33,7 @@ void REGPARAM2 op_0000_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,(An) */
 void REGPARAM2 op_0010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -56,7 +56,7 @@ void REGPARAM2 op_0010_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,(An)+ */
 void REGPARAM2 op_0018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -80,7 +80,7 @@ void REGPARAM2 op_0018_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,-(An) */
 void REGPARAM2 op_0020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -104,7 +104,7 @@ void REGPARAM2 op_0020_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,(d16,An) */
 void REGPARAM2 op_0028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -127,7 +127,7 @@ void REGPARAM2 op_0028_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_0030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -150,7 +150,7 @@ void REGPARAM2 op_0030_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,(xxx).W */
 void REGPARAM2 op_0038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -171,7 +171,7 @@ void REGPARAM2 op_0038_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,(xxx).L */
 void REGPARAM2 op_0039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -192,7 +192,7 @@ void REGPARAM2 op_0039_23_ff(uae_u32 opcode)
 /* ORSR.B #<data>.W */
 void REGPARAM2 op_003c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	MakeSR();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -209,7 +209,7 @@ void REGPARAM2 op_003c_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,Dn */
 void REGPARAM2 op_0040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -230,7 +230,7 @@ void REGPARAM2 op_0040_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,(An) */
 void REGPARAM2 op_0050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -253,7 +253,7 @@ void REGPARAM2 op_0050_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,(An)+ */
 void REGPARAM2 op_0058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -277,7 +277,7 @@ void REGPARAM2 op_0058_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,-(An) */
 void REGPARAM2 op_0060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -301,7 +301,7 @@ void REGPARAM2 op_0060_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,(d16,An) */
 void REGPARAM2 op_0068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -324,7 +324,7 @@ void REGPARAM2 op_0068_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -347,7 +347,7 @@ void REGPARAM2 op_0070_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,(xxx).W */
 void REGPARAM2 op_0078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -368,7 +368,7 @@ void REGPARAM2 op_0078_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,(xxx).L */
 void REGPARAM2 op_0079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -389,7 +389,7 @@ void REGPARAM2 op_0079_23_ff(uae_u32 opcode)
 /* ORSR.W #<data>.W */
 void REGPARAM2 op_007c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -411,7 +411,7 @@ void REGPARAM2 op_007c_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,Dn */
 void REGPARAM2 op_0080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4+2=6,T:0,C:0 fiea */
@@ -433,7 +433,7 @@ void REGPARAM2 op_0080_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,(An) */
 void REGPARAM2 op_0090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:0,C:0 fiea */
@@ -457,7 +457,7 @@ void REGPARAM2 op_0090_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,(An)+ */
 void REGPARAM2 op_0098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:1,C:0 fiea */
@@ -482,7 +482,7 @@ void REGPARAM2 op_0098_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,-(An) */
 void REGPARAM2 op_00a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -507,7 +507,7 @@ void REGPARAM2 op_00a0_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,(d16,An) */
 void REGPARAM2 op_00a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -531,7 +531,7 @@ void REGPARAM2 op_00a8_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_00b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:8,T:2,C:0 fiea */
@@ -555,7 +555,7 @@ void REGPARAM2 op_00b0_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,(xxx).W */
 void REGPARAM2 op_00b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -577,7 +577,7 @@ void REGPARAM2 op_00b8_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,(xxx).L */
 void REGPARAM2 op_00b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:5,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -600,7 +600,7 @@ void REGPARAM2 op_00b9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -636,7 +636,7 @@ void REGPARAM2 op_00d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -672,7 +672,7 @@ void REGPARAM2 op_00e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -708,7 +708,7 @@ void REGPARAM2 op_00f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -742,7 +742,7 @@ void REGPARAM2 op_00f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -776,7 +776,7 @@ void REGPARAM2 op_00f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -812,7 +812,7 @@ void REGPARAM2 op_00fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_00fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -847,7 +847,7 @@ void REGPARAM2 op_00fb_23_ff(uae_u32 opcode)
 /* BTST.L Dn,Dn */
 void REGPARAM2 op_0100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -866,7 +866,7 @@ void REGPARAM2 op_0100_23_ff(uae_u32 opcode)
 /* MVPMR.W (d16,An),Dn */
 void REGPARAM2 op_0108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -884,7 +884,7 @@ void REGPARAM2 op_0108_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(An) */
 void REGPARAM2 op_0110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -905,7 +905,7 @@ void REGPARAM2 op_0110_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(An)+ */
 void REGPARAM2 op_0118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -927,7 +927,7 @@ void REGPARAM2 op_0118_23_ff(uae_u32 opcode)
 /* BTST.B Dn,-(An) */
 void REGPARAM2 op_0120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -949,7 +949,7 @@ void REGPARAM2 op_0120_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(d16,An) */
 void REGPARAM2 op_0128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -970,7 +970,7 @@ void REGPARAM2 op_0128_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_0130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -991,7 +991,7 @@ void REGPARAM2 op_0130_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(xxx).W */
 void REGPARAM2 op_0138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -1011,7 +1011,7 @@ void REGPARAM2 op_0138_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(xxx).L */
 void REGPARAM2 op_0139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -1031,7 +1031,7 @@ void REGPARAM2 op_0139_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(d16,PC) */
 void REGPARAM2 op_013a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = 2;
@@ -1053,7 +1053,7 @@ void REGPARAM2 op_013a_23_ff(uae_u32 opcode)
 /* BTST.B Dn,(d8,PC,Xn) */
 void REGPARAM2 op_013b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = 3;
@@ -1075,7 +1075,7 @@ void REGPARAM2 op_013b_23_ff(uae_u32 opcode)
 /* BTST.B Dn,#<data>.B */
 void REGPARAM2 op_013c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -1093,7 +1093,7 @@ void REGPARAM2 op_013c_23_ff(uae_u32 opcode)
 /* BCHG.L Dn,Dn */
 void REGPARAM2 op_0140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1114,7 +1114,7 @@ void REGPARAM2 op_0140_23_ff(uae_u32 opcode)
 /* MVPMR.L (d16,An),Dn */
 void REGPARAM2 op_0148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -1134,7 +1134,7 @@ void REGPARAM2 op_0148_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,(An) */
 void REGPARAM2 op_0150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1157,7 +1157,7 @@ void REGPARAM2 op_0150_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,(An)+ */
 void REGPARAM2 op_0158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1181,7 +1181,7 @@ void REGPARAM2 op_0158_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,-(An) */
 void REGPARAM2 op_0160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1205,7 +1205,7 @@ void REGPARAM2 op_0160_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,(d16,An) */
 void REGPARAM2 op_0168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1228,7 +1228,7 @@ void REGPARAM2 op_0168_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_0170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1251,7 +1251,7 @@ void REGPARAM2 op_0170_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,(xxx).W */
 void REGPARAM2 op_0178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -1273,7 +1273,7 @@ void REGPARAM2 op_0178_23_ff(uae_u32 opcode)
 /* BCHG.B Dn,(xxx).L */
 void REGPARAM2 op_0179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -1295,7 +1295,7 @@ void REGPARAM2 op_0179_23_ff(uae_u32 opcode)
 /* BCLR.L Dn,Dn */
 void REGPARAM2 op_0180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1316,7 +1316,7 @@ void REGPARAM2 op_0180_23_ff(uae_u32 opcode)
 /* MVPRM.W Dn,(d16,An) */
 void REGPARAM2 op_0188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1334,7 +1334,7 @@ void REGPARAM2 op_0188_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,(An) */
 void REGPARAM2 op_0190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1357,7 +1357,7 @@ void REGPARAM2 op_0190_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,(An)+ */
 void REGPARAM2 op_0198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1381,7 +1381,7 @@ void REGPARAM2 op_0198_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,-(An) */
 void REGPARAM2 op_01a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1405,7 +1405,7 @@ void REGPARAM2 op_01a0_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,(d16,An) */
 void REGPARAM2 op_01a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1428,7 +1428,7 @@ void REGPARAM2 op_01a8_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_01b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1451,7 +1451,7 @@ void REGPARAM2 op_01b0_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,(xxx).W */
 void REGPARAM2 op_01b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -1473,7 +1473,7 @@ void REGPARAM2 op_01b8_23_ff(uae_u32 opcode)
 /* BCLR.B Dn,(xxx).L */
 void REGPARAM2 op_01b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -1495,7 +1495,7 @@ void REGPARAM2 op_01b9_23_ff(uae_u32 opcode)
 /* BSET.L Dn,Dn */
 void REGPARAM2 op_01c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1516,7 +1516,7 @@ void REGPARAM2 op_01c0_23_ff(uae_u32 opcode)
 /* MVPRM.L Dn,(d16,An) */
 void REGPARAM2 op_01c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1536,7 +1536,7 @@ void REGPARAM2 op_01c8_23_ff(uae_u32 opcode)
 /* BSET.B Dn,(An) */
 void REGPARAM2 op_01d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1559,7 +1559,7 @@ void REGPARAM2 op_01d0_23_ff(uae_u32 opcode)
 /* BSET.B Dn,(An)+ */
 void REGPARAM2 op_01d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1583,7 +1583,7 @@ void REGPARAM2 op_01d8_23_ff(uae_u32 opcode)
 /* BSET.B Dn,-(An) */
 void REGPARAM2 op_01e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1607,7 +1607,7 @@ void REGPARAM2 op_01e0_23_ff(uae_u32 opcode)
 /* BSET.B Dn,(d16,An) */
 void REGPARAM2 op_01e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1630,7 +1630,7 @@ void REGPARAM2 op_01e8_23_ff(uae_u32 opcode)
 /* BSET.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_01f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -1653,7 +1653,7 @@ void REGPARAM2 op_01f0_23_ff(uae_u32 opcode)
 /* BSET.B Dn,(xxx).W */
 void REGPARAM2 op_01f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -1675,7 +1675,7 @@ void REGPARAM2 op_01f8_23_ff(uae_u32 opcode)
 /* BSET.B Dn,(xxx).L */
 void REGPARAM2 op_01f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -1697,7 +1697,7 @@ void REGPARAM2 op_01f9_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,Dn */
 void REGPARAM2 op_0200_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -1718,7 +1718,7 @@ void REGPARAM2 op_0200_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,(An) */
 void REGPARAM2 op_0210_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -1741,7 +1741,7 @@ void REGPARAM2 op_0210_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,(An)+ */
 void REGPARAM2 op_0218_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -1765,7 +1765,7 @@ void REGPARAM2 op_0218_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,-(An) */
 void REGPARAM2 op_0220_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -1789,7 +1789,7 @@ void REGPARAM2 op_0220_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,(d16,An) */
 void REGPARAM2 op_0228_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -1812,7 +1812,7 @@ void REGPARAM2 op_0228_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_0230_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -1835,7 +1835,7 @@ void REGPARAM2 op_0230_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,(xxx).W */
 void REGPARAM2 op_0238_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -1856,7 +1856,7 @@ void REGPARAM2 op_0238_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,(xxx).L */
 void REGPARAM2 op_0239_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -1877,7 +1877,7 @@ void REGPARAM2 op_0239_23_ff(uae_u32 opcode)
 /* ANDSR.B #<data>.W */
 void REGPARAM2 op_023c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	MakeSR();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -1895,7 +1895,7 @@ void REGPARAM2 op_023c_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,Dn */
 void REGPARAM2 op_0240_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -1916,7 +1916,7 @@ void REGPARAM2 op_0240_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,(An) */
 void REGPARAM2 op_0250_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -1939,7 +1939,7 @@ void REGPARAM2 op_0250_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,(An)+ */
 void REGPARAM2 op_0258_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -1963,7 +1963,7 @@ void REGPARAM2 op_0258_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,-(An) */
 void REGPARAM2 op_0260_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -1987,7 +1987,7 @@ void REGPARAM2 op_0260_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,(d16,An) */
 void REGPARAM2 op_0268_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -2010,7 +2010,7 @@ void REGPARAM2 op_0268_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0270_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -2033,7 +2033,7 @@ void REGPARAM2 op_0270_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,(xxx).W */
 void REGPARAM2 op_0278_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -2054,7 +2054,7 @@ void REGPARAM2 op_0278_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,(xxx).L */
 void REGPARAM2 op_0279_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -2075,7 +2075,7 @@ void REGPARAM2 op_0279_23_ff(uae_u32 opcode)
 /* ANDSR.W #<data>.W */
 void REGPARAM2 op_027c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -2097,7 +2097,7 @@ void REGPARAM2 op_027c_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,Dn */
 void REGPARAM2 op_0280_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4+2=6,T:0,C:0 fiea */
@@ -2119,7 +2119,7 @@ void REGPARAM2 op_0280_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,(An) */
 void REGPARAM2 op_0290_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:0,C:0 fiea */
@@ -2143,7 +2143,7 @@ void REGPARAM2 op_0290_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,(An)+ */
 void REGPARAM2 op_0298_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:1,C:0 fiea */
@@ -2168,7 +2168,7 @@ void REGPARAM2 op_0298_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,-(An) */
 void REGPARAM2 op_02a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -2193,7 +2193,7 @@ void REGPARAM2 op_02a0_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,(d16,An) */
 void REGPARAM2 op_02a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -2217,7 +2217,7 @@ void REGPARAM2 op_02a8_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_02b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:8,T:2,C:0 fiea */
@@ -2241,7 +2241,7 @@ void REGPARAM2 op_02b0_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,(xxx).W */
 void REGPARAM2 op_02b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -2263,7 +2263,7 @@ void REGPARAM2 op_02b8_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,(xxx).L */
 void REGPARAM2 op_02b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:5,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -2286,7 +2286,7 @@ void REGPARAM2 op_02b9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -2322,7 +2322,7 @@ void REGPARAM2 op_02d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -2358,7 +2358,7 @@ void REGPARAM2 op_02e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -2394,7 +2394,7 @@ void REGPARAM2 op_02f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -2428,7 +2428,7 @@ void REGPARAM2 op_02f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -2462,7 +2462,7 @@ void REGPARAM2 op_02f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -2498,7 +2498,7 @@ void REGPARAM2 op_02fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_02fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -2533,7 +2533,7 @@ void REGPARAM2 op_02fb_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,Dn */
 void REGPARAM2 op_0400_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -2559,7 +2559,7 @@ void REGPARAM2 op_0400_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,(An) */
 void REGPARAM2 op_0410_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -2587,7 +2587,7 @@ void REGPARAM2 op_0410_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,(An)+ */
 void REGPARAM2 op_0418_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -2616,7 +2616,7 @@ void REGPARAM2 op_0418_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,-(An) */
 void REGPARAM2 op_0420_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -2645,7 +2645,7 @@ void REGPARAM2 op_0420_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,(d16,An) */
 void REGPARAM2 op_0428_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -2673,7 +2673,7 @@ void REGPARAM2 op_0428_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_0430_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -2701,7 +2701,7 @@ void REGPARAM2 op_0430_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,(xxx).W */
 void REGPARAM2 op_0438_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -2727,7 +2727,7 @@ void REGPARAM2 op_0438_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,(xxx).L */
 void REGPARAM2 op_0439_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -2753,7 +2753,7 @@ void REGPARAM2 op_0439_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,Dn */
 void REGPARAM2 op_0440_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -2779,7 +2779,7 @@ void REGPARAM2 op_0440_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,(An) */
 void REGPARAM2 op_0450_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -2807,7 +2807,7 @@ void REGPARAM2 op_0450_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,(An)+ */
 void REGPARAM2 op_0458_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -2836,7 +2836,7 @@ void REGPARAM2 op_0458_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,-(An) */
 void REGPARAM2 op_0460_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -2865,7 +2865,7 @@ void REGPARAM2 op_0460_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,(d16,An) */
 void REGPARAM2 op_0468_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -2893,7 +2893,7 @@ void REGPARAM2 op_0468_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0470_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -2921,7 +2921,7 @@ void REGPARAM2 op_0470_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,(xxx).W */
 void REGPARAM2 op_0478_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -2947,7 +2947,7 @@ void REGPARAM2 op_0478_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,(xxx).L */
 void REGPARAM2 op_0479_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -2973,7 +2973,7 @@ void REGPARAM2 op_0479_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,Dn */
 void REGPARAM2 op_0480_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4+2=6,T:0,C:0 fiea */
@@ -3000,7 +3000,7 @@ void REGPARAM2 op_0480_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,(An) */
 void REGPARAM2 op_0490_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:0,C:0 fiea */
@@ -3029,7 +3029,7 @@ void REGPARAM2 op_0490_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,(An)+ */
 void REGPARAM2 op_0498_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:1,C:0 fiea */
@@ -3059,7 +3059,7 @@ void REGPARAM2 op_0498_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,-(An) */
 void REGPARAM2 op_04a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -3089,7 +3089,7 @@ void REGPARAM2 op_04a0_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,(d16,An) */
 void REGPARAM2 op_04a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -3118,7 +3118,7 @@ void REGPARAM2 op_04a8_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_04b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:8,T:2,C:0 fiea */
@@ -3147,7 +3147,7 @@ void REGPARAM2 op_04b0_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,(xxx).W */
 void REGPARAM2 op_04b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -3174,7 +3174,7 @@ void REGPARAM2 op_04b8_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,(xxx).L */
 void REGPARAM2 op_04b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:5,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -3202,7 +3202,7 @@ void REGPARAM2 op_04b9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -3236,7 +3236,7 @@ void REGPARAM2 op_04d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -3270,7 +3270,7 @@ void REGPARAM2 op_04e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -3304,7 +3304,7 @@ void REGPARAM2 op_04f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -3336,7 +3336,7 @@ void REGPARAM2 op_04f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -3368,7 +3368,7 @@ void REGPARAM2 op_04f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -3402,7 +3402,7 @@ void REGPARAM2 op_04fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_04fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -3435,7 +3435,7 @@ void REGPARAM2 op_04fb_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,Dn */
 void REGPARAM2 op_0600_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -3461,7 +3461,7 @@ void REGPARAM2 op_0600_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,(An) */
 void REGPARAM2 op_0610_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -3489,7 +3489,7 @@ void REGPARAM2 op_0610_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,(An)+ */
 void REGPARAM2 op_0618_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -3518,7 +3518,7 @@ void REGPARAM2 op_0618_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,-(An) */
 void REGPARAM2 op_0620_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -3547,7 +3547,7 @@ void REGPARAM2 op_0620_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,(d16,An) */
 void REGPARAM2 op_0628_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -3575,7 +3575,7 @@ void REGPARAM2 op_0628_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_0630_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -3603,7 +3603,7 @@ void REGPARAM2 op_0630_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,(xxx).W */
 void REGPARAM2 op_0638_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -3629,7 +3629,7 @@ void REGPARAM2 op_0638_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,(xxx).L */
 void REGPARAM2 op_0639_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -3655,7 +3655,7 @@ void REGPARAM2 op_0639_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,Dn */
 void REGPARAM2 op_0640_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -3681,7 +3681,7 @@ void REGPARAM2 op_0640_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,(An) */
 void REGPARAM2 op_0650_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -3709,7 +3709,7 @@ void REGPARAM2 op_0650_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,(An)+ */
 void REGPARAM2 op_0658_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -3738,7 +3738,7 @@ void REGPARAM2 op_0658_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,-(An) */
 void REGPARAM2 op_0660_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -3767,7 +3767,7 @@ void REGPARAM2 op_0660_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,(d16,An) */
 void REGPARAM2 op_0668_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -3795,7 +3795,7 @@ void REGPARAM2 op_0668_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0670_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -3823,7 +3823,7 @@ void REGPARAM2 op_0670_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,(xxx).W */
 void REGPARAM2 op_0678_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -3849,7 +3849,7 @@ void REGPARAM2 op_0678_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,(xxx).L */
 void REGPARAM2 op_0679_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -3875,7 +3875,7 @@ void REGPARAM2 op_0679_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,Dn */
 void REGPARAM2 op_0680_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4+2=6,T:0,C:0 fiea */
@@ -3902,7 +3902,7 @@ void REGPARAM2 op_0680_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,(An) */
 void REGPARAM2 op_0690_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:0,C:0 fiea */
@@ -3931,7 +3931,7 @@ void REGPARAM2 op_0690_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,(An)+ */
 void REGPARAM2 op_0698_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:1,C:0 fiea */
@@ -3961,7 +3961,7 @@ void REGPARAM2 op_0698_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,-(An) */
 void REGPARAM2 op_06a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -3991,7 +3991,7 @@ void REGPARAM2 op_06a0_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,(d16,An) */
 void REGPARAM2 op_06a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -4020,7 +4020,7 @@ void REGPARAM2 op_06a8_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_06b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:8,T:2,C:0 fiea */
@@ -4049,7 +4049,7 @@ void REGPARAM2 op_06b0_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,(xxx).W */
 void REGPARAM2 op_06b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -4076,7 +4076,7 @@ void REGPARAM2 op_06b8_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,(xxx).L */
 void REGPARAM2 op_06b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:5,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -4104,7 +4104,7 @@ void REGPARAM2 op_06b9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	m68k_incpci(2);
@@ -4118,7 +4118,7 @@ void REGPARAM2 op_06c0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	m68k_incpci(2);
@@ -4132,7 +4132,7 @@ void REGPARAM2 op_06c8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	m68k_incpci(2);
@@ -4146,7 +4146,7 @@ void REGPARAM2 op_06d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	m68k_incpci(2);
@@ -4160,7 +4160,7 @@ void REGPARAM2 op_06e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	m68k_incpci(2);
@@ -4174,7 +4174,7 @@ void REGPARAM2 op_06f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	op_illg_noret(opcode);
 	return;
@@ -4186,7 +4186,7 @@ void REGPARAM2 op_06f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	op_illg_noret(opcode);
 	return;
@@ -4198,7 +4198,7 @@ void REGPARAM2 op_06f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	op_illg_noret(opcode);
 	return;
@@ -4210,7 +4210,7 @@ void REGPARAM2 op_06fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_06fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	op_illg_noret(opcode);
 	return;
@@ -4221,7 +4221,7 @@ void REGPARAM2 op_06fb_23_ff(uae_u32 opcode)
 /* BTST.L #<data>.W,Dn */
 void REGPARAM2 op_0800_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* No EA */
@@ -4239,7 +4239,7 @@ void REGPARAM2 op_0800_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(An) */
 void REGPARAM2 op_0810_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -4259,7 +4259,7 @@ void REGPARAM2 op_0810_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(An)+ */
 void REGPARAM2 op_0818_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -4280,7 +4280,7 @@ void REGPARAM2 op_0818_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,-(An) */
 void REGPARAM2 op_0820_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -4301,7 +4301,7 @@ void REGPARAM2 op_0820_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(d16,An) */
 void REGPARAM2 op_0828_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -4321,7 +4321,7 @@ void REGPARAM2 op_0828_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0830_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -4341,7 +4341,7 @@ void REGPARAM2 op_0830_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(xxx).W */
 void REGPARAM2 op_0838_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4359,7 +4359,7 @@ void REGPARAM2 op_0838_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(xxx).L */
 void REGPARAM2 op_0839_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4377,7 +4377,7 @@ void REGPARAM2 op_0839_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(d16,PC) */
 void REGPARAM2 op_083a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -4397,7 +4397,7 @@ void REGPARAM2 op_083a_23_ff(uae_u32 opcode)
 /* BTST.B #<data>.W,(d8,PC,Xn) */
 void REGPARAM2 op_083b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -4417,7 +4417,7 @@ void REGPARAM2 op_083b_23_ff(uae_u32 opcode)
 /* BCHG.L #<data>.W,Dn */
 void REGPARAM2 op_0840_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* No EA */
@@ -4437,7 +4437,7 @@ void REGPARAM2 op_0840_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,(An) */
 void REGPARAM2 op_0850_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -4459,7 +4459,7 @@ void REGPARAM2 op_0850_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,(An)+ */
 void REGPARAM2 op_0858_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -4482,7 +4482,7 @@ void REGPARAM2 op_0858_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,-(An) */
 void REGPARAM2 op_0860_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -4505,7 +4505,7 @@ void REGPARAM2 op_0860_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,(d16,An) */
 void REGPARAM2 op_0868_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -4527,7 +4527,7 @@ void REGPARAM2 op_0868_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0870_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -4549,7 +4549,7 @@ void REGPARAM2 op_0870_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,(xxx).W */
 void REGPARAM2 op_0878_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4569,7 +4569,7 @@ void REGPARAM2 op_0878_23_ff(uae_u32 opcode)
 /* BCHG.B #<data>.W,(xxx).L */
 void REGPARAM2 op_0879_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4589,7 +4589,7 @@ void REGPARAM2 op_0879_23_ff(uae_u32 opcode)
 /* BCLR.L #<data>.W,Dn */
 void REGPARAM2 op_0880_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* No EA */
@@ -4609,7 +4609,7 @@ void REGPARAM2 op_0880_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,(An) */
 void REGPARAM2 op_0890_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -4631,7 +4631,7 @@ void REGPARAM2 op_0890_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,(An)+ */
 void REGPARAM2 op_0898_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -4654,7 +4654,7 @@ void REGPARAM2 op_0898_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,-(An) */
 void REGPARAM2 op_08a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -4677,7 +4677,7 @@ void REGPARAM2 op_08a0_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,(d16,An) */
 void REGPARAM2 op_08a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -4699,7 +4699,7 @@ void REGPARAM2 op_08a8_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_08b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -4721,7 +4721,7 @@ void REGPARAM2 op_08b0_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,(xxx).W */
 void REGPARAM2 op_08b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4741,7 +4741,7 @@ void REGPARAM2 op_08b8_23_ff(uae_u32 opcode)
 /* BCLR.B #<data>.W,(xxx).L */
 void REGPARAM2 op_08b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4761,7 +4761,7 @@ void REGPARAM2 op_08b9_23_ff(uae_u32 opcode)
 /* BSET.L #<data>.W,Dn */
 void REGPARAM2 op_08c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* No EA */
@@ -4781,7 +4781,7 @@ void REGPARAM2 op_08c0_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,(An) */
 void REGPARAM2 op_08d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -4803,7 +4803,7 @@ void REGPARAM2 op_08d0_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,(An)+ */
 void REGPARAM2 op_08d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -4826,7 +4826,7 @@ void REGPARAM2 op_08d8_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,-(An) */
 void REGPARAM2 op_08e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -4849,7 +4849,7 @@ void REGPARAM2 op_08e0_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,(d16,An) */
 void REGPARAM2 op_08e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -4871,7 +4871,7 @@ void REGPARAM2 op_08e8_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_08f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -4893,7 +4893,7 @@ void REGPARAM2 op_08f0_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,(xxx).W */
 void REGPARAM2 op_08f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4913,7 +4913,7 @@ void REGPARAM2 op_08f8_23_ff(uae_u32 opcode)
 /* BSET.B #<data>.W,(xxx).L */
 void REGPARAM2 op_08f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -4933,7 +4933,7 @@ void REGPARAM2 op_08f9_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,Dn */
 void REGPARAM2 op_0a00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -4954,7 +4954,7 @@ void REGPARAM2 op_0a00_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,(An) */
 void REGPARAM2 op_0a10_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -4977,7 +4977,7 @@ void REGPARAM2 op_0a10_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,(An)+ */
 void REGPARAM2 op_0a18_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -5001,7 +5001,7 @@ void REGPARAM2 op_0a18_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,-(An) */
 void REGPARAM2 op_0a20_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -5025,7 +5025,7 @@ void REGPARAM2 op_0a20_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,(d16,An) */
 void REGPARAM2 op_0a28_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -5048,7 +5048,7 @@ void REGPARAM2 op_0a28_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_0a30_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -5071,7 +5071,7 @@ void REGPARAM2 op_0a30_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,(xxx).W */
 void REGPARAM2 op_0a38_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -5092,7 +5092,7 @@ void REGPARAM2 op_0a38_23_ff(uae_u32 opcode)
 /* EOR.B #<data>.B,(xxx).L */
 void REGPARAM2 op_0a39_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -5113,7 +5113,7 @@ void REGPARAM2 op_0a39_23_ff(uae_u32 opcode)
 /* EORSR.B #<data>.W */
 void REGPARAM2 op_0a3c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	MakeSR();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -5130,7 +5130,7 @@ void REGPARAM2 op_0a3c_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,Dn */
 void REGPARAM2 op_0a40_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -5151,7 +5151,7 @@ void REGPARAM2 op_0a40_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,(An) */
 void REGPARAM2 op_0a50_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -5174,7 +5174,7 @@ void REGPARAM2 op_0a50_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,(An)+ */
 void REGPARAM2 op_0a58_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -5198,7 +5198,7 @@ void REGPARAM2 op_0a58_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,-(An) */
 void REGPARAM2 op_0a60_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -5222,7 +5222,7 @@ void REGPARAM2 op_0a60_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,(d16,An) */
 void REGPARAM2 op_0a68_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -5245,7 +5245,7 @@ void REGPARAM2 op_0a68_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0a70_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -5268,7 +5268,7 @@ void REGPARAM2 op_0a70_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,(xxx).W */
 void REGPARAM2 op_0a78_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -5289,7 +5289,7 @@ void REGPARAM2 op_0a78_23_ff(uae_u32 opcode)
 /* EOR.W #<data>.W,(xxx).L */
 void REGPARAM2 op_0a79_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -5310,7 +5310,7 @@ void REGPARAM2 op_0a79_23_ff(uae_u32 opcode)
 /* EORSR.W #<data>.W */
 void REGPARAM2 op_0a7c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -5332,7 +5332,7 @@ void REGPARAM2 op_0a7c_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,Dn */
 void REGPARAM2 op_0a80_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4+2=6,T:0,C:0 fiea */
@@ -5354,7 +5354,7 @@ void REGPARAM2 op_0a80_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,(An) */
 void REGPARAM2 op_0a90_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:0,C:0 fiea */
@@ -5378,7 +5378,7 @@ void REGPARAM2 op_0a90_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,(An)+ */
 void REGPARAM2 op_0a98_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:1,C:0 fiea */
@@ -5403,7 +5403,7 @@ void REGPARAM2 op_0a98_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,-(An) */
 void REGPARAM2 op_0aa0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -5428,7 +5428,7 @@ void REGPARAM2 op_0aa0_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,(d16,An) */
 void REGPARAM2 op_0aa8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -5452,7 +5452,7 @@ void REGPARAM2 op_0aa8_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_0ab0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:8,T:2,C:0 fiea */
@@ -5476,7 +5476,7 @@ void REGPARAM2 op_0ab0_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,(xxx).W */
 void REGPARAM2 op_0ab8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -5498,7 +5498,7 @@ void REGPARAM2 op_0ab8_23_ff(uae_u32 opcode)
 /* EOR.L #<data>.L,(xxx).L */
 void REGPARAM2 op_0ab9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:5,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -5521,7 +5521,7 @@ void REGPARAM2 op_0ab9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ad0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -5557,7 +5557,7 @@ void REGPARAM2 op_0ad0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ad8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -5594,7 +5594,7 @@ void REGPARAM2 op_0ad8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ae0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -5631,7 +5631,7 @@ void REGPARAM2 op_0ae0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ae8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -5667,7 +5667,7 @@ void REGPARAM2 op_0ae8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0af0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -5703,7 +5703,7 @@ void REGPARAM2 op_0af0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0af8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -5737,7 +5737,7 @@ void REGPARAM2 op_0af8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0af9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -5770,7 +5770,7 @@ void REGPARAM2 op_0af9_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,Dn */
 void REGPARAM2 op_0c00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -5794,7 +5794,7 @@ void REGPARAM2 op_0c00_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,(An) */
 void REGPARAM2 op_0c10_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -5820,7 +5820,7 @@ void REGPARAM2 op_0c10_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,(An)+ */
 void REGPARAM2 op_0c18_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -5847,7 +5847,7 @@ void REGPARAM2 op_0c18_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,-(An) */
 void REGPARAM2 op_0c20_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -5874,7 +5874,7 @@ void REGPARAM2 op_0c20_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,(d16,An) */
 void REGPARAM2 op_0c28_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -5900,7 +5900,7 @@ void REGPARAM2 op_0c28_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_0c30_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -5926,7 +5926,7 @@ void REGPARAM2 op_0c30_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,(xxx).W */
 void REGPARAM2 op_0c38_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -5950,7 +5950,7 @@ void REGPARAM2 op_0c38_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,(xxx).L */
 void REGPARAM2 op_0c39_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -5975,7 +5975,7 @@ void REGPARAM2 op_0c39_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0c3a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
@@ -6003,7 +6003,7 @@ void REGPARAM2 op_0c3a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0c3b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
@@ -6030,7 +6030,7 @@ void REGPARAM2 op_0c3b_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,Dn */
 void REGPARAM2 op_0c40_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2+2=4,T:0,C:0 fiea */
@@ -6054,7 +6054,7 @@ void REGPARAM2 op_0c40_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,(An) */
 void REGPARAM2 op_0c50_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:1,C:0 fiea */
@@ -6080,7 +6080,7 @@ void REGPARAM2 op_0c50_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,(An)+ */
 void REGPARAM2 op_0c58_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:1,C:0 fiea */
@@ -6107,7 +6107,7 @@ void REGPARAM2 op_0c58_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,-(An) */
 void REGPARAM2 op_0c60_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:2,C:0 fiea */
@@ -6134,7 +6134,7 @@ void REGPARAM2 op_0c60_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,(d16,An) */
 void REGPARAM2 op_0c68_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -6160,7 +6160,7 @@ void REGPARAM2 op_0c68_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_0c70_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:6,T:2,C:0 fiea */
@@ -6186,7 +6186,7 @@ void REGPARAM2 op_0c70_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,(xxx).W */
 void REGPARAM2 op_0c78_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -6210,7 +6210,7 @@ void REGPARAM2 op_0c78_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,(xxx).L */
 void REGPARAM2 op_0c79_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:3,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -6235,7 +6235,7 @@ void REGPARAM2 op_0c79_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0c7a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6263,7 +6263,7 @@ void REGPARAM2 op_0c7a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0c7b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6290,7 +6290,7 @@ void REGPARAM2 op_0c7b_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,Dn */
 void REGPARAM2 op_0c80_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4+2=6,T:0,C:0 fiea */
@@ -6315,7 +6315,7 @@ void REGPARAM2 op_0c80_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,(An) */
 void REGPARAM2 op_0c90_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:1,T:0,C:0 fiea */
@@ -6342,7 +6342,7 @@ void REGPARAM2 op_0c90_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,(An)+ */
 void REGPARAM2 op_0c98_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:1,C:0 fiea */
@@ -6370,7 +6370,7 @@ void REGPARAM2 op_0c98_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,-(An) */
 void REGPARAM2 op_0ca0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -6398,7 +6398,7 @@ void REGPARAM2 op_0ca0_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,(d16,An) */
 void REGPARAM2 op_0ca8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -6425,7 +6425,7 @@ void REGPARAM2 op_0ca8_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_0cb0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	/* ea H:8,T:2,C:0 fiea */
@@ -6452,7 +6452,7 @@ void REGPARAM2 op_0cb0_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,(xxx).W */
 void REGPARAM2 op_0cb8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:6,T:2,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -6477,7 +6477,7 @@ void REGPARAM2 op_0cb8_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,(xxx).L */
 void REGPARAM2 op_0cb9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:5,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -6503,7 +6503,7 @@ void REGPARAM2 op_0cb9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	/* ea H:4,T:0,C:0 fiea */
 	uae_s32 src;
@@ -6532,7 +6532,7 @@ void REGPARAM2 op_0cba_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cbb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	/* ea H:8,T:2,C:0 fiea */
 	uae_s32 src;
@@ -6561,7 +6561,7 @@ void REGPARAM2 op_0cbb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6597,7 +6597,7 @@ void REGPARAM2 op_0cd0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cd8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6634,7 +6634,7 @@ void REGPARAM2 op_0cd8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ce0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6671,7 +6671,7 @@ void REGPARAM2 op_0ce0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ce8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6707,7 +6707,7 @@ void REGPARAM2 op_0ce8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -6743,7 +6743,7 @@ void REGPARAM2 op_0cf0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -6777,7 +6777,7 @@ void REGPARAM2 op_0cf8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -6811,7 +6811,7 @@ void REGPARAM2 op_0cf9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0cfc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 extra;
 	extra = get_long_ce030_prefetch(2);
 	/* OP zero */
@@ -6855,7 +6855,7 @@ void REGPARAM2 op_0cfc_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e10_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -6894,7 +6894,7 @@ void REGPARAM2 op_0e10_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e18_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -6936,7 +6936,7 @@ void REGPARAM2 op_0e18_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e20_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -6978,7 +6978,7 @@ void REGPARAM2 op_0e20_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e28_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7017,7 +7017,7 @@ void REGPARAM2 op_0e28_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e30_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7056,7 +7056,7 @@ void REGPARAM2 op_0e30_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e38_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -7093,7 +7093,7 @@ void REGPARAM2 op_0e38_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e39_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -7130,7 +7130,7 @@ void REGPARAM2 op_0e39_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e50_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7169,7 +7169,7 @@ void REGPARAM2 op_0e50_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e58_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7211,7 +7211,7 @@ void REGPARAM2 op_0e58_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e60_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7253,7 +7253,7 @@ void REGPARAM2 op_0e60_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e68_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7292,7 +7292,7 @@ void REGPARAM2 op_0e68_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e70_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7331,7 +7331,7 @@ void REGPARAM2 op_0e70_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e78_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -7368,7 +7368,7 @@ void REGPARAM2 op_0e78_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e79_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -7405,7 +7405,7 @@ void REGPARAM2 op_0e79_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e90_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7444,7 +7444,7 @@ void REGPARAM2 op_0e90_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0e98_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7486,7 +7486,7 @@ void REGPARAM2 op_0e98_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ea0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7528,7 +7528,7 @@ void REGPARAM2 op_0ea0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ea8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7567,7 +7567,7 @@ void REGPARAM2 op_0ea8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0eb0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	if (!regs.s) {
@@ -7606,7 +7606,7 @@ void REGPARAM2 op_0eb0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0eb8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -7643,7 +7643,7 @@ void REGPARAM2 op_0eb8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0eb9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -7680,7 +7680,7 @@ void REGPARAM2 op_0eb9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ed0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -7716,7 +7716,7 @@ void REGPARAM2 op_0ed0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ed8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -7753,7 +7753,7 @@ void REGPARAM2 op_0ed8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ee0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -7790,7 +7790,7 @@ void REGPARAM2 op_0ee0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ee8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -7826,7 +7826,7 @@ void REGPARAM2 op_0ee8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ef0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -7862,7 +7862,7 @@ void REGPARAM2 op_0ef0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ef8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -7896,7 +7896,7 @@ void REGPARAM2 op_0ef8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0ef9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -7930,7 +7930,7 @@ void REGPARAM2 op_0ef9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_0efc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 extra;
 	extra = get_long_ce030_prefetch(2);
 	/* OP zero */
@@ -7973,7 +7973,7 @@ void REGPARAM2 op_0efc_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,Dn */
 void REGPARAM2 op_1000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -7992,7 +7992,7 @@ void REGPARAM2 op_1000_23_ff(uae_u32 opcode)
 /* MOVE.B (An),Dn */
 void REGPARAM2 op_1010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8014,7 +8014,7 @@ void REGPARAM2 op_1010_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,Dn */
 void REGPARAM2 op_1018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8037,7 +8037,7 @@ void REGPARAM2 op_1018_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),Dn */
 void REGPARAM2 op_1020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8060,7 +8060,7 @@ void REGPARAM2 op_1020_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),Dn */
 void REGPARAM2 op_1028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8082,7 +8082,7 @@ void REGPARAM2 op_1028_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),Dn */
 void REGPARAM2 op_1030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8104,7 +8104,7 @@ void REGPARAM2 op_1030_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,Dn */
 void REGPARAM2 op_1038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8125,7 +8125,7 @@ void REGPARAM2 op_1038_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,Dn */
 void REGPARAM2 op_1039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -8146,7 +8146,7 @@ void REGPARAM2 op_1039_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),Dn */
 void REGPARAM2 op_103a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8168,7 +8168,7 @@ void REGPARAM2 op_103a_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),Dn */
 void REGPARAM2 op_103b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -8190,7 +8190,7 @@ void REGPARAM2 op_103b_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,Dn */
 void REGPARAM2 op_103c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -8209,7 +8209,7 @@ void REGPARAM2 op_103c_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,(An) */
 void REGPARAM2 op_1080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8230,7 +8230,7 @@ void REGPARAM2 op_1080_23_ff(uae_u32 opcode)
 /* MOVE.B (An),(An) */
 void REGPARAM2 op_1090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8254,7 +8254,7 @@ void REGPARAM2 op_1090_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,(An) */
 void REGPARAM2 op_1098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8279,7 +8279,7 @@ void REGPARAM2 op_1098_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),(An) */
 void REGPARAM2 op_10a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8304,7 +8304,7 @@ void REGPARAM2 op_10a0_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),(An) */
 void REGPARAM2 op_10a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8328,7 +8328,7 @@ void REGPARAM2 op_10a8_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),(An) */
 void REGPARAM2 op_10b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8352,7 +8352,7 @@ void REGPARAM2 op_10b0_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,(An) */
 void REGPARAM2 op_10b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8375,7 +8375,7 @@ void REGPARAM2 op_10b8_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,(An) */
 void REGPARAM2 op_10b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -8398,7 +8398,7 @@ void REGPARAM2 op_10b9_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),(An) */
 void REGPARAM2 op_10ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8422,7 +8422,7 @@ void REGPARAM2 op_10ba_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),(An) */
 void REGPARAM2 op_10bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -8446,7 +8446,7 @@ void REGPARAM2 op_10bb_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,(An) */
 void REGPARAM2 op_10bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -8467,7 +8467,7 @@ void REGPARAM2 op_10bc_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,(An)+ */
 void REGPARAM2 op_10c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8489,7 +8489,7 @@ void REGPARAM2 op_10c0_23_ff(uae_u32 opcode)
 /* MOVE.B (An),(An)+ */
 void REGPARAM2 op_10d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8514,7 +8514,7 @@ void REGPARAM2 op_10d0_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,(An)+ */
 void REGPARAM2 op_10d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8540,7 +8540,7 @@ void REGPARAM2 op_10d8_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),(An)+ */
 void REGPARAM2 op_10e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8566,7 +8566,7 @@ void REGPARAM2 op_10e0_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),(An)+ */
 void REGPARAM2 op_10e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8591,7 +8591,7 @@ void REGPARAM2 op_10e8_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),(An)+ */
 void REGPARAM2 op_10f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8616,7 +8616,7 @@ void REGPARAM2 op_10f0_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,(An)+ */
 void REGPARAM2 op_10f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8640,7 +8640,7 @@ void REGPARAM2 op_10f8_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,(An)+ */
 void REGPARAM2 op_10f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -8664,7 +8664,7 @@ void REGPARAM2 op_10f9_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),(An)+ */
 void REGPARAM2 op_10fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8689,7 +8689,7 @@ void REGPARAM2 op_10fa_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),(An)+ */
 void REGPARAM2 op_10fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -8714,7 +8714,7 @@ void REGPARAM2 op_10fb_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,(An)+ */
 void REGPARAM2 op_10fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -8736,7 +8736,7 @@ void REGPARAM2 op_10fc_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,-(An) */
 void REGPARAM2 op_1100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8758,7 +8758,7 @@ void REGPARAM2 op_1100_23_ff(uae_u32 opcode)
 /* MOVE.B (An),-(An) */
 void REGPARAM2 op_1110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8783,7 +8783,7 @@ void REGPARAM2 op_1110_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,-(An) */
 void REGPARAM2 op_1118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8809,7 +8809,7 @@ void REGPARAM2 op_1118_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),-(An) */
 void REGPARAM2 op_1120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8835,7 +8835,7 @@ void REGPARAM2 op_1120_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),-(An) */
 void REGPARAM2 op_1128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8860,7 +8860,7 @@ void REGPARAM2 op_1128_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),-(An) */
 void REGPARAM2 op_1130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -8885,7 +8885,7 @@ void REGPARAM2 op_1130_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,-(An) */
 void REGPARAM2 op_1138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8909,7 +8909,7 @@ void REGPARAM2 op_1138_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,-(An) */
 void REGPARAM2 op_1139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -8933,7 +8933,7 @@ void REGPARAM2 op_1139_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),-(An) */
 void REGPARAM2 op_113a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -8958,7 +8958,7 @@ void REGPARAM2 op_113a_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),-(An) */
 void REGPARAM2 op_113b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -8983,7 +8983,7 @@ void REGPARAM2 op_113b_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,-(An) */
 void REGPARAM2 op_113c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -9005,7 +9005,7 @@ void REGPARAM2 op_113c_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,(d16,An) */
 void REGPARAM2 op_1140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9027,7 +9027,7 @@ void REGPARAM2 op_1140_23_ff(uae_u32 opcode)
 /* MOVE.B (An),(d16,An) */
 void REGPARAM2 op_1150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9051,7 +9051,7 @@ void REGPARAM2 op_1150_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,(d16,An) */
 void REGPARAM2 op_1158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9076,7 +9076,7 @@ void REGPARAM2 op_1158_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),(d16,An) */
 void REGPARAM2 op_1160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9101,7 +9101,7 @@ void REGPARAM2 op_1160_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),(d16,An) */
 void REGPARAM2 op_1168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9125,7 +9125,7 @@ void REGPARAM2 op_1168_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),(d16,An) */
 void REGPARAM2 op_1170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9150,7 +9150,7 @@ void REGPARAM2 op_1170_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,(d16,An) */
 void REGPARAM2 op_1178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -9173,7 +9173,7 @@ void REGPARAM2 op_1178_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,(d16,An) */
 void REGPARAM2 op_1179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -9196,7 +9196,7 @@ void REGPARAM2 op_1179_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),(d16,An) */
 void REGPARAM2 op_117a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -9220,7 +9220,7 @@ void REGPARAM2 op_117a_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),(d16,An) */
 void REGPARAM2 op_117b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -9245,7 +9245,7 @@ void REGPARAM2 op_117b_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,(d16,An) */
 void REGPARAM2 op_117c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -9266,7 +9266,7 @@ void REGPARAM2 op_117c_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_1180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9288,7 +9288,7 @@ void REGPARAM2 op_1180_23_ff(uae_u32 opcode)
 /* MOVE.B (An),(d8,An,Xn) */
 void REGPARAM2 op_1190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9312,7 +9312,7 @@ void REGPARAM2 op_1190_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,(d8,An,Xn) */
 void REGPARAM2 op_1198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9337,7 +9337,7 @@ void REGPARAM2 op_1198_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),(d8,An,Xn) */
 void REGPARAM2 op_11a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9362,7 +9362,7 @@ void REGPARAM2 op_11a0_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),(d8,An,Xn) */
 void REGPARAM2 op_11a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9386,7 +9386,7 @@ void REGPARAM2 op_11a8_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),(d8,An,Xn) */
 void REGPARAM2 op_11b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -9410,7 +9410,7 @@ void REGPARAM2 op_11b0_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,(d8,An,Xn) */
 void REGPARAM2 op_11b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -9433,7 +9433,7 @@ void REGPARAM2 op_11b8_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,(d8,An,Xn) */
 void REGPARAM2 op_11b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -9456,7 +9456,7 @@ void REGPARAM2 op_11b9_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),(d8,An,Xn) */
 void REGPARAM2 op_11ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -9480,7 +9480,7 @@ void REGPARAM2 op_11ba_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),(d8,An,Xn) */
 void REGPARAM2 op_11bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -9504,7 +9504,7 @@ void REGPARAM2 op_11bb_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,(d8,An,Xn) */
 void REGPARAM2 op_11bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -9525,7 +9525,7 @@ void REGPARAM2 op_11bc_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,(xxx).W */
 void REGPARAM2 op_11c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -9546,7 +9546,7 @@ void REGPARAM2 op_11c0_23_ff(uae_u32 opcode)
 /* MOVE.B (An),(xxx).W */
 void REGPARAM2 op_11d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -9569,7 +9569,7 @@ void REGPARAM2 op_11d0_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,(xxx).W */
 void REGPARAM2 op_11d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -9593,7 +9593,7 @@ void REGPARAM2 op_11d8_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),(xxx).W */
 void REGPARAM2 op_11e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -9617,7 +9617,7 @@ void REGPARAM2 op_11e0_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),(xxx).W */
 void REGPARAM2 op_11e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -9640,7 +9640,7 @@ void REGPARAM2 op_11e8_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),(xxx).W */
 void REGPARAM2 op_11f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -9664,7 +9664,7 @@ void REGPARAM2 op_11f0_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,(xxx).W */
 void REGPARAM2 op_11f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -9685,7 +9685,7 @@ void REGPARAM2 op_11f8_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,(xxx).W */
 void REGPARAM2 op_11f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -9706,7 +9706,7 @@ void REGPARAM2 op_11f9_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),(xxx).W */
 void REGPARAM2 op_11fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -9728,7 +9728,7 @@ void REGPARAM2 op_11fa_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),(xxx).W */
 void REGPARAM2 op_11fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -9751,7 +9751,7 @@ void REGPARAM2 op_11fb_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,(xxx).W */
 void REGPARAM2 op_11fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -9770,7 +9770,7 @@ void REGPARAM2 op_11fc_23_ff(uae_u32 opcode)
 /* MOVE.B Dn,(xxx).L */
 void REGPARAM2 op_13c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -9791,7 +9791,7 @@ void REGPARAM2 op_13c0_23_ff(uae_u32 opcode)
 /* MOVE.B (An),(xxx).L */
 void REGPARAM2 op_13d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -9814,7 +9814,7 @@ void REGPARAM2 op_13d0_23_ff(uae_u32 opcode)
 /* MOVE.B (An)+,(xxx).L */
 void REGPARAM2 op_13d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -9838,7 +9838,7 @@ void REGPARAM2 op_13d8_23_ff(uae_u32 opcode)
 /* MOVE.B -(An),(xxx).L */
 void REGPARAM2 op_13e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -9862,7 +9862,7 @@ void REGPARAM2 op_13e0_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,An),(xxx).L */
 void REGPARAM2 op_13e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -9885,7 +9885,7 @@ void REGPARAM2 op_13e8_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,An,Xn),(xxx).L */
 void REGPARAM2 op_13f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -9909,7 +9909,7 @@ void REGPARAM2 op_13f0_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).W,(xxx).L */
 void REGPARAM2 op_13f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -9930,7 +9930,7 @@ void REGPARAM2 op_13f8_23_ff(uae_u32 opcode)
 /* MOVE.B (xxx).L,(xxx).L */
 void REGPARAM2 op_13f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -9951,7 +9951,7 @@ void REGPARAM2 op_13f9_23_ff(uae_u32 opcode)
 /* MOVE.B (d16,PC),(xxx).L */
 void REGPARAM2 op_13fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -9973,7 +9973,7 @@ void REGPARAM2 op_13fa_23_ff(uae_u32 opcode)
 /* MOVE.B (d8,PC,Xn),(xxx).L */
 void REGPARAM2 op_13fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -9996,7 +9996,7 @@ void REGPARAM2 op_13fb_23_ff(uae_u32 opcode)
 /* MOVE.B #<data>.B,(xxx).L */
 void REGPARAM2 op_13fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -10015,7 +10015,7 @@ void REGPARAM2 op_13fc_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,Dn */
 void REGPARAM2 op_2000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10034,7 +10034,7 @@ void REGPARAM2 op_2000_23_ff(uae_u32 opcode)
 /* MOVE.L An,Dn */
 void REGPARAM2 op_2008_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10053,7 +10053,7 @@ void REGPARAM2 op_2008_23_ff(uae_u32 opcode)
 /* MOVE.L (An),Dn */
 void REGPARAM2 op_2010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10075,7 +10075,7 @@ void REGPARAM2 op_2010_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,Dn */
 void REGPARAM2 op_2018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10098,7 +10098,7 @@ void REGPARAM2 op_2018_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),Dn */
 void REGPARAM2 op_2020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10121,7 +10121,7 @@ void REGPARAM2 op_2020_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),Dn */
 void REGPARAM2 op_2028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10143,7 +10143,7 @@ void REGPARAM2 op_2028_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),Dn */
 void REGPARAM2 op_2030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10165,7 +10165,7 @@ void REGPARAM2 op_2030_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,Dn */
 void REGPARAM2 op_2038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10186,7 +10186,7 @@ void REGPARAM2 op_2038_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,Dn */
 void REGPARAM2 op_2039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -10207,7 +10207,7 @@ void REGPARAM2 op_2039_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),Dn */
 void REGPARAM2 op_203a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10229,7 +10229,7 @@ void REGPARAM2 op_203a_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),Dn */
 void REGPARAM2 op_203b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -10251,7 +10251,7 @@ void REGPARAM2 op_203b_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,Dn */
 void REGPARAM2 op_203c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -10271,7 +10271,7 @@ void REGPARAM2 op_203c_23_ff(uae_u32 opcode)
 /* MOVEA.L Dn,An */
 void REGPARAM2 op_2040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10287,7 +10287,7 @@ void REGPARAM2 op_2040_23_ff(uae_u32 opcode)
 /* MOVEA.L An,An */
 void REGPARAM2 op_2048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10303,7 +10303,7 @@ void REGPARAM2 op_2048_23_ff(uae_u32 opcode)
 /* MOVEA.L (An),An */
 void REGPARAM2 op_2050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10322,7 +10322,7 @@ void REGPARAM2 op_2050_23_ff(uae_u32 opcode)
 /* MOVEA.L (An)+,An */
 void REGPARAM2 op_2058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10342,7 +10342,7 @@ void REGPARAM2 op_2058_23_ff(uae_u32 opcode)
 /* MOVEA.L -(An),An */
 void REGPARAM2 op_2060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10362,7 +10362,7 @@ void REGPARAM2 op_2060_23_ff(uae_u32 opcode)
 /* MOVEA.L (d16,An),An */
 void REGPARAM2 op_2068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10381,7 +10381,7 @@ void REGPARAM2 op_2068_23_ff(uae_u32 opcode)
 /* MOVEA.L (d8,An,Xn),An */
 void REGPARAM2 op_2070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10400,7 +10400,7 @@ void REGPARAM2 op_2070_23_ff(uae_u32 opcode)
 /* MOVEA.L (xxx).W,An */
 void REGPARAM2 op_2078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10418,7 +10418,7 @@ void REGPARAM2 op_2078_23_ff(uae_u32 opcode)
 /* MOVEA.L (xxx).L,An */
 void REGPARAM2 op_2079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -10436,7 +10436,7 @@ void REGPARAM2 op_2079_23_ff(uae_u32 opcode)
 /* MOVEA.L (d16,PC),An */
 void REGPARAM2 op_207a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10455,7 +10455,7 @@ void REGPARAM2 op_207a_23_ff(uae_u32 opcode)
 /* MOVEA.L (d8,PC,Xn),An */
 void REGPARAM2 op_207b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -10474,7 +10474,7 @@ void REGPARAM2 op_207b_23_ff(uae_u32 opcode)
 /* MOVEA.L #<data>.L,An */
 void REGPARAM2 op_207c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -10491,7 +10491,7 @@ void REGPARAM2 op_207c_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,(An) */
 void REGPARAM2 op_2080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10512,7 +10512,7 @@ void REGPARAM2 op_2080_23_ff(uae_u32 opcode)
 /* MOVE.L An,(An) */
 void REGPARAM2 op_2088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10533,7 +10533,7 @@ void REGPARAM2 op_2088_23_ff(uae_u32 opcode)
 /* MOVE.L (An),(An) */
 void REGPARAM2 op_2090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10557,7 +10557,7 @@ void REGPARAM2 op_2090_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,(An) */
 void REGPARAM2 op_2098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10582,7 +10582,7 @@ void REGPARAM2 op_2098_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),(An) */
 void REGPARAM2 op_20a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10607,7 +10607,7 @@ void REGPARAM2 op_20a0_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),(An) */
 void REGPARAM2 op_20a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10631,7 +10631,7 @@ void REGPARAM2 op_20a8_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),(An) */
 void REGPARAM2 op_20b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10655,7 +10655,7 @@ void REGPARAM2 op_20b0_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,(An) */
 void REGPARAM2 op_20b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10678,7 +10678,7 @@ void REGPARAM2 op_20b8_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,(An) */
 void REGPARAM2 op_20b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -10701,7 +10701,7 @@ void REGPARAM2 op_20b9_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),(An) */
 void REGPARAM2 op_20ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10725,7 +10725,7 @@ void REGPARAM2 op_20ba_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),(An) */
 void REGPARAM2 op_20bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -10749,7 +10749,7 @@ void REGPARAM2 op_20bb_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,(An) */
 void REGPARAM2 op_20bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -10771,7 +10771,7 @@ void REGPARAM2 op_20bc_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,(An)+ */
 void REGPARAM2 op_20c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10793,7 +10793,7 @@ void REGPARAM2 op_20c0_23_ff(uae_u32 opcode)
 /* MOVE.L An,(An)+ */
 void REGPARAM2 op_20c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10815,7 +10815,7 @@ void REGPARAM2 op_20c8_23_ff(uae_u32 opcode)
 /* MOVE.L (An),(An)+ */
 void REGPARAM2 op_20d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10840,7 +10840,7 @@ void REGPARAM2 op_20d0_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,(An)+ */
 void REGPARAM2 op_20d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10866,7 +10866,7 @@ void REGPARAM2 op_20d8_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),(An)+ */
 void REGPARAM2 op_20e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10892,7 +10892,7 @@ void REGPARAM2 op_20e0_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),(An)+ */
 void REGPARAM2 op_20e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10917,7 +10917,7 @@ void REGPARAM2 op_20e8_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),(An)+ */
 void REGPARAM2 op_20f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -10942,7 +10942,7 @@ void REGPARAM2 op_20f0_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,(An)+ */
 void REGPARAM2 op_20f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -10966,7 +10966,7 @@ void REGPARAM2 op_20f8_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,(An)+ */
 void REGPARAM2 op_20f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -10990,7 +10990,7 @@ void REGPARAM2 op_20f9_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),(An)+ */
 void REGPARAM2 op_20fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11015,7 +11015,7 @@ void REGPARAM2 op_20fa_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),(An)+ */
 void REGPARAM2 op_20fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -11040,7 +11040,7 @@ void REGPARAM2 op_20fb_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,(An)+ */
 void REGPARAM2 op_20fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -11063,7 +11063,7 @@ void REGPARAM2 op_20fc_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,-(An) */
 void REGPARAM2 op_2100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11085,7 +11085,7 @@ void REGPARAM2 op_2100_23_ff(uae_u32 opcode)
 /* MOVE.L An,-(An) */
 void REGPARAM2 op_2108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11107,7 +11107,7 @@ void REGPARAM2 op_2108_23_ff(uae_u32 opcode)
 /* MOVE.L (An),-(An) */
 void REGPARAM2 op_2110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11132,7 +11132,7 @@ void REGPARAM2 op_2110_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,-(An) */
 void REGPARAM2 op_2118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11158,7 +11158,7 @@ void REGPARAM2 op_2118_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),-(An) */
 void REGPARAM2 op_2120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11184,7 +11184,7 @@ void REGPARAM2 op_2120_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),-(An) */
 void REGPARAM2 op_2128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11209,7 +11209,7 @@ void REGPARAM2 op_2128_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),-(An) */
 void REGPARAM2 op_2130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11234,7 +11234,7 @@ void REGPARAM2 op_2130_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,-(An) */
 void REGPARAM2 op_2138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11258,7 +11258,7 @@ void REGPARAM2 op_2138_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,-(An) */
 void REGPARAM2 op_2139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -11282,7 +11282,7 @@ void REGPARAM2 op_2139_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),-(An) */
 void REGPARAM2 op_213a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11307,7 +11307,7 @@ void REGPARAM2 op_213a_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),-(An) */
 void REGPARAM2 op_213b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -11332,7 +11332,7 @@ void REGPARAM2 op_213b_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,-(An) */
 void REGPARAM2 op_213c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -11355,7 +11355,7 @@ void REGPARAM2 op_213c_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,(d16,An) */
 void REGPARAM2 op_2140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11377,7 +11377,7 @@ void REGPARAM2 op_2140_23_ff(uae_u32 opcode)
 /* MOVE.L An,(d16,An) */
 void REGPARAM2 op_2148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11399,7 +11399,7 @@ void REGPARAM2 op_2148_23_ff(uae_u32 opcode)
 /* MOVE.L (An),(d16,An) */
 void REGPARAM2 op_2150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11423,7 +11423,7 @@ void REGPARAM2 op_2150_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,(d16,An) */
 void REGPARAM2 op_2158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11448,7 +11448,7 @@ void REGPARAM2 op_2158_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),(d16,An) */
 void REGPARAM2 op_2160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11473,7 +11473,7 @@ void REGPARAM2 op_2160_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),(d16,An) */
 void REGPARAM2 op_2168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11497,7 +11497,7 @@ void REGPARAM2 op_2168_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),(d16,An) */
 void REGPARAM2 op_2170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11522,7 +11522,7 @@ void REGPARAM2 op_2170_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,(d16,An) */
 void REGPARAM2 op_2178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11545,7 +11545,7 @@ void REGPARAM2 op_2178_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,(d16,An) */
 void REGPARAM2 op_2179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -11568,7 +11568,7 @@ void REGPARAM2 op_2179_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),(d16,An) */
 void REGPARAM2 op_217a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11592,7 +11592,7 @@ void REGPARAM2 op_217a_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),(d16,An) */
 void REGPARAM2 op_217b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -11617,7 +11617,7 @@ void REGPARAM2 op_217b_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,(d16,An) */
 void REGPARAM2 op_217c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -11639,7 +11639,7 @@ void REGPARAM2 op_217c_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,(d8,An,Xn) */
 void REGPARAM2 op_2180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11661,7 +11661,7 @@ void REGPARAM2 op_2180_23_ff(uae_u32 opcode)
 /* MOVE.L An,(d8,An,Xn) */
 void REGPARAM2 op_2188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11683,7 +11683,7 @@ void REGPARAM2 op_2188_23_ff(uae_u32 opcode)
 /* MOVE.L (An),(d8,An,Xn) */
 void REGPARAM2 op_2190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11707,7 +11707,7 @@ void REGPARAM2 op_2190_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,(d8,An,Xn) */
 void REGPARAM2 op_2198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11732,7 +11732,7 @@ void REGPARAM2 op_2198_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),(d8,An,Xn) */
 void REGPARAM2 op_21a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11757,7 +11757,7 @@ void REGPARAM2 op_21a0_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),(d8,An,Xn) */
 void REGPARAM2 op_21a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11781,7 +11781,7 @@ void REGPARAM2 op_21a8_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),(d8,An,Xn) */
 void REGPARAM2 op_21b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -11805,7 +11805,7 @@ void REGPARAM2 op_21b0_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,(d8,An,Xn) */
 void REGPARAM2 op_21b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11828,7 +11828,7 @@ void REGPARAM2 op_21b8_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,(d8,An,Xn) */
 void REGPARAM2 op_21b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -11851,7 +11851,7 @@ void REGPARAM2 op_21b9_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),(d8,An,Xn) */
 void REGPARAM2 op_21ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -11875,7 +11875,7 @@ void REGPARAM2 op_21ba_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),(d8,An,Xn) */
 void REGPARAM2 op_21bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -11899,7 +11899,7 @@ void REGPARAM2 op_21bb_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,(d8,An,Xn) */
 void REGPARAM2 op_21bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:0,C:0 fiea */
@@ -11921,7 +11921,7 @@ void REGPARAM2 op_21bc_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,(xxx).W */
 void REGPARAM2 op_21c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -11942,7 +11942,7 @@ void REGPARAM2 op_21c0_23_ff(uae_u32 opcode)
 /* MOVE.L An,(xxx).W */
 void REGPARAM2 op_21c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -11963,7 +11963,7 @@ void REGPARAM2 op_21c8_23_ff(uae_u32 opcode)
 /* MOVE.L (An),(xxx).W */
 void REGPARAM2 op_21d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -11986,7 +11986,7 @@ void REGPARAM2 op_21d0_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,(xxx).W */
 void REGPARAM2 op_21d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -12010,7 +12010,7 @@ void REGPARAM2 op_21d8_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),(xxx).W */
 void REGPARAM2 op_21e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -12034,7 +12034,7 @@ void REGPARAM2 op_21e0_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),(xxx).W */
 void REGPARAM2 op_21e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -12057,7 +12057,7 @@ void REGPARAM2 op_21e8_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),(xxx).W */
 void REGPARAM2 op_21f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -12081,7 +12081,7 @@ void REGPARAM2 op_21f0_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,(xxx).W */
 void REGPARAM2 op_21f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -12102,7 +12102,7 @@ void REGPARAM2 op_21f8_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,(xxx).W */
 void REGPARAM2 op_21f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -12123,7 +12123,7 @@ void REGPARAM2 op_21f9_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),(xxx).W */
 void REGPARAM2 op_21fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -12145,7 +12145,7 @@ void REGPARAM2 op_21fa_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),(xxx).W */
 void REGPARAM2 op_21fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -12168,7 +12168,7 @@ void REGPARAM2 op_21fb_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,(xxx).W */
 void REGPARAM2 op_21fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -12188,7 +12188,7 @@ void REGPARAM2 op_21fc_23_ff(uae_u32 opcode)
 /* MOVE.L Dn,(xxx).L */
 void REGPARAM2 op_23c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -12209,7 +12209,7 @@ void REGPARAM2 op_23c0_23_ff(uae_u32 opcode)
 /* MOVE.L An,(xxx).L */
 void REGPARAM2 op_23c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -12230,7 +12230,7 @@ void REGPARAM2 op_23c8_23_ff(uae_u32 opcode)
 /* MOVE.L (An),(xxx).L */
 void REGPARAM2 op_23d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -12253,7 +12253,7 @@ void REGPARAM2 op_23d0_23_ff(uae_u32 opcode)
 /* MOVE.L (An)+,(xxx).L */
 void REGPARAM2 op_23d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -12277,7 +12277,7 @@ void REGPARAM2 op_23d8_23_ff(uae_u32 opcode)
 /* MOVE.L -(An),(xxx).L */
 void REGPARAM2 op_23e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -12301,7 +12301,7 @@ void REGPARAM2 op_23e0_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,An),(xxx).L */
 void REGPARAM2 op_23e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -12324,7 +12324,7 @@ void REGPARAM2 op_23e8_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,An,Xn),(xxx).L */
 void REGPARAM2 op_23f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -12348,7 +12348,7 @@ void REGPARAM2 op_23f0_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).W,(xxx).L */
 void REGPARAM2 op_23f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -12369,7 +12369,7 @@ void REGPARAM2 op_23f8_23_ff(uae_u32 opcode)
 /* MOVE.L (xxx).L,(xxx).L */
 void REGPARAM2 op_23f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -12390,7 +12390,7 @@ void REGPARAM2 op_23f9_23_ff(uae_u32 opcode)
 /* MOVE.L (d16,PC),(xxx).L */
 void REGPARAM2 op_23fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -12412,7 +12412,7 @@ void REGPARAM2 op_23fa_23_ff(uae_u32 opcode)
 /* MOVE.L (d8,PC,Xn),(xxx).L */
 void REGPARAM2 op_23fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -12435,7 +12435,7 @@ void REGPARAM2 op_23fb_23_ff(uae_u32 opcode)
 /* MOVE.L #<data>.L,(xxx).L */
 void REGPARAM2 op_23fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 fiea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -12455,7 +12455,7 @@ void REGPARAM2 op_23fc_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,Dn */
 void REGPARAM2 op_3000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12474,7 +12474,7 @@ void REGPARAM2 op_3000_23_ff(uae_u32 opcode)
 /* MOVE.W An,Dn */
 void REGPARAM2 op_3008_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12493,7 +12493,7 @@ void REGPARAM2 op_3008_23_ff(uae_u32 opcode)
 /* MOVE.W (An),Dn */
 void REGPARAM2 op_3010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12515,7 +12515,7 @@ void REGPARAM2 op_3010_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,Dn */
 void REGPARAM2 op_3018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12538,7 +12538,7 @@ void REGPARAM2 op_3018_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),Dn */
 void REGPARAM2 op_3020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12561,7 +12561,7 @@ void REGPARAM2 op_3020_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),Dn */
 void REGPARAM2 op_3028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12583,7 +12583,7 @@ void REGPARAM2 op_3028_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),Dn */
 void REGPARAM2 op_3030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12605,7 +12605,7 @@ void REGPARAM2 op_3030_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,Dn */
 void REGPARAM2 op_3038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -12626,7 +12626,7 @@ void REGPARAM2 op_3038_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,Dn */
 void REGPARAM2 op_3039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -12647,7 +12647,7 @@ void REGPARAM2 op_3039_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),Dn */
 void REGPARAM2 op_303a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -12669,7 +12669,7 @@ void REGPARAM2 op_303a_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_303b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -12691,7 +12691,7 @@ void REGPARAM2 op_303b_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,Dn */
 void REGPARAM2 op_303c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -12710,7 +12710,7 @@ void REGPARAM2 op_303c_23_ff(uae_u32 opcode)
 /* MOVEA.W Dn,An */
 void REGPARAM2 op_3040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12727,7 +12727,7 @@ void REGPARAM2 op_3040_23_ff(uae_u32 opcode)
 /* MOVEA.W An,An */
 void REGPARAM2 op_3048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12744,7 +12744,7 @@ void REGPARAM2 op_3048_23_ff(uae_u32 opcode)
 /* MOVEA.W (An),An */
 void REGPARAM2 op_3050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12764,7 +12764,7 @@ void REGPARAM2 op_3050_23_ff(uae_u32 opcode)
 /* MOVEA.W (An)+,An */
 void REGPARAM2 op_3058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12785,7 +12785,7 @@ void REGPARAM2 op_3058_23_ff(uae_u32 opcode)
 /* MOVEA.W -(An),An */
 void REGPARAM2 op_3060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12806,7 +12806,7 @@ void REGPARAM2 op_3060_23_ff(uae_u32 opcode)
 /* MOVEA.W (d16,An),An */
 void REGPARAM2 op_3068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12826,7 +12826,7 @@ void REGPARAM2 op_3068_23_ff(uae_u32 opcode)
 /* MOVEA.W (d8,An,Xn),An */
 void REGPARAM2 op_3070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12846,7 +12846,7 @@ void REGPARAM2 op_3070_23_ff(uae_u32 opcode)
 /* MOVEA.W (xxx).W,An */
 void REGPARAM2 op_3078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -12865,7 +12865,7 @@ void REGPARAM2 op_3078_23_ff(uae_u32 opcode)
 /* MOVEA.W (xxx).L,An */
 void REGPARAM2 op_3079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -12884,7 +12884,7 @@ void REGPARAM2 op_3079_23_ff(uae_u32 opcode)
 /* MOVEA.W (d16,PC),An */
 void REGPARAM2 op_307a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -12904,7 +12904,7 @@ void REGPARAM2 op_307a_23_ff(uae_u32 opcode)
 /* MOVEA.W (d8,PC,Xn),An */
 void REGPARAM2 op_307b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -12924,7 +12924,7 @@ void REGPARAM2 op_307b_23_ff(uae_u32 opcode)
 /* MOVEA.W #<data>.W,An */
 void REGPARAM2 op_307c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -12941,7 +12941,7 @@ void REGPARAM2 op_307c_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,(An) */
 void REGPARAM2 op_3080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12962,7 +12962,7 @@ void REGPARAM2 op_3080_23_ff(uae_u32 opcode)
 /* MOVE.W An,(An) */
 void REGPARAM2 op_3088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -12983,7 +12983,7 @@ void REGPARAM2 op_3088_23_ff(uae_u32 opcode)
 /* MOVE.W (An),(An) */
 void REGPARAM2 op_3090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13007,7 +13007,7 @@ void REGPARAM2 op_3090_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,(An) */
 void REGPARAM2 op_3098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13032,7 +13032,7 @@ void REGPARAM2 op_3098_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),(An) */
 void REGPARAM2 op_30a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13057,7 +13057,7 @@ void REGPARAM2 op_30a0_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),(An) */
 void REGPARAM2 op_30a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13081,7 +13081,7 @@ void REGPARAM2 op_30a8_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),(An) */
 void REGPARAM2 op_30b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13105,7 +13105,7 @@ void REGPARAM2 op_30b0_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,(An) */
 void REGPARAM2 op_30b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13128,7 +13128,7 @@ void REGPARAM2 op_30b8_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,(An) */
 void REGPARAM2 op_30b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -13151,7 +13151,7 @@ void REGPARAM2 op_30b9_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),(An) */
 void REGPARAM2 op_30ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13175,7 +13175,7 @@ void REGPARAM2 op_30ba_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),(An) */
 void REGPARAM2 op_30bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -13199,7 +13199,7 @@ void REGPARAM2 op_30bb_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,(An) */
 void REGPARAM2 op_30bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -13220,7 +13220,7 @@ void REGPARAM2 op_30bc_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,(An)+ */
 void REGPARAM2 op_30c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13242,7 +13242,7 @@ void REGPARAM2 op_30c0_23_ff(uae_u32 opcode)
 /* MOVE.W An,(An)+ */
 void REGPARAM2 op_30c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13264,7 +13264,7 @@ void REGPARAM2 op_30c8_23_ff(uae_u32 opcode)
 /* MOVE.W (An),(An)+ */
 void REGPARAM2 op_30d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13289,7 +13289,7 @@ void REGPARAM2 op_30d0_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,(An)+ */
 void REGPARAM2 op_30d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13315,7 +13315,7 @@ void REGPARAM2 op_30d8_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),(An)+ */
 void REGPARAM2 op_30e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13341,7 +13341,7 @@ void REGPARAM2 op_30e0_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),(An)+ */
 void REGPARAM2 op_30e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13366,7 +13366,7 @@ void REGPARAM2 op_30e8_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),(An)+ */
 void REGPARAM2 op_30f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13391,7 +13391,7 @@ void REGPARAM2 op_30f0_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,(An)+ */
 void REGPARAM2 op_30f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13415,7 +13415,7 @@ void REGPARAM2 op_30f8_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,(An)+ */
 void REGPARAM2 op_30f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -13439,7 +13439,7 @@ void REGPARAM2 op_30f9_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),(An)+ */
 void REGPARAM2 op_30fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13464,7 +13464,7 @@ void REGPARAM2 op_30fa_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),(An)+ */
 void REGPARAM2 op_30fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -13489,7 +13489,7 @@ void REGPARAM2 op_30fb_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,(An)+ */
 void REGPARAM2 op_30fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -13511,7 +13511,7 @@ void REGPARAM2 op_30fc_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,-(An) */
 void REGPARAM2 op_3100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13533,7 +13533,7 @@ void REGPARAM2 op_3100_23_ff(uae_u32 opcode)
 /* MOVE.W An,-(An) */
 void REGPARAM2 op_3108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13555,7 +13555,7 @@ void REGPARAM2 op_3108_23_ff(uae_u32 opcode)
 /* MOVE.W (An),-(An) */
 void REGPARAM2 op_3110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13580,7 +13580,7 @@ void REGPARAM2 op_3110_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,-(An) */
 void REGPARAM2 op_3118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13606,7 +13606,7 @@ void REGPARAM2 op_3118_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),-(An) */
 void REGPARAM2 op_3120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13632,7 +13632,7 @@ void REGPARAM2 op_3120_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),-(An) */
 void REGPARAM2 op_3128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13657,7 +13657,7 @@ void REGPARAM2 op_3128_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),-(An) */
 void REGPARAM2 op_3130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13682,7 +13682,7 @@ void REGPARAM2 op_3130_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,-(An) */
 void REGPARAM2 op_3138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13706,7 +13706,7 @@ void REGPARAM2 op_3138_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,-(An) */
 void REGPARAM2 op_3139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -13730,7 +13730,7 @@ void REGPARAM2 op_3139_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),-(An) */
 void REGPARAM2 op_313a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13755,7 +13755,7 @@ void REGPARAM2 op_313a_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),-(An) */
 void REGPARAM2 op_313b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -13780,7 +13780,7 @@ void REGPARAM2 op_313b_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,-(An) */
 void REGPARAM2 op_313c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -13802,7 +13802,7 @@ void REGPARAM2 op_313c_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,(d16,An) */
 void REGPARAM2 op_3140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13824,7 +13824,7 @@ void REGPARAM2 op_3140_23_ff(uae_u32 opcode)
 /* MOVE.W An,(d16,An) */
 void REGPARAM2 op_3148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13846,7 +13846,7 @@ void REGPARAM2 op_3148_23_ff(uae_u32 opcode)
 /* MOVE.W (An),(d16,An) */
 void REGPARAM2 op_3150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13870,7 +13870,7 @@ void REGPARAM2 op_3150_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,(d16,An) */
 void REGPARAM2 op_3158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13895,7 +13895,7 @@ void REGPARAM2 op_3158_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),(d16,An) */
 void REGPARAM2 op_3160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13920,7 +13920,7 @@ void REGPARAM2 op_3160_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),(d16,An) */
 void REGPARAM2 op_3168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13944,7 +13944,7 @@ void REGPARAM2 op_3168_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),(d16,An) */
 void REGPARAM2 op_3170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -13969,7 +13969,7 @@ void REGPARAM2 op_3170_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,(d16,An) */
 void REGPARAM2 op_3178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -13992,7 +13992,7 @@ void REGPARAM2 op_3178_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,(d16,An) */
 void REGPARAM2 op_3179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -14015,7 +14015,7 @@ void REGPARAM2 op_3179_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),(d16,An) */
 void REGPARAM2 op_317a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -14039,7 +14039,7 @@ void REGPARAM2 op_317a_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),(d16,An) */
 void REGPARAM2 op_317b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -14064,7 +14064,7 @@ void REGPARAM2 op_317b_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,(d16,An) */
 void REGPARAM2 op_317c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -14085,7 +14085,7 @@ void REGPARAM2 op_317c_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,(d8,An,Xn) */
 void REGPARAM2 op_3180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14107,7 +14107,7 @@ void REGPARAM2 op_3180_23_ff(uae_u32 opcode)
 /* MOVE.W An,(d8,An,Xn) */
 void REGPARAM2 op_3188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14129,7 +14129,7 @@ void REGPARAM2 op_3188_23_ff(uae_u32 opcode)
 /* MOVE.W (An),(d8,An,Xn) */
 void REGPARAM2 op_3190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14153,7 +14153,7 @@ void REGPARAM2 op_3190_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,(d8,An,Xn) */
 void REGPARAM2 op_3198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14178,7 +14178,7 @@ void REGPARAM2 op_3198_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),(d8,An,Xn) */
 void REGPARAM2 op_31a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14203,7 +14203,7 @@ void REGPARAM2 op_31a0_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),(d8,An,Xn) */
 void REGPARAM2 op_31a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14227,7 +14227,7 @@ void REGPARAM2 op_31a8_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),(d8,An,Xn) */
 void REGPARAM2 op_31b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -14251,7 +14251,7 @@ void REGPARAM2 op_31b0_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,(d8,An,Xn) */
 void REGPARAM2 op_31b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -14274,7 +14274,7 @@ void REGPARAM2 op_31b8_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,(d8,An,Xn) */
 void REGPARAM2 op_31b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -14297,7 +14297,7 @@ void REGPARAM2 op_31b9_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),(d8,An,Xn) */
 void REGPARAM2 op_31ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -14321,7 +14321,7 @@ void REGPARAM2 op_31ba_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),(d8,An,Xn) */
 void REGPARAM2 op_31bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -14345,7 +14345,7 @@ void REGPARAM2 op_31bb_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_31bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:0,C:0 fiea */
@@ -14366,7 +14366,7 @@ void REGPARAM2 op_31bc_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,(xxx).W */
 void REGPARAM2 op_31c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -14387,7 +14387,7 @@ void REGPARAM2 op_31c0_23_ff(uae_u32 opcode)
 /* MOVE.W An,(xxx).W */
 void REGPARAM2 op_31c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -14408,7 +14408,7 @@ void REGPARAM2 op_31c8_23_ff(uae_u32 opcode)
 /* MOVE.W (An),(xxx).W */
 void REGPARAM2 op_31d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -14431,7 +14431,7 @@ void REGPARAM2 op_31d0_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,(xxx).W */
 void REGPARAM2 op_31d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -14455,7 +14455,7 @@ void REGPARAM2 op_31d8_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),(xxx).W */
 void REGPARAM2 op_31e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -14479,7 +14479,7 @@ void REGPARAM2 op_31e0_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),(xxx).W */
 void REGPARAM2 op_31e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -14502,7 +14502,7 @@ void REGPARAM2 op_31e8_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),(xxx).W */
 void REGPARAM2 op_31f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -14526,7 +14526,7 @@ void REGPARAM2 op_31f0_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,(xxx).W */
 void REGPARAM2 op_31f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -14547,7 +14547,7 @@ void REGPARAM2 op_31f8_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,(xxx).W */
 void REGPARAM2 op_31f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -14568,7 +14568,7 @@ void REGPARAM2 op_31f9_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),(xxx).W */
 void REGPARAM2 op_31fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -14590,7 +14590,7 @@ void REGPARAM2 op_31fa_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),(xxx).W */
 void REGPARAM2 op_31fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -14613,7 +14613,7 @@ void REGPARAM2 op_31fb_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,(xxx).W */
 void REGPARAM2 op_31fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -14632,7 +14632,7 @@ void REGPARAM2 op_31fc_23_ff(uae_u32 opcode)
 /* MOVE.W Dn,(xxx).L */
 void REGPARAM2 op_33c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -14653,7 +14653,7 @@ void REGPARAM2 op_33c0_23_ff(uae_u32 opcode)
 /* MOVE.W An,(xxx).L */
 void REGPARAM2 op_33c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -14674,7 +14674,7 @@ void REGPARAM2 op_33c8_23_ff(uae_u32 opcode)
 /* MOVE.W (An),(xxx).L */
 void REGPARAM2 op_33d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -14697,7 +14697,7 @@ void REGPARAM2 op_33d0_23_ff(uae_u32 opcode)
 /* MOVE.W (An)+,(xxx).L */
 void REGPARAM2 op_33d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -14721,7 +14721,7 @@ void REGPARAM2 op_33d8_23_ff(uae_u32 opcode)
 /* MOVE.W -(An),(xxx).L */
 void REGPARAM2 op_33e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -14745,7 +14745,7 @@ void REGPARAM2 op_33e0_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,An),(xxx).L */
 void REGPARAM2 op_33e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -14768,7 +14768,7 @@ void REGPARAM2 op_33e8_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,An,Xn),(xxx).L */
 void REGPARAM2 op_33f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -14792,7 +14792,7 @@ void REGPARAM2 op_33f0_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).W,(xxx).L */
 void REGPARAM2 op_33f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -14813,7 +14813,7 @@ void REGPARAM2 op_33f8_23_ff(uae_u32 opcode)
 /* MOVE.W (xxx).L,(xxx).L */
 void REGPARAM2 op_33f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -14834,7 +14834,7 @@ void REGPARAM2 op_33f9_23_ff(uae_u32 opcode)
 /* MOVE.W (d16,PC),(xxx).L */
 void REGPARAM2 op_33fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -14856,7 +14856,7 @@ void REGPARAM2 op_33fa_23_ff(uae_u32 opcode)
 /* MOVE.W (d8,PC,Xn),(xxx).L */
 void REGPARAM2 op_33fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -14879,7 +14879,7 @@ void REGPARAM2 op_33fb_23_ff(uae_u32 opcode)
 /* MOVE.W #<data>.W,(xxx).L */
 void REGPARAM2 op_33fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 fiea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	uaecptr dsta;
@@ -14898,7 +14898,7 @@ void REGPARAM2 op_33fc_23_ff(uae_u32 opcode)
 /* NEGX.B Dn */
 void REGPARAM2 op_4000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s8 src = m68k_dreg(regs, srcreg);
@@ -14922,7 +14922,7 @@ void REGPARAM2 op_4000_23_ff(uae_u32 opcode)
 /* NEGX.B (An) */
 void REGPARAM2 op_4010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -14949,7 +14949,7 @@ void REGPARAM2 op_4010_23_ff(uae_u32 opcode)
 /* NEGX.B (An)+ */
 void REGPARAM2 op_4018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -14977,7 +14977,7 @@ void REGPARAM2 op_4018_23_ff(uae_u32 opcode)
 /* NEGX.B -(An) */
 void REGPARAM2 op_4020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -15005,7 +15005,7 @@ void REGPARAM2 op_4020_23_ff(uae_u32 opcode)
 /* NEGX.B (d16,An) */
 void REGPARAM2 op_4028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -15032,7 +15032,7 @@ void REGPARAM2 op_4028_23_ff(uae_u32 opcode)
 /* NEGX.B (d8,An,Xn) */
 void REGPARAM2 op_4030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -15059,7 +15059,7 @@ void REGPARAM2 op_4030_23_ff(uae_u32 opcode)
 /* NEGX.B (xxx).W */
 void REGPARAM2 op_4038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -15084,7 +15084,7 @@ void REGPARAM2 op_4038_23_ff(uae_u32 opcode)
 /* NEGX.B (xxx).L */
 void REGPARAM2 op_4039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -15109,7 +15109,7 @@ void REGPARAM2 op_4039_23_ff(uae_u32 opcode)
 /* NEGX.W Dn */
 void REGPARAM2 op_4040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s16 src = m68k_dreg(regs, srcreg);
@@ -15133,7 +15133,7 @@ void REGPARAM2 op_4040_23_ff(uae_u32 opcode)
 /* NEGX.W (An) */
 void REGPARAM2 op_4050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -15160,7 +15160,7 @@ void REGPARAM2 op_4050_23_ff(uae_u32 opcode)
 /* NEGX.W (An)+ */
 void REGPARAM2 op_4058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -15188,7 +15188,7 @@ void REGPARAM2 op_4058_23_ff(uae_u32 opcode)
 /* NEGX.W -(An) */
 void REGPARAM2 op_4060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -15216,7 +15216,7 @@ void REGPARAM2 op_4060_23_ff(uae_u32 opcode)
 /* NEGX.W (d16,An) */
 void REGPARAM2 op_4068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -15243,7 +15243,7 @@ void REGPARAM2 op_4068_23_ff(uae_u32 opcode)
 /* NEGX.W (d8,An,Xn) */
 void REGPARAM2 op_4070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -15270,7 +15270,7 @@ void REGPARAM2 op_4070_23_ff(uae_u32 opcode)
 /* NEGX.W (xxx).W */
 void REGPARAM2 op_4078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -15295,7 +15295,7 @@ void REGPARAM2 op_4078_23_ff(uae_u32 opcode)
 /* NEGX.W (xxx).L */
 void REGPARAM2 op_4079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -15320,7 +15320,7 @@ void REGPARAM2 op_4079_23_ff(uae_u32 opcode)
 /* NEGX.L Dn */
 void REGPARAM2 op_4080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -15344,7 +15344,7 @@ void REGPARAM2 op_4080_23_ff(uae_u32 opcode)
 /* NEGX.L (An) */
 void REGPARAM2 op_4090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -15371,7 +15371,7 @@ void REGPARAM2 op_4090_23_ff(uae_u32 opcode)
 /* NEGX.L (An)+ */
 void REGPARAM2 op_4098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -15399,7 +15399,7 @@ void REGPARAM2 op_4098_23_ff(uae_u32 opcode)
 /* NEGX.L -(An) */
 void REGPARAM2 op_40a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -15427,7 +15427,7 @@ void REGPARAM2 op_40a0_23_ff(uae_u32 opcode)
 /* NEGX.L (d16,An) */
 void REGPARAM2 op_40a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -15454,7 +15454,7 @@ void REGPARAM2 op_40a8_23_ff(uae_u32 opcode)
 /* NEGX.L (d8,An,Xn) */
 void REGPARAM2 op_40b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -15481,7 +15481,7 @@ void REGPARAM2 op_40b0_23_ff(uae_u32 opcode)
 /* NEGX.L (xxx).W */
 void REGPARAM2 op_40b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -15506,7 +15506,7 @@ void REGPARAM2 op_40b8_23_ff(uae_u32 opcode)
 /* NEGX.L (xxx).L */
 void REGPARAM2 op_40b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -15531,7 +15531,7 @@ void REGPARAM2 op_40b9_23_ff(uae_u32 opcode)
 /* MVSR2.W Dn */
 void REGPARAM2 op_40c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -15550,7 +15550,7 @@ void REGPARAM2 op_40c0_23_ff(uae_u32 opcode)
 /* MVSR2.W (An) */
 void REGPARAM2 op_40d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -15572,7 +15572,7 @@ void REGPARAM2 op_40d0_23_ff(uae_u32 opcode)
 /* MVSR2.W (An)+ */
 void REGPARAM2 op_40d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -15595,7 +15595,7 @@ void REGPARAM2 op_40d8_23_ff(uae_u32 opcode)
 /* MVSR2.W -(An) */
 void REGPARAM2 op_40e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -15618,7 +15618,7 @@ void REGPARAM2 op_40e0_23_ff(uae_u32 opcode)
 /* MVSR2.W (d16,An) */
 void REGPARAM2 op_40e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -15640,7 +15640,7 @@ void REGPARAM2 op_40e8_23_ff(uae_u32 opcode)
 /* MVSR2.W (d8,An,Xn) */
 void REGPARAM2 op_40f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -15662,7 +15662,7 @@ void REGPARAM2 op_40f0_23_ff(uae_u32 opcode)
 /* MVSR2.W (xxx).W */
 void REGPARAM2 op_40f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -15682,7 +15682,7 @@ void REGPARAM2 op_40f8_23_ff(uae_u32 opcode)
 /* MVSR2.W (xxx).L */
 void REGPARAM2 op_40f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -15703,7 +15703,7 @@ void REGPARAM2 op_40f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -15733,7 +15733,7 @@ void REGPARAM2 op_4100_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -15765,7 +15765,7 @@ void REGPARAM2 op_4110_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -15798,7 +15798,7 @@ void REGPARAM2 op_4118_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -15831,7 +15831,7 @@ void REGPARAM2 op_4120_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -15863,7 +15863,7 @@ void REGPARAM2 op_4128_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -15895,7 +15895,7 @@ void REGPARAM2 op_4130_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -15926,7 +15926,7 @@ void REGPARAM2 op_4138_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -15957,7 +15957,7 @@ void REGPARAM2 op_4139_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_413a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -15989,7 +15989,7 @@ void REGPARAM2 op_413a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_413b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -16021,7 +16021,7 @@ void REGPARAM2 op_413b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_413c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uae_s32 src;
@@ -16050,7 +16050,7 @@ void REGPARAM2 op_413c_23_ff(uae_u32 opcode)
 /* CHK.W Dn,Dn */
 void REGPARAM2 op_4180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16078,7 +16078,7 @@ void REGPARAM2 op_4180_23_ff(uae_u32 opcode)
 /* CHK.W (An),Dn */
 void REGPARAM2 op_4190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16108,7 +16108,7 @@ void REGPARAM2 op_4190_23_ff(uae_u32 opcode)
 /* CHK.W (An)+,Dn */
 void REGPARAM2 op_4198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16139,7 +16139,7 @@ void REGPARAM2 op_4198_23_ff(uae_u32 opcode)
 /* CHK.W -(An),Dn */
 void REGPARAM2 op_41a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16170,7 +16170,7 @@ void REGPARAM2 op_41a0_23_ff(uae_u32 opcode)
 /* CHK.W (d16,An),Dn */
 void REGPARAM2 op_41a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16200,7 +16200,7 @@ void REGPARAM2 op_41a8_23_ff(uae_u32 opcode)
 /* CHK.W (d8,An,Xn),Dn */
 void REGPARAM2 op_41b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16230,7 +16230,7 @@ void REGPARAM2 op_41b0_23_ff(uae_u32 opcode)
 /* CHK.W (xxx).W,Dn */
 void REGPARAM2 op_41b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -16259,7 +16259,7 @@ void REGPARAM2 op_41b8_23_ff(uae_u32 opcode)
 /* CHK.W (xxx).L,Dn */
 void REGPARAM2 op_41b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -16288,7 +16288,7 @@ void REGPARAM2 op_41b9_23_ff(uae_u32 opcode)
 /* CHK.W (d16,PC),Dn */
 void REGPARAM2 op_41ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -16318,7 +16318,7 @@ void REGPARAM2 op_41ba_23_ff(uae_u32 opcode)
 /* CHK.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_41bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uaecptr srca;
@@ -16348,7 +16348,7 @@ void REGPARAM2 op_41bb_23_ff(uae_u32 opcode)
 /* CHK.W #<data>.W,Dn */
 void REGPARAM2 op_41bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	uae_s16 src = get_word_ce030_prefetch(2);
@@ -16375,7 +16375,7 @@ void REGPARAM2 op_41bc_23_ff(uae_u32 opcode)
 /* LEA.L (An),An */
 void REGPARAM2 op_41d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16393,7 +16393,7 @@ void REGPARAM2 op_41d0_23_ff(uae_u32 opcode)
 /* LEA.L (d16,An),An */
 void REGPARAM2 op_41e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16411,7 +16411,7 @@ void REGPARAM2 op_41e8_23_ff(uae_u32 opcode)
 /* LEA.L (d8,An,Xn),An */
 void REGPARAM2 op_41f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -16429,7 +16429,7 @@ void REGPARAM2 op_41f0_23_ff(uae_u32 opcode)
 /* LEA.L (xxx).W,An */
 void REGPARAM2 op_41f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2+2=4,T:0,C:0 cea */
@@ -16446,7 +16446,7 @@ void REGPARAM2 op_41f8_23_ff(uae_u32 opcode)
 /* LEA.L (xxx).L,An */
 void REGPARAM2 op_41f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4+2=6,T:0,C:0 cea */
@@ -16463,7 +16463,7 @@ void REGPARAM2 op_41f9_23_ff(uae_u32 opcode)
 /* LEA.L (d16,PC),An */
 void REGPARAM2 op_41fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2+2=4,T:0,C:0 cea */
@@ -16481,7 +16481,7 @@ void REGPARAM2 op_41fa_23_ff(uae_u32 opcode)
 /* LEA.L (d8,PC,Xn),An */
 void REGPARAM2 op_41fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4+2=6,T:0,C:0 cea */
@@ -16499,7 +16499,7 @@ void REGPARAM2 op_41fb_23_ff(uae_u32 opcode)
 /* CLR.B Dn */
 void REGPARAM2 op_4200_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* op H:2,T:0,C:-2 */
@@ -16516,7 +16516,7 @@ void REGPARAM2 op_4200_23_ff(uae_u32 opcode)
 /* CLR.B (An) */
 void REGPARAM2 op_4210_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16536,7 +16536,7 @@ void REGPARAM2 op_4210_23_ff(uae_u32 opcode)
 /* CLR.B (An)+ */
 void REGPARAM2 op_4218_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -16557,7 +16557,7 @@ void REGPARAM2 op_4218_23_ff(uae_u32 opcode)
 /* CLR.B -(An) */
 void REGPARAM2 op_4220_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16578,7 +16578,7 @@ void REGPARAM2 op_4220_23_ff(uae_u32 opcode)
 /* CLR.B (d16,An) */
 void REGPARAM2 op_4228_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16598,7 +16598,7 @@ void REGPARAM2 op_4228_23_ff(uae_u32 opcode)
 /* CLR.B (d8,An,Xn) */
 void REGPARAM2 op_4230_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -16618,7 +16618,7 @@ void REGPARAM2 op_4230_23_ff(uae_u32 opcode)
 /* CLR.B (xxx).W */
 void REGPARAM2 op_4238_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -16636,7 +16636,7 @@ void REGPARAM2 op_4238_23_ff(uae_u32 opcode)
 /* CLR.B (xxx).L */
 void REGPARAM2 op_4239_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -16654,7 +16654,7 @@ void REGPARAM2 op_4239_23_ff(uae_u32 opcode)
 /* CLR.W Dn */
 void REGPARAM2 op_4240_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* op H:2,T:0,C:-2 */
@@ -16671,7 +16671,7 @@ void REGPARAM2 op_4240_23_ff(uae_u32 opcode)
 /* CLR.W (An) */
 void REGPARAM2 op_4250_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16691,7 +16691,7 @@ void REGPARAM2 op_4250_23_ff(uae_u32 opcode)
 /* CLR.W (An)+ */
 void REGPARAM2 op_4258_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -16712,7 +16712,7 @@ void REGPARAM2 op_4258_23_ff(uae_u32 opcode)
 /* CLR.W -(An) */
 void REGPARAM2 op_4260_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16733,7 +16733,7 @@ void REGPARAM2 op_4260_23_ff(uae_u32 opcode)
 /* CLR.W (d16,An) */
 void REGPARAM2 op_4268_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16753,7 +16753,7 @@ void REGPARAM2 op_4268_23_ff(uae_u32 opcode)
 /* CLR.W (d8,An,Xn) */
 void REGPARAM2 op_4270_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -16773,7 +16773,7 @@ void REGPARAM2 op_4270_23_ff(uae_u32 opcode)
 /* CLR.W (xxx).W */
 void REGPARAM2 op_4278_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -16791,7 +16791,7 @@ void REGPARAM2 op_4278_23_ff(uae_u32 opcode)
 /* CLR.W (xxx).L */
 void REGPARAM2 op_4279_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -16809,7 +16809,7 @@ void REGPARAM2 op_4279_23_ff(uae_u32 opcode)
 /* CLR.L Dn */
 void REGPARAM2 op_4280_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* op H:2,T:0,C:-2 */
@@ -16826,7 +16826,7 @@ void REGPARAM2 op_4280_23_ff(uae_u32 opcode)
 /* CLR.L (An) */
 void REGPARAM2 op_4290_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16846,7 +16846,7 @@ void REGPARAM2 op_4290_23_ff(uae_u32 opcode)
 /* CLR.L (An)+ */
 void REGPARAM2 op_4298_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -16867,7 +16867,7 @@ void REGPARAM2 op_4298_23_ff(uae_u32 opcode)
 /* CLR.L -(An) */
 void REGPARAM2 op_42a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16888,7 +16888,7 @@ void REGPARAM2 op_42a0_23_ff(uae_u32 opcode)
 /* CLR.L (d16,An) */
 void REGPARAM2 op_42a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -16908,7 +16908,7 @@ void REGPARAM2 op_42a8_23_ff(uae_u32 opcode)
 /* CLR.L (d8,An,Xn) */
 void REGPARAM2 op_42b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -16928,7 +16928,7 @@ void REGPARAM2 op_42b0_23_ff(uae_u32 opcode)
 /* CLR.L (xxx).W */
 void REGPARAM2 op_42b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -16946,7 +16946,7 @@ void REGPARAM2 op_42b8_23_ff(uae_u32 opcode)
 /* CLR.L (xxx).L */
 void REGPARAM2 op_42b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -16965,7 +16965,7 @@ void REGPARAM2 op_42b9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* op H:2,T:0,C:-2 */
@@ -16982,7 +16982,7 @@ void REGPARAM2 op_42c0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2+2=4,T:0,C:0 cea */
@@ -17002,7 +17002,7 @@ void REGPARAM2 op_42d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -17023,7 +17023,7 @@ void REGPARAM2 op_42d8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2+2=4,T:0,C:0 cea */
@@ -17044,7 +17044,7 @@ void REGPARAM2 op_42e0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2+2=4,T:0,C:0 cea */
@@ -17064,7 +17064,7 @@ void REGPARAM2 op_42e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4+2=6,T:0,C:0 cea */
@@ -17084,7 +17084,7 @@ void REGPARAM2 op_42f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2+2=4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -17102,7 +17102,7 @@ void REGPARAM2 op_42f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_42f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4+2=6,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -17119,7 +17119,7 @@ void REGPARAM2 op_42f9_23_ff(uae_u32 opcode)
 /* NEG.B Dn */
 void REGPARAM2 op_4400_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s8 src = m68k_dreg(regs, srcreg);
@@ -17143,7 +17143,7 @@ void REGPARAM2 op_4400_23_ff(uae_u32 opcode)
 /* NEG.B (An) */
 void REGPARAM2 op_4410_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -17170,7 +17170,7 @@ void REGPARAM2 op_4410_23_ff(uae_u32 opcode)
 /* NEG.B (An)+ */
 void REGPARAM2 op_4418_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -17198,7 +17198,7 @@ void REGPARAM2 op_4418_23_ff(uae_u32 opcode)
 /* NEG.B -(An) */
 void REGPARAM2 op_4420_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17226,7 +17226,7 @@ void REGPARAM2 op_4420_23_ff(uae_u32 opcode)
 /* NEG.B (d16,An) */
 void REGPARAM2 op_4428_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17253,7 +17253,7 @@ void REGPARAM2 op_4428_23_ff(uae_u32 opcode)
 /* NEG.B (d8,An,Xn) */
 void REGPARAM2 op_4430_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -17280,7 +17280,7 @@ void REGPARAM2 op_4430_23_ff(uae_u32 opcode)
 /* NEG.B (xxx).W */
 void REGPARAM2 op_4438_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -17305,7 +17305,7 @@ void REGPARAM2 op_4438_23_ff(uae_u32 opcode)
 /* NEG.B (xxx).L */
 void REGPARAM2 op_4439_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -17330,7 +17330,7 @@ void REGPARAM2 op_4439_23_ff(uae_u32 opcode)
 /* NEG.W Dn */
 void REGPARAM2 op_4440_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s16 src = m68k_dreg(regs, srcreg);
@@ -17354,7 +17354,7 @@ void REGPARAM2 op_4440_23_ff(uae_u32 opcode)
 /* NEG.W (An) */
 void REGPARAM2 op_4450_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -17381,7 +17381,7 @@ void REGPARAM2 op_4450_23_ff(uae_u32 opcode)
 /* NEG.W (An)+ */
 void REGPARAM2 op_4458_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -17409,7 +17409,7 @@ void REGPARAM2 op_4458_23_ff(uae_u32 opcode)
 /* NEG.W -(An) */
 void REGPARAM2 op_4460_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17437,7 +17437,7 @@ void REGPARAM2 op_4460_23_ff(uae_u32 opcode)
 /* NEG.W (d16,An) */
 void REGPARAM2 op_4468_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17464,7 +17464,7 @@ void REGPARAM2 op_4468_23_ff(uae_u32 opcode)
 /* NEG.W (d8,An,Xn) */
 void REGPARAM2 op_4470_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -17491,7 +17491,7 @@ void REGPARAM2 op_4470_23_ff(uae_u32 opcode)
 /* NEG.W (xxx).W */
 void REGPARAM2 op_4478_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -17516,7 +17516,7 @@ void REGPARAM2 op_4478_23_ff(uae_u32 opcode)
 /* NEG.W (xxx).L */
 void REGPARAM2 op_4479_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -17541,7 +17541,7 @@ void REGPARAM2 op_4479_23_ff(uae_u32 opcode)
 /* NEG.L Dn */
 void REGPARAM2 op_4480_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -17565,7 +17565,7 @@ void REGPARAM2 op_4480_23_ff(uae_u32 opcode)
 /* NEG.L (An) */
 void REGPARAM2 op_4490_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -17592,7 +17592,7 @@ void REGPARAM2 op_4490_23_ff(uae_u32 opcode)
 /* NEG.L (An)+ */
 void REGPARAM2 op_4498_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -17620,7 +17620,7 @@ void REGPARAM2 op_4498_23_ff(uae_u32 opcode)
 /* NEG.L -(An) */
 void REGPARAM2 op_44a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17648,7 +17648,7 @@ void REGPARAM2 op_44a0_23_ff(uae_u32 opcode)
 /* NEG.L (d16,An) */
 void REGPARAM2 op_44a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17675,7 +17675,7 @@ void REGPARAM2 op_44a8_23_ff(uae_u32 opcode)
 /* NEG.L (d8,An,Xn) */
 void REGPARAM2 op_44b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -17702,7 +17702,7 @@ void REGPARAM2 op_44b0_23_ff(uae_u32 opcode)
 /* NEG.L (xxx).W */
 void REGPARAM2 op_44b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -17727,7 +17727,7 @@ void REGPARAM2 op_44b8_23_ff(uae_u32 opcode)
 /* NEG.L (xxx).L */
 void REGPARAM2 op_44b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -17752,7 +17752,7 @@ void REGPARAM2 op_44b9_23_ff(uae_u32 opcode)
 /* MV2SR.B Dn */
 void REGPARAM2 op_44c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s16 src = m68k_dreg(regs, srcreg);
@@ -17771,7 +17771,7 @@ void REGPARAM2 op_44c0_23_ff(uae_u32 opcode)
 /* MV2SR.B (An) */
 void REGPARAM2 op_44d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -17793,7 +17793,7 @@ void REGPARAM2 op_44d0_23_ff(uae_u32 opcode)
 /* MV2SR.B (An)+ */
 void REGPARAM2 op_44d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -17816,7 +17816,7 @@ void REGPARAM2 op_44d8_23_ff(uae_u32 opcode)
 /* MV2SR.B -(An) */
 void REGPARAM2 op_44e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17839,7 +17839,7 @@ void REGPARAM2 op_44e0_23_ff(uae_u32 opcode)
 /* MV2SR.B (d16,An) */
 void REGPARAM2 op_44e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -17861,7 +17861,7 @@ void REGPARAM2 op_44e8_23_ff(uae_u32 opcode)
 /* MV2SR.B (d8,An,Xn) */
 void REGPARAM2 op_44f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -17883,7 +17883,7 @@ void REGPARAM2 op_44f0_23_ff(uae_u32 opcode)
 /* MV2SR.B (xxx).W */
 void REGPARAM2 op_44f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -17903,7 +17903,7 @@ void REGPARAM2 op_44f8_23_ff(uae_u32 opcode)
 /* MV2SR.B (xxx).L */
 void REGPARAM2 op_44f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -17923,7 +17923,7 @@ void REGPARAM2 op_44f9_23_ff(uae_u32 opcode)
 /* MV2SR.B (d16,PC) */
 void REGPARAM2 op_44fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -17944,7 +17944,7 @@ void REGPARAM2 op_44fa_23_ff(uae_u32 opcode)
 /* MV2SR.B (d8,PC,Xn) */
 void REGPARAM2 op_44fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -17965,7 +17965,7 @@ void REGPARAM2 op_44fb_23_ff(uae_u32 opcode)
 /* MV2SR.B #<data>.B */
 void REGPARAM2 op_44fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:0,T:0,C:0 fea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	regs.irc = get_word_ce030_prefetch_opcode(4);
@@ -17983,7 +17983,7 @@ void REGPARAM2 op_44fc_23_ff(uae_u32 opcode)
 /* NOT.B Dn */
 void REGPARAM2 op_4600_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s8 src = m68k_dreg(regs, srcreg);
@@ -18002,7 +18002,7 @@ void REGPARAM2 op_4600_23_ff(uae_u32 opcode)
 /* NOT.B (An) */
 void REGPARAM2 op_4610_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -18024,7 +18024,7 @@ void REGPARAM2 op_4610_23_ff(uae_u32 opcode)
 /* NOT.B (An)+ */
 void REGPARAM2 op_4618_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -18047,7 +18047,7 @@ void REGPARAM2 op_4618_23_ff(uae_u32 opcode)
 /* NOT.B -(An) */
 void REGPARAM2 op_4620_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -18070,7 +18070,7 @@ void REGPARAM2 op_4620_23_ff(uae_u32 opcode)
 /* NOT.B (d16,An) */
 void REGPARAM2 op_4628_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -18092,7 +18092,7 @@ void REGPARAM2 op_4628_23_ff(uae_u32 opcode)
 /* NOT.B (d8,An,Xn) */
 void REGPARAM2 op_4630_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -18114,7 +18114,7 @@ void REGPARAM2 op_4630_23_ff(uae_u32 opcode)
 /* NOT.B (xxx).W */
 void REGPARAM2 op_4638_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -18134,7 +18134,7 @@ void REGPARAM2 op_4638_23_ff(uae_u32 opcode)
 /* NOT.B (xxx).L */
 void REGPARAM2 op_4639_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -18154,7 +18154,7 @@ void REGPARAM2 op_4639_23_ff(uae_u32 opcode)
 /* NOT.W Dn */
 void REGPARAM2 op_4640_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s16 src = m68k_dreg(regs, srcreg);
@@ -18173,7 +18173,7 @@ void REGPARAM2 op_4640_23_ff(uae_u32 opcode)
 /* NOT.W (An) */
 void REGPARAM2 op_4650_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -18195,7 +18195,7 @@ void REGPARAM2 op_4650_23_ff(uae_u32 opcode)
 /* NOT.W (An)+ */
 void REGPARAM2 op_4658_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -18218,7 +18218,7 @@ void REGPARAM2 op_4658_23_ff(uae_u32 opcode)
 /* NOT.W -(An) */
 void REGPARAM2 op_4660_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -18241,7 +18241,7 @@ void REGPARAM2 op_4660_23_ff(uae_u32 opcode)
 /* NOT.W (d16,An) */
 void REGPARAM2 op_4668_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -18263,7 +18263,7 @@ void REGPARAM2 op_4668_23_ff(uae_u32 opcode)
 /* NOT.W (d8,An,Xn) */
 void REGPARAM2 op_4670_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -18285,7 +18285,7 @@ void REGPARAM2 op_4670_23_ff(uae_u32 opcode)
 /* NOT.W (xxx).W */
 void REGPARAM2 op_4678_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -18305,7 +18305,7 @@ void REGPARAM2 op_4678_23_ff(uae_u32 opcode)
 /* NOT.W (xxx).L */
 void REGPARAM2 op_4679_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -18325,7 +18325,7 @@ void REGPARAM2 op_4679_23_ff(uae_u32 opcode)
 /* NOT.L Dn */
 void REGPARAM2 op_4680_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -18344,7 +18344,7 @@ void REGPARAM2 op_4680_23_ff(uae_u32 opcode)
 /* NOT.L (An) */
 void REGPARAM2 op_4690_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -18366,7 +18366,7 @@ void REGPARAM2 op_4690_23_ff(uae_u32 opcode)
 /* NOT.L (An)+ */
 void REGPARAM2 op_4698_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -18389,7 +18389,7 @@ void REGPARAM2 op_4698_23_ff(uae_u32 opcode)
 /* NOT.L -(An) */
 void REGPARAM2 op_46a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -18412,7 +18412,7 @@ void REGPARAM2 op_46a0_23_ff(uae_u32 opcode)
 /* NOT.L (d16,An) */
 void REGPARAM2 op_46a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -18434,7 +18434,7 @@ void REGPARAM2 op_46a8_23_ff(uae_u32 opcode)
 /* NOT.L (d8,An,Xn) */
 void REGPARAM2 op_46b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -18456,7 +18456,7 @@ void REGPARAM2 op_46b0_23_ff(uae_u32 opcode)
 /* NOT.L (xxx).W */
 void REGPARAM2 op_46b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -18476,7 +18476,7 @@ void REGPARAM2 op_46b8_23_ff(uae_u32 opcode)
 /* NOT.L (xxx).L */
 void REGPARAM2 op_46b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -18496,7 +18496,7 @@ void REGPARAM2 op_46b9_23_ff(uae_u32 opcode)
 /* MV2SR.W Dn */
 void REGPARAM2 op_46c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -18521,7 +18521,7 @@ void REGPARAM2 op_46c0_23_ff(uae_u32 opcode)
 /* MV2SR.W (An) */
 void REGPARAM2 op_46d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -18548,7 +18548,7 @@ void REGPARAM2 op_46d0_23_ff(uae_u32 opcode)
 /* MV2SR.W (An)+ */
 void REGPARAM2 op_46d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -18576,7 +18576,7 @@ void REGPARAM2 op_46d8_23_ff(uae_u32 opcode)
 /* MV2SR.W -(An) */
 void REGPARAM2 op_46e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -18604,7 +18604,7 @@ void REGPARAM2 op_46e0_23_ff(uae_u32 opcode)
 /* MV2SR.W (d16,An) */
 void REGPARAM2 op_46e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -18631,7 +18631,7 @@ void REGPARAM2 op_46e8_23_ff(uae_u32 opcode)
 /* MV2SR.W (d8,An,Xn) */
 void REGPARAM2 op_46f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -18658,7 +18658,7 @@ void REGPARAM2 op_46f0_23_ff(uae_u32 opcode)
 /* MV2SR.W (xxx).W */
 void REGPARAM2 op_46f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -18683,7 +18683,7 @@ void REGPARAM2 op_46f8_23_ff(uae_u32 opcode)
 /* MV2SR.W (xxx).L */
 void REGPARAM2 op_46f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -18708,7 +18708,7 @@ void REGPARAM2 op_46f9_23_ff(uae_u32 opcode)
 /* MV2SR.W (d16,PC) */
 void REGPARAM2 op_46fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -18734,7 +18734,7 @@ void REGPARAM2 op_46fa_23_ff(uae_u32 opcode)
 /* MV2SR.W (d8,PC,Xn) */
 void REGPARAM2 op_46fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -18760,7 +18760,7 @@ void REGPARAM2 op_46fb_23_ff(uae_u32 opcode)
 /* MV2SR.W #<data>.W */
 void REGPARAM2 op_46fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -18783,7 +18783,7 @@ void REGPARAM2 op_46fc_23_ff(uae_u32 opcode)
 /* NBCD.B Dn */
 void REGPARAM2 op_4800_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s8 src = m68k_dreg(regs, srcreg);
@@ -18813,7 +18813,7 @@ void REGPARAM2 op_4800_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4808_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* op H:2,T:0,C:-2 */
@@ -18836,7 +18836,7 @@ void REGPARAM2 op_4808_23_ff(uae_u32 opcode)
 /* NBCD.B (An) */
 void REGPARAM2 op_4810_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uaecptr srca;
@@ -18867,7 +18867,7 @@ void REGPARAM2 op_4810_23_ff(uae_u32 opcode)
 /* NBCD.B (An)+ */
 void REGPARAM2 op_4818_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uaecptr srca;
@@ -18899,7 +18899,7 @@ void REGPARAM2 op_4818_23_ff(uae_u32 opcode)
 /* NBCD.B -(An) */
 void REGPARAM2 op_4820_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uaecptr srca;
@@ -18931,7 +18931,7 @@ void REGPARAM2 op_4820_23_ff(uae_u32 opcode)
 /* NBCD.B (d16,An) */
 void REGPARAM2 op_4828_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uaecptr srca;
@@ -18962,7 +18962,7 @@ void REGPARAM2 op_4828_23_ff(uae_u32 opcode)
 /* NBCD.B (d8,An,Xn) */
 void REGPARAM2 op_4830_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uaecptr srca;
@@ -18993,7 +18993,7 @@ void REGPARAM2 op_4830_23_ff(uae_u32 opcode)
 /* NBCD.B (xxx).W */
 void REGPARAM2 op_4838_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
 	uae_s8 src = x_get_byte(srca);
@@ -19022,7 +19022,7 @@ void REGPARAM2 op_4838_23_ff(uae_u32 opcode)
 /* NBCD.B (xxx).L */
 void REGPARAM2 op_4839_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
 	uae_s8 src = x_get_byte(srca);
@@ -19051,7 +19051,7 @@ void REGPARAM2 op_4839_23_ff(uae_u32 opcode)
 /* SWAP.W Dn */
 void REGPARAM2 op_4840_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -19071,7 +19071,7 @@ void REGPARAM2 op_4840_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4848_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	op_illg_noret(opcode);
@@ -19083,7 +19083,7 @@ void REGPARAM2 op_4848_23_ff(uae_u32 opcode)
 /* PEA.L (An) */
 void REGPARAM2 op_4850_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -19103,7 +19103,7 @@ void REGPARAM2 op_4850_23_ff(uae_u32 opcode)
 /* PEA.L (d16,An) */
 void REGPARAM2 op_4868_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -19123,7 +19123,7 @@ void REGPARAM2 op_4868_23_ff(uae_u32 opcode)
 /* PEA.L (d8,An,Xn) */
 void REGPARAM2 op_4870_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -19143,7 +19143,7 @@ void REGPARAM2 op_4870_23_ff(uae_u32 opcode)
 /* PEA.L (xxx).W */
 void REGPARAM2 op_4878_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -19161,7 +19161,7 @@ void REGPARAM2 op_4878_23_ff(uae_u32 opcode)
 /* PEA.L (xxx).L */
 void REGPARAM2 op_4879_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -19179,7 +19179,7 @@ void REGPARAM2 op_4879_23_ff(uae_u32 opcode)
 /* PEA.L (d16,PC) */
 void REGPARAM2 op_487a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -19198,7 +19198,7 @@ void REGPARAM2 op_487a_23_ff(uae_u32 opcode)
 /* PEA.L (d8,PC,Xn) */
 void REGPARAM2 op_487b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -19217,7 +19217,7 @@ void REGPARAM2 op_487b_23_ff(uae_u32 opcode)
 /* EXT.W Dn */
 void REGPARAM2 op_4880_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -19236,7 +19236,7 @@ void REGPARAM2 op_4880_23_ff(uae_u32 opcode)
 /* MVMLE.W #<data>.W,(An) */
 void REGPARAM2 op_4890_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19245,13 +19245,13 @@ void REGPARAM2 op_4890_23_ff(uae_u32 opcode)
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_word(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_word(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -19264,7 +19264,7 @@ void REGPARAM2 op_4890_23_ff(uae_u32 opcode)
 /* MVMLE.W #<data>.W,-(An) */
 void REGPARAM2 op_48a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19276,17 +19276,17 @@ void REGPARAM2 op_48a0_23_ff(uae_u32 opcode)
 		srca -= 2;
 		if (!type || movem_index2[amask] != dstreg) {
 			x_put_word(srca, m68k_areg(regs, movem_index2[amask]));
-			count_cycles += 4 * CYCLE_UNIT / 2;
+			/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		} else {
 			x_put_word(srca, m68k_areg(regs, movem_index2[amask]) - 2);
-			count_cycles += 4 * CYCLE_UNIT / 2;
+			/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		}
 		amask = movem_next[amask];
 	}
 	while (dmask) {
 		srca -= 2;
 		x_put_word(srca, m68k_dreg(regs, movem_index2[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		dmask = movem_next[dmask];
 	}
 	m68k_areg(regs, dstreg) = srca;
@@ -19299,7 +19299,7 @@ void REGPARAM2 op_48a0_23_ff(uae_u32 opcode)
 /* MVMLE.W #<data>.W,(d16,An) */
 void REGPARAM2 op_48a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19308,13 +19308,13 @@ void REGPARAM2 op_48a8_23_ff(uae_u32 opcode)
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_word(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_word(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -19327,7 +19327,7 @@ void REGPARAM2 op_48a8_23_ff(uae_u32 opcode)
 /* MVMLE.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_48b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19337,13 +19337,13 @@ void REGPARAM2 op_48b0_23_ff(uae_u32 opcode)
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_word(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_word(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -19355,20 +19355,20 @@ void REGPARAM2 op_48b0_23_ff(uae_u32 opcode)
 /* MVMLE.W #<data>.W,(xxx).W */
 void REGPARAM2 op_48b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_word(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_word(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -19381,20 +19381,20 @@ void REGPARAM2 op_48b8_23_ff(uae_u32 opcode)
 /* MVMLE.W #<data>.W,(xxx).L */
 void REGPARAM2 op_48b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(4);
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_word(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_word(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -19407,7 +19407,7 @@ void REGPARAM2 op_48b9_23_ff(uae_u32 opcode)
 /* EXT.L Dn */
 void REGPARAM2 op_48c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -19426,7 +19426,7 @@ void REGPARAM2 op_48c0_23_ff(uae_u32 opcode)
 /* MVMLE.L #<data>.W,(An) */
 void REGPARAM2 op_48d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19435,13 +19435,13 @@ void REGPARAM2 op_48d0_23_ff(uae_u32 opcode)
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_long(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_long(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -19454,7 +19454,7 @@ void REGPARAM2 op_48d0_23_ff(uae_u32 opcode)
 /* MVMLE.L #<data>.W,-(An) */
 void REGPARAM2 op_48e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19466,17 +19466,17 @@ void REGPARAM2 op_48e0_23_ff(uae_u32 opcode)
 		srca -= 4;
 		if (!type || movem_index2[amask] != dstreg) {
 			x_put_long(srca, m68k_areg(regs, movem_index2[amask]));
-			count_cycles += 4 * CYCLE_UNIT / 2;
+			/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		} else {
 			x_put_long(srca, m68k_areg(regs, movem_index2[amask]) - 4);
-			count_cycles += 4 * CYCLE_UNIT / 2;
+			/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		}
 		amask = movem_next[amask];
 	}
 	while (dmask) {
 		srca -= 4;
 		x_put_long(srca, m68k_dreg(regs, movem_index2[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		dmask = movem_next[dmask];
 	}
 	m68k_areg(regs, dstreg) = srca;
@@ -19489,7 +19489,7 @@ void REGPARAM2 op_48e0_23_ff(uae_u32 opcode)
 /* MVMLE.L #<data>.W,(d16,An) */
 void REGPARAM2 op_48e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19498,13 +19498,13 @@ void REGPARAM2 op_48e8_23_ff(uae_u32 opcode)
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_long(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_long(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -19517,7 +19517,7 @@ void REGPARAM2 op_48e8_23_ff(uae_u32 opcode)
 /* MVMLE.L #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_48f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -19527,13 +19527,13 @@ void REGPARAM2 op_48f0_23_ff(uae_u32 opcode)
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_long(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_long(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -19545,20 +19545,20 @@ void REGPARAM2 op_48f0_23_ff(uae_u32 opcode)
 /* MVMLE.L #<data>.W,(xxx).W */
 void REGPARAM2 op_48f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_long(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_long(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -19571,20 +19571,20 @@ void REGPARAM2 op_48f8_23_ff(uae_u32 opcode)
 /* MVMLE.L #<data>.W,(xxx).L */
 void REGPARAM2 op_48f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(4);
 	uae_u16 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	while (dmask) {
 		x_put_long(srca, m68k_dreg(regs, movem_index1[dmask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		x_put_long(srca, m68k_areg(regs, movem_index1[amask]));
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -19598,7 +19598,7 @@ void REGPARAM2 op_48f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_49c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -19618,7 +19618,7 @@ void REGPARAM2 op_49c0_23_ff(uae_u32 opcode)
 /* TST.B Dn */
 void REGPARAM2 op_4a00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s8 src = m68k_dreg(regs, srcreg);
@@ -19635,7 +19635,7 @@ void REGPARAM2 op_4a00_23_ff(uae_u32 opcode)
 /* TST.B (An) */
 void REGPARAM2 op_4a10_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -19655,7 +19655,7 @@ void REGPARAM2 op_4a10_23_ff(uae_u32 opcode)
 /* TST.B (An)+ */
 void REGPARAM2 op_4a18_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -19676,7 +19676,7 @@ void REGPARAM2 op_4a18_23_ff(uae_u32 opcode)
 /* TST.B -(An) */
 void REGPARAM2 op_4a20_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -19697,7 +19697,7 @@ void REGPARAM2 op_4a20_23_ff(uae_u32 opcode)
 /* TST.B (d16,An) */
 void REGPARAM2 op_4a28_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -19717,7 +19717,7 @@ void REGPARAM2 op_4a28_23_ff(uae_u32 opcode)
 /* TST.B (d8,An,Xn) */
 void REGPARAM2 op_4a30_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -19737,7 +19737,7 @@ void REGPARAM2 op_4a30_23_ff(uae_u32 opcode)
 /* TST.B (xxx).W */
 void REGPARAM2 op_4a38_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -19755,7 +19755,7 @@ void REGPARAM2 op_4a38_23_ff(uae_u32 opcode)
 /* TST.B (xxx).L */
 void REGPARAM2 op_4a39_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -19774,7 +19774,7 @@ void REGPARAM2 op_4a39_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a3a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -19795,7 +19795,7 @@ void REGPARAM2 op_4a3a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a3b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -19816,7 +19816,7 @@ void REGPARAM2 op_4a3b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a3c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:0,T:0,C:0 fea */
 	uae_s8 src = (uae_u8)get_word_ce030_prefetch(2);
 	regs.irc = get_word_ce030_prefetch_opcode(4);
@@ -19833,7 +19833,7 @@ void REGPARAM2 op_4a3c_23_ff(uae_u32 opcode)
 /* TST.W Dn */
 void REGPARAM2 op_4a40_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s16 src = m68k_dreg(regs, srcreg);
@@ -19851,7 +19851,7 @@ void REGPARAM2 op_4a40_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a48_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -19870,7 +19870,7 @@ void REGPARAM2 op_4a48_23_ff(uae_u32 opcode)
 /* TST.W (An) */
 void REGPARAM2 op_4a50_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -19890,7 +19890,7 @@ void REGPARAM2 op_4a50_23_ff(uae_u32 opcode)
 /* TST.W (An)+ */
 void REGPARAM2 op_4a58_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -19911,7 +19911,7 @@ void REGPARAM2 op_4a58_23_ff(uae_u32 opcode)
 /* TST.W -(An) */
 void REGPARAM2 op_4a60_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -19932,7 +19932,7 @@ void REGPARAM2 op_4a60_23_ff(uae_u32 opcode)
 /* TST.W (d16,An) */
 void REGPARAM2 op_4a68_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -19952,7 +19952,7 @@ void REGPARAM2 op_4a68_23_ff(uae_u32 opcode)
 /* TST.W (d8,An,Xn) */
 void REGPARAM2 op_4a70_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -19972,7 +19972,7 @@ void REGPARAM2 op_4a70_23_ff(uae_u32 opcode)
 /* TST.W (xxx).W */
 void REGPARAM2 op_4a78_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -19990,7 +19990,7 @@ void REGPARAM2 op_4a78_23_ff(uae_u32 opcode)
 /* TST.W (xxx).L */
 void REGPARAM2 op_4a79_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -20009,7 +20009,7 @@ void REGPARAM2 op_4a79_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a7a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -20030,7 +20030,7 @@ void REGPARAM2 op_4a7a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a7b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -20051,7 +20051,7 @@ void REGPARAM2 op_4a7b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a7c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:0,T:0,C:0 fea */
 	uae_s16 src = get_word_ce030_prefetch(2);
 	regs.irc = get_word_ce030_prefetch_opcode(4);
@@ -20068,7 +20068,7 @@ void REGPARAM2 op_4a7c_23_ff(uae_u32 opcode)
 /* TST.L Dn */
 void REGPARAM2 op_4a80_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_dreg(regs, srcreg);
@@ -20086,7 +20086,7 @@ void REGPARAM2 op_4a80_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4a88_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 fea */
@@ -20105,7 +20105,7 @@ void REGPARAM2 op_4a88_23_ff(uae_u32 opcode)
 /* TST.L (An) */
 void REGPARAM2 op_4a90_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -20125,7 +20125,7 @@ void REGPARAM2 op_4a90_23_ff(uae_u32 opcode)
 /* TST.L (An)+ */
 void REGPARAM2 op_4a98_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -20146,7 +20146,7 @@ void REGPARAM2 op_4a98_23_ff(uae_u32 opcode)
 /* TST.L -(An) */
 void REGPARAM2 op_4aa0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -20167,7 +20167,7 @@ void REGPARAM2 op_4aa0_23_ff(uae_u32 opcode)
 /* TST.L (d16,An) */
 void REGPARAM2 op_4aa8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -20187,7 +20187,7 @@ void REGPARAM2 op_4aa8_23_ff(uae_u32 opcode)
 /* TST.L (d8,An,Xn) */
 void REGPARAM2 op_4ab0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -20207,7 +20207,7 @@ void REGPARAM2 op_4ab0_23_ff(uae_u32 opcode)
 /* TST.L (xxx).W */
 void REGPARAM2 op_4ab8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -20225,7 +20225,7 @@ void REGPARAM2 op_4ab8_23_ff(uae_u32 opcode)
 /* TST.L (xxx).L */
 void REGPARAM2 op_4ab9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -20244,7 +20244,7 @@ void REGPARAM2 op_4ab9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4aba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -20265,7 +20265,7 @@ void REGPARAM2 op_4aba_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4abb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:2,C:0 fea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -20286,7 +20286,7 @@ void REGPARAM2 op_4abb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4abc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:0,T:0,C:0 fea */
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -20304,7 +20304,7 @@ void REGPARAM2 op_4abc_23_ff(uae_u32 opcode)
 /* TAS.B Dn */
 void REGPARAM2 op_4ac0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s8 src = m68k_dreg(regs, srcreg);
@@ -20323,7 +20323,7 @@ void REGPARAM2 op_4ac0_23_ff(uae_u32 opcode)
 /* TAS.B (An) */
 void REGPARAM2 op_4ad0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -20345,7 +20345,7 @@ void REGPARAM2 op_4ad0_23_ff(uae_u32 opcode)
 /* TAS.B (An)+ */
 void REGPARAM2 op_4ad8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -20368,7 +20368,7 @@ void REGPARAM2 op_4ad8_23_ff(uae_u32 opcode)
 /* TAS.B -(An) */
 void REGPARAM2 op_4ae0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -20391,7 +20391,7 @@ void REGPARAM2 op_4ae0_23_ff(uae_u32 opcode)
 /* TAS.B (d16,An) */
 void REGPARAM2 op_4ae8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -20413,7 +20413,7 @@ void REGPARAM2 op_4ae8_23_ff(uae_u32 opcode)
 /* TAS.B (d8,An,Xn) */
 void REGPARAM2 op_4af0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -20435,7 +20435,7 @@ void REGPARAM2 op_4af0_23_ff(uae_u32 opcode)
 /* TAS.B (xxx).W */
 void REGPARAM2 op_4af8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -20455,7 +20455,7 @@ void REGPARAM2 op_4af8_23_ff(uae_u32 opcode)
 /* TAS.B (xxx).L */
 void REGPARAM2 op_4af9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -20476,7 +20476,7 @@ void REGPARAM2 op_4af9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -20501,7 +20501,7 @@ void REGPARAM2 op_4c00_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c10_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -20528,7 +20528,7 @@ void REGPARAM2 op_4c10_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c18_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -20556,7 +20556,7 @@ void REGPARAM2 op_4c18_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c20_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -20584,7 +20584,7 @@ void REGPARAM2 op_4c20_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c28_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -20611,7 +20611,7 @@ void REGPARAM2 op_4c28_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c30_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -20638,7 +20638,7 @@ void REGPARAM2 op_4c30_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c38_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:2,T:0,C:28 */
 	uaecptr dsta;
@@ -20663,7 +20663,7 @@ void REGPARAM2 op_4c38_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c39_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:2,T:0,C:28 */
 	uaecptr dsta;
@@ -20688,7 +20688,7 @@ void REGPARAM2 op_4c39_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c3a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:2,T:0,C:28 */
@@ -20715,7 +20715,7 @@ void REGPARAM2 op_4c3a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c3b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:2,T:0,C:28 */
@@ -20742,7 +20742,7 @@ void REGPARAM2 op_4c3b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c3c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:2,T:0,C:28 */
 	uae_s32 dst;
@@ -20766,7 +20766,7 @@ void REGPARAM2 op_4c3c_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c40_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uaecptr oldpc = m68k_getpci();
@@ -20792,7 +20792,7 @@ void REGPARAM2 op_4c40_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c50_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uaecptr oldpc = m68k_getpci();
@@ -20820,7 +20820,7 @@ void REGPARAM2 op_4c50_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c58_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uaecptr oldpc = m68k_getpci();
@@ -20849,7 +20849,7 @@ void REGPARAM2 op_4c58_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c60_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uaecptr oldpc = m68k_getpci();
@@ -20878,7 +20878,7 @@ void REGPARAM2 op_4c60_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c68_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uaecptr oldpc = m68k_getpci();
@@ -20906,7 +20906,7 @@ void REGPARAM2 op_4c68_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c70_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uaecptr oldpc = m68k_getpci();
@@ -20934,7 +20934,7 @@ void REGPARAM2 op_4c70_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c78_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:0,T:0,C:50 */
@@ -20960,7 +20960,7 @@ void REGPARAM2 op_4c78_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c79_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:0,T:0,C:50 */
@@ -20986,7 +20986,7 @@ void REGPARAM2 op_4c79_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c7a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -21014,7 +21014,7 @@ void REGPARAM2 op_4c7a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c7b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -21042,7 +21042,7 @@ void REGPARAM2 op_4c7b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4c7c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* op H:0,T:0,C:50 */
@@ -21066,7 +21066,7 @@ void REGPARAM2 op_4c7c_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(An) */
 void REGPARAM2 op_4c90_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21075,13 +21075,13 @@ void REGPARAM2 op_4c90_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, dstreg);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21094,7 +21094,7 @@ void REGPARAM2 op_4c90_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(An)+ */
 void REGPARAM2 op_4c98_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21103,13 +21103,13 @@ void REGPARAM2 op_4c98_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, dstreg);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21123,7 +21123,7 @@ void REGPARAM2 op_4c98_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(d16,An) */
 void REGPARAM2 op_4ca8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21132,13 +21132,13 @@ void REGPARAM2 op_4ca8_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, dstreg) + (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21151,7 +21151,7 @@ void REGPARAM2 op_4ca8_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_4cb0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21161,13 +21161,13 @@ void REGPARAM2 op_4cb0_23_ff(uae_u32 opcode)
 	srca = x_get_disp_ea_ce030(m68k_areg(regs, dstreg), 0);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21179,20 +21179,20 @@ void REGPARAM2 op_4cb0_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(xxx).W */
 void REGPARAM2 op_4cb8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21205,20 +21205,20 @@ void REGPARAM2 op_4cb8_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(xxx).L */
 void REGPARAM2 op_4cb9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21231,7 +21231,7 @@ void REGPARAM2 op_4cb9_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(d16,PC) */
 void REGPARAM2 op_4cba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
@@ -21240,13 +21240,13 @@ void REGPARAM2 op_4cba_23_ff(uae_u32 opcode)
 	srca += (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21259,7 +21259,7 @@ void REGPARAM2 op_4cba_23_ff(uae_u32 opcode)
 /* MVMEL.W #<data>.W,(d8,PC,Xn) */
 void REGPARAM2 op_4cbb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
@@ -21269,13 +21269,13 @@ void REGPARAM2 op_4cbb_23_ff(uae_u32 opcode)
 	srca = x_get_disp_ea_ce030(tmppc, 0);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = (uae_s32)(uae_s16)x_get_word(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 2;
 		amask = movem_next[amask];
 	}
@@ -21287,7 +21287,7 @@ void REGPARAM2 op_4cbb_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(An) */
 void REGPARAM2 op_4cd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21296,13 +21296,13 @@ void REGPARAM2 op_4cd0_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, dstreg);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21315,7 +21315,7 @@ void REGPARAM2 op_4cd0_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(An)+ */
 void REGPARAM2 op_4cd8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21324,13 +21324,13 @@ void REGPARAM2 op_4cd8_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, dstreg);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21344,7 +21344,7 @@ void REGPARAM2 op_4cd8_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(d16,An) */
 void REGPARAM2 op_4ce8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21353,13 +21353,13 @@ void REGPARAM2 op_4ce8_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, dstreg) + (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21372,7 +21372,7 @@ void REGPARAM2 op_4ce8_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(d8,An,Xn) */
 void REGPARAM2 op_4cf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_u16 mask = get_word_ce030_prefetch(2);
@@ -21382,13 +21382,13 @@ void REGPARAM2 op_4cf0_23_ff(uae_u32 opcode)
 	srca = x_get_disp_ea_ce030(m68k_areg(regs, dstreg), 0);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21400,20 +21400,20 @@ void REGPARAM2 op_4cf0_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(xxx).W */
 void REGPARAM2 op_4cf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21426,20 +21426,20 @@ void REGPARAM2 op_4cf8_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(xxx).L */
 void REGPARAM2 op_4cf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21452,7 +21452,7 @@ void REGPARAM2 op_4cf9_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(d16,PC) */
 void REGPARAM2 op_4cfa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
@@ -21461,13 +21461,13 @@ void REGPARAM2 op_4cfa_23_ff(uae_u32 opcode)
 	srca += (uae_s32)(uae_s16)get_word_ce030_prefetch(4);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21480,7 +21480,7 @@ void REGPARAM2 op_4cfa_23_ff(uae_u32 opcode)
 /* MVMEL.L #<data>.W,(d8,PC,Xn) */
 void REGPARAM2 op_4cfb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_u16 mask = get_word_ce030_prefetch(2);
 	uae_u32 dmask = mask & 0xff, amask = (mask >> 8) & 0xff;
@@ -21490,13 +21490,13 @@ void REGPARAM2 op_4cfb_23_ff(uae_u32 opcode)
 	srca = x_get_disp_ea_ce030(tmppc, 0);
 	while (dmask) {
 		m68k_dreg(regs, movem_index1[dmask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		dmask = movem_next[dmask];
 	}
 	while (amask) {
 		m68k_areg(regs, movem_index1[amask]) = x_get_long(srca);
-		count_cycles += 4 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 4 * CYCLE_UNIT / 2;
 		srca += 4;
 		amask = movem_next[amask];
 	}
@@ -21508,7 +21508,7 @@ void REGPARAM2 op_4cfb_23_ff(uae_u32 opcode)
 /* TRAPQ.L #<data> */
 void REGPARAM2 op_4e40_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 15);
 	uae_u32 src = srcreg;
@@ -21523,7 +21523,7 @@ void REGPARAM2 op_4e40_23_ff(uae_u32 opcode)
 /* LINK.W An,#<data>.W */
 void REGPARAM2 op_4e50_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
@@ -21544,7 +21544,7 @@ void REGPARAM2 op_4e50_23_ff(uae_u32 opcode)
 /* UNLK.L An */
 void REGPARAM2 op_4e58_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_s32 src = m68k_areg(regs, srcreg);
@@ -21562,7 +21562,7 @@ void REGPARAM2 op_4e58_23_ff(uae_u32 opcode)
 /* MVR2USP.L An */
 void REGPARAM2 op_4e60_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -21581,7 +21581,7 @@ void REGPARAM2 op_4e60_23_ff(uae_u32 opcode)
 /* MVUSP2R.L An */
 void REGPARAM2 op_4e68_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -21599,7 +21599,7 @@ void REGPARAM2 op_4e68_23_ff(uae_u32 opcode)
 /* RESET.L  */
 void REGPARAM2 op_4e70_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -21617,7 +21617,7 @@ void REGPARAM2 op_4e70_23_ff(uae_u32 opcode)
 /* NOP.L  */
 void REGPARAM2 op_4e71_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_incpci(2);
 	return;
@@ -21627,7 +21627,7 @@ void REGPARAM2 op_4e71_23_ff(uae_u32 opcode)
 /* STOP.L #<data>.W */
 void REGPARAM2 op_4e72_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -21650,7 +21650,7 @@ void REGPARAM2 op_4e72_23_ff(uae_u32 opcode)
 /* RTE.L  */
 void REGPARAM2 op_4e73_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -21711,7 +21711,7 @@ void REGPARAM2 op_4e73_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4e74_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	/* op H:2,T:0,C:8 */
 	uaecptr pca;
@@ -21735,7 +21735,7 @@ void REGPARAM2 op_4e74_23_ff(uae_u32 opcode)
 /* RTS.L  */
 void REGPARAM2 op_4e75_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* op H:1,T:0,C:8 */
 	uaecptr oldpc = m68k_getpci();
 	m68k_do_rts_ce030();
@@ -21758,7 +21758,7 @@ void REGPARAM2 op_4e75_23_ff(uae_u32 opcode)
 /* TRAPV.L  */
 void REGPARAM2 op_4e76_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (GET_VFLG()) {
 		Exception_cpu(7);
@@ -21772,7 +21772,7 @@ void REGPARAM2 op_4e76_23_ff(uae_u32 opcode)
 /* RTR.L  */
 void REGPARAM2 op_4e77_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	MakeSR();
 	uaecptr sra;
@@ -21803,7 +21803,7 @@ void REGPARAM2 op_4e77_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4e7a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* op H:6,T:0,C:-6 */
 	int regno = (src >> 12) & 15;
@@ -21822,7 +21822,7 @@ void REGPARAM2 op_4e7a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_4e7b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* op H:6,T:0,C:-6 */
 	int regno = (src >> 12) & 15;
@@ -21840,7 +21840,7 @@ void REGPARAM2 op_4e7b_23_ff(uae_u32 opcode)
 /* JSR.L (An) */
 void REGPARAM2 op_4e90_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 jea */
@@ -21869,7 +21869,7 @@ void REGPARAM2 op_4e90_23_ff(uae_u32 opcode)
 /* JSR.L (d16,An) */
 void REGPARAM2 op_4ea8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 jea */
@@ -21898,7 +21898,7 @@ void REGPARAM2 op_4ea8_23_ff(uae_u32 opcode)
 /* JSR.L (d8,An,Xn) */
 void REGPARAM2 op_4eb0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 jea */
@@ -21928,7 +21928,7 @@ void REGPARAM2 op_4eb0_23_ff(uae_u32 opcode)
 /* JSR.L (xxx).W */
 void REGPARAM2 op_4eb8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 jea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -21955,7 +21955,7 @@ void REGPARAM2 op_4eb8_23_ff(uae_u32 opcode)
 /* JSR.L (xxx).L */
 void REGPARAM2 op_4eb9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 jea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -21982,7 +21982,7 @@ void REGPARAM2 op_4eb9_23_ff(uae_u32 opcode)
 /* JSR.L (d16,PC) */
 void REGPARAM2 op_4eba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 jea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
@@ -22010,7 +22010,7 @@ void REGPARAM2 op_4eba_23_ff(uae_u32 opcode)
 /* JSR.L (d8,PC,Xn) */
 void REGPARAM2 op_4ebb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:0,T:0,C:0 jea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -22039,7 +22039,7 @@ void REGPARAM2 op_4ebb_23_ff(uae_u32 opcode)
 /* JMP.L (An) */
 void REGPARAM2 op_4ed0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2+4=6,T:0,C:0 jea */
@@ -22060,7 +22060,7 @@ void REGPARAM2 op_4ed0_23_ff(uae_u32 opcode)
 /* JMP.L (d16,An) */
 void REGPARAM2 op_4ee8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4+4=8,T:0,C:0 jea */
@@ -22068,7 +22068,7 @@ void REGPARAM2 op_4ee8_23_ff(uae_u32 opcode)
 	srca = m68k_areg(regs, srcreg) + (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
 	/* op H:4-,T:0,C:-4 */
 	if (srca & 1) {
-		count_cycles += 2 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 2 * CYCLE_UNIT / 2;
 		m68k_incpci(2);
 		exception3_read_prefetch_only(opcode, srca);
 		return;
@@ -22082,7 +22082,7 @@ void REGPARAM2 op_4ee8_23_ff(uae_u32 opcode)
 /* JMP.L (d8,An,Xn) */
 void REGPARAM2 op_4ef0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 jea */
@@ -22091,7 +22091,7 @@ void REGPARAM2 op_4ef0_23_ff(uae_u32 opcode)
 	srca = x_get_disp_ea_ce030(m68k_areg(regs, srcreg), 0);
 	/* op H:4,T:0,C:-4 */
 	if (srca & 1) {
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 		m68k_incpci(2);
 		exception3_read_prefetch_only(opcode, srca);
 		return;
@@ -22105,13 +22105,13 @@ void REGPARAM2 op_4ef0_23_ff(uae_u32 opcode)
 /* JMP.L (xxx).W */
 void REGPARAM2 op_4ef8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2+4=6,T:0,C:0 jea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
 	/* op H:4-,T:0,C:-4 */
 	if (srca & 1) {
-		count_cycles += 2 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 2 * CYCLE_UNIT / 2;
 		m68k_incpci(2);
 		exception3_read_prefetch_only(opcode, srca);
 		return;
@@ -22125,7 +22125,7 @@ void REGPARAM2 op_4ef8_23_ff(uae_u32 opcode)
 /* JMP.L (xxx).L */
 void REGPARAM2 op_4ef9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2+4=6,T:0,C:0 jea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -22144,14 +22144,14 @@ void REGPARAM2 op_4ef9_23_ff(uae_u32 opcode)
 /* JMP.L (d16,PC) */
 void REGPARAM2 op_4efa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4+4=8,T:0,C:0 jea */
 	uaecptr srca;
 	srca = m68k_getpci() + 2;
 	srca += (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
 	/* op H:4-,T:0,C:-4 */
 	if (srca & 1) {
-		count_cycles += 2 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 2 * CYCLE_UNIT / 2;
 		m68k_incpci(2);
 		exception3_read_prefetch_only(opcode, srca);
 		return;
@@ -22165,7 +22165,7 @@ void REGPARAM2 op_4efa_23_ff(uae_u32 opcode)
 /* JMP.L (d8,PC,Xn) */
 void REGPARAM2 op_4efb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:0,T:0,C:0 jea */
 	uaecptr srca;
 	m68k_incpci(2);
@@ -22173,7 +22173,7 @@ void REGPARAM2 op_4efb_23_ff(uae_u32 opcode)
 	srca = x_get_disp_ea_ce030(tmppc, 0);
 	/* op H:4,T:0,C:-4 */
 	if (srca & 1) {
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 		m68k_incpci(2);
 		exception3_read_prefetch_only(opcode, srca);
 		return;
@@ -22187,7 +22187,7 @@ void REGPARAM2 op_4efb_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,Dn */
 void REGPARAM2 op_5000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22214,7 +22214,7 @@ void REGPARAM2 op_5000_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,(An) */
 void REGPARAM2 op_5010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22243,7 +22243,7 @@ void REGPARAM2 op_5010_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,(An)+ */
 void REGPARAM2 op_5018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22273,7 +22273,7 @@ void REGPARAM2 op_5018_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,-(An) */
 void REGPARAM2 op_5020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22303,7 +22303,7 @@ void REGPARAM2 op_5020_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,(d16,An) */
 void REGPARAM2 op_5028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22332,7 +22332,7 @@ void REGPARAM2 op_5028_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,(d8,An,Xn) */
 void REGPARAM2 op_5030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22361,7 +22361,7 @@ void REGPARAM2 op_5030_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,(xxx).W */
 void REGPARAM2 op_5038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:2,T:2,C:0 fea */
@@ -22389,7 +22389,7 @@ void REGPARAM2 op_5038_23_ff(uae_u32 opcode)
 /* ADDQ.B #<data>,(xxx).L */
 void REGPARAM2 op_5039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:1,T:0,C:0 fea */
@@ -22417,7 +22417,7 @@ void REGPARAM2 op_5039_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,Dn */
 void REGPARAM2 op_5040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22444,7 +22444,7 @@ void REGPARAM2 op_5040_23_ff(uae_u32 opcode)
 /* ADDAQ.W #<data>,An */
 void REGPARAM2 op_5048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22463,7 +22463,7 @@ void REGPARAM2 op_5048_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,(An) */
 void REGPARAM2 op_5050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22492,7 +22492,7 @@ void REGPARAM2 op_5050_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,(An)+ */
 void REGPARAM2 op_5058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22522,7 +22522,7 @@ void REGPARAM2 op_5058_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,-(An) */
 void REGPARAM2 op_5060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22552,7 +22552,7 @@ void REGPARAM2 op_5060_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,(d16,An) */
 void REGPARAM2 op_5068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22581,7 +22581,7 @@ void REGPARAM2 op_5068_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,(d8,An,Xn) */
 void REGPARAM2 op_5070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22610,7 +22610,7 @@ void REGPARAM2 op_5070_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,(xxx).W */
 void REGPARAM2 op_5078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:2,T:2,C:0 fea */
@@ -22638,7 +22638,7 @@ void REGPARAM2 op_5078_23_ff(uae_u32 opcode)
 /* ADDQ.W #<data>,(xxx).L */
 void REGPARAM2 op_5079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:1,T:0,C:0 fea */
@@ -22666,7 +22666,7 @@ void REGPARAM2 op_5079_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,Dn */
 void REGPARAM2 op_5080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22693,7 +22693,7 @@ void REGPARAM2 op_5080_23_ff(uae_u32 opcode)
 /* ADDAQ.L #<data>,An */
 void REGPARAM2 op_5088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22712,7 +22712,7 @@ void REGPARAM2 op_5088_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,(An) */
 void REGPARAM2 op_5090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22741,7 +22741,7 @@ void REGPARAM2 op_5090_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,(An)+ */
 void REGPARAM2 op_5098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22771,7 +22771,7 @@ void REGPARAM2 op_5098_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,-(An) */
 void REGPARAM2 op_50a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22801,7 +22801,7 @@ void REGPARAM2 op_50a0_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,(d16,An) */
 void REGPARAM2 op_50a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22830,7 +22830,7 @@ void REGPARAM2 op_50a8_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,(d8,An,Xn) */
 void REGPARAM2 op_50b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -22859,7 +22859,7 @@ void REGPARAM2 op_50b0_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,(xxx).W */
 void REGPARAM2 op_50b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:2,T:2,C:0 fea */
@@ -22887,7 +22887,7 @@ void REGPARAM2 op_50b8_23_ff(uae_u32 opcode)
 /* ADDQ.L #<data>,(xxx).L */
 void REGPARAM2 op_50b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:1,T:0,C:0 fea */
@@ -22915,14 +22915,14 @@ void REGPARAM2 op_50b9_23_ff(uae_u32 opcode)
 /* Scc.B Dn (T) */
 void REGPARAM2 op_50c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(0) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -22931,7 +22931,7 @@ void REGPARAM2 op_50c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (T) */
 void REGPARAM2 op_50c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -22950,7 +22950,7 @@ void REGPARAM2 op_50c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -22961,7 +22961,7 @@ void REGPARAM2 op_50c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (T) */
 void REGPARAM2 op_50d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -22979,7 +22979,7 @@ void REGPARAM2 op_50d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (T) */
 void REGPARAM2 op_50d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -22998,7 +22998,7 @@ void REGPARAM2 op_50d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (T) */
 void REGPARAM2 op_50e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -23017,7 +23017,7 @@ void REGPARAM2 op_50e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (T) */
 void REGPARAM2 op_50e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -23035,7 +23035,7 @@ void REGPARAM2 op_50e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (T) */
 void REGPARAM2 op_50f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -23053,7 +23053,7 @@ void REGPARAM2 op_50f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (T) */
 void REGPARAM2 op_50f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -23069,7 +23069,7 @@ void REGPARAM2 op_50f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (T) */
 void REGPARAM2 op_50f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -23086,7 +23086,7 @@ void REGPARAM2 op_50f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_50fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -23105,7 +23105,7 @@ void REGPARAM2 op_50fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_50fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -23125,7 +23125,7 @@ void REGPARAM2 op_50fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_50fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(0)) {
 		Exception_cpu(7);
@@ -23140,7 +23140,7 @@ void REGPARAM2 op_50fc_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,Dn */
 void REGPARAM2 op_5100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23167,7 +23167,7 @@ void REGPARAM2 op_5100_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,(An) */
 void REGPARAM2 op_5110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23196,7 +23196,7 @@ void REGPARAM2 op_5110_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,(An)+ */
 void REGPARAM2 op_5118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23226,7 +23226,7 @@ void REGPARAM2 op_5118_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,-(An) */
 void REGPARAM2 op_5120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23256,7 +23256,7 @@ void REGPARAM2 op_5120_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,(d16,An) */
 void REGPARAM2 op_5128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23285,7 +23285,7 @@ void REGPARAM2 op_5128_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,(d8,An,Xn) */
 void REGPARAM2 op_5130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23314,7 +23314,7 @@ void REGPARAM2 op_5130_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,(xxx).W */
 void REGPARAM2 op_5138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:2,T:2,C:0 fea */
@@ -23342,7 +23342,7 @@ void REGPARAM2 op_5138_23_ff(uae_u32 opcode)
 /* SUBQ.B #<data>,(xxx).L */
 void REGPARAM2 op_5139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:1,T:0,C:0 fea */
@@ -23370,7 +23370,7 @@ void REGPARAM2 op_5139_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,Dn */
 void REGPARAM2 op_5140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23397,7 +23397,7 @@ void REGPARAM2 op_5140_23_ff(uae_u32 opcode)
 /* SUBAQ.W #<data>,An */
 void REGPARAM2 op_5148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23416,7 +23416,7 @@ void REGPARAM2 op_5148_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,(An) */
 void REGPARAM2 op_5150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23445,7 +23445,7 @@ void REGPARAM2 op_5150_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,(An)+ */
 void REGPARAM2 op_5158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23475,7 +23475,7 @@ void REGPARAM2 op_5158_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,-(An) */
 void REGPARAM2 op_5160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23505,7 +23505,7 @@ void REGPARAM2 op_5160_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,(d16,An) */
 void REGPARAM2 op_5168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23534,7 +23534,7 @@ void REGPARAM2 op_5168_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,(d8,An,Xn) */
 void REGPARAM2 op_5170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23563,7 +23563,7 @@ void REGPARAM2 op_5170_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,(xxx).W */
 void REGPARAM2 op_5178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:2,T:2,C:0 fea */
@@ -23591,7 +23591,7 @@ void REGPARAM2 op_5178_23_ff(uae_u32 opcode)
 /* SUBQ.W #<data>,(xxx).L */
 void REGPARAM2 op_5179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:1,T:0,C:0 fea */
@@ -23619,7 +23619,7 @@ void REGPARAM2 op_5179_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,Dn */
 void REGPARAM2 op_5180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23646,7 +23646,7 @@ void REGPARAM2 op_5180_23_ff(uae_u32 opcode)
 /* SUBAQ.L #<data>,An */
 void REGPARAM2 op_5188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23665,7 +23665,7 @@ void REGPARAM2 op_5188_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,(An) */
 void REGPARAM2 op_5190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23694,7 +23694,7 @@ void REGPARAM2 op_5190_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,(An)+ */
 void REGPARAM2 op_5198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23724,7 +23724,7 @@ void REGPARAM2 op_5198_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,-(An) */
 void REGPARAM2 op_51a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23754,7 +23754,7 @@ void REGPARAM2 op_51a0_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,(d16,An) */
 void REGPARAM2 op_51a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23783,7 +23783,7 @@ void REGPARAM2 op_51a8_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,(d8,An,Xn) */
 void REGPARAM2 op_51b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -23812,7 +23812,7 @@ void REGPARAM2 op_51b0_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,(xxx).W */
 void REGPARAM2 op_51b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:2,T:2,C:0 fea */
@@ -23840,7 +23840,7 @@ void REGPARAM2 op_51b8_23_ff(uae_u32 opcode)
 /* SUBQ.L #<data>,(xxx).L */
 void REGPARAM2 op_51b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	/* ea H:1,T:0,C:0 fea */
@@ -23868,14 +23868,14 @@ void REGPARAM2 op_51b9_23_ff(uae_u32 opcode)
 /* Scc.B Dn (F) */
 void REGPARAM2 op_51c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(1) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -23884,7 +23884,7 @@ void REGPARAM2 op_51c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (F) */
 void REGPARAM2 op_51c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -23903,7 +23903,7 @@ void REGPARAM2 op_51c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -23914,7 +23914,7 @@ void REGPARAM2 op_51c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (F) */
 void REGPARAM2 op_51d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -23932,7 +23932,7 @@ void REGPARAM2 op_51d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (F) */
 void REGPARAM2 op_51d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -23951,7 +23951,7 @@ void REGPARAM2 op_51d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (F) */
 void REGPARAM2 op_51e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -23970,7 +23970,7 @@ void REGPARAM2 op_51e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (F) */
 void REGPARAM2 op_51e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -23988,7 +23988,7 @@ void REGPARAM2 op_51e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (F) */
 void REGPARAM2 op_51f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -24006,7 +24006,7 @@ void REGPARAM2 op_51f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (F) */
 void REGPARAM2 op_51f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -24022,7 +24022,7 @@ void REGPARAM2 op_51f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (F) */
 void REGPARAM2 op_51f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -24039,7 +24039,7 @@ void REGPARAM2 op_51f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_51fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -24058,7 +24058,7 @@ void REGPARAM2 op_51fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_51fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -24078,7 +24078,7 @@ void REGPARAM2 op_51fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_51fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(1)) {
 		Exception_cpu(7);
@@ -24093,14 +24093,14 @@ void REGPARAM2 op_51fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (HI) */
 void REGPARAM2 op_52c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(2) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -24109,7 +24109,7 @@ void REGPARAM2 op_52c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (HI) */
 void REGPARAM2 op_52c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -24128,7 +24128,7 @@ void REGPARAM2 op_52c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -24139,7 +24139,7 @@ void REGPARAM2 op_52c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (HI) */
 void REGPARAM2 op_52d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24157,7 +24157,7 @@ void REGPARAM2 op_52d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (HI) */
 void REGPARAM2 op_52d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -24176,7 +24176,7 @@ void REGPARAM2 op_52d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (HI) */
 void REGPARAM2 op_52e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24195,7 +24195,7 @@ void REGPARAM2 op_52e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (HI) */
 void REGPARAM2 op_52e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24213,7 +24213,7 @@ void REGPARAM2 op_52e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (HI) */
 void REGPARAM2 op_52f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -24231,7 +24231,7 @@ void REGPARAM2 op_52f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (HI) */
 void REGPARAM2 op_52f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -24247,7 +24247,7 @@ void REGPARAM2 op_52f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (HI) */
 void REGPARAM2 op_52f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -24264,7 +24264,7 @@ void REGPARAM2 op_52f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_52fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -24283,7 +24283,7 @@ void REGPARAM2 op_52fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_52fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -24303,7 +24303,7 @@ void REGPARAM2 op_52fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_52fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(2)) {
 		Exception_cpu(7);
@@ -24318,14 +24318,14 @@ void REGPARAM2 op_52fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (LS) */
 void REGPARAM2 op_53c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(3) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -24334,7 +24334,7 @@ void REGPARAM2 op_53c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (LS) */
 void REGPARAM2 op_53c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -24353,7 +24353,7 @@ void REGPARAM2 op_53c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -24364,7 +24364,7 @@ void REGPARAM2 op_53c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (LS) */
 void REGPARAM2 op_53d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24382,7 +24382,7 @@ void REGPARAM2 op_53d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (LS) */
 void REGPARAM2 op_53d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -24401,7 +24401,7 @@ void REGPARAM2 op_53d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (LS) */
 void REGPARAM2 op_53e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24420,7 +24420,7 @@ void REGPARAM2 op_53e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (LS) */
 void REGPARAM2 op_53e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24438,7 +24438,7 @@ void REGPARAM2 op_53e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (LS) */
 void REGPARAM2 op_53f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -24456,7 +24456,7 @@ void REGPARAM2 op_53f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (LS) */
 void REGPARAM2 op_53f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -24472,7 +24472,7 @@ void REGPARAM2 op_53f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (LS) */
 void REGPARAM2 op_53f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -24489,7 +24489,7 @@ void REGPARAM2 op_53f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_53fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -24508,7 +24508,7 @@ void REGPARAM2 op_53fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_53fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -24528,7 +24528,7 @@ void REGPARAM2 op_53fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_53fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(3)) {
 		Exception_cpu(7);
@@ -24543,14 +24543,14 @@ void REGPARAM2 op_53fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (CC) */
 void REGPARAM2 op_54c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(4) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -24559,7 +24559,7 @@ void REGPARAM2 op_54c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (CC) */
 void REGPARAM2 op_54c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -24578,7 +24578,7 @@ void REGPARAM2 op_54c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -24589,7 +24589,7 @@ void REGPARAM2 op_54c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (CC) */
 void REGPARAM2 op_54d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24607,7 +24607,7 @@ void REGPARAM2 op_54d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (CC) */
 void REGPARAM2 op_54d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -24626,7 +24626,7 @@ void REGPARAM2 op_54d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (CC) */
 void REGPARAM2 op_54e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24645,7 +24645,7 @@ void REGPARAM2 op_54e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (CC) */
 void REGPARAM2 op_54e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24663,7 +24663,7 @@ void REGPARAM2 op_54e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (CC) */
 void REGPARAM2 op_54f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -24681,7 +24681,7 @@ void REGPARAM2 op_54f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (CC) */
 void REGPARAM2 op_54f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -24697,7 +24697,7 @@ void REGPARAM2 op_54f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (CC) */
 void REGPARAM2 op_54f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -24714,7 +24714,7 @@ void REGPARAM2 op_54f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_54fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -24733,7 +24733,7 @@ void REGPARAM2 op_54fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_54fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -24753,7 +24753,7 @@ void REGPARAM2 op_54fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_54fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(4)) {
 		Exception_cpu(7);
@@ -24768,14 +24768,14 @@ void REGPARAM2 op_54fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (CS) */
 void REGPARAM2 op_55c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(5) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -24784,7 +24784,7 @@ void REGPARAM2 op_55c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (CS) */
 void REGPARAM2 op_55c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -24803,7 +24803,7 @@ void REGPARAM2 op_55c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -24814,7 +24814,7 @@ void REGPARAM2 op_55c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (CS) */
 void REGPARAM2 op_55d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24832,7 +24832,7 @@ void REGPARAM2 op_55d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (CS) */
 void REGPARAM2 op_55d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -24851,7 +24851,7 @@ void REGPARAM2 op_55d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (CS) */
 void REGPARAM2 op_55e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24870,7 +24870,7 @@ void REGPARAM2 op_55e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (CS) */
 void REGPARAM2 op_55e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -24888,7 +24888,7 @@ void REGPARAM2 op_55e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (CS) */
 void REGPARAM2 op_55f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -24906,7 +24906,7 @@ void REGPARAM2 op_55f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (CS) */
 void REGPARAM2 op_55f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -24922,7 +24922,7 @@ void REGPARAM2 op_55f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (CS) */
 void REGPARAM2 op_55f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -24939,7 +24939,7 @@ void REGPARAM2 op_55f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_55fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -24958,7 +24958,7 @@ void REGPARAM2 op_55fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_55fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -24978,7 +24978,7 @@ void REGPARAM2 op_55fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_55fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(5)) {
 		Exception_cpu(7);
@@ -24993,14 +24993,14 @@ void REGPARAM2 op_55fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (NE) */
 void REGPARAM2 op_56c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(6) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -25009,7 +25009,7 @@ void REGPARAM2 op_56c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (NE) */
 void REGPARAM2 op_56c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -25028,7 +25028,7 @@ void REGPARAM2 op_56c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -25039,7 +25039,7 @@ void REGPARAM2 op_56c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (NE) */
 void REGPARAM2 op_56d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25057,7 +25057,7 @@ void REGPARAM2 op_56d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (NE) */
 void REGPARAM2 op_56d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -25076,7 +25076,7 @@ void REGPARAM2 op_56d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (NE) */
 void REGPARAM2 op_56e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25095,7 +25095,7 @@ void REGPARAM2 op_56e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (NE) */
 void REGPARAM2 op_56e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25113,7 +25113,7 @@ void REGPARAM2 op_56e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (NE) */
 void REGPARAM2 op_56f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -25131,7 +25131,7 @@ void REGPARAM2 op_56f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (NE) */
 void REGPARAM2 op_56f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -25147,7 +25147,7 @@ void REGPARAM2 op_56f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (NE) */
 void REGPARAM2 op_56f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -25164,7 +25164,7 @@ void REGPARAM2 op_56f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_56fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -25183,7 +25183,7 @@ void REGPARAM2 op_56fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_56fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -25203,7 +25203,7 @@ void REGPARAM2 op_56fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_56fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(6)) {
 		Exception_cpu(7);
@@ -25218,14 +25218,14 @@ void REGPARAM2 op_56fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (EQ) */
 void REGPARAM2 op_57c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(7) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -25234,7 +25234,7 @@ void REGPARAM2 op_57c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (EQ) */
 void REGPARAM2 op_57c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -25253,7 +25253,7 @@ void REGPARAM2 op_57c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -25264,7 +25264,7 @@ void REGPARAM2 op_57c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (EQ) */
 void REGPARAM2 op_57d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25282,7 +25282,7 @@ void REGPARAM2 op_57d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (EQ) */
 void REGPARAM2 op_57d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -25301,7 +25301,7 @@ void REGPARAM2 op_57d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (EQ) */
 void REGPARAM2 op_57e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25320,7 +25320,7 @@ void REGPARAM2 op_57e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (EQ) */
 void REGPARAM2 op_57e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25338,7 +25338,7 @@ void REGPARAM2 op_57e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (EQ) */
 void REGPARAM2 op_57f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -25356,7 +25356,7 @@ void REGPARAM2 op_57f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (EQ) */
 void REGPARAM2 op_57f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -25372,7 +25372,7 @@ void REGPARAM2 op_57f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (EQ) */
 void REGPARAM2 op_57f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -25389,7 +25389,7 @@ void REGPARAM2 op_57f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_57fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -25408,7 +25408,7 @@ void REGPARAM2 op_57fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_57fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -25428,7 +25428,7 @@ void REGPARAM2 op_57fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_57fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(7)) {
 		Exception_cpu(7);
@@ -25443,14 +25443,14 @@ void REGPARAM2 op_57fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (VC) */
 void REGPARAM2 op_58c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(8) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -25459,7 +25459,7 @@ void REGPARAM2 op_58c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (VC) */
 void REGPARAM2 op_58c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -25478,7 +25478,7 @@ void REGPARAM2 op_58c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -25489,7 +25489,7 @@ void REGPARAM2 op_58c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (VC) */
 void REGPARAM2 op_58d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25507,7 +25507,7 @@ void REGPARAM2 op_58d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (VC) */
 void REGPARAM2 op_58d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -25526,7 +25526,7 @@ void REGPARAM2 op_58d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (VC) */
 void REGPARAM2 op_58e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25545,7 +25545,7 @@ void REGPARAM2 op_58e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (VC) */
 void REGPARAM2 op_58e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25563,7 +25563,7 @@ void REGPARAM2 op_58e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (VC) */
 void REGPARAM2 op_58f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -25581,7 +25581,7 @@ void REGPARAM2 op_58f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (VC) */
 void REGPARAM2 op_58f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -25597,7 +25597,7 @@ void REGPARAM2 op_58f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (VC) */
 void REGPARAM2 op_58f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -25614,7 +25614,7 @@ void REGPARAM2 op_58f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_58fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -25633,7 +25633,7 @@ void REGPARAM2 op_58fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_58fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -25653,7 +25653,7 @@ void REGPARAM2 op_58fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_58fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(8)) {
 		Exception_cpu(7);
@@ -25668,14 +25668,14 @@ void REGPARAM2 op_58fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (VS) */
 void REGPARAM2 op_59c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(9) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -25684,7 +25684,7 @@ void REGPARAM2 op_59c0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (VS) */
 void REGPARAM2 op_59c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -25703,7 +25703,7 @@ void REGPARAM2 op_59c8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -25714,7 +25714,7 @@ void REGPARAM2 op_59c8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (VS) */
 void REGPARAM2 op_59d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25732,7 +25732,7 @@ void REGPARAM2 op_59d0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (VS) */
 void REGPARAM2 op_59d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -25751,7 +25751,7 @@ void REGPARAM2 op_59d8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (VS) */
 void REGPARAM2 op_59e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25770,7 +25770,7 @@ void REGPARAM2 op_59e0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (VS) */
 void REGPARAM2 op_59e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25788,7 +25788,7 @@ void REGPARAM2 op_59e8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (VS) */
 void REGPARAM2 op_59f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -25806,7 +25806,7 @@ void REGPARAM2 op_59f0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (VS) */
 void REGPARAM2 op_59f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -25822,7 +25822,7 @@ void REGPARAM2 op_59f8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (VS) */
 void REGPARAM2 op_59f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -25839,7 +25839,7 @@ void REGPARAM2 op_59f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_59fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -25858,7 +25858,7 @@ void REGPARAM2 op_59fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_59fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -25878,7 +25878,7 @@ void REGPARAM2 op_59fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_59fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(9)) {
 		Exception_cpu(7);
@@ -25893,14 +25893,14 @@ void REGPARAM2 op_59fc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (PL) */
 void REGPARAM2 op_5ac0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(10) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -25909,7 +25909,7 @@ void REGPARAM2 op_5ac0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (PL) */
 void REGPARAM2 op_5ac8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -25928,7 +25928,7 @@ void REGPARAM2 op_5ac8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -25939,7 +25939,7 @@ void REGPARAM2 op_5ac8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (PL) */
 void REGPARAM2 op_5ad0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25957,7 +25957,7 @@ void REGPARAM2 op_5ad0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (PL) */
 void REGPARAM2 op_5ad8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -25976,7 +25976,7 @@ void REGPARAM2 op_5ad8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (PL) */
 void REGPARAM2 op_5ae0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -25995,7 +25995,7 @@ void REGPARAM2 op_5ae0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (PL) */
 void REGPARAM2 op_5ae8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26013,7 +26013,7 @@ void REGPARAM2 op_5ae8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (PL) */
 void REGPARAM2 op_5af0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -26031,7 +26031,7 @@ void REGPARAM2 op_5af0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (PL) */
 void REGPARAM2 op_5af8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -26047,7 +26047,7 @@ void REGPARAM2 op_5af8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (PL) */
 void REGPARAM2 op_5af9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -26064,7 +26064,7 @@ void REGPARAM2 op_5af9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5afa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -26083,7 +26083,7 @@ void REGPARAM2 op_5afa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5afb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -26103,7 +26103,7 @@ void REGPARAM2 op_5afb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5afc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(10)) {
 		Exception_cpu(7);
@@ -26118,14 +26118,14 @@ void REGPARAM2 op_5afc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (MI) */
 void REGPARAM2 op_5bc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(11) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -26134,7 +26134,7 @@ void REGPARAM2 op_5bc0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (MI) */
 void REGPARAM2 op_5bc8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -26153,7 +26153,7 @@ void REGPARAM2 op_5bc8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -26164,7 +26164,7 @@ void REGPARAM2 op_5bc8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (MI) */
 void REGPARAM2 op_5bd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26182,7 +26182,7 @@ void REGPARAM2 op_5bd0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (MI) */
 void REGPARAM2 op_5bd8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -26201,7 +26201,7 @@ void REGPARAM2 op_5bd8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (MI) */
 void REGPARAM2 op_5be0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26220,7 +26220,7 @@ void REGPARAM2 op_5be0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (MI) */
 void REGPARAM2 op_5be8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26238,7 +26238,7 @@ void REGPARAM2 op_5be8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (MI) */
 void REGPARAM2 op_5bf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -26256,7 +26256,7 @@ void REGPARAM2 op_5bf0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (MI) */
 void REGPARAM2 op_5bf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -26272,7 +26272,7 @@ void REGPARAM2 op_5bf8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (MI) */
 void REGPARAM2 op_5bf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -26289,7 +26289,7 @@ void REGPARAM2 op_5bf9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5bfa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -26308,7 +26308,7 @@ void REGPARAM2 op_5bfa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5bfb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -26328,7 +26328,7 @@ void REGPARAM2 op_5bfb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5bfc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(11)) {
 		Exception_cpu(7);
@@ -26343,14 +26343,14 @@ void REGPARAM2 op_5bfc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (GE) */
 void REGPARAM2 op_5cc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(12) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -26359,7 +26359,7 @@ void REGPARAM2 op_5cc0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (GE) */
 void REGPARAM2 op_5cc8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -26378,7 +26378,7 @@ void REGPARAM2 op_5cc8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -26389,7 +26389,7 @@ void REGPARAM2 op_5cc8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (GE) */
 void REGPARAM2 op_5cd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26407,7 +26407,7 @@ void REGPARAM2 op_5cd0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (GE) */
 void REGPARAM2 op_5cd8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -26426,7 +26426,7 @@ void REGPARAM2 op_5cd8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (GE) */
 void REGPARAM2 op_5ce0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26445,7 +26445,7 @@ void REGPARAM2 op_5ce0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (GE) */
 void REGPARAM2 op_5ce8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26463,7 +26463,7 @@ void REGPARAM2 op_5ce8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (GE) */
 void REGPARAM2 op_5cf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -26481,7 +26481,7 @@ void REGPARAM2 op_5cf0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (GE) */
 void REGPARAM2 op_5cf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -26497,7 +26497,7 @@ void REGPARAM2 op_5cf8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (GE) */
 void REGPARAM2 op_5cf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -26514,7 +26514,7 @@ void REGPARAM2 op_5cf9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5cfa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -26533,7 +26533,7 @@ void REGPARAM2 op_5cfa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5cfb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -26553,7 +26553,7 @@ void REGPARAM2 op_5cfb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5cfc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(12)) {
 		Exception_cpu(7);
@@ -26568,14 +26568,14 @@ void REGPARAM2 op_5cfc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (LT) */
 void REGPARAM2 op_5dc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(13) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -26584,7 +26584,7 @@ void REGPARAM2 op_5dc0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (LT) */
 void REGPARAM2 op_5dc8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -26603,7 +26603,7 @@ void REGPARAM2 op_5dc8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -26614,7 +26614,7 @@ void REGPARAM2 op_5dc8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (LT) */
 void REGPARAM2 op_5dd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26632,7 +26632,7 @@ void REGPARAM2 op_5dd0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (LT) */
 void REGPARAM2 op_5dd8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -26651,7 +26651,7 @@ void REGPARAM2 op_5dd8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (LT) */
 void REGPARAM2 op_5de0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26670,7 +26670,7 @@ void REGPARAM2 op_5de0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (LT) */
 void REGPARAM2 op_5de8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26688,7 +26688,7 @@ void REGPARAM2 op_5de8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (LT) */
 void REGPARAM2 op_5df0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -26706,7 +26706,7 @@ void REGPARAM2 op_5df0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (LT) */
 void REGPARAM2 op_5df8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -26722,7 +26722,7 @@ void REGPARAM2 op_5df8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (LT) */
 void REGPARAM2 op_5df9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -26739,7 +26739,7 @@ void REGPARAM2 op_5df9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5dfa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -26758,7 +26758,7 @@ void REGPARAM2 op_5dfa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5dfb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -26778,7 +26778,7 @@ void REGPARAM2 op_5dfb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5dfc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(13)) {
 		Exception_cpu(7);
@@ -26793,14 +26793,14 @@ void REGPARAM2 op_5dfc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (GT) */
 void REGPARAM2 op_5ec0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(14) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -26809,7 +26809,7 @@ void REGPARAM2 op_5ec0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (GT) */
 void REGPARAM2 op_5ec8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -26828,7 +26828,7 @@ void REGPARAM2 op_5ec8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -26839,7 +26839,7 @@ void REGPARAM2 op_5ec8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (GT) */
 void REGPARAM2 op_5ed0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26857,7 +26857,7 @@ void REGPARAM2 op_5ed0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (GT) */
 void REGPARAM2 op_5ed8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -26876,7 +26876,7 @@ void REGPARAM2 op_5ed8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (GT) */
 void REGPARAM2 op_5ee0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26895,7 +26895,7 @@ void REGPARAM2 op_5ee0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (GT) */
 void REGPARAM2 op_5ee8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -26913,7 +26913,7 @@ void REGPARAM2 op_5ee8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (GT) */
 void REGPARAM2 op_5ef0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -26931,7 +26931,7 @@ void REGPARAM2 op_5ef0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (GT) */
 void REGPARAM2 op_5ef8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -26947,7 +26947,7 @@ void REGPARAM2 op_5ef8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (GT) */
 void REGPARAM2 op_5ef9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -26964,7 +26964,7 @@ void REGPARAM2 op_5ef9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5efa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -26983,7 +26983,7 @@ void REGPARAM2 op_5efa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5efb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -27003,7 +27003,7 @@ void REGPARAM2 op_5efb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5efc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(14)) {
 		Exception_cpu(7);
@@ -27018,14 +27018,14 @@ void REGPARAM2 op_5efc_23_ff(uae_u32 opcode)
 /* Scc.B Dn (LE) */
 void REGPARAM2 op_5fc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* OP zero */
 	int val = cctrue(15) ? 0xff : 0x00;
 	regs.irc = get_word_ce030_prefetch_opcode(2);
 	m68k_dreg(regs, srcreg) = (m68k_dreg(regs, srcreg) & ~0xff) | ((val) & 0xff);
-	count_cycles += ((val ? 2 : 0)) * CYCLE_UNIT / 2;
+	/*count_cycles += */ // ((val ? 2 : 0)) * CYCLE_UNIT / 2;
 	m68k_incpci(2);
 	return;
 }
@@ -27034,7 +27034,7 @@ void REGPARAM2 op_5fc0_23_ff(uae_u32 opcode)
 /* DBcc.W Dn,#<data>.W (LE) */
 void REGPARAM2 op_5fc8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* No EA */
@@ -27053,7 +27053,7 @@ void REGPARAM2 op_5fc8_23_ff(uae_u32 opcode)
 			fill_prefetch_030();
 			return;
 		}
-		count_cycles += 6 * CYCLE_UNIT / 2;
+		/*count_cycles += */ // 6 * CYCLE_UNIT / 2;
 	}
 	m68k_setpci_j(oldpc + 4);
 	regs.irc = get_word_ce030_prefetch_opcode(0);
@@ -27064,7 +27064,7 @@ void REGPARAM2 op_5fc8_23_ff(uae_u32 opcode)
 /* Scc.B (An) (LE) */
 void REGPARAM2 op_5fd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -27082,7 +27082,7 @@ void REGPARAM2 op_5fd0_23_ff(uae_u32 opcode)
 /* Scc.B (An)+ (LE) */
 void REGPARAM2 op_5fd8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:0,C:0 cea */
@@ -27101,7 +27101,7 @@ void REGPARAM2 op_5fd8_23_ff(uae_u32 opcode)
 /* Scc.B -(An) (LE) */
 void REGPARAM2 op_5fe0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -27120,7 +27120,7 @@ void REGPARAM2 op_5fe0_23_ff(uae_u32 opcode)
 /* Scc.B (d16,An) (LE) */
 void REGPARAM2 op_5fe8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:0,C:0 cea */
@@ -27138,7 +27138,7 @@ void REGPARAM2 op_5fe8_23_ff(uae_u32 opcode)
 /* Scc.B (d8,An,Xn) (LE) */
 void REGPARAM2 op_5ff0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:0,C:0 cea */
@@ -27156,7 +27156,7 @@ void REGPARAM2 op_5ff0_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).W (LE) */
 void REGPARAM2 op_5ff8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:0,C:0 cea */
 	uaecptr srca;
 	srca = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -27172,7 +27172,7 @@ void REGPARAM2 op_5ff8_23_ff(uae_u32 opcode)
 /* Scc.B (xxx).L (LE) */
 void REGPARAM2 op_5ff9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:4,T:0,C:0 cea */
 	uaecptr srca;
 	srca = get_long_ce030_prefetch(2);
@@ -27189,7 +27189,7 @@ void REGPARAM2 op_5ff9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5ffa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 dummy = get_word_ce030_prefetch(2);
  (void)dummy;
 	/* OP zero */
@@ -27208,7 +27208,7 @@ void REGPARAM2 op_5ffa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5ffb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_long_ce030_prefetch(2);
  (void)dummy;
@@ -27228,7 +27228,7 @@ void REGPARAM2 op_5ffb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_5ffc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	m68k_incpci(2);
 	if (cctrue(15)) {
 		Exception_cpu(7);
@@ -27243,7 +27243,7 @@ void REGPARAM2 op_5ffc_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (T) */
 void REGPARAM2 op_6000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27266,7 +27266,7 @@ void REGPARAM2 op_6000_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (T) */
 void REGPARAM2 op_6001_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27291,7 +27291,7 @@ void REGPARAM2 op_6001_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (T) */
 void REGPARAM2 op_60ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27315,7 +27315,7 @@ void REGPARAM2 op_60ff_23_ff(uae_u32 opcode)
 /* BSR.W #<data>.W */
 void REGPARAM2 op_6100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 s;
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* op H:2,T:0,C:-2 */
@@ -27341,7 +27341,7 @@ void REGPARAM2 op_6100_23_ff(uae_u32 opcode)
 /* BSRQ.B #<data> */
 void REGPARAM2 op_6101_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uae_s32 s;
@@ -27369,7 +27369,7 @@ void REGPARAM2 op_6101_23_ff(uae_u32 opcode)
 /* BSR.L #<data>.L */
 void REGPARAM2 op_61ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 s;
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27396,7 +27396,7 @@ void REGPARAM2 op_61ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (HI) */
 void REGPARAM2 op_6200_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27419,7 +27419,7 @@ void REGPARAM2 op_6200_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (HI) */
 void REGPARAM2 op_6201_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27444,7 +27444,7 @@ void REGPARAM2 op_6201_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (HI) */
 void REGPARAM2 op_62ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27468,7 +27468,7 @@ void REGPARAM2 op_62ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (LS) */
 void REGPARAM2 op_6300_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27491,7 +27491,7 @@ void REGPARAM2 op_6300_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (LS) */
 void REGPARAM2 op_6301_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27516,7 +27516,7 @@ void REGPARAM2 op_6301_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (LS) */
 void REGPARAM2 op_63ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27540,7 +27540,7 @@ void REGPARAM2 op_63ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (CC) */
 void REGPARAM2 op_6400_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27563,7 +27563,7 @@ void REGPARAM2 op_6400_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (CC) */
 void REGPARAM2 op_6401_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27588,7 +27588,7 @@ void REGPARAM2 op_6401_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (CC) */
 void REGPARAM2 op_64ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27612,7 +27612,7 @@ void REGPARAM2 op_64ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (CS) */
 void REGPARAM2 op_6500_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27635,7 +27635,7 @@ void REGPARAM2 op_6500_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (CS) */
 void REGPARAM2 op_6501_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27660,7 +27660,7 @@ void REGPARAM2 op_6501_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (CS) */
 void REGPARAM2 op_65ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27684,7 +27684,7 @@ void REGPARAM2 op_65ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (NE) */
 void REGPARAM2 op_6600_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27707,7 +27707,7 @@ void REGPARAM2 op_6600_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (NE) */
 void REGPARAM2 op_6601_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27732,7 +27732,7 @@ void REGPARAM2 op_6601_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (NE) */
 void REGPARAM2 op_66ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27756,7 +27756,7 @@ void REGPARAM2 op_66ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (EQ) */
 void REGPARAM2 op_6700_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27779,7 +27779,7 @@ void REGPARAM2 op_6700_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (EQ) */
 void REGPARAM2 op_6701_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27804,7 +27804,7 @@ void REGPARAM2 op_6701_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (EQ) */
 void REGPARAM2 op_67ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27828,7 +27828,7 @@ void REGPARAM2 op_67ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (VC) */
 void REGPARAM2 op_6800_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27851,7 +27851,7 @@ void REGPARAM2 op_6800_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (VC) */
 void REGPARAM2 op_6801_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27876,7 +27876,7 @@ void REGPARAM2 op_6801_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (VC) */
 void REGPARAM2 op_68ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27900,7 +27900,7 @@ void REGPARAM2 op_68ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (VS) */
 void REGPARAM2 op_6900_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27923,7 +27923,7 @@ void REGPARAM2 op_6900_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (VS) */
 void REGPARAM2 op_6901_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -27948,7 +27948,7 @@ void REGPARAM2 op_6901_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (VS) */
 void REGPARAM2 op_69ff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -27972,7 +27972,7 @@ void REGPARAM2 op_69ff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (PL) */
 void REGPARAM2 op_6a00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -27995,7 +27995,7 @@ void REGPARAM2 op_6a00_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (PL) */
 void REGPARAM2 op_6a01_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -28020,7 +28020,7 @@ void REGPARAM2 op_6a01_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (PL) */
 void REGPARAM2 op_6aff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -28044,7 +28044,7 @@ void REGPARAM2 op_6aff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (MI) */
 void REGPARAM2 op_6b00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -28067,7 +28067,7 @@ void REGPARAM2 op_6b00_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (MI) */
 void REGPARAM2 op_6b01_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -28092,7 +28092,7 @@ void REGPARAM2 op_6b01_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (MI) */
 void REGPARAM2 op_6bff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -28116,7 +28116,7 @@ void REGPARAM2 op_6bff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (GE) */
 void REGPARAM2 op_6c00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -28139,7 +28139,7 @@ void REGPARAM2 op_6c00_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (GE) */
 void REGPARAM2 op_6c01_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -28164,7 +28164,7 @@ void REGPARAM2 op_6c01_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (GE) */
 void REGPARAM2 op_6cff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -28188,7 +28188,7 @@ void REGPARAM2 op_6cff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (LT) */
 void REGPARAM2 op_6d00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -28211,7 +28211,7 @@ void REGPARAM2 op_6d00_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (LT) */
 void REGPARAM2 op_6d01_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -28236,7 +28236,7 @@ void REGPARAM2 op_6d01_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (LT) */
 void REGPARAM2 op_6dff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -28260,7 +28260,7 @@ void REGPARAM2 op_6dff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (GT) */
 void REGPARAM2 op_6e00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -28283,7 +28283,7 @@ void REGPARAM2 op_6e00_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (GT) */
 void REGPARAM2 op_6e01_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -28308,7 +28308,7 @@ void REGPARAM2 op_6e01_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (GT) */
 void REGPARAM2 op_6eff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -28332,7 +28332,7 @@ void REGPARAM2 op_6eff_23_ff(uae_u32 opcode)
 /* Bcc.W #<data>.W (LE) */
 void REGPARAM2 op_6f00_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s16 src = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -28355,7 +28355,7 @@ void REGPARAM2 op_6f00_23_ff(uae_u32 opcode)
 /* BccQ.B #<data> (LE) */
 void REGPARAM2 op_6f01_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uaecptr oldpc = m68k_getpci();
@@ -28380,7 +28380,7 @@ void REGPARAM2 op_6f01_23_ff(uae_u32 opcode)
 /* Bcc.L #<data>.L (LE) */
 void REGPARAM2 op_6fff_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uaecptr oldpc = m68k_getpci();
 	uae_s32 src;
 	src = get_long_ce030_prefetch(2);
@@ -28404,7 +28404,7 @@ void REGPARAM2 op_6fff_23_ff(uae_u32 opcode)
 /* MOVEQ.L #<data>,Dn */
 void REGPARAM2 op_7000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (uae_s32)(uae_s8)(real_opcode & 255);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28423,7 +28423,7 @@ void REGPARAM2 op_7000_23_ff(uae_u32 opcode)
 /* OR.B Dn,Dn */
 void REGPARAM2 op_8000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28445,7 +28445,7 @@ void REGPARAM2 op_8000_23_ff(uae_u32 opcode)
 /* OR.B (An),Dn */
 void REGPARAM2 op_8010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28469,7 +28469,7 @@ void REGPARAM2 op_8010_23_ff(uae_u32 opcode)
 /* OR.B (An)+,Dn */
 void REGPARAM2 op_8018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28494,7 +28494,7 @@ void REGPARAM2 op_8018_23_ff(uae_u32 opcode)
 /* OR.B -(An),Dn */
 void REGPARAM2 op_8020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28519,7 +28519,7 @@ void REGPARAM2 op_8020_23_ff(uae_u32 opcode)
 /* OR.B (d16,An),Dn */
 void REGPARAM2 op_8028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28543,7 +28543,7 @@ void REGPARAM2 op_8028_23_ff(uae_u32 opcode)
 /* OR.B (d8,An,Xn),Dn */
 void REGPARAM2 op_8030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28567,7 +28567,7 @@ void REGPARAM2 op_8030_23_ff(uae_u32 opcode)
 /* OR.B (xxx).W,Dn */
 void REGPARAM2 op_8038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -28590,7 +28590,7 @@ void REGPARAM2 op_8038_23_ff(uae_u32 opcode)
 /* OR.B (xxx).L,Dn */
 void REGPARAM2 op_8039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -28613,7 +28613,7 @@ void REGPARAM2 op_8039_23_ff(uae_u32 opcode)
 /* OR.B (d16,PC),Dn */
 void REGPARAM2 op_803a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -28637,7 +28637,7 @@ void REGPARAM2 op_803a_23_ff(uae_u32 opcode)
 /* OR.B (d8,PC,Xn),Dn */
 void REGPARAM2 op_803b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -28661,7 +28661,7 @@ void REGPARAM2 op_803b_23_ff(uae_u32 opcode)
 /* OR.B #<data>.B,Dn */
 void REGPARAM2 op_803c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -28682,7 +28682,7 @@ void REGPARAM2 op_803c_23_ff(uae_u32 opcode)
 /* OR.W Dn,Dn */
 void REGPARAM2 op_8040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28704,7 +28704,7 @@ void REGPARAM2 op_8040_23_ff(uae_u32 opcode)
 /* OR.W (An),Dn */
 void REGPARAM2 op_8050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28728,7 +28728,7 @@ void REGPARAM2 op_8050_23_ff(uae_u32 opcode)
 /* OR.W (An)+,Dn */
 void REGPARAM2 op_8058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28753,7 +28753,7 @@ void REGPARAM2 op_8058_23_ff(uae_u32 opcode)
 /* OR.W -(An),Dn */
 void REGPARAM2 op_8060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28778,7 +28778,7 @@ void REGPARAM2 op_8060_23_ff(uae_u32 opcode)
 /* OR.W (d16,An),Dn */
 void REGPARAM2 op_8068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28802,7 +28802,7 @@ void REGPARAM2 op_8068_23_ff(uae_u32 opcode)
 /* OR.W (d8,An,Xn),Dn */
 void REGPARAM2 op_8070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28826,7 +28826,7 @@ void REGPARAM2 op_8070_23_ff(uae_u32 opcode)
 /* OR.W (xxx).W,Dn */
 void REGPARAM2 op_8078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -28849,7 +28849,7 @@ void REGPARAM2 op_8078_23_ff(uae_u32 opcode)
 /* OR.W (xxx).L,Dn */
 void REGPARAM2 op_8079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -28872,7 +28872,7 @@ void REGPARAM2 op_8079_23_ff(uae_u32 opcode)
 /* OR.W (d16,PC),Dn */
 void REGPARAM2 op_807a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -28896,7 +28896,7 @@ void REGPARAM2 op_807a_23_ff(uae_u32 opcode)
 /* OR.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_807b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -28920,7 +28920,7 @@ void REGPARAM2 op_807b_23_ff(uae_u32 opcode)
 /* OR.W #<data>.W,Dn */
 void REGPARAM2 op_807c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -28941,7 +28941,7 @@ void REGPARAM2 op_807c_23_ff(uae_u32 opcode)
 /* OR.L Dn,Dn */
 void REGPARAM2 op_8080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28963,7 +28963,7 @@ void REGPARAM2 op_8080_23_ff(uae_u32 opcode)
 /* OR.L (An),Dn */
 void REGPARAM2 op_8090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -28987,7 +28987,7 @@ void REGPARAM2 op_8090_23_ff(uae_u32 opcode)
 /* OR.L (An)+,Dn */
 void REGPARAM2 op_8098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29012,7 +29012,7 @@ void REGPARAM2 op_8098_23_ff(uae_u32 opcode)
 /* OR.L -(An),Dn */
 void REGPARAM2 op_80a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29037,7 +29037,7 @@ void REGPARAM2 op_80a0_23_ff(uae_u32 opcode)
 /* OR.L (d16,An),Dn */
 void REGPARAM2 op_80a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29061,7 +29061,7 @@ void REGPARAM2 op_80a8_23_ff(uae_u32 opcode)
 /* OR.L (d8,An,Xn),Dn */
 void REGPARAM2 op_80b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29085,7 +29085,7 @@ void REGPARAM2 op_80b0_23_ff(uae_u32 opcode)
 /* OR.L (xxx).W,Dn */
 void REGPARAM2 op_80b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -29108,7 +29108,7 @@ void REGPARAM2 op_80b8_23_ff(uae_u32 opcode)
 /* OR.L (xxx).L,Dn */
 void REGPARAM2 op_80b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -29131,7 +29131,7 @@ void REGPARAM2 op_80b9_23_ff(uae_u32 opcode)
 /* OR.L (d16,PC),Dn */
 void REGPARAM2 op_80ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -29155,7 +29155,7 @@ void REGPARAM2 op_80ba_23_ff(uae_u32 opcode)
 /* OR.L (d8,PC,Xn),Dn */
 void REGPARAM2 op_80bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -29179,7 +29179,7 @@ void REGPARAM2 op_80bb_23_ff(uae_u32 opcode)
 /* OR.L #<data>.L,Dn */
 void REGPARAM2 op_80bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -29201,7 +29201,7 @@ void REGPARAM2 op_80bc_23_ff(uae_u32 opcode)
 /* DIVU.W Dn,Dn */
 void REGPARAM2 op_80c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29236,7 +29236,7 @@ void REGPARAM2 op_80c0_23_ff(uae_u32 opcode)
 /* DIVU.W (An),Dn */
 void REGPARAM2 op_80d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29273,7 +29273,7 @@ void REGPARAM2 op_80d0_23_ff(uae_u32 opcode)
 /* DIVU.W (An)+,Dn */
 void REGPARAM2 op_80d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29311,7 +29311,7 @@ void REGPARAM2 op_80d8_23_ff(uae_u32 opcode)
 /* DIVU.W -(An),Dn */
 void REGPARAM2 op_80e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29349,7 +29349,7 @@ void REGPARAM2 op_80e0_23_ff(uae_u32 opcode)
 /* DIVU.W (d16,An),Dn */
 void REGPARAM2 op_80e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29386,7 +29386,7 @@ void REGPARAM2 op_80e8_23_ff(uae_u32 opcode)
 /* DIVU.W (d8,An,Xn),Dn */
 void REGPARAM2 op_80f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29423,7 +29423,7 @@ void REGPARAM2 op_80f0_23_ff(uae_u32 opcode)
 /* DIVU.W (xxx).W,Dn */
 void REGPARAM2 op_80f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -29459,7 +29459,7 @@ void REGPARAM2 op_80f8_23_ff(uae_u32 opcode)
 /* DIVU.W (xxx).L,Dn */
 void REGPARAM2 op_80f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -29495,7 +29495,7 @@ void REGPARAM2 op_80f9_23_ff(uae_u32 opcode)
 /* DIVU.W (d16,PC),Dn */
 void REGPARAM2 op_80fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -29532,7 +29532,7 @@ void REGPARAM2 op_80fa_23_ff(uae_u32 opcode)
 /* DIVU.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_80fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -29569,7 +29569,7 @@ void REGPARAM2 op_80fb_23_ff(uae_u32 opcode)
 /* DIVU.W #<data>.W,Dn */
 void REGPARAM2 op_80fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -29603,7 +29603,7 @@ void REGPARAM2 op_80fc_23_ff(uae_u32 opcode)
 /* SBCD.B Dn,Dn */
 void REGPARAM2 op_8100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29633,7 +29633,7 @@ if ((((dst & 0xFF) - (src & 0xFF) - (GET_XFLG() ? 1 : 0)) & 0x100) > 0xFF) { new
 /* SBCD.B -(An),-(An) */
 void REGPARAM2 op_8108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29669,7 +29669,7 @@ if ((((dst & 0xFF) - (src & 0xFF) - (GET_XFLG() ? 1 : 0)) & 0x100) > 0xFF) { new
 /* OR.B Dn,(An) */
 void REGPARAM2 op_8110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29693,7 +29693,7 @@ void REGPARAM2 op_8110_23_ff(uae_u32 opcode)
 /* OR.B Dn,(An)+ */
 void REGPARAM2 op_8118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29718,7 +29718,7 @@ void REGPARAM2 op_8118_23_ff(uae_u32 opcode)
 /* OR.B Dn,-(An) */
 void REGPARAM2 op_8120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29743,7 +29743,7 @@ void REGPARAM2 op_8120_23_ff(uae_u32 opcode)
 /* OR.B Dn,(d16,An) */
 void REGPARAM2 op_8128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29767,7 +29767,7 @@ void REGPARAM2 op_8128_23_ff(uae_u32 opcode)
 /* OR.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_8130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29791,7 +29791,7 @@ void REGPARAM2 op_8130_23_ff(uae_u32 opcode)
 /* OR.B Dn,(xxx).W */
 void REGPARAM2 op_8138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -29814,7 +29814,7 @@ void REGPARAM2 op_8138_23_ff(uae_u32 opcode)
 /* OR.B Dn,(xxx).L */
 void REGPARAM2 op_8139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -29838,7 +29838,7 @@ void REGPARAM2 op_8139_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_8140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29855,7 +29855,7 @@ void REGPARAM2 op_8140_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_8148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -29875,7 +29875,7 @@ void REGPARAM2 op_8148_23_ff(uae_u32 opcode)
 /* OR.W Dn,(An) */
 void REGPARAM2 op_8150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29899,7 +29899,7 @@ void REGPARAM2 op_8150_23_ff(uae_u32 opcode)
 /* OR.W Dn,(An)+ */
 void REGPARAM2 op_8158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29924,7 +29924,7 @@ void REGPARAM2 op_8158_23_ff(uae_u32 opcode)
 /* OR.W Dn,-(An) */
 void REGPARAM2 op_8160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29949,7 +29949,7 @@ void REGPARAM2 op_8160_23_ff(uae_u32 opcode)
 /* OR.W Dn,(d16,An) */
 void REGPARAM2 op_8168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29973,7 +29973,7 @@ void REGPARAM2 op_8168_23_ff(uae_u32 opcode)
 /* OR.W Dn,(d8,An,Xn) */
 void REGPARAM2 op_8170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -29997,7 +29997,7 @@ void REGPARAM2 op_8170_23_ff(uae_u32 opcode)
 /* OR.W Dn,(xxx).W */
 void REGPARAM2 op_8178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -30020,7 +30020,7 @@ void REGPARAM2 op_8178_23_ff(uae_u32 opcode)
 /* OR.W Dn,(xxx).L */
 void REGPARAM2 op_8179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -30044,7 +30044,7 @@ void REGPARAM2 op_8179_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_8180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30063,7 +30063,7 @@ void REGPARAM2 op_8180_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_8188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30083,7 +30083,7 @@ void REGPARAM2 op_8188_23_ff(uae_u32 opcode)
 /* OR.L Dn,(An) */
 void REGPARAM2 op_8190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -30107,7 +30107,7 @@ void REGPARAM2 op_8190_23_ff(uae_u32 opcode)
 /* OR.L Dn,(An)+ */
 void REGPARAM2 op_8198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -30132,7 +30132,7 @@ void REGPARAM2 op_8198_23_ff(uae_u32 opcode)
 /* OR.L Dn,-(An) */
 void REGPARAM2 op_81a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -30157,7 +30157,7 @@ void REGPARAM2 op_81a0_23_ff(uae_u32 opcode)
 /* OR.L Dn,(d16,An) */
 void REGPARAM2 op_81a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -30181,7 +30181,7 @@ void REGPARAM2 op_81a8_23_ff(uae_u32 opcode)
 /* OR.L Dn,(d8,An,Xn) */
 void REGPARAM2 op_81b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -30205,7 +30205,7 @@ void REGPARAM2 op_81b0_23_ff(uae_u32 opcode)
 /* OR.L Dn,(xxx).W */
 void REGPARAM2 op_81b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -30228,7 +30228,7 @@ void REGPARAM2 op_81b8_23_ff(uae_u32 opcode)
 /* OR.L Dn,(xxx).L */
 void REGPARAM2 op_81b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -30251,7 +30251,7 @@ void REGPARAM2 op_81b9_23_ff(uae_u32 opcode)
 /* DIVS.W Dn,Dn */
 void REGPARAM2 op_81c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30291,7 +30291,7 @@ void REGPARAM2 op_81c0_23_ff(uae_u32 opcode)
 /* DIVS.W (An),Dn */
 void REGPARAM2 op_81d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30333,7 +30333,7 @@ void REGPARAM2 op_81d0_23_ff(uae_u32 opcode)
 /* DIVS.W (An)+,Dn */
 void REGPARAM2 op_81d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30376,7 +30376,7 @@ void REGPARAM2 op_81d8_23_ff(uae_u32 opcode)
 /* DIVS.W -(An),Dn */
 void REGPARAM2 op_81e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30419,7 +30419,7 @@ void REGPARAM2 op_81e0_23_ff(uae_u32 opcode)
 /* DIVS.W (d16,An),Dn */
 void REGPARAM2 op_81e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30461,7 +30461,7 @@ void REGPARAM2 op_81e8_23_ff(uae_u32 opcode)
 /* DIVS.W (d8,An,Xn),Dn */
 void REGPARAM2 op_81f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30503,7 +30503,7 @@ void REGPARAM2 op_81f0_23_ff(uae_u32 opcode)
 /* DIVS.W (xxx).W,Dn */
 void REGPARAM2 op_81f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -30544,7 +30544,7 @@ void REGPARAM2 op_81f8_23_ff(uae_u32 opcode)
 /* DIVS.W (xxx).L,Dn */
 void REGPARAM2 op_81f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -30585,7 +30585,7 @@ void REGPARAM2 op_81f9_23_ff(uae_u32 opcode)
 /* DIVS.W (d16,PC),Dn */
 void REGPARAM2 op_81fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -30627,7 +30627,7 @@ void REGPARAM2 op_81fa_23_ff(uae_u32 opcode)
 /* DIVS.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_81fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -30669,7 +30669,7 @@ void REGPARAM2 op_81fb_23_ff(uae_u32 opcode)
 /* DIVS.W #<data>.W,Dn */
 void REGPARAM2 op_81fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -30708,7 +30708,7 @@ void REGPARAM2 op_81fc_23_ff(uae_u32 opcode)
 /* SUB.B Dn,Dn */
 void REGPARAM2 op_9000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30735,7 +30735,7 @@ void REGPARAM2 op_9000_23_ff(uae_u32 opcode)
 /* SUB.B (An),Dn */
 void REGPARAM2 op_9010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30764,7 +30764,7 @@ void REGPARAM2 op_9010_23_ff(uae_u32 opcode)
 /* SUB.B (An)+,Dn */
 void REGPARAM2 op_9018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30794,7 +30794,7 @@ void REGPARAM2 op_9018_23_ff(uae_u32 opcode)
 /* SUB.B -(An),Dn */
 void REGPARAM2 op_9020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30824,7 +30824,7 @@ void REGPARAM2 op_9020_23_ff(uae_u32 opcode)
 /* SUB.B (d16,An),Dn */
 void REGPARAM2 op_9028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30853,7 +30853,7 @@ void REGPARAM2 op_9028_23_ff(uae_u32 opcode)
 /* SUB.B (d8,An,Xn),Dn */
 void REGPARAM2 op_9030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -30882,7 +30882,7 @@ void REGPARAM2 op_9030_23_ff(uae_u32 opcode)
 /* SUB.B (xxx).W,Dn */
 void REGPARAM2 op_9038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -30910,7 +30910,7 @@ void REGPARAM2 op_9038_23_ff(uae_u32 opcode)
 /* SUB.B (xxx).L,Dn */
 void REGPARAM2 op_9039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -30938,7 +30938,7 @@ void REGPARAM2 op_9039_23_ff(uae_u32 opcode)
 /* SUB.B (d16,PC),Dn */
 void REGPARAM2 op_903a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -30967,7 +30967,7 @@ void REGPARAM2 op_903a_23_ff(uae_u32 opcode)
 /* SUB.B (d8,PC,Xn),Dn */
 void REGPARAM2 op_903b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -30996,7 +30996,7 @@ void REGPARAM2 op_903b_23_ff(uae_u32 opcode)
 /* SUB.B #<data>.B,Dn */
 void REGPARAM2 op_903c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -31022,7 +31022,7 @@ void REGPARAM2 op_903c_23_ff(uae_u32 opcode)
 /* SUB.W Dn,Dn */
 void REGPARAM2 op_9040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31049,7 +31049,7 @@ void REGPARAM2 op_9040_23_ff(uae_u32 opcode)
 /* SUB.W An,Dn */
 void REGPARAM2 op_9048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31076,7 +31076,7 @@ void REGPARAM2 op_9048_23_ff(uae_u32 opcode)
 /* SUB.W (An),Dn */
 void REGPARAM2 op_9050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31105,7 +31105,7 @@ void REGPARAM2 op_9050_23_ff(uae_u32 opcode)
 /* SUB.W (An)+,Dn */
 void REGPARAM2 op_9058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31135,7 +31135,7 @@ void REGPARAM2 op_9058_23_ff(uae_u32 opcode)
 /* SUB.W -(An),Dn */
 void REGPARAM2 op_9060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31165,7 +31165,7 @@ void REGPARAM2 op_9060_23_ff(uae_u32 opcode)
 /* SUB.W (d16,An),Dn */
 void REGPARAM2 op_9068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31194,7 +31194,7 @@ void REGPARAM2 op_9068_23_ff(uae_u32 opcode)
 /* SUB.W (d8,An,Xn),Dn */
 void REGPARAM2 op_9070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31223,7 +31223,7 @@ void REGPARAM2 op_9070_23_ff(uae_u32 opcode)
 /* SUB.W (xxx).W,Dn */
 void REGPARAM2 op_9078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -31251,7 +31251,7 @@ void REGPARAM2 op_9078_23_ff(uae_u32 opcode)
 /* SUB.W (xxx).L,Dn */
 void REGPARAM2 op_9079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -31279,7 +31279,7 @@ void REGPARAM2 op_9079_23_ff(uae_u32 opcode)
 /* SUB.W (d16,PC),Dn */
 void REGPARAM2 op_907a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -31308,7 +31308,7 @@ void REGPARAM2 op_907a_23_ff(uae_u32 opcode)
 /* SUB.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_907b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -31337,7 +31337,7 @@ void REGPARAM2 op_907b_23_ff(uae_u32 opcode)
 /* SUB.W #<data>.W,Dn */
 void REGPARAM2 op_907c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -31363,7 +31363,7 @@ void REGPARAM2 op_907c_23_ff(uae_u32 opcode)
 /* SUB.L Dn,Dn */
 void REGPARAM2 op_9080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31390,7 +31390,7 @@ void REGPARAM2 op_9080_23_ff(uae_u32 opcode)
 /* SUB.L An,Dn */
 void REGPARAM2 op_9088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31417,7 +31417,7 @@ void REGPARAM2 op_9088_23_ff(uae_u32 opcode)
 /* SUB.L (An),Dn */
 void REGPARAM2 op_9090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31446,7 +31446,7 @@ void REGPARAM2 op_9090_23_ff(uae_u32 opcode)
 /* SUB.L (An)+,Dn */
 void REGPARAM2 op_9098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31476,7 +31476,7 @@ void REGPARAM2 op_9098_23_ff(uae_u32 opcode)
 /* SUB.L -(An),Dn */
 void REGPARAM2 op_90a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31506,7 +31506,7 @@ void REGPARAM2 op_90a0_23_ff(uae_u32 opcode)
 /* SUB.L (d16,An),Dn */
 void REGPARAM2 op_90a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31535,7 +31535,7 @@ void REGPARAM2 op_90a8_23_ff(uae_u32 opcode)
 /* SUB.L (d8,An,Xn),Dn */
 void REGPARAM2 op_90b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31564,7 +31564,7 @@ void REGPARAM2 op_90b0_23_ff(uae_u32 opcode)
 /* SUB.L (xxx).W,Dn */
 void REGPARAM2 op_90b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -31592,7 +31592,7 @@ void REGPARAM2 op_90b8_23_ff(uae_u32 opcode)
 /* SUB.L (xxx).L,Dn */
 void REGPARAM2 op_90b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -31620,7 +31620,7 @@ void REGPARAM2 op_90b9_23_ff(uae_u32 opcode)
 /* SUB.L (d16,PC),Dn */
 void REGPARAM2 op_90ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -31649,7 +31649,7 @@ void REGPARAM2 op_90ba_23_ff(uae_u32 opcode)
 /* SUB.L (d8,PC,Xn),Dn */
 void REGPARAM2 op_90bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -31678,7 +31678,7 @@ void REGPARAM2 op_90bb_23_ff(uae_u32 opcode)
 /* SUB.L #<data>.L,Dn */
 void REGPARAM2 op_90bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -31705,7 +31705,7 @@ void REGPARAM2 op_90bc_23_ff(uae_u32 opcode)
 /* SUBA.W Dn,An */
 void REGPARAM2 op_90c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31724,7 +31724,7 @@ void REGPARAM2 op_90c0_23_ff(uae_u32 opcode)
 /* SUBA.W An,An */
 void REGPARAM2 op_90c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31743,7 +31743,7 @@ void REGPARAM2 op_90c8_23_ff(uae_u32 opcode)
 /* SUBA.W (An),An */
 void REGPARAM2 op_90d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31764,7 +31764,7 @@ void REGPARAM2 op_90d0_23_ff(uae_u32 opcode)
 /* SUBA.W (An)+,An */
 void REGPARAM2 op_90d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31786,7 +31786,7 @@ void REGPARAM2 op_90d8_23_ff(uae_u32 opcode)
 /* SUBA.W -(An),An */
 void REGPARAM2 op_90e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31808,7 +31808,7 @@ void REGPARAM2 op_90e0_23_ff(uae_u32 opcode)
 /* SUBA.W (d16,An),An */
 void REGPARAM2 op_90e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31829,7 +31829,7 @@ void REGPARAM2 op_90e8_23_ff(uae_u32 opcode)
 /* SUBA.W (d8,An,Xn),An */
 void REGPARAM2 op_90f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31850,7 +31850,7 @@ void REGPARAM2 op_90f0_23_ff(uae_u32 opcode)
 /* SUBA.W (xxx).W,An */
 void REGPARAM2 op_90f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -31870,7 +31870,7 @@ void REGPARAM2 op_90f8_23_ff(uae_u32 opcode)
 /* SUBA.W (xxx).L,An */
 void REGPARAM2 op_90f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -31890,7 +31890,7 @@ void REGPARAM2 op_90f9_23_ff(uae_u32 opcode)
 /* SUBA.W (d16,PC),An */
 void REGPARAM2 op_90fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -31911,7 +31911,7 @@ void REGPARAM2 op_90fa_23_ff(uae_u32 opcode)
 /* SUBA.W (d8,PC,Xn),An */
 void REGPARAM2 op_90fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -31932,7 +31932,7 @@ void REGPARAM2 op_90fb_23_ff(uae_u32 opcode)
 /* SUBA.W #<data>.W,An */
 void REGPARAM2 op_90fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -31950,7 +31950,7 @@ void REGPARAM2 op_90fc_23_ff(uae_u32 opcode)
 /* SUBX.B Dn,Dn */
 void REGPARAM2 op_9100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -31977,7 +31977,7 @@ void REGPARAM2 op_9100_23_ff(uae_u32 opcode)
 /* SUBX.B -(An),-(An) */
 void REGPARAM2 op_9108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32010,7 +32010,7 @@ void REGPARAM2 op_9108_23_ff(uae_u32 opcode)
 /* SUB.B Dn,(An) */
 void REGPARAM2 op_9110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32039,7 +32039,7 @@ void REGPARAM2 op_9110_23_ff(uae_u32 opcode)
 /* SUB.B Dn,(An)+ */
 void REGPARAM2 op_9118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32069,7 +32069,7 @@ void REGPARAM2 op_9118_23_ff(uae_u32 opcode)
 /* SUB.B Dn,-(An) */
 void REGPARAM2 op_9120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32099,7 +32099,7 @@ void REGPARAM2 op_9120_23_ff(uae_u32 opcode)
 /* SUB.B Dn,(d16,An) */
 void REGPARAM2 op_9128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32128,7 +32128,7 @@ void REGPARAM2 op_9128_23_ff(uae_u32 opcode)
 /* SUB.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_9130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32157,7 +32157,7 @@ void REGPARAM2 op_9130_23_ff(uae_u32 opcode)
 /* SUB.B Dn,(xxx).W */
 void REGPARAM2 op_9138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -32185,7 +32185,7 @@ void REGPARAM2 op_9138_23_ff(uae_u32 opcode)
 /* SUB.B Dn,(xxx).L */
 void REGPARAM2 op_9139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -32213,7 +32213,7 @@ void REGPARAM2 op_9139_23_ff(uae_u32 opcode)
 /* SUBX.W Dn,Dn */
 void REGPARAM2 op_9140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32240,7 +32240,7 @@ void REGPARAM2 op_9140_23_ff(uae_u32 opcode)
 /* SUBX.W -(An),-(An) */
 void REGPARAM2 op_9148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32273,7 +32273,7 @@ void REGPARAM2 op_9148_23_ff(uae_u32 opcode)
 /* SUB.W Dn,(An) */
 void REGPARAM2 op_9150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32302,7 +32302,7 @@ void REGPARAM2 op_9150_23_ff(uae_u32 opcode)
 /* SUB.W Dn,(An)+ */
 void REGPARAM2 op_9158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32332,7 +32332,7 @@ void REGPARAM2 op_9158_23_ff(uae_u32 opcode)
 /* SUB.W Dn,-(An) */
 void REGPARAM2 op_9160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32362,7 +32362,7 @@ void REGPARAM2 op_9160_23_ff(uae_u32 opcode)
 /* SUB.W Dn,(d16,An) */
 void REGPARAM2 op_9168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32391,7 +32391,7 @@ void REGPARAM2 op_9168_23_ff(uae_u32 opcode)
 /* SUB.W Dn,(d8,An,Xn) */
 void REGPARAM2 op_9170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32420,7 +32420,7 @@ void REGPARAM2 op_9170_23_ff(uae_u32 opcode)
 /* SUB.W Dn,(xxx).W */
 void REGPARAM2 op_9178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -32448,7 +32448,7 @@ void REGPARAM2 op_9178_23_ff(uae_u32 opcode)
 /* SUB.W Dn,(xxx).L */
 void REGPARAM2 op_9179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -32476,7 +32476,7 @@ void REGPARAM2 op_9179_23_ff(uae_u32 opcode)
 /* SUBX.L Dn,Dn */
 void REGPARAM2 op_9180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32503,7 +32503,7 @@ void REGPARAM2 op_9180_23_ff(uae_u32 opcode)
 /* SUBX.L -(An),-(An) */
 void REGPARAM2 op_9188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32536,7 +32536,7 @@ void REGPARAM2 op_9188_23_ff(uae_u32 opcode)
 /* SUB.L Dn,(An) */
 void REGPARAM2 op_9190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32565,7 +32565,7 @@ void REGPARAM2 op_9190_23_ff(uae_u32 opcode)
 /* SUB.L Dn,(An)+ */
 void REGPARAM2 op_9198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32595,7 +32595,7 @@ void REGPARAM2 op_9198_23_ff(uae_u32 opcode)
 /* SUB.L Dn,-(An) */
 void REGPARAM2 op_91a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32625,7 +32625,7 @@ void REGPARAM2 op_91a0_23_ff(uae_u32 opcode)
 /* SUB.L Dn,(d16,An) */
 void REGPARAM2 op_91a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32654,7 +32654,7 @@ void REGPARAM2 op_91a8_23_ff(uae_u32 opcode)
 /* SUB.L Dn,(d8,An,Xn) */
 void REGPARAM2 op_91b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -32683,7 +32683,7 @@ void REGPARAM2 op_91b0_23_ff(uae_u32 opcode)
 /* SUB.L Dn,(xxx).W */
 void REGPARAM2 op_91b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -32711,7 +32711,7 @@ void REGPARAM2 op_91b8_23_ff(uae_u32 opcode)
 /* SUB.L Dn,(xxx).L */
 void REGPARAM2 op_91b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -32739,7 +32739,7 @@ void REGPARAM2 op_91b9_23_ff(uae_u32 opcode)
 /* SUBA.L Dn,An */
 void REGPARAM2 op_91c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32758,7 +32758,7 @@ void REGPARAM2 op_91c0_23_ff(uae_u32 opcode)
 /* SUBA.L An,An */
 void REGPARAM2 op_91c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32777,7 +32777,7 @@ void REGPARAM2 op_91c8_23_ff(uae_u32 opcode)
 /* SUBA.L (An),An */
 void REGPARAM2 op_91d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32798,7 +32798,7 @@ void REGPARAM2 op_91d0_23_ff(uae_u32 opcode)
 /* SUBA.L (An)+,An */
 void REGPARAM2 op_91d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32820,7 +32820,7 @@ void REGPARAM2 op_91d8_23_ff(uae_u32 opcode)
 /* SUBA.L -(An),An */
 void REGPARAM2 op_91e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32842,7 +32842,7 @@ void REGPARAM2 op_91e0_23_ff(uae_u32 opcode)
 /* SUBA.L (d16,An),An */
 void REGPARAM2 op_91e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32863,7 +32863,7 @@ void REGPARAM2 op_91e8_23_ff(uae_u32 opcode)
 /* SUBA.L (d8,An,Xn),An */
 void REGPARAM2 op_91f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -32884,7 +32884,7 @@ void REGPARAM2 op_91f0_23_ff(uae_u32 opcode)
 /* SUBA.L (xxx).W,An */
 void REGPARAM2 op_91f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -32904,7 +32904,7 @@ void REGPARAM2 op_91f8_23_ff(uae_u32 opcode)
 /* SUBA.L (xxx).L,An */
 void REGPARAM2 op_91f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -32924,7 +32924,7 @@ void REGPARAM2 op_91f9_23_ff(uae_u32 opcode)
 /* SUBA.L (d16,PC),An */
 void REGPARAM2 op_91fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -32945,7 +32945,7 @@ void REGPARAM2 op_91fa_23_ff(uae_u32 opcode)
 /* SUBA.L (d8,PC,Xn),An */
 void REGPARAM2 op_91fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -32966,7 +32966,7 @@ void REGPARAM2 op_91fb_23_ff(uae_u32 opcode)
 /* SUBA.L #<data>.L,An */
 void REGPARAM2 op_91fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -32985,7 +32985,7 @@ void REGPARAM2 op_91fc_23_ff(uae_u32 opcode)
 /* CMP.B Dn,Dn */
 void REGPARAM2 op_b000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33010,7 +33010,7 @@ void REGPARAM2 op_b000_23_ff(uae_u32 opcode)
 /* CMP.B (An),Dn */
 void REGPARAM2 op_b010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33037,7 +33037,7 @@ void REGPARAM2 op_b010_23_ff(uae_u32 opcode)
 /* CMP.B (An)+,Dn */
 void REGPARAM2 op_b018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33065,7 +33065,7 @@ void REGPARAM2 op_b018_23_ff(uae_u32 opcode)
 /* CMP.B -(An),Dn */
 void REGPARAM2 op_b020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33093,7 +33093,7 @@ void REGPARAM2 op_b020_23_ff(uae_u32 opcode)
 /* CMP.B (d16,An),Dn */
 void REGPARAM2 op_b028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33120,7 +33120,7 @@ void REGPARAM2 op_b028_23_ff(uae_u32 opcode)
 /* CMP.B (d8,An,Xn),Dn */
 void REGPARAM2 op_b030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33147,7 +33147,7 @@ void REGPARAM2 op_b030_23_ff(uae_u32 opcode)
 /* CMP.B (xxx).W,Dn */
 void REGPARAM2 op_b038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -33173,7 +33173,7 @@ void REGPARAM2 op_b038_23_ff(uae_u32 opcode)
 /* CMP.B (xxx).L,Dn */
 void REGPARAM2 op_b039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -33199,7 +33199,7 @@ void REGPARAM2 op_b039_23_ff(uae_u32 opcode)
 /* CMP.B (d16,PC),Dn */
 void REGPARAM2 op_b03a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -33226,7 +33226,7 @@ void REGPARAM2 op_b03a_23_ff(uae_u32 opcode)
 /* CMP.B (d8,PC,Xn),Dn */
 void REGPARAM2 op_b03b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -33253,7 +33253,7 @@ void REGPARAM2 op_b03b_23_ff(uae_u32 opcode)
 /* CMP.B #<data>.B,Dn */
 void REGPARAM2 op_b03c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -33277,7 +33277,7 @@ void REGPARAM2 op_b03c_23_ff(uae_u32 opcode)
 /* CMP.W Dn,Dn */
 void REGPARAM2 op_b040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33302,7 +33302,7 @@ void REGPARAM2 op_b040_23_ff(uae_u32 opcode)
 /* CMP.W An,Dn */
 void REGPARAM2 op_b048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33327,7 +33327,7 @@ void REGPARAM2 op_b048_23_ff(uae_u32 opcode)
 /* CMP.W (An),Dn */
 void REGPARAM2 op_b050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33354,7 +33354,7 @@ void REGPARAM2 op_b050_23_ff(uae_u32 opcode)
 /* CMP.W (An)+,Dn */
 void REGPARAM2 op_b058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33382,7 +33382,7 @@ void REGPARAM2 op_b058_23_ff(uae_u32 opcode)
 /* CMP.W -(An),Dn */
 void REGPARAM2 op_b060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33410,7 +33410,7 @@ void REGPARAM2 op_b060_23_ff(uae_u32 opcode)
 /* CMP.W (d16,An),Dn */
 void REGPARAM2 op_b068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33437,7 +33437,7 @@ void REGPARAM2 op_b068_23_ff(uae_u32 opcode)
 /* CMP.W (d8,An,Xn),Dn */
 void REGPARAM2 op_b070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33464,7 +33464,7 @@ void REGPARAM2 op_b070_23_ff(uae_u32 opcode)
 /* CMP.W (xxx).W,Dn */
 void REGPARAM2 op_b078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -33490,7 +33490,7 @@ void REGPARAM2 op_b078_23_ff(uae_u32 opcode)
 /* CMP.W (xxx).L,Dn */
 void REGPARAM2 op_b079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -33516,7 +33516,7 @@ void REGPARAM2 op_b079_23_ff(uae_u32 opcode)
 /* CMP.W (d16,PC),Dn */
 void REGPARAM2 op_b07a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -33543,7 +33543,7 @@ void REGPARAM2 op_b07a_23_ff(uae_u32 opcode)
 /* CMP.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_b07b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -33570,7 +33570,7 @@ void REGPARAM2 op_b07b_23_ff(uae_u32 opcode)
 /* CMP.W #<data>.W,Dn */
 void REGPARAM2 op_b07c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -33594,7 +33594,7 @@ void REGPARAM2 op_b07c_23_ff(uae_u32 opcode)
 /* CMP.L Dn,Dn */
 void REGPARAM2 op_b080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33619,7 +33619,7 @@ void REGPARAM2 op_b080_23_ff(uae_u32 opcode)
 /* CMP.L An,Dn */
 void REGPARAM2 op_b088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33644,7 +33644,7 @@ void REGPARAM2 op_b088_23_ff(uae_u32 opcode)
 /* CMP.L (An),Dn */
 void REGPARAM2 op_b090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33671,7 +33671,7 @@ void REGPARAM2 op_b090_23_ff(uae_u32 opcode)
 /* CMP.L (An)+,Dn */
 void REGPARAM2 op_b098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33699,7 +33699,7 @@ void REGPARAM2 op_b098_23_ff(uae_u32 opcode)
 /* CMP.L -(An),Dn */
 void REGPARAM2 op_b0a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33727,7 +33727,7 @@ void REGPARAM2 op_b0a0_23_ff(uae_u32 opcode)
 /* CMP.L (d16,An),Dn */
 void REGPARAM2 op_b0a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33754,7 +33754,7 @@ void REGPARAM2 op_b0a8_23_ff(uae_u32 opcode)
 /* CMP.L (d8,An,Xn),Dn */
 void REGPARAM2 op_b0b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33781,7 +33781,7 @@ void REGPARAM2 op_b0b0_23_ff(uae_u32 opcode)
 /* CMP.L (xxx).W,Dn */
 void REGPARAM2 op_b0b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -33807,7 +33807,7 @@ void REGPARAM2 op_b0b8_23_ff(uae_u32 opcode)
 /* CMP.L (xxx).L,Dn */
 void REGPARAM2 op_b0b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -33833,7 +33833,7 @@ void REGPARAM2 op_b0b9_23_ff(uae_u32 opcode)
 /* CMP.L (d16,PC),Dn */
 void REGPARAM2 op_b0ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -33860,7 +33860,7 @@ void REGPARAM2 op_b0ba_23_ff(uae_u32 opcode)
 /* CMP.L (d8,PC,Xn),Dn */
 void REGPARAM2 op_b0bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -33887,7 +33887,7 @@ void REGPARAM2 op_b0bb_23_ff(uae_u32 opcode)
 /* CMP.L #<data>.L,Dn */
 void REGPARAM2 op_b0bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -33912,7 +33912,7 @@ void REGPARAM2 op_b0bc_23_ff(uae_u32 opcode)
 /* CMPA.W Dn,An */
 void REGPARAM2 op_b0c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33937,7 +33937,7 @@ void REGPARAM2 op_b0c0_23_ff(uae_u32 opcode)
 /* CMPA.W An,An */
 void REGPARAM2 op_b0c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33962,7 +33962,7 @@ void REGPARAM2 op_b0c8_23_ff(uae_u32 opcode)
 /* CMPA.W (An),An */
 void REGPARAM2 op_b0d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -33989,7 +33989,7 @@ void REGPARAM2 op_b0d0_23_ff(uae_u32 opcode)
 /* CMPA.W (An)+,An */
 void REGPARAM2 op_b0d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34017,7 +34017,7 @@ void REGPARAM2 op_b0d8_23_ff(uae_u32 opcode)
 /* CMPA.W -(An),An */
 void REGPARAM2 op_b0e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34045,7 +34045,7 @@ void REGPARAM2 op_b0e0_23_ff(uae_u32 opcode)
 /* CMPA.W (d16,An),An */
 void REGPARAM2 op_b0e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34072,7 +34072,7 @@ void REGPARAM2 op_b0e8_23_ff(uae_u32 opcode)
 /* CMPA.W (d8,An,Xn),An */
 void REGPARAM2 op_b0f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34099,7 +34099,7 @@ void REGPARAM2 op_b0f0_23_ff(uae_u32 opcode)
 /* CMPA.W (xxx).W,An */
 void REGPARAM2 op_b0f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -34125,7 +34125,7 @@ void REGPARAM2 op_b0f8_23_ff(uae_u32 opcode)
 /* CMPA.W (xxx).L,An */
 void REGPARAM2 op_b0f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -34151,7 +34151,7 @@ void REGPARAM2 op_b0f9_23_ff(uae_u32 opcode)
 /* CMPA.W (d16,PC),An */
 void REGPARAM2 op_b0fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -34178,7 +34178,7 @@ void REGPARAM2 op_b0fa_23_ff(uae_u32 opcode)
 /* CMPA.W (d8,PC,Xn),An */
 void REGPARAM2 op_b0fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -34205,7 +34205,7 @@ void REGPARAM2 op_b0fb_23_ff(uae_u32 opcode)
 /* CMPA.W #<data>.W,An */
 void REGPARAM2 op_b0fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -34229,7 +34229,7 @@ void REGPARAM2 op_b0fc_23_ff(uae_u32 opcode)
 /* EOR.B Dn,Dn */
 void REGPARAM2 op_b100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34251,7 +34251,7 @@ void REGPARAM2 op_b100_23_ff(uae_u32 opcode)
 /* CMPM.B (An)+,(An)+ */
 void REGPARAM2 op_b108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34282,7 +34282,7 @@ void REGPARAM2 op_b108_23_ff(uae_u32 opcode)
 /* EOR.B Dn,(An) */
 void REGPARAM2 op_b110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34306,7 +34306,7 @@ void REGPARAM2 op_b110_23_ff(uae_u32 opcode)
 /* EOR.B Dn,(An)+ */
 void REGPARAM2 op_b118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34331,7 +34331,7 @@ void REGPARAM2 op_b118_23_ff(uae_u32 opcode)
 /* EOR.B Dn,-(An) */
 void REGPARAM2 op_b120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34356,7 +34356,7 @@ void REGPARAM2 op_b120_23_ff(uae_u32 opcode)
 /* EOR.B Dn,(d16,An) */
 void REGPARAM2 op_b128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34380,7 +34380,7 @@ void REGPARAM2 op_b128_23_ff(uae_u32 opcode)
 /* EOR.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_b130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34404,7 +34404,7 @@ void REGPARAM2 op_b130_23_ff(uae_u32 opcode)
 /* EOR.B Dn,(xxx).W */
 void REGPARAM2 op_b138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -34427,7 +34427,7 @@ void REGPARAM2 op_b138_23_ff(uae_u32 opcode)
 /* EOR.B Dn,(xxx).L */
 void REGPARAM2 op_b139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -34450,7 +34450,7 @@ void REGPARAM2 op_b139_23_ff(uae_u32 opcode)
 /* EOR.W Dn,Dn */
 void REGPARAM2 op_b140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34472,7 +34472,7 @@ void REGPARAM2 op_b140_23_ff(uae_u32 opcode)
 /* CMPM.W (An)+,(An)+ */
 void REGPARAM2 op_b148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34503,7 +34503,7 @@ void REGPARAM2 op_b148_23_ff(uae_u32 opcode)
 /* EOR.W Dn,(An) */
 void REGPARAM2 op_b150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34527,7 +34527,7 @@ void REGPARAM2 op_b150_23_ff(uae_u32 opcode)
 /* EOR.W Dn,(An)+ */
 void REGPARAM2 op_b158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34552,7 +34552,7 @@ void REGPARAM2 op_b158_23_ff(uae_u32 opcode)
 /* EOR.W Dn,-(An) */
 void REGPARAM2 op_b160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34577,7 +34577,7 @@ void REGPARAM2 op_b160_23_ff(uae_u32 opcode)
 /* EOR.W Dn,(d16,An) */
 void REGPARAM2 op_b168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34601,7 +34601,7 @@ void REGPARAM2 op_b168_23_ff(uae_u32 opcode)
 /* EOR.W Dn,(d8,An,Xn) */
 void REGPARAM2 op_b170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34625,7 +34625,7 @@ void REGPARAM2 op_b170_23_ff(uae_u32 opcode)
 /* EOR.W Dn,(xxx).W */
 void REGPARAM2 op_b178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -34648,7 +34648,7 @@ void REGPARAM2 op_b178_23_ff(uae_u32 opcode)
 /* EOR.W Dn,(xxx).L */
 void REGPARAM2 op_b179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -34671,7 +34671,7 @@ void REGPARAM2 op_b179_23_ff(uae_u32 opcode)
 /* EOR.L Dn,Dn */
 void REGPARAM2 op_b180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34693,7 +34693,7 @@ void REGPARAM2 op_b180_23_ff(uae_u32 opcode)
 /* CMPM.L (An)+,(An)+ */
 void REGPARAM2 op_b188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34724,7 +34724,7 @@ void REGPARAM2 op_b188_23_ff(uae_u32 opcode)
 /* EOR.L Dn,(An) */
 void REGPARAM2 op_b190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34748,7 +34748,7 @@ void REGPARAM2 op_b190_23_ff(uae_u32 opcode)
 /* EOR.L Dn,(An)+ */
 void REGPARAM2 op_b198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34773,7 +34773,7 @@ void REGPARAM2 op_b198_23_ff(uae_u32 opcode)
 /* EOR.L Dn,-(An) */
 void REGPARAM2 op_b1a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34798,7 +34798,7 @@ void REGPARAM2 op_b1a0_23_ff(uae_u32 opcode)
 /* EOR.L Dn,(d16,An) */
 void REGPARAM2 op_b1a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34822,7 +34822,7 @@ void REGPARAM2 op_b1a8_23_ff(uae_u32 opcode)
 /* EOR.L Dn,(d8,An,Xn) */
 void REGPARAM2 op_b1b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -34846,7 +34846,7 @@ void REGPARAM2 op_b1b0_23_ff(uae_u32 opcode)
 /* EOR.L Dn,(xxx).W */
 void REGPARAM2 op_b1b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -34869,7 +34869,7 @@ void REGPARAM2 op_b1b8_23_ff(uae_u32 opcode)
 /* EOR.L Dn,(xxx).L */
 void REGPARAM2 op_b1b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -34892,7 +34892,7 @@ void REGPARAM2 op_b1b9_23_ff(uae_u32 opcode)
 /* CMPA.L Dn,An */
 void REGPARAM2 op_b1c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34917,7 +34917,7 @@ void REGPARAM2 op_b1c0_23_ff(uae_u32 opcode)
 /* CMPA.L An,An */
 void REGPARAM2 op_b1c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34942,7 +34942,7 @@ void REGPARAM2 op_b1c8_23_ff(uae_u32 opcode)
 /* CMPA.L (An),An */
 void REGPARAM2 op_b1d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34969,7 +34969,7 @@ void REGPARAM2 op_b1d0_23_ff(uae_u32 opcode)
 /* CMPA.L (An)+,An */
 void REGPARAM2 op_b1d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -34997,7 +34997,7 @@ void REGPARAM2 op_b1d8_23_ff(uae_u32 opcode)
 /* CMPA.L -(An),An */
 void REGPARAM2 op_b1e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35025,7 +35025,7 @@ void REGPARAM2 op_b1e0_23_ff(uae_u32 opcode)
 /* CMPA.L (d16,An),An */
 void REGPARAM2 op_b1e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35052,7 +35052,7 @@ void REGPARAM2 op_b1e8_23_ff(uae_u32 opcode)
 /* CMPA.L (d8,An,Xn),An */
 void REGPARAM2 op_b1f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35079,7 +35079,7 @@ void REGPARAM2 op_b1f0_23_ff(uae_u32 opcode)
 /* CMPA.L (xxx).W,An */
 void REGPARAM2 op_b1f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35105,7 +35105,7 @@ void REGPARAM2 op_b1f8_23_ff(uae_u32 opcode)
 /* CMPA.L (xxx).L,An */
 void REGPARAM2 op_b1f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -35131,7 +35131,7 @@ void REGPARAM2 op_b1f9_23_ff(uae_u32 opcode)
 /* CMPA.L (d16,PC),An */
 void REGPARAM2 op_b1fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35158,7 +35158,7 @@ void REGPARAM2 op_b1fa_23_ff(uae_u32 opcode)
 /* CMPA.L (d8,PC,Xn),An */
 void REGPARAM2 op_b1fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -35185,7 +35185,7 @@ void REGPARAM2 op_b1fb_23_ff(uae_u32 opcode)
 /* CMPA.L #<data>.L,An */
 void REGPARAM2 op_b1fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -35210,7 +35210,7 @@ void REGPARAM2 op_b1fc_23_ff(uae_u32 opcode)
 /* AND.B Dn,Dn */
 void REGPARAM2 op_c000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35232,7 +35232,7 @@ void REGPARAM2 op_c000_23_ff(uae_u32 opcode)
 /* AND.B (An),Dn */
 void REGPARAM2 op_c010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35256,7 +35256,7 @@ void REGPARAM2 op_c010_23_ff(uae_u32 opcode)
 /* AND.B (An)+,Dn */
 void REGPARAM2 op_c018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35281,7 +35281,7 @@ void REGPARAM2 op_c018_23_ff(uae_u32 opcode)
 /* AND.B -(An),Dn */
 void REGPARAM2 op_c020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35306,7 +35306,7 @@ void REGPARAM2 op_c020_23_ff(uae_u32 opcode)
 /* AND.B (d16,An),Dn */
 void REGPARAM2 op_c028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35330,7 +35330,7 @@ void REGPARAM2 op_c028_23_ff(uae_u32 opcode)
 /* AND.B (d8,An,Xn),Dn */
 void REGPARAM2 op_c030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35354,7 +35354,7 @@ void REGPARAM2 op_c030_23_ff(uae_u32 opcode)
 /* AND.B (xxx).W,Dn */
 void REGPARAM2 op_c038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35377,7 +35377,7 @@ void REGPARAM2 op_c038_23_ff(uae_u32 opcode)
 /* AND.B (xxx).L,Dn */
 void REGPARAM2 op_c039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -35400,7 +35400,7 @@ void REGPARAM2 op_c039_23_ff(uae_u32 opcode)
 /* AND.B (d16,PC),Dn */
 void REGPARAM2 op_c03a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35424,7 +35424,7 @@ void REGPARAM2 op_c03a_23_ff(uae_u32 opcode)
 /* AND.B (d8,PC,Xn),Dn */
 void REGPARAM2 op_c03b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -35448,7 +35448,7 @@ void REGPARAM2 op_c03b_23_ff(uae_u32 opcode)
 /* AND.B #<data>.B,Dn */
 void REGPARAM2 op_c03c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -35469,7 +35469,7 @@ void REGPARAM2 op_c03c_23_ff(uae_u32 opcode)
 /* AND.W Dn,Dn */
 void REGPARAM2 op_c040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35491,7 +35491,7 @@ void REGPARAM2 op_c040_23_ff(uae_u32 opcode)
 /* AND.W (An),Dn */
 void REGPARAM2 op_c050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35515,7 +35515,7 @@ void REGPARAM2 op_c050_23_ff(uae_u32 opcode)
 /* AND.W (An)+,Dn */
 void REGPARAM2 op_c058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35540,7 +35540,7 @@ void REGPARAM2 op_c058_23_ff(uae_u32 opcode)
 /* AND.W -(An),Dn */
 void REGPARAM2 op_c060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35565,7 +35565,7 @@ void REGPARAM2 op_c060_23_ff(uae_u32 opcode)
 /* AND.W (d16,An),Dn */
 void REGPARAM2 op_c068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35589,7 +35589,7 @@ void REGPARAM2 op_c068_23_ff(uae_u32 opcode)
 /* AND.W (d8,An,Xn),Dn */
 void REGPARAM2 op_c070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35613,7 +35613,7 @@ void REGPARAM2 op_c070_23_ff(uae_u32 opcode)
 /* AND.W (xxx).W,Dn */
 void REGPARAM2 op_c078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35636,7 +35636,7 @@ void REGPARAM2 op_c078_23_ff(uae_u32 opcode)
 /* AND.W (xxx).L,Dn */
 void REGPARAM2 op_c079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -35659,7 +35659,7 @@ void REGPARAM2 op_c079_23_ff(uae_u32 opcode)
 /* AND.W (d16,PC),Dn */
 void REGPARAM2 op_c07a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35683,7 +35683,7 @@ void REGPARAM2 op_c07a_23_ff(uae_u32 opcode)
 /* AND.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_c07b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -35707,7 +35707,7 @@ void REGPARAM2 op_c07b_23_ff(uae_u32 opcode)
 /* AND.W #<data>.W,Dn */
 void REGPARAM2 op_c07c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -35728,7 +35728,7 @@ void REGPARAM2 op_c07c_23_ff(uae_u32 opcode)
 /* AND.L Dn,Dn */
 void REGPARAM2 op_c080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35750,7 +35750,7 @@ void REGPARAM2 op_c080_23_ff(uae_u32 opcode)
 /* AND.L (An),Dn */
 void REGPARAM2 op_c090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35774,7 +35774,7 @@ void REGPARAM2 op_c090_23_ff(uae_u32 opcode)
 /* AND.L (An)+,Dn */
 void REGPARAM2 op_c098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35799,7 +35799,7 @@ void REGPARAM2 op_c098_23_ff(uae_u32 opcode)
 /* AND.L -(An),Dn */
 void REGPARAM2 op_c0a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35824,7 +35824,7 @@ void REGPARAM2 op_c0a0_23_ff(uae_u32 opcode)
 /* AND.L (d16,An),Dn */
 void REGPARAM2 op_c0a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35848,7 +35848,7 @@ void REGPARAM2 op_c0a8_23_ff(uae_u32 opcode)
 /* AND.L (d8,An,Xn),Dn */
 void REGPARAM2 op_c0b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -35872,7 +35872,7 @@ void REGPARAM2 op_c0b0_23_ff(uae_u32 opcode)
 /* AND.L (xxx).W,Dn */
 void REGPARAM2 op_c0b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35895,7 +35895,7 @@ void REGPARAM2 op_c0b8_23_ff(uae_u32 opcode)
 /* AND.L (xxx).L,Dn */
 void REGPARAM2 op_c0b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -35918,7 +35918,7 @@ void REGPARAM2 op_c0b9_23_ff(uae_u32 opcode)
 /* AND.L (d16,PC),Dn */
 void REGPARAM2 op_c0ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -35942,7 +35942,7 @@ void REGPARAM2 op_c0ba_23_ff(uae_u32 opcode)
 /* AND.L (d8,PC,Xn),Dn */
 void REGPARAM2 op_c0bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -35966,7 +35966,7 @@ void REGPARAM2 op_c0bb_23_ff(uae_u32 opcode)
 /* AND.L #<data>.L,Dn */
 void REGPARAM2 op_c0bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -35988,7 +35988,7 @@ void REGPARAM2 op_c0bc_23_ff(uae_u32 opcode)
 /* MULU.W Dn,Dn */
 void REGPARAM2 op_c0c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36011,7 +36011,7 @@ void REGPARAM2 op_c0c0_23_ff(uae_u32 opcode)
 /* MULU.W (An),Dn */
 void REGPARAM2 op_c0d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36036,7 +36036,7 @@ void REGPARAM2 op_c0d0_23_ff(uae_u32 opcode)
 /* MULU.W (An)+,Dn */
 void REGPARAM2 op_c0d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36062,7 +36062,7 @@ void REGPARAM2 op_c0d8_23_ff(uae_u32 opcode)
 /* MULU.W -(An),Dn */
 void REGPARAM2 op_c0e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36088,7 +36088,7 @@ void REGPARAM2 op_c0e0_23_ff(uae_u32 opcode)
 /* MULU.W (d16,An),Dn */
 void REGPARAM2 op_c0e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36113,7 +36113,7 @@ void REGPARAM2 op_c0e8_23_ff(uae_u32 opcode)
 /* MULU.W (d8,An,Xn),Dn */
 void REGPARAM2 op_c0f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36138,7 +36138,7 @@ void REGPARAM2 op_c0f0_23_ff(uae_u32 opcode)
 /* MULU.W (xxx).W,Dn */
 void REGPARAM2 op_c0f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -36162,7 +36162,7 @@ void REGPARAM2 op_c0f8_23_ff(uae_u32 opcode)
 /* MULU.W (xxx).L,Dn */
 void REGPARAM2 op_c0f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -36186,7 +36186,7 @@ void REGPARAM2 op_c0f9_23_ff(uae_u32 opcode)
 /* MULU.W (d16,PC),Dn */
 void REGPARAM2 op_c0fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -36211,7 +36211,7 @@ void REGPARAM2 op_c0fa_23_ff(uae_u32 opcode)
 /* MULU.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_c0fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -36236,7 +36236,7 @@ void REGPARAM2 op_c0fb_23_ff(uae_u32 opcode)
 /* MULU.W #<data>.W,Dn */
 void REGPARAM2 op_c0fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -36258,7 +36258,7 @@ void REGPARAM2 op_c0fc_23_ff(uae_u32 opcode)
 /* ABCD.B Dn,Dn */
 void REGPARAM2 op_c100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36288,7 +36288,7 @@ void REGPARAM2 op_c100_23_ff(uae_u32 opcode)
 /* ABCD.B -(An),-(An) */
 void REGPARAM2 op_c108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36324,7 +36324,7 @@ void REGPARAM2 op_c108_23_ff(uae_u32 opcode)
 /* AND.B Dn,(An) */
 void REGPARAM2 op_c110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36348,7 +36348,7 @@ void REGPARAM2 op_c110_23_ff(uae_u32 opcode)
 /* AND.B Dn,(An)+ */
 void REGPARAM2 op_c118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36373,7 +36373,7 @@ void REGPARAM2 op_c118_23_ff(uae_u32 opcode)
 /* AND.B Dn,-(An) */
 void REGPARAM2 op_c120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36398,7 +36398,7 @@ void REGPARAM2 op_c120_23_ff(uae_u32 opcode)
 /* AND.B Dn,(d16,An) */
 void REGPARAM2 op_c128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36422,7 +36422,7 @@ void REGPARAM2 op_c128_23_ff(uae_u32 opcode)
 /* AND.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_c130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36446,7 +36446,7 @@ void REGPARAM2 op_c130_23_ff(uae_u32 opcode)
 /* AND.B Dn,(xxx).W */
 void REGPARAM2 op_c138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -36469,7 +36469,7 @@ void REGPARAM2 op_c138_23_ff(uae_u32 opcode)
 /* AND.B Dn,(xxx).L */
 void REGPARAM2 op_c139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -36492,7 +36492,7 @@ void REGPARAM2 op_c139_23_ff(uae_u32 opcode)
 /* EXG.L Dn,Dn */
 void REGPARAM2 op_c140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36511,7 +36511,7 @@ void REGPARAM2 op_c140_23_ff(uae_u32 opcode)
 /* EXG.L An,An */
 void REGPARAM2 op_c148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36530,7 +36530,7 @@ void REGPARAM2 op_c148_23_ff(uae_u32 opcode)
 /* AND.W Dn,(An) */
 void REGPARAM2 op_c150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36554,7 +36554,7 @@ void REGPARAM2 op_c150_23_ff(uae_u32 opcode)
 /* AND.W Dn,(An)+ */
 void REGPARAM2 op_c158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36579,7 +36579,7 @@ void REGPARAM2 op_c158_23_ff(uae_u32 opcode)
 /* AND.W Dn,-(An) */
 void REGPARAM2 op_c160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36604,7 +36604,7 @@ void REGPARAM2 op_c160_23_ff(uae_u32 opcode)
 /* AND.W Dn,(d16,An) */
 void REGPARAM2 op_c168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36628,7 +36628,7 @@ void REGPARAM2 op_c168_23_ff(uae_u32 opcode)
 /* AND.W Dn,(d8,An,Xn) */
 void REGPARAM2 op_c170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36652,7 +36652,7 @@ void REGPARAM2 op_c170_23_ff(uae_u32 opcode)
 /* AND.W Dn,(xxx).W */
 void REGPARAM2 op_c178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -36675,7 +36675,7 @@ void REGPARAM2 op_c178_23_ff(uae_u32 opcode)
 /* AND.W Dn,(xxx).L */
 void REGPARAM2 op_c179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -36698,7 +36698,7 @@ void REGPARAM2 op_c179_23_ff(uae_u32 opcode)
 /* EXG.L Dn,An */
 void REGPARAM2 op_c188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36717,7 +36717,7 @@ void REGPARAM2 op_c188_23_ff(uae_u32 opcode)
 /* AND.L Dn,(An) */
 void REGPARAM2 op_c190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36741,7 +36741,7 @@ void REGPARAM2 op_c190_23_ff(uae_u32 opcode)
 /* AND.L Dn,(An)+ */
 void REGPARAM2 op_c198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36766,7 +36766,7 @@ void REGPARAM2 op_c198_23_ff(uae_u32 opcode)
 /* AND.L Dn,-(An) */
 void REGPARAM2 op_c1a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36791,7 +36791,7 @@ void REGPARAM2 op_c1a0_23_ff(uae_u32 opcode)
 /* AND.L Dn,(d16,An) */
 void REGPARAM2 op_c1a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36815,7 +36815,7 @@ void REGPARAM2 op_c1a8_23_ff(uae_u32 opcode)
 /* AND.L Dn,(d8,An,Xn) */
 void REGPARAM2 op_c1b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -36839,7 +36839,7 @@ void REGPARAM2 op_c1b0_23_ff(uae_u32 opcode)
 /* AND.L Dn,(xxx).W */
 void REGPARAM2 op_c1b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -36862,7 +36862,7 @@ void REGPARAM2 op_c1b8_23_ff(uae_u32 opcode)
 /* AND.L Dn,(xxx).L */
 void REGPARAM2 op_c1b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -36885,7 +36885,7 @@ void REGPARAM2 op_c1b9_23_ff(uae_u32 opcode)
 /* MULS.W Dn,Dn */
 void REGPARAM2 op_c1c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36908,7 +36908,7 @@ void REGPARAM2 op_c1c0_23_ff(uae_u32 opcode)
 /* MULS.W (An),Dn */
 void REGPARAM2 op_c1d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36933,7 +36933,7 @@ void REGPARAM2 op_c1d0_23_ff(uae_u32 opcode)
 /* MULS.W (An)+,Dn */
 void REGPARAM2 op_c1d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36959,7 +36959,7 @@ void REGPARAM2 op_c1d8_23_ff(uae_u32 opcode)
 /* MULS.W -(An),Dn */
 void REGPARAM2 op_c1e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -36985,7 +36985,7 @@ void REGPARAM2 op_c1e0_23_ff(uae_u32 opcode)
 /* MULS.W (d16,An),Dn */
 void REGPARAM2 op_c1e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37010,7 +37010,7 @@ void REGPARAM2 op_c1e8_23_ff(uae_u32 opcode)
 /* MULS.W (d8,An,Xn),Dn */
 void REGPARAM2 op_c1f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37035,7 +37035,7 @@ void REGPARAM2 op_c1f0_23_ff(uae_u32 opcode)
 /* MULS.W (xxx).W,Dn */
 void REGPARAM2 op_c1f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -37059,7 +37059,7 @@ void REGPARAM2 op_c1f8_23_ff(uae_u32 opcode)
 /* MULS.W (xxx).L,Dn */
 void REGPARAM2 op_c1f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -37083,7 +37083,7 @@ void REGPARAM2 op_c1f9_23_ff(uae_u32 opcode)
 /* MULS.W (d16,PC),Dn */
 void REGPARAM2 op_c1fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -37108,7 +37108,7 @@ void REGPARAM2 op_c1fa_23_ff(uae_u32 opcode)
 /* MULS.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_c1fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -37133,7 +37133,7 @@ void REGPARAM2 op_c1fb_23_ff(uae_u32 opcode)
 /* MULS.W #<data>.W,Dn */
 void REGPARAM2 op_c1fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -37155,7 +37155,7 @@ void REGPARAM2 op_c1fc_23_ff(uae_u32 opcode)
 /* ADD.B Dn,Dn */
 void REGPARAM2 op_d000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37182,7 +37182,7 @@ void REGPARAM2 op_d000_23_ff(uae_u32 opcode)
 /* ADD.B (An),Dn */
 void REGPARAM2 op_d010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37211,7 +37211,7 @@ void REGPARAM2 op_d010_23_ff(uae_u32 opcode)
 /* ADD.B (An)+,Dn */
 void REGPARAM2 op_d018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37241,7 +37241,7 @@ void REGPARAM2 op_d018_23_ff(uae_u32 opcode)
 /* ADD.B -(An),Dn */
 void REGPARAM2 op_d020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37271,7 +37271,7 @@ void REGPARAM2 op_d020_23_ff(uae_u32 opcode)
 /* ADD.B (d16,An),Dn */
 void REGPARAM2 op_d028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37300,7 +37300,7 @@ void REGPARAM2 op_d028_23_ff(uae_u32 opcode)
 /* ADD.B (d8,An,Xn),Dn */
 void REGPARAM2 op_d030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37329,7 +37329,7 @@ void REGPARAM2 op_d030_23_ff(uae_u32 opcode)
 /* ADD.B (xxx).W,Dn */
 void REGPARAM2 op_d038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -37357,7 +37357,7 @@ void REGPARAM2 op_d038_23_ff(uae_u32 opcode)
 /* ADD.B (xxx).L,Dn */
 void REGPARAM2 op_d039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -37385,7 +37385,7 @@ void REGPARAM2 op_d039_23_ff(uae_u32 opcode)
 /* ADD.B (d16,PC),Dn */
 void REGPARAM2 op_d03a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -37414,7 +37414,7 @@ void REGPARAM2 op_d03a_23_ff(uae_u32 opcode)
 /* ADD.B (d8,PC,Xn),Dn */
 void REGPARAM2 op_d03b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -37443,7 +37443,7 @@ void REGPARAM2 op_d03b_23_ff(uae_u32 opcode)
 /* ADD.B #<data>.B,Dn */
 void REGPARAM2 op_d03c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -37469,7 +37469,7 @@ void REGPARAM2 op_d03c_23_ff(uae_u32 opcode)
 /* ADD.W Dn,Dn */
 void REGPARAM2 op_d040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37496,7 +37496,7 @@ void REGPARAM2 op_d040_23_ff(uae_u32 opcode)
 /* ADD.W An,Dn */
 void REGPARAM2 op_d048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37523,7 +37523,7 @@ void REGPARAM2 op_d048_23_ff(uae_u32 opcode)
 /* ADD.W (An),Dn */
 void REGPARAM2 op_d050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37552,7 +37552,7 @@ void REGPARAM2 op_d050_23_ff(uae_u32 opcode)
 /* ADD.W (An)+,Dn */
 void REGPARAM2 op_d058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37582,7 +37582,7 @@ void REGPARAM2 op_d058_23_ff(uae_u32 opcode)
 /* ADD.W -(An),Dn */
 void REGPARAM2 op_d060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37612,7 +37612,7 @@ void REGPARAM2 op_d060_23_ff(uae_u32 opcode)
 /* ADD.W (d16,An),Dn */
 void REGPARAM2 op_d068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37641,7 +37641,7 @@ void REGPARAM2 op_d068_23_ff(uae_u32 opcode)
 /* ADD.W (d8,An,Xn),Dn */
 void REGPARAM2 op_d070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37670,7 +37670,7 @@ void REGPARAM2 op_d070_23_ff(uae_u32 opcode)
 /* ADD.W (xxx).W,Dn */
 void REGPARAM2 op_d078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -37698,7 +37698,7 @@ void REGPARAM2 op_d078_23_ff(uae_u32 opcode)
 /* ADD.W (xxx).L,Dn */
 void REGPARAM2 op_d079_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -37726,7 +37726,7 @@ void REGPARAM2 op_d079_23_ff(uae_u32 opcode)
 /* ADD.W (d16,PC),Dn */
 void REGPARAM2 op_d07a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -37755,7 +37755,7 @@ void REGPARAM2 op_d07a_23_ff(uae_u32 opcode)
 /* ADD.W (d8,PC,Xn),Dn */
 void REGPARAM2 op_d07b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -37784,7 +37784,7 @@ void REGPARAM2 op_d07b_23_ff(uae_u32 opcode)
 /* ADD.W #<data>.W,Dn */
 void REGPARAM2 op_d07c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -37810,7 +37810,7 @@ void REGPARAM2 op_d07c_23_ff(uae_u32 opcode)
 /* ADD.L Dn,Dn */
 void REGPARAM2 op_d080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37837,7 +37837,7 @@ void REGPARAM2 op_d080_23_ff(uae_u32 opcode)
 /* ADD.L An,Dn */
 void REGPARAM2 op_d088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37864,7 +37864,7 @@ void REGPARAM2 op_d088_23_ff(uae_u32 opcode)
 /* ADD.L (An),Dn */
 void REGPARAM2 op_d090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37893,7 +37893,7 @@ void REGPARAM2 op_d090_23_ff(uae_u32 opcode)
 /* ADD.L (An)+,Dn */
 void REGPARAM2 op_d098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37923,7 +37923,7 @@ void REGPARAM2 op_d098_23_ff(uae_u32 opcode)
 /* ADD.L -(An),Dn */
 void REGPARAM2 op_d0a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37953,7 +37953,7 @@ void REGPARAM2 op_d0a0_23_ff(uae_u32 opcode)
 /* ADD.L (d16,An),Dn */
 void REGPARAM2 op_d0a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -37982,7 +37982,7 @@ void REGPARAM2 op_d0a8_23_ff(uae_u32 opcode)
 /* ADD.L (d8,An,Xn),Dn */
 void REGPARAM2 op_d0b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38011,7 +38011,7 @@ void REGPARAM2 op_d0b0_23_ff(uae_u32 opcode)
 /* ADD.L (xxx).W,Dn */
 void REGPARAM2 op_d0b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -38039,7 +38039,7 @@ void REGPARAM2 op_d0b8_23_ff(uae_u32 opcode)
 /* ADD.L (xxx).L,Dn */
 void REGPARAM2 op_d0b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -38067,7 +38067,7 @@ void REGPARAM2 op_d0b9_23_ff(uae_u32 opcode)
 /* ADD.L (d16,PC),Dn */
 void REGPARAM2 op_d0ba_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -38096,7 +38096,7 @@ void REGPARAM2 op_d0ba_23_ff(uae_u32 opcode)
 /* ADD.L (d8,PC,Xn),Dn */
 void REGPARAM2 op_d0bb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -38125,7 +38125,7 @@ void REGPARAM2 op_d0bb_23_ff(uae_u32 opcode)
 /* ADD.L #<data>.L,Dn */
 void REGPARAM2 op_d0bc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -38152,7 +38152,7 @@ void REGPARAM2 op_d0bc_23_ff(uae_u32 opcode)
 /* ADDA.W Dn,An */
 void REGPARAM2 op_d0c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38171,7 +38171,7 @@ void REGPARAM2 op_d0c0_23_ff(uae_u32 opcode)
 /* ADDA.W An,An */
 void REGPARAM2 op_d0c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38190,7 +38190,7 @@ void REGPARAM2 op_d0c8_23_ff(uae_u32 opcode)
 /* ADDA.W (An),An */
 void REGPARAM2 op_d0d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38211,7 +38211,7 @@ void REGPARAM2 op_d0d0_23_ff(uae_u32 opcode)
 /* ADDA.W (An)+,An */
 void REGPARAM2 op_d0d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38233,7 +38233,7 @@ void REGPARAM2 op_d0d8_23_ff(uae_u32 opcode)
 /* ADDA.W -(An),An */
 void REGPARAM2 op_d0e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38255,7 +38255,7 @@ void REGPARAM2 op_d0e0_23_ff(uae_u32 opcode)
 /* ADDA.W (d16,An),An */
 void REGPARAM2 op_d0e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38276,7 +38276,7 @@ void REGPARAM2 op_d0e8_23_ff(uae_u32 opcode)
 /* ADDA.W (d8,An,Xn),An */
 void REGPARAM2 op_d0f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38297,7 +38297,7 @@ void REGPARAM2 op_d0f0_23_ff(uae_u32 opcode)
 /* ADDA.W (xxx).W,An */
 void REGPARAM2 op_d0f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -38317,7 +38317,7 @@ void REGPARAM2 op_d0f8_23_ff(uae_u32 opcode)
 /* ADDA.W (xxx).L,An */
 void REGPARAM2 op_d0f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -38337,7 +38337,7 @@ void REGPARAM2 op_d0f9_23_ff(uae_u32 opcode)
 /* ADDA.W (d16,PC),An */
 void REGPARAM2 op_d0fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -38358,7 +38358,7 @@ void REGPARAM2 op_d0fa_23_ff(uae_u32 opcode)
 /* ADDA.W (d8,PC,Xn),An */
 void REGPARAM2 op_d0fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -38379,7 +38379,7 @@ void REGPARAM2 op_d0fb_23_ff(uae_u32 opcode)
 /* ADDA.W #<data>.W,An */
 void REGPARAM2 op_d0fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -38397,7 +38397,7 @@ void REGPARAM2 op_d0fc_23_ff(uae_u32 opcode)
 /* ADDX.B Dn,Dn */
 void REGPARAM2 op_d100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38424,7 +38424,7 @@ void REGPARAM2 op_d100_23_ff(uae_u32 opcode)
 /* ADDX.B -(An),-(An) */
 void REGPARAM2 op_d108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38457,7 +38457,7 @@ void REGPARAM2 op_d108_23_ff(uae_u32 opcode)
 /* ADD.B Dn,(An) */
 void REGPARAM2 op_d110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38486,7 +38486,7 @@ void REGPARAM2 op_d110_23_ff(uae_u32 opcode)
 /* ADD.B Dn,(An)+ */
 void REGPARAM2 op_d118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38516,7 +38516,7 @@ void REGPARAM2 op_d118_23_ff(uae_u32 opcode)
 /* ADD.B Dn,-(An) */
 void REGPARAM2 op_d120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38546,7 +38546,7 @@ void REGPARAM2 op_d120_23_ff(uae_u32 opcode)
 /* ADD.B Dn,(d16,An) */
 void REGPARAM2 op_d128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38575,7 +38575,7 @@ void REGPARAM2 op_d128_23_ff(uae_u32 opcode)
 /* ADD.B Dn,(d8,An,Xn) */
 void REGPARAM2 op_d130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38604,7 +38604,7 @@ void REGPARAM2 op_d130_23_ff(uae_u32 opcode)
 /* ADD.B Dn,(xxx).W */
 void REGPARAM2 op_d138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -38632,7 +38632,7 @@ void REGPARAM2 op_d138_23_ff(uae_u32 opcode)
 /* ADD.B Dn,(xxx).L */
 void REGPARAM2 op_d139_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -38660,7 +38660,7 @@ void REGPARAM2 op_d139_23_ff(uae_u32 opcode)
 /* ADDX.W Dn,Dn */
 void REGPARAM2 op_d140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38687,7 +38687,7 @@ void REGPARAM2 op_d140_23_ff(uae_u32 opcode)
 /* ADDX.W -(An),-(An) */
 void REGPARAM2 op_d148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38720,7 +38720,7 @@ void REGPARAM2 op_d148_23_ff(uae_u32 opcode)
 /* ADD.W Dn,(An) */
 void REGPARAM2 op_d150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38749,7 +38749,7 @@ void REGPARAM2 op_d150_23_ff(uae_u32 opcode)
 /* ADD.W Dn,(An)+ */
 void REGPARAM2 op_d158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38779,7 +38779,7 @@ void REGPARAM2 op_d158_23_ff(uae_u32 opcode)
 /* ADD.W Dn,-(An) */
 void REGPARAM2 op_d160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38809,7 +38809,7 @@ void REGPARAM2 op_d160_23_ff(uae_u32 opcode)
 /* ADD.W Dn,(d16,An) */
 void REGPARAM2 op_d168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38838,7 +38838,7 @@ void REGPARAM2 op_d168_23_ff(uae_u32 opcode)
 /* ADD.W Dn,(d8,An,Xn) */
 void REGPARAM2 op_d170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -38867,7 +38867,7 @@ void REGPARAM2 op_d170_23_ff(uae_u32 opcode)
 /* ADD.W Dn,(xxx).W */
 void REGPARAM2 op_d178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -38895,7 +38895,7 @@ void REGPARAM2 op_d178_23_ff(uae_u32 opcode)
 /* ADD.W Dn,(xxx).L */
 void REGPARAM2 op_d179_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -38923,7 +38923,7 @@ void REGPARAM2 op_d179_23_ff(uae_u32 opcode)
 /* ADDX.L Dn,Dn */
 void REGPARAM2 op_d180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38950,7 +38950,7 @@ void REGPARAM2 op_d180_23_ff(uae_u32 opcode)
 /* ADDX.L -(An),-(An) */
 void REGPARAM2 op_d188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -38983,7 +38983,7 @@ void REGPARAM2 op_d188_23_ff(uae_u32 opcode)
 /* ADD.L Dn,(An) */
 void REGPARAM2 op_d190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39012,7 +39012,7 @@ void REGPARAM2 op_d190_23_ff(uae_u32 opcode)
 /* ADD.L Dn,(An)+ */
 void REGPARAM2 op_d198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39042,7 +39042,7 @@ void REGPARAM2 op_d198_23_ff(uae_u32 opcode)
 /* ADD.L Dn,-(An) */
 void REGPARAM2 op_d1a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39072,7 +39072,7 @@ void REGPARAM2 op_d1a0_23_ff(uae_u32 opcode)
 /* ADD.L Dn,(d16,An) */
 void REGPARAM2 op_d1a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39101,7 +39101,7 @@ void REGPARAM2 op_d1a8_23_ff(uae_u32 opcode)
 /* ADD.L Dn,(d8,An,Xn) */
 void REGPARAM2 op_d1b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39130,7 +39130,7 @@ void REGPARAM2 op_d1b0_23_ff(uae_u32 opcode)
 /* ADD.L Dn,(xxx).W */
 void REGPARAM2 op_d1b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -39158,7 +39158,7 @@ void REGPARAM2 op_d1b8_23_ff(uae_u32 opcode)
 /* ADD.L Dn,(xxx).L */
 void REGPARAM2 op_d1b9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	/* ea H:1,T:0,C:0 fea */
@@ -39186,7 +39186,7 @@ void REGPARAM2 op_d1b9_23_ff(uae_u32 opcode)
 /* ADDA.L Dn,An */
 void REGPARAM2 op_d1c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39205,7 +39205,7 @@ void REGPARAM2 op_d1c0_23_ff(uae_u32 opcode)
 /* ADDA.L An,An */
 void REGPARAM2 op_d1c8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39224,7 +39224,7 @@ void REGPARAM2 op_d1c8_23_ff(uae_u32 opcode)
 /* ADDA.L (An),An */
 void REGPARAM2 op_d1d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39245,7 +39245,7 @@ void REGPARAM2 op_d1d0_23_ff(uae_u32 opcode)
 /* ADDA.L (An)+,An */
 void REGPARAM2 op_d1d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39267,7 +39267,7 @@ void REGPARAM2 op_d1d8_23_ff(uae_u32 opcode)
 /* ADDA.L -(An),An */
 void REGPARAM2 op_d1e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39289,7 +39289,7 @@ void REGPARAM2 op_d1e0_23_ff(uae_u32 opcode)
 /* ADDA.L (d16,An),An */
 void REGPARAM2 op_d1e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39310,7 +39310,7 @@ void REGPARAM2 op_d1e8_23_ff(uae_u32 opcode)
 /* ADDA.L (d8,An,Xn),An */
 void REGPARAM2 op_d1f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
@@ -39331,7 +39331,7 @@ void REGPARAM2 op_d1f0_23_ff(uae_u32 opcode)
 /* ADDA.L (xxx).W,An */
 void REGPARAM2 op_d1f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -39351,7 +39351,7 @@ void REGPARAM2 op_d1f8_23_ff(uae_u32 opcode)
 /* ADDA.L (xxx).L,An */
 void REGPARAM2 op_d1f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:1,T:0,C:0 fea */
@@ -39371,7 +39371,7 @@ void REGPARAM2 op_d1f9_23_ff(uae_u32 opcode)
 /* ADDA.L (d16,PC),An */
 void REGPARAM2 op_d1fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:2,T:2,C:0 fea */
@@ -39392,7 +39392,7 @@ void REGPARAM2 op_d1fa_23_ff(uae_u32 opcode)
 /* ADDA.L (d8,PC,Xn),An */
 void REGPARAM2 op_d1fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:4,T:2,C:0 fea */
@@ -39413,7 +39413,7 @@ void REGPARAM2 op_d1fb_23_ff(uae_u32 opcode)
 /* ADDA.L #<data>.L,An */
 void REGPARAM2 op_d1fc_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = (real_opcode >> 9) & 7;
 	/* ea H:0,T:0,C:0 fea */
@@ -39432,7 +39432,7 @@ void REGPARAM2 op_d1fc_23_ff(uae_u32 opcode)
 /* ASRQ.B #<data>,Dn */
 void REGPARAM2 op_e000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39469,7 +39469,7 @@ void REGPARAM2 op_e000_23_ff(uae_u32 opcode)
 /* LSRQ.B #<data>,Dn */
 void REGPARAM2 op_e008_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39503,7 +39503,7 @@ void REGPARAM2 op_e008_23_ff(uae_u32 opcode)
 /* ROXRQ.B #<data>,Dn */
 void REGPARAM2 op_e010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39542,7 +39542,7 @@ void REGPARAM2 op_e010_23_ff(uae_u32 opcode)
 /* RORQ.B #<data>,Dn */
 void REGPARAM2 op_e018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39575,7 +39575,7 @@ void REGPARAM2 op_e018_23_ff(uae_u32 opcode)
 /* ASR.B Dn,Dn */
 void REGPARAM2 op_e020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39612,7 +39612,7 @@ void REGPARAM2 op_e020_23_ff(uae_u32 opcode)
 /* LSR.B Dn,Dn */
 void REGPARAM2 op_e028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39646,7 +39646,7 @@ void REGPARAM2 op_e028_23_ff(uae_u32 opcode)
 /* ROXR.B Dn,Dn */
 void REGPARAM2 op_e030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39688,7 +39688,7 @@ void REGPARAM2 op_e030_23_ff(uae_u32 opcode)
 /* ROR.B Dn,Dn */
 void REGPARAM2 op_e038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39721,7 +39721,7 @@ void REGPARAM2 op_e038_23_ff(uae_u32 opcode)
 /* ASRQ.W #<data>,Dn */
 void REGPARAM2 op_e040_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39758,7 +39758,7 @@ void REGPARAM2 op_e040_23_ff(uae_u32 opcode)
 /* LSRQ.W #<data>,Dn */
 void REGPARAM2 op_e048_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39792,7 +39792,7 @@ void REGPARAM2 op_e048_23_ff(uae_u32 opcode)
 /* ROXRQ.W #<data>,Dn */
 void REGPARAM2 op_e050_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39831,7 +39831,7 @@ void REGPARAM2 op_e050_23_ff(uae_u32 opcode)
 /* RORQ.W #<data>,Dn */
 void REGPARAM2 op_e058_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -39864,7 +39864,7 @@ void REGPARAM2 op_e058_23_ff(uae_u32 opcode)
 /* ASR.W Dn,Dn */
 void REGPARAM2 op_e060_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39901,7 +39901,7 @@ void REGPARAM2 op_e060_23_ff(uae_u32 opcode)
 /* LSR.W Dn,Dn */
 void REGPARAM2 op_e068_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39935,7 +39935,7 @@ void REGPARAM2 op_e068_23_ff(uae_u32 opcode)
 /* ROXR.W Dn,Dn */
 void REGPARAM2 op_e070_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -39976,7 +39976,7 @@ void REGPARAM2 op_e070_23_ff(uae_u32 opcode)
 /* ROR.W Dn,Dn */
 void REGPARAM2 op_e078_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40009,7 +40009,7 @@ void REGPARAM2 op_e078_23_ff(uae_u32 opcode)
 /* ASRQ.L #<data>,Dn */
 void REGPARAM2 op_e080_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40046,7 +40046,7 @@ void REGPARAM2 op_e080_23_ff(uae_u32 opcode)
 /* LSRQ.L #<data>,Dn */
 void REGPARAM2 op_e088_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40080,7 +40080,7 @@ void REGPARAM2 op_e088_23_ff(uae_u32 opcode)
 /* ROXRQ.L #<data>,Dn */
 void REGPARAM2 op_e090_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40119,7 +40119,7 @@ void REGPARAM2 op_e090_23_ff(uae_u32 opcode)
 /* RORQ.L #<data>,Dn */
 void REGPARAM2 op_e098_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40152,7 +40152,7 @@ void REGPARAM2 op_e098_23_ff(uae_u32 opcode)
 /* ASR.L Dn,Dn */
 void REGPARAM2 op_e0a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40189,7 +40189,7 @@ void REGPARAM2 op_e0a0_23_ff(uae_u32 opcode)
 /* LSR.L Dn,Dn */
 void REGPARAM2 op_e0a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40223,7 +40223,7 @@ void REGPARAM2 op_e0a8_23_ff(uae_u32 opcode)
 /* ROXR.L Dn,Dn */
 void REGPARAM2 op_e0b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40263,7 +40263,7 @@ void REGPARAM2 op_e0b0_23_ff(uae_u32 opcode)
 /* ROR.L Dn,Dn */
 void REGPARAM2 op_e0b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40296,7 +40296,7 @@ void REGPARAM2 op_e0b8_23_ff(uae_u32 opcode)
 /* ASRW.W (An) */
 void REGPARAM2 op_e0d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -40323,7 +40323,7 @@ void REGPARAM2 op_e0d0_23_ff(uae_u32 opcode)
 /* ASRW.W (An)+ */
 void REGPARAM2 op_e0d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -40351,7 +40351,7 @@ void REGPARAM2 op_e0d8_23_ff(uae_u32 opcode)
 /* ASRW.W -(An) */
 void REGPARAM2 op_e0e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -40379,7 +40379,7 @@ void REGPARAM2 op_e0e0_23_ff(uae_u32 opcode)
 /* ASRW.W (d16,An) */
 void REGPARAM2 op_e0e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -40406,7 +40406,7 @@ void REGPARAM2 op_e0e8_23_ff(uae_u32 opcode)
 /* ASRW.W (d8,An,Xn) */
 void REGPARAM2 op_e0f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -40433,7 +40433,7 @@ void REGPARAM2 op_e0f0_23_ff(uae_u32 opcode)
 /* ASRW.W (xxx).W */
 void REGPARAM2 op_e0f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -40458,7 +40458,7 @@ void REGPARAM2 op_e0f8_23_ff(uae_u32 opcode)
 /* ASRW.W (xxx).L */
 void REGPARAM2 op_e0f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -40483,7 +40483,7 @@ void REGPARAM2 op_e0f9_23_ff(uae_u32 opcode)
 /* ASLQ.B #<data>,Dn */
 void REGPARAM2 op_e100_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40521,7 +40521,7 @@ void REGPARAM2 op_e100_23_ff(uae_u32 opcode)
 /* LSLQ.B #<data>,Dn */
 void REGPARAM2 op_e108_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40556,7 +40556,7 @@ void REGPARAM2 op_e108_23_ff(uae_u32 opcode)
 /* ROXLQ.B #<data>,Dn */
 void REGPARAM2 op_e110_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40592,7 +40592,7 @@ void REGPARAM2 op_e110_23_ff(uae_u32 opcode)
 /* ROLQ.B #<data>,Dn */
 void REGPARAM2 op_e118_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40625,7 +40625,7 @@ void REGPARAM2 op_e118_23_ff(uae_u32 opcode)
 /* ASL.B Dn,Dn */
 void REGPARAM2 op_e120_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40663,7 +40663,7 @@ void REGPARAM2 op_e120_23_ff(uae_u32 opcode)
 /* LSL.B Dn,Dn */
 void REGPARAM2 op_e128_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40698,7 +40698,7 @@ void REGPARAM2 op_e128_23_ff(uae_u32 opcode)
 /* ROXL.B Dn,Dn */
 void REGPARAM2 op_e130_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40737,7 +40737,7 @@ void REGPARAM2 op_e130_23_ff(uae_u32 opcode)
 /* ROL.B Dn,Dn */
 void REGPARAM2 op_e138_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40770,7 +40770,7 @@ void REGPARAM2 op_e138_23_ff(uae_u32 opcode)
 /* ASLQ.W #<data>,Dn */
 void REGPARAM2 op_e140_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40808,7 +40808,7 @@ void REGPARAM2 op_e140_23_ff(uae_u32 opcode)
 /* LSLQ.W #<data>,Dn */
 void REGPARAM2 op_e148_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40843,7 +40843,7 @@ void REGPARAM2 op_e148_23_ff(uae_u32 opcode)
 /* ROXLQ.W #<data>,Dn */
 void REGPARAM2 op_e150_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40879,7 +40879,7 @@ void REGPARAM2 op_e150_23_ff(uae_u32 opcode)
 /* ROLQ.W #<data>,Dn */
 void REGPARAM2 op_e158_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -40912,7 +40912,7 @@ void REGPARAM2 op_e158_23_ff(uae_u32 opcode)
 /* ASL.W Dn,Dn */
 void REGPARAM2 op_e160_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40950,7 +40950,7 @@ void REGPARAM2 op_e160_23_ff(uae_u32 opcode)
 /* LSL.W Dn,Dn */
 void REGPARAM2 op_e168_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -40985,7 +40985,7 @@ void REGPARAM2 op_e168_23_ff(uae_u32 opcode)
 /* ROXL.W Dn,Dn */
 void REGPARAM2 op_e170_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -41023,7 +41023,7 @@ void REGPARAM2 op_e170_23_ff(uae_u32 opcode)
 /* ROL.W Dn,Dn */
 void REGPARAM2 op_e178_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -41056,7 +41056,7 @@ void REGPARAM2 op_e178_23_ff(uae_u32 opcode)
 /* ASLQ.L #<data>,Dn */
 void REGPARAM2 op_e180_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -41094,7 +41094,7 @@ void REGPARAM2 op_e180_23_ff(uae_u32 opcode)
 /* LSLQ.L #<data>,Dn */
 void REGPARAM2 op_e188_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -41129,7 +41129,7 @@ void REGPARAM2 op_e188_23_ff(uae_u32 opcode)
 /* ROXLQ.L #<data>,Dn */
 void REGPARAM2 op_e190_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -41165,7 +41165,7 @@ void REGPARAM2 op_e190_23_ff(uae_u32 opcode)
 /* ROLQ.L #<data>,Dn */
 void REGPARAM2 op_e198_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = imm8_table[((real_opcode >> 9) & 7)];
 	uae_u32 dstreg = real_opcode & 7;
@@ -41198,7 +41198,7 @@ void REGPARAM2 op_e198_23_ff(uae_u32 opcode)
 /* ASL.L Dn,Dn */
 void REGPARAM2 op_e1a0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -41236,7 +41236,7 @@ void REGPARAM2 op_e1a0_23_ff(uae_u32 opcode)
 /* LSL.L Dn,Dn */
 void REGPARAM2 op_e1a8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -41271,7 +41271,7 @@ void REGPARAM2 op_e1a8_23_ff(uae_u32 opcode)
 /* ROXL.L Dn,Dn */
 void REGPARAM2 op_e1b0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -41308,7 +41308,7 @@ void REGPARAM2 op_e1b0_23_ff(uae_u32 opcode)
 /* ROL.L Dn,Dn */
 void REGPARAM2 op_e1b8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = ((real_opcode >> 9) & 7);
 	uae_u32 dstreg = real_opcode & 7;
@@ -41341,7 +41341,7 @@ void REGPARAM2 op_e1b8_23_ff(uae_u32 opcode)
 /* ASLW.W (An) */
 void REGPARAM2 op_e1d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -41370,7 +41370,7 @@ void REGPARAM2 op_e1d0_23_ff(uae_u32 opcode)
 /* ASLW.W (An)+ */
 void REGPARAM2 op_e1d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -41400,7 +41400,7 @@ void REGPARAM2 op_e1d8_23_ff(uae_u32 opcode)
 /* ASLW.W -(An) */
 void REGPARAM2 op_e1e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41430,7 +41430,7 @@ void REGPARAM2 op_e1e0_23_ff(uae_u32 opcode)
 /* ASLW.W (d16,An) */
 void REGPARAM2 op_e1e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41459,7 +41459,7 @@ void REGPARAM2 op_e1e8_23_ff(uae_u32 opcode)
 /* ASLW.W (d8,An,Xn) */
 void REGPARAM2 op_e1f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -41488,7 +41488,7 @@ void REGPARAM2 op_e1f0_23_ff(uae_u32 opcode)
 /* ASLW.W (xxx).W */
 void REGPARAM2 op_e1f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -41515,7 +41515,7 @@ void REGPARAM2 op_e1f8_23_ff(uae_u32 opcode)
 /* ASLW.W (xxx).L */
 void REGPARAM2 op_e1f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -41542,7 +41542,7 @@ void REGPARAM2 op_e1f9_23_ff(uae_u32 opcode)
 /* LSRW.W (An) */
 void REGPARAM2 op_e2d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -41568,7 +41568,7 @@ void REGPARAM2 op_e2d0_23_ff(uae_u32 opcode)
 /* LSRW.W (An)+ */
 void REGPARAM2 op_e2d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -41595,7 +41595,7 @@ void REGPARAM2 op_e2d8_23_ff(uae_u32 opcode)
 /* LSRW.W -(An) */
 void REGPARAM2 op_e2e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41622,7 +41622,7 @@ void REGPARAM2 op_e2e0_23_ff(uae_u32 opcode)
 /* LSRW.W (d16,An) */
 void REGPARAM2 op_e2e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41648,7 +41648,7 @@ void REGPARAM2 op_e2e8_23_ff(uae_u32 opcode)
 /* LSRW.W (d8,An,Xn) */
 void REGPARAM2 op_e2f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -41674,7 +41674,7 @@ void REGPARAM2 op_e2f0_23_ff(uae_u32 opcode)
 /* LSRW.W (xxx).W */
 void REGPARAM2 op_e2f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -41698,7 +41698,7 @@ void REGPARAM2 op_e2f8_23_ff(uae_u32 opcode)
 /* LSRW.W (xxx).L */
 void REGPARAM2 op_e2f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -41722,7 +41722,7 @@ void REGPARAM2 op_e2f9_23_ff(uae_u32 opcode)
 /* LSLW.W (An) */
 void REGPARAM2 op_e3d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -41748,7 +41748,7 @@ void REGPARAM2 op_e3d0_23_ff(uae_u32 opcode)
 /* LSLW.W (An)+ */
 void REGPARAM2 op_e3d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -41775,7 +41775,7 @@ void REGPARAM2 op_e3d8_23_ff(uae_u32 opcode)
 /* LSLW.W -(An) */
 void REGPARAM2 op_e3e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41802,7 +41802,7 @@ void REGPARAM2 op_e3e0_23_ff(uae_u32 opcode)
 /* LSLW.W (d16,An) */
 void REGPARAM2 op_e3e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41828,7 +41828,7 @@ void REGPARAM2 op_e3e8_23_ff(uae_u32 opcode)
 /* LSLW.W (d8,An,Xn) */
 void REGPARAM2 op_e3f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -41854,7 +41854,7 @@ void REGPARAM2 op_e3f0_23_ff(uae_u32 opcode)
 /* LSLW.W (xxx).W */
 void REGPARAM2 op_e3f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -41878,7 +41878,7 @@ void REGPARAM2 op_e3f8_23_ff(uae_u32 opcode)
 /* LSLW.W (xxx).L */
 void REGPARAM2 op_e3f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -41902,7 +41902,7 @@ void REGPARAM2 op_e3f9_23_ff(uae_u32 opcode)
 /* ROXRW.W (An) */
 void REGPARAM2 op_e4d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -41929,7 +41929,7 @@ void REGPARAM2 op_e4d0_23_ff(uae_u32 opcode)
 /* ROXRW.W (An)+ */
 void REGPARAM2 op_e4d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -41957,7 +41957,7 @@ void REGPARAM2 op_e4d8_23_ff(uae_u32 opcode)
 /* ROXRW.W -(An) */
 void REGPARAM2 op_e4e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -41985,7 +41985,7 @@ void REGPARAM2 op_e4e0_23_ff(uae_u32 opcode)
 /* ROXRW.W (d16,An) */
 void REGPARAM2 op_e4e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42012,7 +42012,7 @@ void REGPARAM2 op_e4e8_23_ff(uae_u32 opcode)
 /* ROXRW.W (d8,An,Xn) */
 void REGPARAM2 op_e4f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -42039,7 +42039,7 @@ void REGPARAM2 op_e4f0_23_ff(uae_u32 opcode)
 /* ROXRW.W (xxx).W */
 void REGPARAM2 op_e4f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -42064,7 +42064,7 @@ void REGPARAM2 op_e4f8_23_ff(uae_u32 opcode)
 /* ROXRW.W (xxx).L */
 void REGPARAM2 op_e4f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -42089,7 +42089,7 @@ void REGPARAM2 op_e4f9_23_ff(uae_u32 opcode)
 /* ROXLW.W (An) */
 void REGPARAM2 op_e5d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -42116,7 +42116,7 @@ void REGPARAM2 op_e5d0_23_ff(uae_u32 opcode)
 /* ROXLW.W (An)+ */
 void REGPARAM2 op_e5d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -42144,7 +42144,7 @@ void REGPARAM2 op_e5d8_23_ff(uae_u32 opcode)
 /* ROXLW.W -(An) */
 void REGPARAM2 op_e5e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42172,7 +42172,7 @@ void REGPARAM2 op_e5e0_23_ff(uae_u32 opcode)
 /* ROXLW.W (d16,An) */
 void REGPARAM2 op_e5e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42199,7 +42199,7 @@ void REGPARAM2 op_e5e8_23_ff(uae_u32 opcode)
 /* ROXLW.W (d8,An,Xn) */
 void REGPARAM2 op_e5f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -42226,7 +42226,7 @@ void REGPARAM2 op_e5f0_23_ff(uae_u32 opcode)
 /* ROXLW.W (xxx).W */
 void REGPARAM2 op_e5f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -42251,7 +42251,7 @@ void REGPARAM2 op_e5f8_23_ff(uae_u32 opcode)
 /* ROXLW.W (xxx).L */
 void REGPARAM2 op_e5f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -42276,7 +42276,7 @@ void REGPARAM2 op_e5f9_23_ff(uae_u32 opcode)
 /* RORW.W (An) */
 void REGPARAM2 op_e6d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -42302,7 +42302,7 @@ void REGPARAM2 op_e6d0_23_ff(uae_u32 opcode)
 /* RORW.W (An)+ */
 void REGPARAM2 op_e6d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -42329,7 +42329,7 @@ void REGPARAM2 op_e6d8_23_ff(uae_u32 opcode)
 /* RORW.W -(An) */
 void REGPARAM2 op_e6e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42356,7 +42356,7 @@ void REGPARAM2 op_e6e0_23_ff(uae_u32 opcode)
 /* RORW.W (d16,An) */
 void REGPARAM2 op_e6e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42382,7 +42382,7 @@ void REGPARAM2 op_e6e8_23_ff(uae_u32 opcode)
 /* RORW.W (d8,An,Xn) */
 void REGPARAM2 op_e6f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -42408,7 +42408,7 @@ void REGPARAM2 op_e6f0_23_ff(uae_u32 opcode)
 /* RORW.W (xxx).W */
 void REGPARAM2 op_e6f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -42432,7 +42432,7 @@ void REGPARAM2 op_e6f8_23_ff(uae_u32 opcode)
 /* RORW.W (xxx).L */
 void REGPARAM2 op_e6f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -42456,7 +42456,7 @@ void REGPARAM2 op_e6f9_23_ff(uae_u32 opcode)
 /* ROLW.W (An) */
 void REGPARAM2 op_e7d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:1,T:1,C:0 fea */
@@ -42482,7 +42482,7 @@ void REGPARAM2 op_e7d0_23_ff(uae_u32 opcode)
 /* ROLW.W (An)+ */
 void REGPARAM2 op_e7d8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:0,T:1,C:0 fea */
@@ -42509,7 +42509,7 @@ void REGPARAM2 op_e7d8_23_ff(uae_u32 opcode)
 /* ROLW.W -(An) */
 void REGPARAM2 op_e7e0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42536,7 +42536,7 @@ void REGPARAM2 op_e7e0_23_ff(uae_u32 opcode)
 /* ROLW.W (d16,An) */
 void REGPARAM2 op_e7e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:2,T:2,C:0 fea */
@@ -42562,7 +42562,7 @@ void REGPARAM2 op_e7e8_23_ff(uae_u32 opcode)
 /* ROLW.W (d8,An,Xn) */
 void REGPARAM2 op_e7f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	/* ea H:4,T:2,C:0 fea */
@@ -42588,7 +42588,7 @@ void REGPARAM2 op_e7f0_23_ff(uae_u32 opcode)
 /* ROLW.W (xxx).W */
 void REGPARAM2 op_e7f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:2,T:2,C:0 fea */
 	uaecptr dataa;
 	dataa = (uae_s32)(uae_s16)get_word_ce030_prefetch(2);
@@ -42612,7 +42612,7 @@ void REGPARAM2 op_e7f8_23_ff(uae_u32 opcode)
 /* ROLW.W (xxx).L */
 void REGPARAM2 op_e7f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	/* ea H:1,T:0,C:0 fea */
 	uaecptr dataa;
 	dataa = get_long_ce030_prefetch(2);
@@ -42637,7 +42637,7 @@ void REGPARAM2 op_e7f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42664,7 +42664,7 @@ void REGPARAM2 op_e8c0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42692,7 +42692,7 @@ void REGPARAM2 op_e8d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42720,7 +42720,7 @@ void REGPARAM2 op_e8e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42748,7 +42748,7 @@ void REGPARAM2 op_e8f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -42774,7 +42774,7 @@ void REGPARAM2 op_e8f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -42800,7 +42800,7 @@ void REGPARAM2 op_e8f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -42828,7 +42828,7 @@ void REGPARAM2 op_e8fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e8fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -42856,7 +42856,7 @@ void REGPARAM2 op_e8fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42884,7 +42884,7 @@ void REGPARAM2 op_e9c0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9d0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42913,7 +42913,7 @@ void REGPARAM2 op_e9d0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9e8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42942,7 +42942,7 @@ void REGPARAM2 op_e9e8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9f0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -42971,7 +42971,7 @@ void REGPARAM2 op_e9f0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9f8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -42998,7 +42998,7 @@ void REGPARAM2 op_e9f8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9f9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43025,7 +43025,7 @@ void REGPARAM2 op_e9f9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9fa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -43054,7 +43054,7 @@ void REGPARAM2 op_e9fa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_e9fb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -43083,7 +43083,7 @@ void REGPARAM2 op_e9fb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eac0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43113,7 +43113,7 @@ void REGPARAM2 op_eac0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ead0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43143,7 +43143,7 @@ void REGPARAM2 op_ead0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eae8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43173,7 +43173,7 @@ void REGPARAM2 op_eae8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eaf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43203,7 +43203,7 @@ void REGPARAM2 op_eaf0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eaf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43231,7 +43231,7 @@ void REGPARAM2 op_eaf8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eaf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43259,7 +43259,7 @@ void REGPARAM2 op_eaf9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43287,7 +43287,7 @@ void REGPARAM2 op_ebc0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43316,7 +43316,7 @@ void REGPARAM2 op_ebd0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebe8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43345,7 +43345,7 @@ void REGPARAM2 op_ebe8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43374,7 +43374,7 @@ void REGPARAM2 op_ebf0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43401,7 +43401,7 @@ void REGPARAM2 op_ebf8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43428,7 +43428,7 @@ void REGPARAM2 op_ebf9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebfa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -43457,7 +43457,7 @@ void REGPARAM2 op_ebfa_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ebfb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -43486,7 +43486,7 @@ void REGPARAM2 op_ebfb_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ecc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43516,7 +43516,7 @@ void REGPARAM2 op_ecc0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ecd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43546,7 +43546,7 @@ void REGPARAM2 op_ecd0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ece8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43576,7 +43576,7 @@ void REGPARAM2 op_ece8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ecf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43606,7 +43606,7 @@ void REGPARAM2 op_ecf0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ecf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43634,7 +43634,7 @@ void REGPARAM2 op_ecf8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ecf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43662,7 +43662,7 @@ void REGPARAM2 op_ecf9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43693,7 +43693,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43725,7 +43725,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_ede8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43757,7 +43757,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edf0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43789,7 +43789,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edf8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43819,7 +43819,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edf9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -43849,7 +43849,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edfa_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -43881,7 +43881,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_edfb_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
@@ -43913,7 +43913,7 @@ while (mask) { if (tmp & mask) break; mask >>= 1; offset2++; }}
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eec0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43943,7 +43943,7 @@ void REGPARAM2 op_eec0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eed0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -43973,7 +43973,7 @@ void REGPARAM2 op_eed0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eee8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44003,7 +44003,7 @@ void REGPARAM2 op_eee8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eef0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44033,7 +44033,7 @@ void REGPARAM2 op_eef0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eef8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -44061,7 +44061,7 @@ void REGPARAM2 op_eef8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eef9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -44089,7 +44089,7 @@ void REGPARAM2 op_eef9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_efc0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44122,7 +44122,7 @@ void REGPARAM2 op_efc0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_efd0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44155,7 +44155,7 @@ void REGPARAM2 op_efd0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_efe8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44188,7 +44188,7 @@ void REGPARAM2 op_efe8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eff0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44221,7 +44221,7 @@ void REGPARAM2 op_eff0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eff8_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -44252,7 +44252,7 @@ void REGPARAM2 op_eff8_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_eff9_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s16 extra = get_word_ce030_prefetch(2);
 	/* OP zero */
 	uaecptr dsta;
@@ -44283,7 +44283,7 @@ void REGPARAM2 op_eff9_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f000_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44306,7 +44306,7 @@ void REGPARAM2 op_f000_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f008_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44329,7 +44329,7 @@ void REGPARAM2 op_f008_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f010_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44354,7 +44354,7 @@ void REGPARAM2 op_f010_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f018_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44380,7 +44380,7 @@ void REGPARAM2 op_f018_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f020_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44406,7 +44406,7 @@ void REGPARAM2 op_f020_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f028_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44432,7 +44432,7 @@ void REGPARAM2 op_f028_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f030_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -44457,7 +44457,7 @@ void REGPARAM2 op_f030_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f038_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -44481,7 +44481,7 @@ void REGPARAM2 op_f038_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f039_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -44505,7 +44505,7 @@ void REGPARAM2 op_f039_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f200_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44528,7 +44528,7 @@ void REGPARAM2 op_f200_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f208_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44551,7 +44551,7 @@ void REGPARAM2 op_f208_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f210_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44574,7 +44574,7 @@ void REGPARAM2 op_f210_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f218_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44597,7 +44597,7 @@ void REGPARAM2 op_f218_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f220_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44620,7 +44620,7 @@ void REGPARAM2 op_f220_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f228_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44643,7 +44643,7 @@ void REGPARAM2 op_f228_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f230_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44666,7 +44666,7 @@ void REGPARAM2 op_f230_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f238_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44687,7 +44687,7 @@ void REGPARAM2 op_f238_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f239_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44708,7 +44708,7 @@ void REGPARAM2 op_f239_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f23a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 2;
 
 	#ifdef FPUEMU
@@ -44730,7 +44730,7 @@ void REGPARAM2 op_f23a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f23b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 dstreg = 3;
 
 	#ifdef FPUEMU
@@ -44752,7 +44752,7 @@ void REGPARAM2 op_f23b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f23c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44773,7 +44773,7 @@ void REGPARAM2 op_f23c_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f240_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44796,7 +44796,7 @@ void REGPARAM2 op_f240_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f248_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44824,7 +44824,7 @@ void REGPARAM2 op_f248_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f250_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44847,7 +44847,7 @@ void REGPARAM2 op_f250_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f258_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44870,7 +44870,7 @@ void REGPARAM2 op_f258_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f260_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44893,7 +44893,7 @@ void REGPARAM2 op_f260_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f268_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44916,7 +44916,7 @@ void REGPARAM2 op_f268_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f270_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 dstreg = real_opcode & 7;
 
@@ -44939,7 +44939,7 @@ void REGPARAM2 op_f270_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f278_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44960,7 +44960,7 @@ void REGPARAM2 op_f278_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f279_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uae_s16 extra = get_word_ce030_prefetch(2);
@@ -44981,7 +44981,7 @@ void REGPARAM2 op_f279_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f27a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uaecptr oldpc = m68k_getpci();
@@ -45005,7 +45005,7 @@ void REGPARAM2 op_f27a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f27b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uaecptr oldpc = m68k_getpci();
@@ -45030,7 +45030,7 @@ void REGPARAM2 op_f27b_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f27c_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 
 	#ifdef FPUEMU
 	uaecptr oldpc = m68k_getpci();
@@ -45051,7 +45051,7 @@ void REGPARAM2 op_f27c_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f280_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 63);
 
@@ -45081,7 +45081,7 @@ void REGPARAM2 op_f280_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f2c0_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 63);
 
@@ -45112,7 +45112,7 @@ void REGPARAM2 op_f2c0_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f310_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45137,7 +45137,7 @@ void REGPARAM2 op_f310_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f320_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45162,7 +45162,7 @@ void REGPARAM2 op_f320_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f328_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45187,7 +45187,7 @@ void REGPARAM2 op_f328_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f330_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45212,7 +45212,7 @@ void REGPARAM2 op_f330_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f338_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -45235,7 +45235,7 @@ void REGPARAM2 op_f338_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f339_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -45258,7 +45258,7 @@ void REGPARAM2 op_f339_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f350_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45283,7 +45283,7 @@ void REGPARAM2 op_f350_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f358_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45308,7 +45308,7 @@ void REGPARAM2 op_f358_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f368_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45333,7 +45333,7 @@ void REGPARAM2 op_f368_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f370_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_u32 real_opcode = opcode;
 	uae_u32 srcreg = (real_opcode & 7);
 	if (!regs.s) {
@@ -45358,7 +45358,7 @@ void REGPARAM2 op_f370_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f378_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -45381,7 +45381,7 @@ void REGPARAM2 op_f378_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f379_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -45404,7 +45404,7 @@ void REGPARAM2 op_f379_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f37a_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
@@ -45427,7 +45427,7 @@ void REGPARAM2 op_f37a_23_ff(uae_u32 opcode)
 #ifndef CPUEMU_68000_ONLY
 void REGPARAM2 op_f37b_23_ff(uae_u32 opcode)
 {
-	int count_cycles = 0;
+	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	if (!regs.s) {
 		Exception(8);
 		return;
