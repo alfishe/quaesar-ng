@@ -6,11 +6,6 @@
 * (c) 2015 Toni Wilen
 */
 
-// Suppress warnings for legacy UAE IDE controller code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 
