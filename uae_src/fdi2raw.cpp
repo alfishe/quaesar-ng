@@ -70,7 +70,7 @@ static TCHAR *datalog (uae_u8 *src, int len)
 	return buf + offset2;
 }
 #else
-static const TCHAR *datalog (uae_u8 *src, int len) { return _T(""); }
+static const TCHAR *datalog (uae_u8 *src, int len) { (void)src; (void)len; return _T(""); }
 #endif
 
 #ifdef DEBUG
@@ -333,13 +333,13 @@ static void zxx (FDI *fdi)
 	//	return -1;
 }
 /* unsupported track */
-static void zyy (FDI *fdi)
+static __attribute__((unused)) void zyy (FDI *fdi)
 {
 	outlog (_T("track %d: unsupported track type 0x%02X\n"), fdi->current_track, fdi->track_type);
 	//	return -1;
 }
 /* empty track */
-static void track_empty (FDI *fdi)
+static __attribute__((unused)) void track_empty (FDI *fdi)
 {
 	//	return 0;
 }
