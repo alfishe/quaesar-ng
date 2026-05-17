@@ -1,5 +1,11 @@
 
 
+// Suppress warnings for legacy UAE CPU common code
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
+#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#pragma clang diagnostic ignored "-Wsign-compare"
+
 #include "sysconfig.h"
 #include "sysdeps.h"
 
