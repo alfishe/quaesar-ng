@@ -6,11 +6,6 @@
 *     2007 Toni Wilen
 */
 
-// Suppress warnings for legacy UAE archive code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wsign-compare"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 
