@@ -20415,6 +20415,7 @@ uae_u32 REGPARAM2 op_50fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(0)) {
 		Exception_cpu(7);
@@ -20432,6 +20433,7 @@ uae_u32 REGPARAM2 op_50fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -21261,6 +21263,7 @@ uae_u32 REGPARAM2 op_51fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(1)) {
 		Exception_cpu(7);
@@ -21278,6 +21281,7 @@ uae_u32 REGPARAM2 op_51fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -21457,6 +21461,7 @@ uae_u32 REGPARAM2 op_52fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(2)) {
 		Exception_cpu(7);
@@ -21474,6 +21479,7 @@ uae_u32 REGPARAM2 op_52fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -21653,6 +21659,7 @@ uae_u32 REGPARAM2 op_53fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(3)) {
 		Exception_cpu(7);
@@ -21670,6 +21677,7 @@ uae_u32 REGPARAM2 op_53fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -21849,6 +21857,7 @@ uae_u32 REGPARAM2 op_54fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(4)) {
 		Exception_cpu(7);
@@ -21866,6 +21875,7 @@ uae_u32 REGPARAM2 op_54fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -22045,6 +22055,7 @@ uae_u32 REGPARAM2 op_55fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(5)) {
 		Exception_cpu(7);
@@ -22062,6 +22073,7 @@ uae_u32 REGPARAM2 op_55fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -22241,6 +22253,7 @@ uae_u32 REGPARAM2 op_56fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(6)) {
 		Exception_cpu(7);
@@ -22258,6 +22271,7 @@ uae_u32 REGPARAM2 op_56fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -22437,6 +22451,7 @@ uae_u32 REGPARAM2 op_57fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(7)) {
 		Exception_cpu(7);
@@ -22454,6 +22469,7 @@ uae_u32 REGPARAM2 op_57fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -22633,6 +22649,7 @@ uae_u32 REGPARAM2 op_58fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(8)) {
 		Exception_cpu(7);
@@ -22650,6 +22667,7 @@ uae_u32 REGPARAM2 op_58fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -22829,6 +22847,7 @@ uae_u32 REGPARAM2 op_59fa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(9)) {
 		Exception_cpu(7);
@@ -22846,6 +22865,7 @@ uae_u32 REGPARAM2 op_59fb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -23025,6 +23045,7 @@ uae_u32 REGPARAM2 op_5afa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(10)) {
 		Exception_cpu(7);
@@ -23042,6 +23063,7 @@ uae_u32 REGPARAM2 op_5afb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -23221,6 +23243,7 @@ uae_u32 REGPARAM2 op_5bfa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(11)) {
 		Exception_cpu(7);
@@ -23238,6 +23261,7 @@ uae_u32 REGPARAM2 op_5bfb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -23417,6 +23441,7 @@ uae_u32 REGPARAM2 op_5cfa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(12)) {
 		Exception_cpu(7);
@@ -23434,6 +23459,7 @@ uae_u32 REGPARAM2 op_5cfb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -23613,6 +23639,7 @@ uae_u32 REGPARAM2 op_5dfa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(13)) {
 		Exception_cpu(7);
@@ -23630,6 +23657,7 @@ uae_u32 REGPARAM2 op_5dfb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -23809,6 +23837,7 @@ uae_u32 REGPARAM2 op_5efa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(14)) {
 		Exception_cpu(7);
@@ -23826,6 +23855,7 @@ uae_u32 REGPARAM2 op_5efb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -24005,6 +24035,7 @@ uae_u32 REGPARAM2 op_5ffa_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(2);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(15)) {
 		Exception_cpu(7);
@@ -24022,6 +24053,7 @@ uae_u32 REGPARAM2 op_5ffb_0_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(6);
@@ -39728,6 +39760,7 @@ uae_u32 REGPARAM2 op_f27a_0_ff(uae_u32 opcode)
 	uae_s16 dummy = get_diword(4);
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(6);
 	fpuop_trapcc (opcode, oldpc, extra);
 
@@ -39747,6 +39780,7 @@ uae_u32 REGPARAM2 op_f27b_0_ff(uae_u32 opcode)
 	uae_u16 extra = get_diword(2);
 	uae_s32 dummy;
 	dummy = get_dilong(4);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
 	m68k_incpc(8);
