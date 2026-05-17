@@ -10,6 +10,11 @@
 *
 */
 
+// Suppress warnings for legacy UAE SCSI emulation code
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wunused-variable"
+
 #include "sysconfig.h"
 #include "sysdeps.h"
 
