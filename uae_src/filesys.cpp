@@ -821,7 +821,7 @@ TCHAR *filesys_createvolname (const TCHAR *volname, const TCHAR *rootdir, struct
 		return nvol;
 	}
 
-	if ((!volname || uaetcslen (volname) == 0) && path && archivehd >= 0) {
+	if ((!volname || uaetcslen (volname) == 0) && path[0] && archivehd >= 0) {
 		p = my_strdup (path);
 		for (i = uaetcslen (p) - 1; i >= 0; i--) {
 			TCHAR c = p[i];
@@ -5993,7 +5993,7 @@ static void	action_set_file_size(TrapContext *ctx, Unit *unit, dpacket *packet)
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_SET_FILE_SIZE(0x%lx, %lld, 0x%x)\n"), GET_PCK_ARG1 (packet), (long long)offset, mode));
+	TRACE((_T("ACTION_SET_FILE_SIZE(0x%lx, %lld, 0x%x)\n"), (unsigned long)GET_PCK_ARG1 (packet), (long long)offset, mode));
 
 	k = lookup_key (unit, GET_PCK_ARG1 (packet));
 	if (k == 0) {
