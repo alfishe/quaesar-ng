@@ -86,7 +86,7 @@ static struct zcache *cache_get (const TCHAR *name)
 	return NULL;
 }
 
-static void zcache_flush (void)
+static void __attribute__((unused)) zcache_flush (void)
 {
 }
 
@@ -126,7 +126,7 @@ static void zcache_free (struct zcache *zc)
 		pl->next = nxt;
 }
 
-static void zcache_close (void)
+static void __attribute__((unused)) zcache_close (void)
 {
 	struct zcache *zc = zcachedata;
 	while (zc) {
@@ -2673,7 +2673,7 @@ static struct znode *znode_alloc_child (struct znode *parent, const TCHAR *name)
 	return zn;
 }
 
-static struct znode *znode_alloc_sibling (struct znode *sibling, const TCHAR *name)
+static struct znode *__attribute__((unused)) znode_alloc_sibling (struct znode *sibling, const TCHAR *name)
 {
 	struct znode *zn = znode_alloc (sibling->parent, name);
 

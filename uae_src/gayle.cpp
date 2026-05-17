@@ -1250,12 +1250,12 @@ static const uae_u8 ne2000pcmcia[] =
 	0x21, 0x02, 0x06, 0x00
 };
 
-static void ne2000_pcmcia_irq_callback(struct pci_board_state *pcibs, bool irq)
+static void __attribute__((unused)) ne2000_pcmcia_irq_callback(struct pci_board_state *pcibs, bool irq)
 {
 	ne2000_pcmcia_irq = irq;
 }
 
-static void initne2000attr(void)
+static void __attribute__((unused)) initne2000attr(void)
 {
 	memcpy(pcmcia_attrs, ne2000pcmcia, sizeof ne2000pcmcia);
 }

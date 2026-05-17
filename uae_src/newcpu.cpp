@@ -2398,7 +2398,7 @@ void REGPARAM2 MakeSR(void)
 		|  GET_CFLG());
 }
 
-static void SetSR(uae_u16 sr)
+static void __attribute__((unused)) SetSR(uae_u16 sr)
 {
 	regs.sr &= 0xff00;
 	regs.sr |= sr;
@@ -4338,7 +4338,7 @@ int cpu_sleep_millis(int ms)
 // 1-9 = wait, levels
 // 10 = max wait
 
-static bool haltloop_do(int vsynctimeline, frame_time_t rpt_end, int lines)
+static bool __attribute__((unused)) haltloop_do(int vsynctimeline, frame_time_t rpt_end, int lines)
 {
 	int ovpos = vpos;
 	while (lines-- >= 0) {
@@ -5633,7 +5633,7 @@ static void m68k_run_2 (void)
 
 #else
 
-static void opcodedebug (uae_u32 pc, uae_u16 opcode, bool full)
+static void __attribute__((unused)) opcodedebug (uae_u32 pc, uae_u16 opcode, bool full)
 {
 	struct mnemolookup *lookup;
 	struct instr *dp;

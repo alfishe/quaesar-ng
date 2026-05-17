@@ -1233,7 +1233,7 @@ static void wl (uae_u8 *p, int v)
 	p[2] = v >> 8;
 	p[3] = v;
 }
-static void ww (uae_u8 *p, int v)
+static void __attribute__((unused)) ww (uae_u8 *p, int v)
 {
 	p[0] = v >> 8;
 	p[1] = v;

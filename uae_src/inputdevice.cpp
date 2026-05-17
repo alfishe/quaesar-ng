@@ -741,7 +741,7 @@ static bool isemptykey(int keyboard, int scancode)
 	return true;
 }
 
-static void out_config (struct zfile *f, int id, int num, const TCHAR *s1, const TCHAR *s2)
+static void __attribute__((unused)) out_config (struct zfile *f, int id, int num, const TCHAR *s1, const TCHAR *s2)
 {
 	TCHAR tmp[MAX_DPATH];
 	_stprintf (tmp, _T("input.%d.%s%d"), id, s1, num);
@@ -2498,7 +2498,7 @@ static uaecptr get_intuitionbase (void)
 		magicmouse_ibase = get_base("intuition.library");
 	return magicmouse_ibase;
 }
-static uaecptr get_gfxbase (void)
+static uaecptr __attribute__((unused)) get_gfxbase (void)
 {
 	if (magicmouse_gfxbase == 0xffffffff)
 		return 0;
@@ -9058,7 +9058,7 @@ int inputdevice_config_change_test (void)
 	return v;
 }
 
-static void copy_inputdevice_settings(struct uae_input_device *src, struct uae_input_device *dst)
+static void __attribute__((unused)) copy_inputdevice_settings(struct uae_input_device *src, struct uae_input_device *dst)
 {
 	for (int l = 0; l < MAX_INPUT_DEVICE_EVENTS; l++) {
 		for (int i = 0; i < MAX_INPUT_SUB_EVENT_ALL; i++) {
@@ -9071,7 +9071,7 @@ static void copy_inputdevice_settings(struct uae_input_device *src, struct uae_i
 	}
 }
 
-static void copy_inputdevice_settings_free(struct uae_input_device *src, struct uae_input_device *dst)
+static void __attribute__((unused)) copy_inputdevice_settings_free(struct uae_input_device *src, struct uae_input_device *dst)
 {
 	for (int l = 0; l < MAX_INPUT_DEVICE_EVENTS; l++) {
 		for (int i = 0; i < MAX_INPUT_SUB_EVENT_ALL; i++) {
@@ -9127,7 +9127,7 @@ static void swapevent (struct uae_input_device *uid, int i, int j, int evt)
 	uid->port[i][j] = port;
 }
 
-static void swapjoydevice (struct uae_input_device *uid, const int **swaps)
+static void __attribute__((unused)) swapjoydevice (struct uae_input_device *uid, const int **swaps)
 {
 	for (int i = 0; i < MAX_INPUT_DEVICE_EVENTS; i++) {
 		for (int j = 0; j < MAX_INPUT_SUB_EVENT; j++) {

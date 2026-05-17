@@ -726,7 +726,7 @@ static TCHAR *cfgfile_get_multipath2 (struct multipath *mp, const TCHAR *path, c
 	return NULL;
 }
 
-static TCHAR *cfgfile_get_multipath (struct multipath *mp, const TCHAR *path, const TCHAR *file, bool dir)
+static TCHAR *__attribute__((unused)) cfgfile_get_multipath (struct multipath *mp, const TCHAR *path, const TCHAR *file, bool dir)
 {
 	TCHAR *s = cfgfile_get_multipath2 (mp, path, file, dir);
 	if (s)
@@ -880,7 +880,7 @@ void cfgfile_dwrite_bool(struct zfile *f, const TCHAR *option, bool b)
 {
 	cfg_dowrite(f, option, b ? _T("true") : _T("false"), 1, 0, 0);
 }
-static void cfgfile_dwrite_bool(struct zfile *f, const TCHAR *option, const TCHAR *optionext, bool b)
+static void __attribute__((unused)) cfgfile_dwrite_bool(struct zfile *f, const TCHAR *option, const TCHAR *optionext, bool b)
 {
 	cfg_dowrite(f, option, optionext, b ? _T("true") : _T("false"), 1, 0, 0);
 }
@@ -898,7 +898,7 @@ void cfgfile_write_strarr(struct zfile *f, const TCHAR *option, const TCHAR *arr
 	const TCHAR *v = arr[value];
 	cfg_dowrite(f, option, v, 0, 0, 0);
 }
-static void cfgfile_write_str(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *value)
+static void __attribute__((unused)) cfgfile_write_str(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *value)
 {
 	cfg_dowrite(f, option, optionext, value, 0, 0, 0);
 }
@@ -910,7 +910,7 @@ void cfgfile_dwrite_str(struct zfile *f, const TCHAR *option, const TCHAR *value
 {
 	cfg_dowrite(f, option, value, 1, 0, 0);
 }
-static void cfgfile_dwrite_str(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *value)
+static void __attribute__((unused)) cfgfile_dwrite_str(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *value)
 {
 	cfg_dowrite(f, option, optionext, value, 1, 0, 0);
 }
@@ -945,7 +945,7 @@ void cfgfile_target_dwrite_str_escape(struct zfile *f, const TCHAR *option, cons
 	cfg_dowrite(f, option, value, 1, 1, 1);
 }
 
-static void cfgfile_write_ext(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *format,...)
+static void __attribute__((unused)) cfgfile_write_ext(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *format,...)
 {
 	va_list parms;
 	TCHAR tmp[CONFIG_BLEN], tmp2[CONFIG_BLEN];
@@ -979,7 +979,7 @@ void cfgfile_write_escape(struct zfile *f, const TCHAR *option, const TCHAR *for
 	cfg_dowrite(f, option, tmp, 0, 0, 1);
 	va_end(parms);
 }
-static void cfgfile_dwrite_ext(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *format,...)
+static void __attribute__((unused)) cfgfile_dwrite_ext(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *format,...)
 {
 	va_list parms;
 	TCHAR tmp[CONFIG_BLEN], tmp2[CONFIG_BLEN];
@@ -3142,7 +3142,7 @@ int cfgfile_intval (const TCHAR *option, const TCHAR *value, const TCHAR *name, 
 	*location = (int)v;
 	return r;
 }
-static int cfgfile_intval (const TCHAR *option, const TCHAR *value, const TCHAR *name, const TCHAR *nameext, int *location, int scale)
+static int __attribute__((unused)) cfgfile_intval (const TCHAR *option, const TCHAR *value, const TCHAR *name, const TCHAR *nameext, int *location, int scale)
 {
 	unsigned int v = 0;
 	int r = cfgfile_intval (option, value, name, nameext, &v, scale);
@@ -3217,7 +3217,7 @@ int cfgfile_string(const TCHAR *option, const TCHAR *value, const TCHAR *name, T
 	return 1;
 }
 
-static int cfgfile_string (const TCHAR *option, const TCHAR *value, const TCHAR *name, const TCHAR *nameext, TCHAR *location, int maxsz)
+static int __attribute__((unused)) cfgfile_string (const TCHAR *option, const TCHAR *value, const TCHAR *name, const TCHAR *nameext, TCHAR *location, int maxsz)
 {
 	if (nameext) {
 		TCHAR tmp[MAX_DPATH];

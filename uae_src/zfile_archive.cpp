@@ -29,7 +29,7 @@
 #define unpack_log(fmt, ...)
 
 
-static time_t fromdostime (uae_u32 dd)
+static time_t __attribute__((unused)) fromdostime (uae_u32 dd)
 {
 	struct tm tm;
 	time_t t;
@@ -1192,7 +1192,7 @@ static const int secs_per_day = 24 * 60 * 60;
 static const int diff = (8 * 365 + 2) * (24 * 60 * 60);
 static const int diff2 = (-8 * 365 - 2) * (24 * 60 * 60);
 
-static time_t put_time (long days, long mins, long ticks)
+static time_t __attribute__((unused)) put_time (long days, long mins, long ticks)
 {
 	time_t t;
 

@@ -243,7 +243,7 @@ static struct debugsegtracker **dsegt;
 static int segtrackermax, segtrackerindex;
 static uae_u32 inhibit_break, last_break;
 
-static uae_u8 *lebx(uae_u8 *p, uae_u32 *v)
+static uae_u8 *__attribute__((unused)) lebx(uae_u8 *p, uae_u32 *v)
 {
 	uae_u32 val = 0;
 	for (;;) {

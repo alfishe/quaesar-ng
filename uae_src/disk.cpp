@@ -681,7 +681,7 @@ static int get_floppy_speed_from_image(drive *drv)
 	return m;
 }
 
-static const TCHAR *drive_id_name(drive *drv)
+static const TCHAR *__attribute__((unused)) drive_id_name(drive *drv)
 {
 	switch(drv->drive_id)
 	{
@@ -6257,7 +6257,7 @@ int disk_prevnext (int drive, int dir)
 	return 1;
 }
 
-static int getdebug(void)
+static int __attribute__((unused)) getdebug(void)
 {
 	return floppy[0].mfmpos;
 }
