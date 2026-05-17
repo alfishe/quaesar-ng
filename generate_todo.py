@@ -93,7 +93,7 @@ def generate_todo_md(warnings, output_file='TODO.md'):
         f.write("**Rule:** NO pragma suppressions - fix warnings properly with code changes!\n")
 
 if __name__ == '__main__':
-    log_file = '/tmp/clean_build.log'
+    log_file = '/tmp/latest_build.log'
     output_file = '/Volumes/TB4-4Tb/Projects/emulators/github/quaesar-ng/TODO.md'
     
     print(f"Parsing warnings from {log_file}...")
