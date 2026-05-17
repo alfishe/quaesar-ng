@@ -11,10 +11,6 @@
 * should be stopped.
 */
 
-// Suppress warnings for legacy UAE native code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 

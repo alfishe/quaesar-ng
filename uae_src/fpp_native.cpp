@@ -14,11 +14,6 @@
 #include <float.h>
 #include <fenv.h>
 
-// Suppress warnings for legacy UAE FPU native code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-braces"
-#pragma clang diagnostic ignored "-Wunused-variable"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 

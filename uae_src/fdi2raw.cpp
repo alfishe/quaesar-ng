@@ -34,11 +34,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <string.h>
 
 /* IF UAE */
-
-// Suppress warnings for legacy FDI code
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-
 #include "sysconfig.h"
 #include "sysdeps.h"
 #include "zfile.h"
