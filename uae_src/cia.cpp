@@ -2250,7 +2250,7 @@ addrbank cia_bank = {
 	default_xlate, default_check, NULL, NULL, _T("CIA"),
 	cia_lgeti, cia_wgeti,
 	ABFLAG_IO | ABFLAG_CIA, S_READ, S_WRITE, NULL, 0x3f01, 0xbfc000,
-	NULL
+	0
 };
 
 static __attribute__((unused)) int cia_cycles(int delay, int phase, int val, int post)
@@ -2714,7 +2714,7 @@ addrbank clock_bank = {
 	default_xlate, default_check, NULL, NULL, _T("Battery backed up clock (none)"),
 	dummy_lgeti, dummy_wgeti,
 	ABFLAG_IO, S_READ, S_WRITE, NULL, 0x3f, 0xdc0000,
-	NULL
+	0
 };
 
 static __attribute__((unused)) uae_u8 getclockreg(int addr, struct tm *ct)

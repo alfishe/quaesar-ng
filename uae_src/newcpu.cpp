@@ -443,7 +443,7 @@ static bool get_trace(uaecptr addr, int accessmode, int size, uae_u32 *data)
 			write_log(_T("CPU trace: GET %d: PC=%08x %08x=%08x %d %d %08x/%08x/%08x %d/%d (%08x)\n"),
 				i, cputrace.pc, addr, ctm->data, accessmode, size,
 				(unsigned int)(cputrace.cyclecounter & 0xFFFFFFFF), (unsigned int)(cputrace.cyclecounter_pre & 0xFFFFFFFF), (unsigned int)(cputrace.cyclecounter_post & 0xFFFFFFFF),
-				cputrace.readcounter, cputrace.writecounter, get_cycles ());
+				cputrace.readcounter, cputrace.writecounter, (unsigned int)(get_cycles() & 0xFFFFFFFF));
 			if (accessmode == 1)
 				cputrace.writecounter--;
 			else
