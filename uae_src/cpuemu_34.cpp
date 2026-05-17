@@ -24001,6 +24001,7 @@ uae_u32 REGPARAM2 op_50fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(0)) {
 		Exception_cpu(7);
@@ -24019,6 +24020,7 @@ uae_u32 REGPARAM2 op_50fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -24967,6 +24969,7 @@ uae_u32 REGPARAM2 op_51fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(1)) {
 		Exception_cpu(7);
@@ -24985,6 +24988,7 @@ uae_u32 REGPARAM2 op_51fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -25197,6 +25201,7 @@ uae_u32 REGPARAM2 op_52fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(2)) {
 		Exception_cpu(7);
@@ -25215,6 +25220,7 @@ uae_u32 REGPARAM2 op_52fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -25427,6 +25433,7 @@ uae_u32 REGPARAM2 op_53fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(3)) {
 		Exception_cpu(7);
@@ -25445,6 +25452,7 @@ uae_u32 REGPARAM2 op_53fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -25657,6 +25665,7 @@ uae_u32 REGPARAM2 op_54fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(4)) {
 		Exception_cpu(7);
@@ -25675,6 +25684,7 @@ uae_u32 REGPARAM2 op_54fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -25887,6 +25897,7 @@ uae_u32 REGPARAM2 op_55fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(5)) {
 		Exception_cpu(7);
@@ -25905,6 +25916,7 @@ uae_u32 REGPARAM2 op_55fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -26117,6 +26129,7 @@ uae_u32 REGPARAM2 op_56fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(6)) {
 		Exception_cpu(7);
@@ -26135,6 +26148,7 @@ uae_u32 REGPARAM2 op_56fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -26347,6 +26361,7 @@ uae_u32 REGPARAM2 op_57fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(7)) {
 		Exception_cpu(7);
@@ -26365,6 +26380,7 @@ uae_u32 REGPARAM2 op_57fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -26577,6 +26593,7 @@ uae_u32 REGPARAM2 op_58fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(8)) {
 		Exception_cpu(7);
@@ -26595,6 +26612,7 @@ uae_u32 REGPARAM2 op_58fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -26807,6 +26825,7 @@ uae_u32 REGPARAM2 op_59fa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(9)) {
 		Exception_cpu(7);
@@ -26825,6 +26844,7 @@ uae_u32 REGPARAM2 op_59fb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27037,6 +27057,7 @@ uae_u32 REGPARAM2 op_5afa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(10)) {
 		Exception_cpu(7);
@@ -27055,6 +27076,7 @@ uae_u32 REGPARAM2 op_5afb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27267,6 +27289,7 @@ uae_u32 REGPARAM2 op_5bfa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(11)) {
 		Exception_cpu(7);
@@ -27285,6 +27308,7 @@ uae_u32 REGPARAM2 op_5bfb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27497,6 +27521,7 @@ uae_u32 REGPARAM2 op_5cfa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(12)) {
 		Exception_cpu(7);
@@ -27515,6 +27540,7 @@ uae_u32 REGPARAM2 op_5cfb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27727,6 +27753,7 @@ uae_u32 REGPARAM2 op_5dfa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(13)) {
 		Exception_cpu(7);
@@ -27745,6 +27772,7 @@ uae_u32 REGPARAM2 op_5dfb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27957,6 +27985,7 @@ uae_u32 REGPARAM2 op_5efa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(14)) {
 		Exception_cpu(7);
@@ -27975,6 +28004,7 @@ uae_u32 REGPARAM2 op_5efb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -28187,6 +28217,7 @@ uae_u32 REGPARAM2 op_5ffa_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(4);
 	if (cctrue(15)) {
 		Exception_cpu(7);
@@ -28205,6 +28236,7 @@ uae_u32 REGPARAM2 op_5ffb_34_ff(uae_u32 opcode)
 	int count_cycles = 0;
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -45474,6 +45506,7 @@ uae_u32 REGPARAM2 op_f27a_34_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpci(6);
 	fpuop_trapcc (opcode, oldpc, extra);
 	if (regs.fp_exception) {
@@ -45497,6 +45530,7 @@ uae_u32 REGPARAM2 op_f27b_34_ff(uae_u32 opcode)
 	uae_u16 extra = get_iword_mmu030c_state(2);
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(4);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;

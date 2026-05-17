@@ -19450,6 +19450,7 @@ uae_u32 REGPARAM2 op_50fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(0)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -19467,6 +19468,7 @@ uae_u32 REGPARAM2 op_50fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -20261,6 +20263,7 @@ uae_u32 REGPARAM2 op_51fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(1)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -20278,6 +20281,7 @@ uae_u32 REGPARAM2 op_51fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -20448,6 +20452,7 @@ uae_u32 REGPARAM2 op_52fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(2)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -20465,6 +20470,7 @@ uae_u32 REGPARAM2 op_52fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -20635,6 +20641,7 @@ uae_u32 REGPARAM2 op_53fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(3)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -20652,6 +20659,7 @@ uae_u32 REGPARAM2 op_53fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -20822,6 +20830,7 @@ uae_u32 REGPARAM2 op_54fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(4)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -20839,6 +20848,7 @@ uae_u32 REGPARAM2 op_54fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -21009,6 +21019,7 @@ uae_u32 REGPARAM2 op_55fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(5)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -21026,6 +21037,7 @@ uae_u32 REGPARAM2 op_55fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -21196,6 +21208,7 @@ uae_u32 REGPARAM2 op_56fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(6)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -21213,6 +21226,7 @@ uae_u32 REGPARAM2 op_56fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -21383,6 +21397,7 @@ uae_u32 REGPARAM2 op_57fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(7)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -21400,6 +21415,7 @@ uae_u32 REGPARAM2 op_57fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -21570,6 +21586,7 @@ uae_u32 REGPARAM2 op_58fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(8)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -21587,6 +21604,7 @@ uae_u32 REGPARAM2 op_58fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -21757,6 +21775,7 @@ uae_u32 REGPARAM2 op_59fa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(9)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -21774,6 +21793,7 @@ uae_u32 REGPARAM2 op_59fb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -21944,6 +21964,7 @@ uae_u32 REGPARAM2 op_5afa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(10)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -21961,6 +21982,7 @@ uae_u32 REGPARAM2 op_5afb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -22131,6 +22153,7 @@ uae_u32 REGPARAM2 op_5bfa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(11)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -22148,6 +22171,7 @@ uae_u32 REGPARAM2 op_5bfb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -22318,6 +22342,7 @@ uae_u32 REGPARAM2 op_5cfa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(12)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -22335,6 +22360,7 @@ uae_u32 REGPARAM2 op_5cfb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -22505,6 +22531,7 @@ uae_u32 REGPARAM2 op_5dfa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(13)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -22522,6 +22549,7 @@ uae_u32 REGPARAM2 op_5dfb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -22692,6 +22720,7 @@ uae_u32 REGPARAM2 op_5efa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(14)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -22709,6 +22738,7 @@ uae_u32 REGPARAM2 op_5efb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -22879,6 +22909,7 @@ uae_u32 REGPARAM2 op_5ffa_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(4);
 	if (cctrue(15)) {
 		Exception_cpu_oldpc(7,oldpc);
@@ -22896,6 +22927,7 @@ uae_u32 REGPARAM2 op_5ffb_40_ff(uae_u32 opcode)
 	uaecptr oldpc = m68k_getpc();
 	uae_s32 dummy;
 	dummy = get_dilong(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -37965,6 +37997,7 @@ uae_u32 REGPARAM2 op_f27a_40_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	m68k_incpc(6);
 	fpuop_trapcc (opcode, oldpc, extra);
 
@@ -37983,6 +38016,7 @@ uae_u32 REGPARAM2 op_f27b_40_ff(uae_u32 opcode)
 	uae_u16 extra = get_diword(2);
 	uae_s32 dummy;
 	dummy = get_dilong(4);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;

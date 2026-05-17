@@ -25812,6 +25812,7 @@ void REGPARAM2 op_50fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(0)) {
@@ -25831,6 +25832,7 @@ void REGPARAM2 op_50fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -26849,6 +26851,7 @@ void REGPARAM2 op_51fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(1)) {
@@ -26868,6 +26871,7 @@ void REGPARAM2 op_51fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27098,6 +27102,7 @@ void REGPARAM2 op_52fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(2)) {
@@ -27117,6 +27122,7 @@ void REGPARAM2 op_52fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27347,6 +27353,7 @@ void REGPARAM2 op_53fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(3)) {
@@ -27366,6 +27373,7 @@ void REGPARAM2 op_53fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27596,6 +27604,7 @@ void REGPARAM2 op_54fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(4)) {
@@ -27615,6 +27624,7 @@ void REGPARAM2 op_54fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -27845,6 +27855,7 @@ void REGPARAM2 op_55fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(5)) {
@@ -27864,6 +27875,7 @@ void REGPARAM2 op_55fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -28094,6 +28106,7 @@ void REGPARAM2 op_56fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(6)) {
@@ -28113,6 +28126,7 @@ void REGPARAM2 op_56fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -28343,6 +28357,7 @@ void REGPARAM2 op_57fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(7)) {
@@ -28362,6 +28377,7 @@ void REGPARAM2 op_57fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -28592,6 +28608,7 @@ void REGPARAM2 op_58fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(8)) {
@@ -28611,6 +28628,7 @@ void REGPARAM2 op_58fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -28841,6 +28859,7 @@ void REGPARAM2 op_59fa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(9)) {
@@ -28860,6 +28879,7 @@ void REGPARAM2 op_59fb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -29090,6 +29110,7 @@ void REGPARAM2 op_5afa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(10)) {
@@ -29109,6 +29130,7 @@ void REGPARAM2 op_5afb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -29339,6 +29361,7 @@ void REGPARAM2 op_5bfa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(11)) {
@@ -29358,6 +29381,7 @@ void REGPARAM2 op_5bfb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -29588,6 +29612,7 @@ void REGPARAM2 op_5cfa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(12)) {
@@ -29607,6 +29632,7 @@ void REGPARAM2 op_5cfb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -29837,6 +29863,7 @@ void REGPARAM2 op_5dfa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(13)) {
@@ -29856,6 +29883,7 @@ void REGPARAM2 op_5dfb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -30086,6 +30114,7 @@ void REGPARAM2 op_5efa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(14)) {
@@ -30105,6 +30134,7 @@ void REGPARAM2 op_5efb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -30335,6 +30365,7 @@ void REGPARAM2 op_5ffa_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(4);
 	if (cctrue(15)) {
@@ -30354,6 +30385,7 @@ void REGPARAM2 op_5ffb_35_ff(uae_u32 opcode)
 	/*int count_cycles = 0;*/ // Warning fix: set but not used
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(2);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
@@ -48855,6 +48887,7 @@ void REGPARAM2 op_f27a_35_ff(uae_u32 opcode)
  (void)dummy;
  (void)dummy;
  (void)dummy;
+ (void)dummy;
 	/* OP zero */
 	m68k_incpci(6);
 	fpuop_trapcc (opcode, oldpc, extra);
@@ -48879,6 +48912,7 @@ void REGPARAM2 op_f27b_35_ff(uae_u32 opcode)
 	uae_u16 extra = get_iword_mmu030c_state(2);
 	uae_s32 dummy;
 	dummy = get_ilong_mmu030c_state(4);
+ (void)dummy;
  (void)dummy;
  (void)dummy;
  (void)dummy;
