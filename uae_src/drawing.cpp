@@ -1491,7 +1491,7 @@ static bool get_genlock_very_rare_and_complex_case(uae_u8 v)
 			if (v >= 128 && v < 192 && (currprefs.ecs_genlock_features_colorkey_mask[2] & (1LL << (v - 128)))) {
 				return false;
 			}
-			if (v >= 192 && v < 256 && (currprefs.ecs_genlock_features_colorkey_mask[3] & (1LL << (v - 192)))) {
+			if (v >= 192 && (currprefs.ecs_genlock_features_colorkey_mask[3] & (1LL << (v - 192)))) {
 				return false;
 			}
 		} else {
@@ -5186,6 +5186,9 @@ void hsync_record_line_state_last(int lineno, enum nln_how how, int changed)
 		case nln_lower_black:
 		case nln_lower_black_always:
 		hsync_record_line_state(lineno, how, 0);
+		break;
+		default:
+		// Other line types don't need special handling here
 		break;
 	}
 }
