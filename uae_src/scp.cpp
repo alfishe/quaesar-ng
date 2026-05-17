@@ -113,6 +113,8 @@ int scp_loadtrack(
     int track, int *tracklength, int *multirev,
     int *gapoffset, int *nextrev, bool setrev)
 {
+    (void)nextrev;
+    (void)setrev;
     struct scpdrive *d = &drive[drv];
     uint8_t trk_header[4];
     uint32_t longwords[3];

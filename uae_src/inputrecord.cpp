@@ -175,7 +175,7 @@ static int inprec_pstart (uae_u8 type)
 	uae_u32 hc = hsync_counter;
 	uae_u8 hpos = current_hpos ();
 	frame_time_t cycles = get_cycles ();
-	static uae_u8 *lastp; // Only used in #if 0 debug block below
+	// static uae_u8 *lastp; // Only used in #if 0 debug block
 	uae_u32 hc_orig, hc2_orig;
 	int mvp = current_maxvpos ();
 
