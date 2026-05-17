@@ -116,6 +116,7 @@ static void rdbdump(FILE* h, uae_u64 offset, uae_u8* buf, int blocksize) {
 // static int ismounted (int hd)
 // FIXME:
 static int ismounted(FILE* f) {
+    (void)f;
     STUB("");
     int mounted;
     // mounted = 1;
@@ -125,6 +126,7 @@ static int ismounted(FILE* f) {
 
 #define CA "Commodore\0Amiga\0"
 static int safetycheck(FILE* h, const char* name, uae_u64 offset, uae_u8* buf, int blocksize) {
+    (void)name;
     int i, j, blocks = 63, empty = 1;
     long outlen;
 
@@ -437,6 +439,7 @@ void hdf_close_target(struct hardfiledata* hfd) {
 }
 
 int hdf_dup_target(struct hardfiledata* dhfd, const struct hardfiledata* shfd) {
+    (void)dhfd;
     if (!shfd->handle_valid)
         return 0;
 
@@ -567,6 +570,7 @@ static int hdf_read_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, in
 
 // TODO: Implement error handling
 int hdf_read_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int len, uae_u32* error) {
+    (void)error;
     int got = 0;
     uae_u8* p = (uae_u8*)buffer;
 
@@ -628,6 +632,7 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
         const TCHAR* name = hfd->emptyname == NULL ? _T("<unknown>") : hfd->emptyname;
         if (offset == 0) {
             long outlen2;
+            (void)outlen2; // Suppress set-but-not-used warning
             uae_u8* tmp;
             int tmplen = 512;
             tmp = (uae_u8*)xmalloc(uae_u8, tmplen);
