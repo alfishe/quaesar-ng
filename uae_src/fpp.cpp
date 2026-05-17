@@ -149,7 +149,7 @@ FPP_ABP fpp_move;
 #define DEBUG_FPP 0
 #define EXCEPTION_FPP 0
 
-STATIC_INLINE int isinrom (void)
+STATIC_INLINE int __attribute__((unused)) isinrom (void)
 {
 	return (munge24 (m68k_getpc ()) & 0xFFF80000) == 0xF80000 && !currprefs.mmu_model;
 }
@@ -725,7 +725,7 @@ static void fpnan (fpdata *fpd)
 	fpp_to_exten(fpd, xhex_nan[0], xhex_nan[1], xhex_nan[2]);
 }
 
-static void fpclear (fpdata *fpd)
+static void __attribute__((unused)) fpclear (fpdata *fpd)
 {
 	fpp_from_int(fpd, 0);
 }
@@ -776,7 +776,7 @@ bool fpu_get_constant(fpdata *fpd, int cr)
 {
 	uae_u32 f[3] = { 0, 0, 0 };
 	int entry = 0;
-	bool round = true;
+	// bool round = true; // Unused
 	int mode = (regs.fpcr >> 4) & 3;
 	int prec = (regs.fpcr >> 6) & 3;
 	
@@ -1107,6 +1107,7 @@ static bool if_no_fpu(void)
 
 static bool fault_if_no_fpu(uae_u16 opcode, uae_u16 extra, uaecptr ea, bool easet, uaecptr oldpc)
 {
+	(void)extra;
 	if (if_no_fpu()) {
 #if EXCEPTION_FPP
 		write_log(_T("no FPU: %04X-%04X PC=%08X\n"), opcode, extra, oldpc);
@@ -1300,7 +1301,7 @@ static bool fault_if_unimplemented_680x0 (uae_u16 opcode, uae_u16 extra, uaecptr
 	return false;
 }
 
-static bool fault_if_unimplemented_6888x (uae_u16 opcode, uae_u16 extra, uaecptr oldpc)
+static bool __attribute__((unused)) fault_if_unimplemented_6888x (uae_u16 opcode, uae_u16 extra, uaecptr oldpc)
 {
 	if ((currprefs.fpu_model == 68881 || currprefs.fpu_model == 68882) && currprefs.fpu_no_unimplemented) {
 		uae_u16 v = extra & 0x7f;
@@ -1409,6 +1410,7 @@ static bool fault_if_no_fpu_u (uae_u16 opcode, uae_u16 extra, uaecptr ea, bool e
 
 static bool fault_if_no_6888x (uae_u16 opcode, uae_u16 extra, uaecptr oldpc)
 {
+	(void)extra;
 	if (currprefs.cpu_model < 68040 && currprefs.fpu_model <= 0) {
 #if EXCEPTION_FPP
 		write_log(_T("6888x no FPU: %04X-%04X PC=%08X\n"), opcode, extra, oldpc);
@@ -2746,7 +2748,7 @@ retry:
 		if (frame_version == fpu_version) { // not null frame
 			uae_u32 biu_flags;
 			uae_u32 frame_size = (d >> 16) & 0xff;
-			uae_u32 biu_offset = frame_size - 4;
+			// uae_u32 biu_offset = frame_size - 4; // Unused
 			regs.fpu_state = 1;
 
 			if (frame_size == 0x18 || frame_size == 0x38) { // idle
