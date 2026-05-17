@@ -1871,34 +1871,34 @@ void decide_blitter(int until_hpos)
 void decide_blitter (int hpos) { }
 #endif
 
-static void blitter_force_finish(bool state)
-{
-	(void)state; // Parameter currently unused
-	uae_u16 odmacon;
-	if (!blt_info.blit_main && !blt_info.blit_finald)
-		return;
-	/* blitter is currently running
-	* force finish (no blitter state support yet)
-	*/
-	odmacon = dmacon;
-	dmacon |= DMA_MASTER | DMA_BLITTER;
-	if (state)
-		write_log(_T("forcing blitter finish\n"));
-	if (blitter_cycle_exact && !immediate_blits) {
-		int rounds = 10000;
-		while ((blt_info.blit_main || blt_info.blit_finald) && rounds > 0) {
-			memset(cycle_line_slot, 0, sizeof(cycle_line_slot));
-			decide_blitter(-1);
-			rounds--;
-		}
-		if (rounds == 0)
-			write_log(_T("blitter froze!?\n"));
-	} else {
-		actually_do_blit();
-	}
-	blitter_done_all(-1);
-	dmacon = odmacon;
-}
+// static void blitter_force_finish(bool state) // Unused function - kept for future use
+// {
+// 	(void)state; // Parameter currently unused
+// 	uae_u16 odmacon;
+// 	if (!blt_info.blit_main && !blt_info.blit_finald)
+// 		return;
+// 	/* blitter is currently running
+// 	* force finish (no blitter state support yet)
+// 	*/
+// 	odmacon = dmacon;
+// 	dmacon |= DMA_MASTER | DMA_BLITTER;
+// 	if (state)
+// 		write_log(_T("forcing blitter finish\n"));
+// 	if (blitter_cycle_exact && !immediate_blits) {
+// 		int rounds = 10000;
+// 		while ((blt_info.blit_main || blt_info.blit_finald) && rounds > 0) {
+// 			memset(cycle_line_slot, 0, sizeof(cycle_line_slot));
+// 			decide_blitter(-1);
+// 			rounds--;
+// 		}
+// 		if (rounds == 0)
+// 			write_log(_T("blitter froze!?\n"));
+// 	} else {
+// 		actually_do_blit();
+// 	}
+// 	blitter_done_all(-1);
+// 	dmacon = odmacon;
+// }
 
 static void blit_modset (void)
 {

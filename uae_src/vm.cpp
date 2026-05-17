@@ -284,6 +284,7 @@ bool uae_vm_free(void *address, int size)
 
 static void *try_reserve(uintptr_t try_addr, uae_u32 size, int flags)
 {
+	(void)flags; // Unused parameter
 	void *address = NULL;
 	if (try_addr) {
 		uae_log("VM: Reserve  0x%-8x bytes, try address 0x%llx\n",
