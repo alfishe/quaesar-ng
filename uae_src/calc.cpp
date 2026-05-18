@@ -47,7 +47,7 @@ static TCHAR *parsedvaluess[MAX_VALUES];
 // 2            * / %           left to right
 // 3            + -             left to right
 // 4            =               right to left
-static int op_preced(const TCHAR c)
+static int op_preced(int c)
 {
     switch(c)    {
         case 0xf0: case 0xf1: case 0xf2:
@@ -68,7 +68,7 @@ static int op_preced(const TCHAR c)
     return 0;
 }
  
-static bool op_left_assoc(const TCHAR c)
+static bool op_left_assoc(int c)
 {
     switch(c)    {
         // left to right
@@ -83,7 +83,7 @@ static bool op_left_assoc(const TCHAR c)
     return false;
 }
  
-static unsigned int op_arg_count(const TCHAR c)
+static unsigned int op_arg_count(int c)
 {
     switch(c)  {
         case '?':
@@ -308,7 +308,7 @@ static TCHAR *stacktostring(struct calcstack *st)
 }
 
 
-static TCHAR *docalcxs(TCHAR op, TCHAR *v1, TCHAR *v2, double *voutp)
+static TCHAR *docalcxs(int op, TCHAR *v1, TCHAR *v2, double *voutp)
 {
     TCHAR tmp[MAX_DPATH];
     tmp[0] = 0;
@@ -346,7 +346,7 @@ static TCHAR *docalcxs(TCHAR op, TCHAR *v1, TCHAR *v2, double *voutp)
     return my_strdup(tmp);
 }
 
-static bool docalcx(TCHAR op, double v1, double v2, double *valp)
+static bool docalcx(int op, double v1, double v2, double *valp)
 {
     double v = 0;
 	switch (op)

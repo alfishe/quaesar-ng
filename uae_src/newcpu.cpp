@@ -404,7 +404,7 @@ static bool check_trace (void)
 	if (!cputrace.readcounter && !cputrace.writecounter && !cputrace.cyclecounter) {
 		if (cpu_tracer != -2) {
 			write_log (_T("CPU trace: dma_cycle() enabled. %08x %08x NOW=%08llx\n"),
-				cputrace.cyclecounter_pre, cputrace.cyclecounter_post, get_cycles ());
+				cputrace.cyclecounter_pre, cputrace.cyclecounter_post, (unsigned long long)get_cycles ());
 			cpu_tracer = -2; // dma_cycle() allowed to work now
 		}
 	}
@@ -427,7 +427,7 @@ static bool check_trace (void)
 	x_do_cycles_pre = x2_do_cycles_pre;
 	x_do_cycles_post = x2_do_cycles_post;
 	set_x_cp_funcs();
-	write_log(_T("CPU tracer playback complete. STARTCYCLES=%016llx NOWCYCLES=%016llx\n"), cputrace.startcycles, get_cycles());
+	write_log(_T("CPU tracer playback complete. STARTCYCLES=%016llx NOWCYCLES=%016llx\n"), (unsigned long long)cputrace.startcycles, (unsigned long long)get_cycles());
 	cputrace.needendcycles = 1;
 	cpu_tracer = 0;
 	return true;
@@ -5085,7 +5085,7 @@ static void m68k_run_1_ce (void)
 cont:
 				if (cputrace.needendcycles) {
 					cputrace.needendcycles = 0;
-					write_log(_T("STARTCYCLES=%016llx ENDCYCLES=%016llx\n"), cputrace.startcycles, get_cycles());
+					write_log(_T("STARTCYCLES=%016llx ENDCYCLES=%016llx\n"), (unsigned long long)cputrace.startcycles, (unsigned long long)get_cycles());
 #ifdef DEBUGGER
 					log_dma_record ();
 #endif
@@ -7229,7 +7229,7 @@ uae_u8 *save_cpu_trace(size_t *len, uae_u8 *dstptr)
 	save_u32 (cputrace.writecounter);
 	save_u32 (cputrace.memoryoffset);
 	write_log (_T("CPUT SAVE: PC=%08x C=%016llX %08x %08x %08x %d %d %d\n"),
-		cputrace.pc, cputrace.startcycles,
+		cputrace.pc, (unsigned long long)cputrace.startcycles,
 		cputrace.cyclecounter, cputrace.cyclecounter_pre, cputrace.cyclecounter_post,
 		cputrace.readcounter, cputrace.writecounter, cputrace.memoryoffset);
 	for (int i = 0; i < cputrace.memoryoffset; i++) {

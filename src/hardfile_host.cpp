@@ -337,7 +337,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
                 write_log(
                     "osx: found raw device: block_size=%u "
                     "block_count=%llu\n",
-                    block_size, block_count);
+                    block_size, (unsigned long long)block_count);
                 low = block_size * block_count;
 #elif defined(OPENBSD)
                 struct disklabel label;
@@ -348,7 +348,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
                 write_log("openbsd: bytes per sector: %u\n", label.d_secsize);
                 write_log("openbsd: sectors per unit: %u\n", label.d_secperunit);
                 low = label.d_secsize * label.d_secperunit;
-                write_log("openbsd: total bytes: %llu\n", low);
+                write_log("openbsd: total bytes: %llu\n", (unsigned long long)low);
 #endif
             }
 #endif  // OPENBSD || MACOSX
@@ -366,7 +366,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
             low &= ~(hfd->ci.blocksize - 1);
             hfd->physsize = hfd->virtsize = low;
             if (g_debug) {
-                write_log("set physsize = virtsize = %lld (low)\n", hfd->virtsize);
+                write_log("set physsize = virtsize = %lld (low)\n", (long long)hfd->virtsize);
             }
             hfd->handle_valid = HDF_HANDLE_LINUX;
             if (hfd->physsize < 64 * 1024 * 1024 && zmode) {
@@ -380,7 +380,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
                 zfile_fseek(hfd->handle->zf, 0, SEEK_END);
                 hfd->physsize = hfd->virtsize = zfile_ftell(hfd->handle->zf);
                 if (g_debug) {
-                    write_log("set physsize = virtsize = %lld\n", hfd->virtsize);
+                    write_log("set physsize = virtsize = %lld\n", (long long)hfd->virtsize);
                 }
                 zfile_fseek(hfd->handle->zf, 0, SEEK_SET);
                 hfd->handle_valid = HDF_HANDLE_ZFILE;
@@ -454,13 +454,13 @@ static int hdf_seek(struct hardfiledata* hfd, uae_u64 offset) {
         abort();
     }
     if (offset >= hfd->physsize - hfd->virtual_size) {
-        gui_message("hd: tried to seek out of bounds! (0x%llx >= 0x%llx)\n", offset, hfd->physsize);
+        gui_message("hd: tried to seek out of bounds! (0x%llx >= 0x%llx)\n", (unsigned long long)offset, (unsigned long long)hfd->physsize);
         abort();
     }
     offset += hfd->offset;
     if (offset & (hfd->ci.blocksize - 1)) {
         gui_message("hd: poscheck failed, offset=0x%llx not aligned to blocksize=%d! (0x%llx & 0x%04.4x = 0x%04.4x)\n",
-                    offset, hfd->ci.blocksize, offset, hfd->ci.blocksize, offset & (hfd->ci.blocksize - 1));
+                    (unsigned long long)offset, hfd->ci.blocksize, (unsigned long long)offset, hfd->ci.blocksize, (unsigned)(offset & (hfd->ci.blocksize - 1)));
         abort();
     }
     if (hfd->handle_valid == HDF_HANDLE_LINUX) {
@@ -494,18 +494,18 @@ static void poscheck(struct hardfiledata* hfd, int len) {
         abort();
     }
     if (pos < hfd->offset) {
-        gui_message("hd: poscheck failed, offset out of bounds! (0x%llx < 0x%llx)", pos, hfd->offset);
+        gui_message("hd: poscheck failed, offset out of bounds! (0x%llx < 0x%llx)", (unsigned long long)pos, (unsigned long long)hfd->offset);
         abort();
     }
     if (pos >= hfd->offset + hfd->physsize - hfd->virtual_size ||
         pos >= hfd->offset + hfd->physsize + len - hfd->virtual_size) {
-        gui_message("hd: poscheck failed, offset out of bounds! (0x%llx >= 0x%llx, LEN=%d)", pos,
-                    hfd->offset + hfd->physsize, len);
+        gui_message("hd: poscheck failed, offset out of bounds! (0x%llx >= 0x%llx, LEN=%d)", (unsigned long long)pos,
+                    (unsigned long long)(hfd->offset + hfd->physsize), len);
         abort();
     }
     if (pos & (hfd->ci.blocksize - 1)) {
-        gui_message("hd: poscheck failed, offset not aligned to blocksize! (0x%llx & 0x%04.4x = 0x%04.4x\n", pos,
-                    hfd->ci.blocksize, pos & hfd->ci.blocksize);
+        gui_message("hd: poscheck failed, offset not aligned to blocksize! (0x%llx & 0x%04.4x = 0x%04.4x\n", (unsigned long long)pos,
+                    hfd->ci.blocksize, (unsigned)(pos & hfd->ci.blocksize));
         abort();
     }
 }
@@ -563,7 +563,7 @@ static int hdf_read_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, in
         memcpy(buffer, hfd->cache + coffset, len);
         return len;
     }
-    write_log("hdf_read: cache bug! offset=0x%llx len=%d\n", offset, len);
+    write_log("hdf_read: cache bug! offset=0x%llx len=%d\n", (unsigned long long)offset, len);
     hfd->cache_valid = 0;
     return 0;
 }
@@ -627,7 +627,7 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
         outlen = fwrite(hfd->cache, 1, len, hfd->handle->h);
         // fflush(hfd->handle->h);
         if (g_debug) {
-            write_log("wrote %u bytes (wanted %d) at offset %llx\n", outlen, len, offset);
+            write_log("wrote %u bytes (wanted %d) at offset %llx\n", outlen, len, (unsigned long long)offset);
         }
         const TCHAR* name = hfd->emptyname == NULL ? _T("<unknown>") : hfd->emptyname;
         if (offset == 0) {
@@ -655,7 +655,7 @@ int hdf_write_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int
     uae_u8* p = (uae_u8*)buffer;
 
     if (g_debug) {
-        write_log("hdf_write_target off %llx len %d virtual size %lld\n", offset, len, hfd->virtual_size);
+        write_log("hdf_write_target off %llx len %d virtual size %lld\n", (unsigned long long)offset, len, (long long)hfd->virtual_size);
     }
     if (hfd->drive_empty) {
         if (g_debug) {
@@ -696,10 +696,10 @@ int hdf_resize_target(struct hardfiledata* hfd, uae_u64 newsize) {
         uae_log(
             "hdf_resize_target: failed to write byte at position "
             "%lld errno %d\n",
-            newsize - 1, errno);
+            (long long)(newsize - 1), errno);
         return 0;
     }
-    uae_log("hdf_resize_target: %lld -> %lld\n", hfd->physsize, newsize);
+    uae_log("hdf_resize_target: %lld -> %lld\n", (long long)hfd->physsize, (long long)newsize);
     hfd->physsize = newsize;
     return 1;
 }

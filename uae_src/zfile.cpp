@@ -551,7 +551,7 @@ static struct zfile *vhd (struct zfile *z)
 	write_log (_T("%s is VHD %s image, virtual size=%lldK\n"),
 		zfile_getname (z),
 		zvhd->vhd_type == 2 ? _T("fixed") : _T("dynamic"),
-		zvhd->virtsize / 1024);
+		(long long)(zvhd->virtsize / 1024));
 	return z;
 nonvhd:
 end:
