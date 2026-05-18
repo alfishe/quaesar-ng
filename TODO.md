@@ -1,12 +1,12 @@
 # Compiler Warning Elimination TODO
 
 **Original Warnings:** 5,620  
-**Current Warnings:** 3,295  
-**Eliminated:** 2,325 (41.4% reduction)  
-**Files Remaining:** ~120  
-**Last Updated:** 2025-05-15  
+**Current Warnings:** 2,797  
+**Eliminated:** 2,823 (50.2% reduction)  
+**Files Remaining:** ~110  
+**Last Updated:** 2025-05-17  
 
-**Batches Completed:** 12 (pushed to `uae-warnings-only` branch)
+**Batches Completed:** 14 (pushed to `uae-warnings-only` branch)
 
 ---
 
