@@ -10,20 +10,34 @@
 
 ---
 
-## Warning Categories (by count)
+## Completed Batches
+
+| Batch | Warnings Fixed | Description |
+|-------|---------------|-------------|
+| 1-4 | ~1,000 | Initial cleanup (uae_src/src files) |
+| 5 | ~180 | fdi2raw.cpp, traps.cpp, gfxutil.cpp, linetoscr.cpp |
+| 6 | 29 | Final remaining warnings from initial scan |
+| 7-10 | 220 | 'dummy' set-but-not-used in cpuemu files (3 attempts) |
+| 11 | 138 | Unused functions with `__attribute__((unused))` |
+| 12 | 1 | newcpu.cpp unused parameter |
+| 13 | 249 | inputevents.def: Fix DEFEVENT/DEFEVENT2 macros (missing data2 field) |
+| 14 | 250 | identify.cpp: Fix customData mask arrays + unused variable |
+
+**Total Fixed:** 2,823 warnings (50.2% reduction)
+
+---
+
+## Warning Categories (by count) - REMAINING
 
 | Category | Count | Strategy |
 |----------|-------|----------|
-| missing-field-initializers | 1,449 | Add missing fields to struct initializers |
-| missing-braces | 561 | Add braces around sub-object initialization |
-| unused-parameter | 456 | Add `(void)param;` to function bodies |
-| unused-but-set-variable | 378 | Comment out or add `(void)` casts |
-| sign-compare | 207 | Cast to matching types |
-| unused-variable | 187 | Comment out or use |
-| unused-function | 48 | Add `__attribute__((unused))` |
-| format-mismatch | ~8 | Fix printf format specifiers |
-| null-conversion | 1 | Use `0` for integers |
-| other | 8 | Case-by-case fixes |
+| missing-field-initializers | ~1,100 | Add missing fields to struct initializers |
+| missing-braces | ~560 | Add braces around sub-object initialization |
+| unused-parameter | ~450 | Add `(void)param;` to function bodies |
+| unused-but-set-variable | ~370 | Comment out or add `(void)` casts |
+| sign-compare | ~200 | Cast to matching types |
+| unused-variable | ~180 | Comment out or use |
+| other | ~50 | Case-by-case fixes |
 
 ---
 
