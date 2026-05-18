@@ -3154,17 +3154,21 @@ Exit:;
 
 #else
 
-static bool sndboard_init_capture(int freq) { 
+static bool sndboard_init_capture(int freq) {
+	(void)freq; 
     return false; 
 }
 
 static void sndboard_free_capture(void) { }
 
-static uae_u8 *sndboard_get_buffer(int *frames) { 
+static uae_u8 *sndboard_get_buffer(int *frames) {
+	(void)frames; 
     return NULL; 
 }
 
-static void sndboard_release_buffer(uae_u8 *buffer, int frames) { 
+static void sndboard_release_buffer(uae_u8 *buffer, int frames) {
+	(void)buffer;
+	(void)frames; 
 }
 
 #endif

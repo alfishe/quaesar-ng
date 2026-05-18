@@ -616,6 +616,7 @@ static int hdf_read2(struct hardfiledata *hfd, void *buffer, uae_u64 offset, int
 
 static void hdf_init_cache(struct hardfiledata *hfd)
 {
+	(void)hfd;
 }
 static void hdf_flush_cache(struct hardfiledata *hdf)
 {

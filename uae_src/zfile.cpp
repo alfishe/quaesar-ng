@@ -2882,6 +2882,7 @@ static struct znode *get_znode (struct zvolume *zv, const TCHAR *ppath, int);
 
 static void zfile_fopen_archive_recurse2 (struct zvolume *zv, struct znode *zn, int flags)
 {
+	(void)flags;
 	struct zvolume *zvnew;
 	struct znode *zndir;
 	TCHAR tmp[MAX_DPATH];

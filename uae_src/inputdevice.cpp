@@ -8586,10 +8586,12 @@ static TCHAR *get_int_friendlyname (int num)
 }
 static TCHAR *get_int_uniquename (int num)
 {
+	(void)num;
 	return my_strdup(_T("INTERNALEVENTS1"));
 }
 static int get_int_widget_num (int num)
 {
+	(void)num;
 	int i;
 	for (i = 0; internaleventlabels[i]; i++);
 	return i;

@@ -812,10 +812,12 @@ static void do_cycles_post (int cycles, uae_u32 v)
 }
 static void do_cycles_ce_post (int cycles, uae_u32 v)
 {
+	(void)v;
 	do_cycles_ce (cycles);
 }
 static void do_cycles_ce020_post (int cycles, uae_u32 v)
 {
+	(void)v;
 	do_cycles_ce020 (cycles);
 }
 

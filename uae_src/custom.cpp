@@ -2754,6 +2754,7 @@ static uaecptr update_refptr(int slot, int end, bool process, bool overwrite)
 // Strobe+refresh (always first, second possible if ECS and NTSC) slot conflict
 static void fetch_strobe_conflict(int nr, int fm, int hpos, bool addmodulo)
 {
+	(void)fm;
 	int slot = (hpos - REFRESH_FIRST_HPOS) / 2;
 	static int warned1 = 30;
 
@@ -4135,6 +4136,7 @@ static void record_color_change(int hpos, int regno, uae_u32 value);
 
 static void hack_shres_delay(int hpos)
 {
+	(void)hpos;
 #if 0
 	if (currprefs.chipset_hr)
 		return;
@@ -5583,6 +5585,7 @@ superhires pixels (if AGA).  */
 
 static void record_sprite(int num, int sprxp, uae_u16 *data, uae_u16 *datb, unsigned int ctl)
 {
+	(void)ctl;
 	struct sprite_entry *e = curr_sprite_entries + next_sprite_entry;
 	int word_offs;
 	uae_u32 collision_mask;
@@ -8178,16 +8181,19 @@ static void SPRHSTRT(int hpos, uae_u16 v)
 }
 static void SPRHSTOP(int hpos, uae_u16 v)
 {
+	(void)hpos;
 	sprhstop = v;
 	sprhstop_v = v & (MAXVPOS_LINES_ECS - 1);
 }
 static void BPLHSTRT(int hpos, uae_u16 v)
 {
+	(void)hpos;
 	bplhstrt = v;
 	bplhstrt_v = v & (MAXVPOS_LINES_ECS - 1);
 }
 static void BPLHSTOP(int hpos, uae_u16 v)
 {
+	(void)hpos;
 	bplhstop = v;
 	bplhstop_v = v & (MAXVPOS_LINES_ECS - 1);
 }
@@ -9406,6 +9412,7 @@ static void DIWSTRT_next(uae_u32 v)
 }
 static void DIWSTRT(int hpos, uae_u16 v)
 {
+	(void)hpos;
 	if (diwstrt == v && !diwhigh_written) {
 		return;
 	}
@@ -9423,6 +9430,7 @@ static void DIWSTOP_next(uae_u32 v)
 }
 static void DIWSTOP(int hpos, uae_u16 v)
 {
+	(void)hpos;
 	if (diwstop == v && !diwhigh_written) {
 		return;
 	}
@@ -9441,6 +9449,7 @@ static void DIWHIGH_next(uae_u32 v)
 }
 static void DIWHIGH(int hpos, uae_u16 v)
 {
+	(void)hpos;
 	if (!ecs_agnus && !ecs_denise) {
 		return;
 	}

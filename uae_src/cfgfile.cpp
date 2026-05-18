@@ -8946,6 +8946,7 @@ static int bip_a3000 (struct uae_prefs *p, int config, int compa, int romcheck)
 }
 static int bip_a4000 (struct uae_prefs *p, int config, int compa, int romcheck)
 {
+	(void)compa;
 	int roms[8];
 
 	roms[0] = 16;
@@ -8993,6 +8994,7 @@ static int bip_a4000 (struct uae_prefs *p, int config, int compa, int romcheck)
 }
 static int bip_a4000t (struct uae_prefs *p, int config, int compa, int romcheck)
 {
+	(void)compa;
 
 	int roms[8];
 

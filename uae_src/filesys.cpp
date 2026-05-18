@@ -3821,6 +3821,7 @@ static void action_add_notify(TrapContext *ctx, Unit *unit, dpacket *packet)
 }
 static void	action_remove_notify(TrapContext *ctx, Unit *unit, dpacket *packet)
 {
+	(void)ctx;
 	uaecptr nr = GET_PCK_ARG1 (packet);
 	Notify *n;
 	int hash;
@@ -5983,6 +5984,7 @@ static void	action_examine_fh(TrapContext *ctx, Unit *unit, dpacket *packet, boo
 * (which seems to match the Autodoc description). */
 static void	action_set_file_size(TrapContext *ctx, Unit *unit, dpacket *packet)
 {
+	(void)ctx;
 	Key *k, *k1;
 	off_t offset = GET_PCK_ARG2 (packet);
 	int mode = (uae_s32)GET_PCK_ARG3 (packet);

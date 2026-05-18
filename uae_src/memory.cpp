@@ -784,10 +784,12 @@ static uae_u32 REGPARAM2 chipmem_dummy_bget (uaecptr addr)
 }
 static uae_u32 REGPARAM2 chipmem_dummy_wget (uaecptr addr)
 {
+	(void)addr;
 	return chipmem_dummy ();
 }
 static uae_u32 REGPARAM2 chipmem_dummy_lget (uaecptr addr)
 {
+	(void)addr;
 	return (chipmem_dummy () << 16) | chipmem_dummy ();
 }
 
@@ -1190,16 +1192,19 @@ MEMORY_XLATE(extendedkickmem);
 
 static void REGPARAM2 extendedkickmem_lput (uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log (_T("Illegal extendedkickmem lput at %08x\n"), addr);
 }
 static void REGPARAM2 extendedkickmem_wput (uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log (_T("Illegal extendedkickmem wput at %08x\n"), addr);
 }
 static void REGPARAM2 extendedkickmem_bput (uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log (_T("Illegal extendedkickmem lput at %08x\n"), addr);
 }
@@ -1226,16 +1231,19 @@ MEMORY_XLATE(extendedkickmem2b);
 
 static void REGPARAM2 extendedkickmem2a_lput (uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log (_T("Illegal extendedkickmem2a lput at %08x\n"), addr);
 }
 static void REGPARAM2 extendedkickmem2a_wput (uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log (_T("Illegal extendedkickmem2a wput at %08x\n"), addr);
 }
 static void REGPARAM2 extendedkickmem2a_bput (uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log (_T("Illegal extendedkickmem2a lput at %08x\n"), addr);
 }
@@ -1247,11 +1255,13 @@ static void REGPARAM2 extendedkickmem2b_lput(uaecptr addr, uae_u32 b)
 }
 static void REGPARAM2 extendedkickmem2b_wput(uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log(_T("Illegal extendedkickmem2b wput at %08x\n"), addr);
 }
 static void REGPARAM2 extendedkickmem2b_bput(uaecptr addr, uae_u32 b)
 {
+	(void)b;
 	if (currprefs.illegal_mem)
 		write_log(_T("Illegal extendedkickmem2b lput at %08x\n"), addr);
 }

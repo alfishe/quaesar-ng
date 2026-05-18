@@ -1876,6 +1876,7 @@ static uae_u8 render_sprites(int pos, int dualpf, uae_u8 apixel, int aga)
 
 static uae_u8 sh_render_sprites(int pos, int dualpf, uae_u8 apixel, int aga)
 {
+	(void)aga;
 	struct spritepixelsbuf *spb = &spritepixels[pos];
 	unsigned int v = spb->data;
 	int *shift_lookup = dualpf ? (bpldualpfpri ? dblpf_ms2 : dblpf_ms1) : dblpf_ms;
@@ -2869,6 +2870,7 @@ function only pass in constant arguments (except for E).  This means
 that many of the if statements will go away completely after inlining.  */
 STATIC_INLINE void draw_sprites_1(struct sprite_entry *e, int dualpf, int has_attach)
 {
+	(void)dualpf;
 	uae_u16 *buf = spixels + e->first_pixel;
 	uae_u8 *stbuf = spixstate.stb + e->first_pixel;
 	uae_u16 *stfmbuf = spixstate.stbfm + e->first_pixel;

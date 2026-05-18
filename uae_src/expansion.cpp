@@ -1003,6 +1003,8 @@ MEMORY_ARRAY_FUNCTIONS(romboardmem, 3);
 
 static void REGPARAM2 empty_put(uaecptr addr, uae_u32 v)
 {
+	(void)v;
+	(void)addr;
 }
 
 addrbank romboardmem_bank[MAX_ROM_BOARDS] =

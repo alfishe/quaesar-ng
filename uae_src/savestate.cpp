@@ -216,6 +216,7 @@ void save_string_func (uae_u8 **dstp, const TCHAR *from)
 }
 void save_path_func (uae_u8 **dstp, const TCHAR *from, int type)
 {
+	(void)type;
 	save_string_func (dstp, from);
 }
 void save_path_full_func(uae_u8 **dstp, const TCHAR *spath, int type)
