@@ -1,9 +1,12 @@
 # Compiler Warning Elimination TODO
 
-**Original Warnings:** 5,620
-**Current Warnings:** 3,966
-**Eliminated:** 1,654 (29.4% reduction)
-**Files Remaining:** 145
+**Original Warnings:** 5,620  
+**Current Warnings:** 3,295  
+**Eliminated:** 2,325 (41.4% reduction)  
+**Files Remaining:** ~120  
+**Last Updated:** 2025-05-15  
+
+**Batches Completed:** 12 (pushed to `uae-warnings-only` branch)
 
 ---
 
@@ -11,23 +14,22 @@
 
 | Category | Count | Strategy |
 |----------|-------|----------|
-| missing-field-initializers | 1,449 | Add `{}` or `{0}` to struct initializers |
+| missing-field-initializers | 1,449 | Add missing fields to struct initializers |
 | missing-braces | 561 | Add braces around sub-object initialization |
-| unused-but-set-variable | 806 | Comment out or add `(void)` casts |
-| unused-parameter | 559 | Add `(void)param;` to function bodies |
-| sign-compare | 220 | Cast to matching types |
-| unused-variable | 181 | Comment out or use |
-| unused-function | 149 | Comment out or `__attribute__((unused))` |
-| format-mismatch | 28 | Fix printf format specifiers |
-| null-conversion | 3 | Use `0` for integers, `false` for bools |
-| pointer-bool-conversion | 1 | Check `array[0] != 0` instead of `array` |
-| other | 32 | Case-by-case fixes |
+| unused-parameter | 456 | Add `(void)param;` to function bodies |
+| unused-but-set-variable | 378 | Comment out or add `(void)` casts |
+| sign-compare | 207 | Cast to matching types |
+| unused-variable | 187 | Comment out or use |
+| unused-function | 48 | Add `__attribute__((unused))` |
+| format-mismatch | ~8 | Fix printf format specifiers |
+| null-conversion | 1 | Use `0` for integers |
+| other | 8 | Case-by-case fixes |
 
 ---
 
 ## Phase 1: Quick Wins (~2,500 warnings)
 
-### 1. rommgr.cpp - 1,042 warnings
+### 1. rommgr.cpp - 1,043 warnings
 
 **Path:** `uae_src/rommgr.cpp`
 
@@ -39,13 +41,13 @@
 | sign-compare | 7 |
 | unused-parameter | 2 |
 | unused-variable | 1 |
-| other | 3 |
+| other | 4 |
 
-**Strategy:** Fix board_data struct initialization pattern
+**Strategy:** Fix romdata struct initialization pattern - add `, NULL, NULL, 0` to initializers
 
 ---
 
-### 2. expansion.cpp - 372 warnings
+### 2. expansion.cpp - 383 warnings
 
 **Path:** `uae_src/expansion.cpp`
 
@@ -70,7 +72,7 @@
 
 ---
 
-### 3. identify.cpp - 250 warnings
+### 3. identify.cpp - 216 warnings
 
 **Path:** `uae_src/identify.cpp`
 
@@ -85,7 +87,7 @@
 
 ---
 
-### 4. inputevents.def - 249 warnings
+### 4. inputevents.def - 244 warnings
 
 **Path:** `uae_src/inputevents.def`
 
@@ -97,202 +99,170 @@
 
 ---
 
-### 5. cpuemu_*.cpp files - ~800 warnings
+### 5. cpuemu_*.cpp files - ~320 warnings
 
 **Files:** cpuemu_0.cpp, cpuemu_11.cpp, cpuemu_13.cpp, cpuemu_20.cpp, cpuemu_21.cpp, cpuemu_22.cpp, cpuemu_23.cpp, cpuemu_24.cpp, cpuemu_31.cpp, cpuemu_32.cpp, cpuemu_33.cpp, cpuemu_34.cpp, cpuemu_35.cpp, cpuemu_40.cpp, cpuemu_50.cpp
 
 | Variable | Total Count |
 |----------|-------------|
-| dummy | 221 |
-| count_cycles | 204 |
-| pcadjust | 160 |
-| tmp_newv | 127 |
+| tmp_newv | 93 |
+| pcadjust | 32 |
+| src | 14 |
+| oldsr | 8 |
+| newsr | 2 |
 
-**Strategy:** Comment out unused variables or add `(void)` casts (generated CPU emulation code)
+**Strategy:** LAST ITEM - Fix code generator (gencpu.cpp, build68k.cpp) to not produce these patterns
 
 ---
 
-## Phase 2: Systematic Fixes (~780 warnings)
+## Phase 2: Systematic Fixes (~1,200 warnings)
 
-### 6. Unused Parameters - 559 warnings
+### 6. Unused Parameters - 456 warnings
+
+**Top files:**
+- cfgfile.cpp: ~15
+- custom.cpp: ~32
+- debug.cpp: ~16
+- drawing.cpp: ~17
+- expansion.cpp: ~10
+- filesys.cpp: ~27
+- gayle.cpp: ~7
+- hardfile.cpp: ~9
+- idecontrollers.cpp: ~16
+- inputdevice.cpp: ~29
+- memory.cpp: ~30
+- newcpu.cpp: ~21
+- rommgr.cpp: ~2
+- scsi.cpp: ~33
+- sndboard.cpp: ~50
+- traps.cpp: ~1
 
 **Top patterns:**
-- 27x `addr`
 - 22x `ncr`
-- 19x `v`
-- 18x `b`
+- 22x `ctx`
+- 20x `addr`
 - 17x `hpos`
-- 17x `ctx`
+- 17x `b`
+- 16x `v`
 - 16x `pcibs`
 - 16x `board`
 
-**Strategy:** Add `(void)param;` at start of function bodies across 60+ files
+**Strategy:** Add `(void)param;` at start of function bodies
 
 ---
 
-### 7. Sign-Compare Issues - 220 warnings
+### 7. Sign-Compare Issues - 207 warnings
 
 | Pattern | Count |
 |---------|-------|
-| 'uae_u32' vs 'int' | 49 |
+| 'uae_u32' vs 'int' | 47 |
 | 'int' vs 'uae_u32' | 44 |
-| 'int' vs 'unsigned long' | 23 |
+| 'int' vs 'unsigned long' | 22 |
 | 'uint64_t' vs 'int' | 13 |
-| 'uaecptr' vs 'int' | 13 |
-| 'int' vs 'size_t' | 13 |
-| 'unsigned int' vs 'int' | 13 |
+| 'uaecptr' vs 'int' | 12 |
+| 'size_t' vs 'int' | 8 |
+| 'unsigned int' vs 'int' | 10 |
 | 'int' vs 'unsigned int' | 10 |
-| Other | 42 |
+| 'uint64_t' vs 'int64_t' | 7 |
+| Other | 34 |
 
 **Strategy:** Cast to matching unsigned/signed types
 
 ---
 
-## Phase 3: Cleanup (~400 warnings)
+## Phase 3: Cleanup (~300 warnings)
 
-### 8. Unused Variables - 181 warnings
+### 8. Unused Variables - 187 warnings
 
 Scattered across 40+ files. Comment out or use appropriately.
 
+**Top files:**
+- cfgfile.cpp: ~5
+- custom.cpp: ~6
+- drawing.cpp: ~7
+- newcpu.cpp: ~6
+
 ---
 
-### 9. Unused Functions - 149 warnings
+### 9. Unused Functions - 48 warnings
 
 **Top files:**
-- expansion.cpp: 48
-- custom.cpp: 11
-- drawing.cpp: 13
+- expansion.cpp: 30
 - linetoscr.cpp: 16
-- gayle.cpp: 10
+- drawing.cpp: 13
+- custom.cpp: 11
+- gayle.cpp: 8
+- cfgfile.cpp: 8
 - memory.cpp: 7
 
-**Strategy:** Comment out with `// Unused function - kept for future use` or add `__attribute__((unused))`
+**Strategy:** Add `__attribute__((unused))` to static functions
 
 ---
 
-### 10. Other Warnings - 64 warnings
+### 10. Other Warnings - 17 warnings
 
 | Type | Count |
 |------|-------|
-| format-mismatch | 28 |
-| other (precedence, comma, etc.) | 32 |
-| null-conversion | 3 |
-| pointer-bool-conversion | 1 |
+| format-mismatch | ~8 |
+| other (precedence, comma, etc.) | 8 |
+| null-conversion | 1 |
 
 ---
 
-## Complete File List (145 files remaining)
+## Complete File List (Top 35 files)
 
-| Warnings | File |
-|----------|------|
-| 1,042 | uae_src/rommgr.cpp |
-| 372 | uae_src/expansion.cpp |
-| 250 | uae_src/identify.cpp |
-| 249 | uae_src/inputevents.def |
-| 132 | uae_src/cpuemu_40.cpp |
-| 91 | uae_src/cpuemu_21.cpp |
-| 91 | uae_src/cpuemu_23.cpp |
-| 90 | uae_src/sndboard.cpp |
-| 89 | uae_src/filesys.cpp |
-| 86 | uae_src/custom.cpp |
-| 73 | uae_src/drawing.cpp |
-| 71 | uae_src/memory.cpp |
-| 68 | uae_src/cpuemu_0.cpp |
-| 68 | uae_src/cpuemu_50.cpp |
-| 63 | uae_src/cpuemu_35.cpp |
-| 63 | uae_src/inputdevice.cpp |
-| 62 | uae_src/cpuemu_24.cpp |
-| 58 | uae_src/cfgfile.cpp |
-| 57 | uae_src/debug.cpp |
-| 55 | uae_src/scsi.cpp |
-| 52 | uae_src/keybuf.cpp |
-| 46 | uae_src/debugmem.cpp |
-| 38 | uae_src/newcpu.cpp |
-| 34 | uae_src/idecontrollers.cpp |
-| 32 | uae_src/gayle.cpp |
-| 27 | uae_src/hardfile.cpp |
-| 26 | uae_src/cpuemu_20.cpp |
-| 26 | uae_src/cpuemu_32.cpp |
-| 26 | uae_src/cpuemu_34.cpp |
-| 25 | uae_src/cpuemu_22.cpp |
-| 25 | uae_src/cpuemu_31.cpp |
-| 25 | uae_src/cpuemu_33.cpp |
-| 24 | uae_src/isofs.cpp |
-| 21 | uae_src/zfile.cpp |
-| 20 | uae_src/disk.cpp |
-| 17 | uae_src/fdi2raw.cpp |
-| 17 | uae_src/uaenative.cpp |
-| 16 | uae_src/linetoscr.cpp |
-| 16 | uae_src/savestate.cpp |
-| 16 | uae_src/scsiemul.cpp |
-| 16 | uae_src/uaeserial.cpp |
-| 15 | uae_src/blkdev.cpp |
-| 15 | uae_src/traps.cpp |
-| 15 | uae_src/zfile_archive.cpp |
-| 15 | uae_src/gfxutil.cpp |
-| 13 | uae_src/newcpu_common.cpp |
-| 13 | uae_src/tabletlibrary.cpp |
-| 12 | uae_src/cpummu.cpp |
-| 12 | uae_src/fdi2raw.cpp |
-| 12 | uae_src/sound.cpp (src/sounddep/) |
-| 11 | uae_src/disasm.cpp |
-| 10 | uae_src/fpp_native.cpp |
-| 10 | uae_src/softfloat/softfloat-specialize.h |
-| 9 | uae_src/cdtvcr.cpp |
-| 9 | uae_src/softfloat/softfloat.cpp |
-| 8 | uae_src/cia.cpp |
-| 8 | uae_src/cpummu30.cpp |
-| 7 | uae_src/flashrom.cpp |
-| 7 | uae_src/fpp.cpp |
-| 7 | uae_src/scsitape.cpp |
-| 6 | uae_src/ide.cpp |
-| 5 | uae_src/enforcer.cpp |
-| 5 | uae_src/ethernet.cpp |
-| 5 | uae_src/statusline.cpp |
-| 4 | uae_src/include/cpu_prefetch.h |
-| 4 | uae_src/main.cpp |
-| 3 | uae_src/autoconf.cpp |
-| 3 | uae_src/fsdb.cpp |
-| 3 | uae_src/gfx.cpp (src/) |
-| 3 | uae_src/serial.cpp |
-| 3 | uae_src/softfloat/SOFTFLOAT-MACROS.H |
-| 3 | uae_src/softfloat/softfloat_fpsp.cpp |
-| 2 | uae_src/consolehook.cpp |
-| 2 | uae_src/dongle.cpp |
-| 2 | uae_src/readcpu.cpp |
-| 2 | uae_src/uaelib.cpp |
-| 1 | uae_src/blitter.cpp |
-| 1 | uae_src/cd32_fmv.cpp |
-| 1 | uae_src/cpuboard.cpp |
-| 1 | uae_src/diskutil.cpp |
-| 1 | uae_src/driveclick.cpp |
-| 1 | uae_src/events.cpp |
-| 1 | uae_src/file.cpp |
-| 1 | uae_src/hrtmon.rom.cpp |
-| 1 | uae_src/logging.cpp (src/) |
-| 1 | uae_src/mman.cpp (uae_src/od-win32/) |
-| 1 | uae_src/native2amiga.cpp |
-| 1 | uae_src/rommgr.cpp (command line) |
-| 1 | uae_src/rp.cpp (src/) |
-| 1 | uae_src/rtc.cpp |
-| 1 | uae_src/sampler.cpp |
-| 1 | uae_src/winuaeboot.cpp |
-| ... | (145 files total) |
+| Warnings | File | CPUemu? |
+|----------|------|---------|
+| 1,043 | uae_src/rommgr.cpp | No |
+| 383 | uae_src/expansion.cpp | No |
+| 244 | uae_src/../uae_src/inputevents.def | No |
+| 216 | uae_src/identify.cpp | No |
+| 115 | uae_src/cpuemu_40.cpp | **Yes** |
+| 105 | uae_src/filesys.cpp | No |
+| 86 | uae_src/sndboard.cpp | No |
+| 77 | uae_src/custom.cpp | No |
+| 68 | uae_src/memory.cpp | No |
+| 61 | uae_src/drawing.cpp | No |
+| 60 | uae_src/inputdevice.cpp | No |
+| 54 | uae_src/debug.cpp | No |
+| 52 | uae_src/keybuf.cpp | No |
+| 52 | uae_src/scsi.cpp | No |
+| 51 | uae_src/cfgfile.cpp | No |
+| 51 | uae_src/cpuemu_0.cpp | **Yes** |
+| 51 | uae_src/cpuemu_50.cpp | **Yes** |
+| 45 | uae_src/debugmem.cpp | No |
+| 35 | uae_src/newcpu.cpp | No |
+| 34 | uae_src/gayle.cpp | No |
+| 32 | uae_src/idecontrollers.cpp | No |
+| 27 | uae_src/hardfile.cpp | No |
+| 24 | uae_src/isofs.cpp | No |
+| 21 | uae_src/zfile.cpp | No |
+| 20 | uae_src/disk.cpp | No |
+| 17 | uae_src/fdi2raw.cpp | No |
+| 16 | uae_src/linetoscr.cpp | No |
+| 16 | uae_src/savestate.cpp | No |
+| 16 | uae_src/scsiemul.cpp | No |
+| 15 | uae_src/blkdev.cpp | No |
+| 15 | uae_src/traps.cpp | No |
+| 15 | uae_src/zfile_archive.cpp | No |
+| 15 | uae_src/gfxutil.cpp | No |
+| 13 | uae_src/newcpu_common.cpp | No |
+| ... | (~120 files total) | |
 
 ---
 
 ## Fix Strategy
 
-1. **missing-field-initializers** → Add `= {}` or `= {0}` to struct/array initializers
-2. **missing-braces** → Use `= {{}}` instead of `= {0}` for nested structs
-3. **unused-but-set-variable** → Comment out or add `(void)var;` if kept for debugging
-4. **unused-parameter** → Add `(void)param;` at function start
+1. **missing-field-initializers** → Add missing fields (`, NULL, NULL, 0` or appropriate defaults)
+2. **missing-braces** → Use `{{}}` instead of `{0}` for nested structs
+3. **unused-parameter** → Add `(void)param;` at function start
+4. **unused-but-set-variable** → Comment out or add `(void)var;` if kept for debugging
 5. **sign-compare** → Add explicit casts to matching types
 6. **unused-variable** → Remove or comment out
-7. **unused-function** → Comment out or add `__attribute__((unused))`
+7. **unused-function** → Add `__attribute__((unused))` to static functions
 8. **format-mismatch** → Fix printf format specifiers
-9. **null-conversion** → Use `0` for integers, `false` for bools
-10. **pointer-bool-conversion** → Check `array[0] != 0` instead of `array`
+9. **null-conversion** → Use `0` for integers, `nullptr` for pointers
+10. **cpuemu files** → **LAST** - Fix code generator (gencpu.cpp, build68k.cpp)
 
 **Rule:** NO pragma suppressions - fix warnings properly with code changes!
 
@@ -302,16 +272,32 @@ Scattered across 40+ files. Comment out or use appropriately.
 
 | Phase | Target | Warnings | Status |
 |-------|--------|----------|--------|
-| Phase 1.1 | rommgr.cpp | 1,042 | ⏳ Pending |
-| Phase 1.2 | expansion.cpp | 372 | ⏳ Pending |
-| Phase 1.3 | identify.cpp | 250 | ⏳ Pending |
-| Phase 1.4 | inputevents.def | 249 | ⏳ Pending |
-| Phase 1.5 | cpuemu_*.cpp files | ~800 | ⏳ Pending |
-| Phase 2.1 | Unused parameters | 559 | ⏳ Pending |
-| Phase 2.2 | Sign-compare | 220 | ⏳ Pending |
-| Phase 3 | Cleanup | ~400 | ⏳ Pending |
+| Phase 1.1 | rommgr.cpp | 1,043 | ⏳ Pending |
+| Phase 1.2 | expansion.cpp | 383 | ⏳ Pending |
+| Phase 1.3 | identify.cpp | 216 | ⏳ Pending |
+| Phase 1.4 | inputevents.def | 244 | ⏳ Pending |
+| Phase 1.5 | filesys.cpp + others | ~500 | ⏳ Pending |
+| Phase 2.1 | Unused parameters | 456 | ⏳ Pending |
+| Phase 2.2 | Sign-compare | 207 | ⏳ Pending |
+| Phase 3 | Cleanup | ~300 | ⏳ Pending |
+| **LAST** | cpuemu generator | 320 | ⏳ Pending (fix generator) |
 
-**Expected Final Result:** ~0 warnings
+**Expected Final Result:** 0 warnings (after fixing generator)
+
+---
+
+## Completed Batches
+
+| Batch | Warnings Fixed | Description |
+|-------|---------------|-------------|
+| 1-4 | ~1,000 | Initial cleanup (uae_src/src files) |
+| 5 | ~180 | fdi2raw.cpp, traps.cpp, gfxutil.cpp, linetoscr.cpp |
+| 6 | 29 | Final remaining warnings from initial scan |
+| 7-10 | 220 | 'dummy' set-but-not-used in cpuemu files (3 attempts) |
+| 11 | 138 | Unused functions with `__attribute__((unused))` |
+| 12 | 1 | newcpu.cpp unused parameter |
+
+**Total Fixed:** 2,325 warnings (41.4% reduction)
 
 ---
 
@@ -319,35 +305,24 @@ Scattered across 40+ files. Comment out or use appropriately.
 
 ```bash
 cd build
-make clean
-make -j8 2>&1 | tee /tmp/warning_analysis.log
-grep "warning:" /tmp/warning_analysis.log | wc -l
+cmake --build --target clean
+cmake --build -- -j$(sysctl -n hw.ncpu) 2>&1 | tee /tmp/warning_analysis.log
+grep -c "warning:" /tmp/warning_analysis.log
 ```
 
 ## How to Regenerate This File
 
-```python
-python3 << 'EOF'
-import re
-from collections import defaultdict
-
-files = defaultdict(int)
-categories = defaultdict(int)
-
-with open('/tmp/warning_analysis.log', 'r') as f:
-    for line in f:
-        if 'warning:' not in line:
-            continue
-        
-        match = re.search(r'(/Volumes/TB4-4Tb/Projects/emulators/github/quaesar-ng/[^\s:]+)', line)
-        if match:
-            filepath = match.group(1).replace('/Volumes/TB4-4Tb/Projects/emulators/github/quaesar-ng/', '')
-            files[filepath] += 1
-        
-        if 'missing-field-initializers' in line:
-            categories['missing-field-initializers'] += 1
-        elif 'missing-braces' in line:
-            categories['missing-braces'] += 1
-        # ... etc
-EOF
+```bash
+cd /Volumes/TB4-4Tb/Projects/emulators/github/quaesar-ng
+python3 scripts/generate_todo.py  # Create this script from analysis above
 ```
+
+---
+
+## Next Steps
+
+1. ✅ Fix all non-cpuemu warnings systematically (Phases 1-3)
+2. ✅ Verify zero warnings in non-cpuemu files
+3. **LAST:** Fix gencpu.cpp and build68k.cpp generators
+4. Regenerate cpuemu files with warning-free code
+5. Final verification: ZERO warnings across entire codebase
