@@ -58,7 +58,7 @@
 #include <signal.h>
 #else
 /* Need to have these somewhere */
-bool check_prefs_changed_comp (bool checkonly) { return false; }
+bool check_prefs_changed_comp (bool checkonly) { (void)checkonly;  (void)checkonly; return false; }
 #endif
 /* For faster JIT cycles handling */
 int pissoff = 0;
