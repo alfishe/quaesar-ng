@@ -637,7 +637,7 @@ static void cdtvcr_4510_do_something(void)
 	}
 }
 
-static bool __attribute__((unused)) cdtvcr_debug(uaecptr addr)
+static bool cdtvcr_debug(uaecptr addr)
 {
 	addr &= CDTVCR_MASK;
 	return !(addr >= CDTVCR_RAM_OFFSET && addr < CDTVCR_RAM_OFFSET + CDTVCR_RAM_SIZE);

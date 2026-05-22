@@ -1381,7 +1381,7 @@ static void setciatod(uae_u32 *tod, uae_u32 v)
 }
 
 // E-clock count mode?
-static bool __attribute__((unused)) CIA_timer_02(int num, uae_u8 cr)
+static bool CIA_timer_02(int num, uae_u8 cr)
 {
 	if (num) {
 		return (cr & (CR_INMODE | CR_INMODE1)) == 0;
@@ -2253,7 +2253,7 @@ addrbank cia_bank = {
 	0
 };
 
-static __attribute__((unused)) int cia_cycles(int delay, int phase, int val, int post)
+static int cia_cycles(int delay, int phase, int val, int post)
 {
 #ifdef DEBUGGER
 	if (currprefs.cpu_memory_cycle_exact && debug_dma) {
@@ -2717,7 +2717,7 @@ addrbank clock_bank = {
 	0
 };
 
-static __attribute__((unused)) uae_u8 getclockreg(int addr, struct tm *ct)
+static uae_u8 getclockreg(int addr, struct tm *ct)
 {
 	uae_u8 v = 0;
 

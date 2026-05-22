@@ -149,7 +149,7 @@ FPP_ABP fpp_move;
 #define DEBUG_FPP 0
 #define EXCEPTION_FPP 0
 
-STATIC_INLINE int __attribute__((unused)) isinrom (void)
+STATIC_INLINE int isinrom (void)
 {
 	return (munge24 (m68k_getpc ()) & 0xFFF80000) == 0xF80000 && !currprefs.mmu_model;
 }
@@ -725,7 +725,7 @@ static void fpnan (fpdata *fpd)
 	fpp_to_exten(fpd, xhex_nan[0], xhex_nan[1], xhex_nan[2]);
 }
 
-static void __attribute__((unused)) fpclear (fpdata *fpd)
+static void fpclear (fpdata *fpd)
 {
 	fpp_from_int(fpd, 0);
 }
@@ -1301,7 +1301,7 @@ static bool fault_if_unimplemented_680x0 (uae_u16 opcode, uae_u16 extra, uaecptr
 	return false;
 }
 
-static bool __attribute__((unused)) fault_if_unimplemented_6888x (uae_u16 opcode, uae_u16 extra, uaecptr oldpc)
+static bool fault_if_unimplemented_6888x (uae_u16 opcode, uae_u16 extra, uaecptr oldpc)
 {
 	if ((currprefs.fpu_model == 68881 || currprefs.fpu_model == 68882) && currprefs.fpu_no_unimplemented) {
 		uae_u16 v = extra & 0x7f;

@@ -366,7 +366,7 @@ static addrbank expamemz3_bank = {
 	ABFLAG_IO | ABFLAG_SAFE | ABFLAG_PPCIOSPACE, S_READ, S_WRITE
 };
 
-static addrbank *__attribute__((unused)) expamem_map_clear (void)
+static addrbank *expamem_map_clear (void)
 {
 	write_log (_T("expamem_map_clear() got called. Shouldn't happen.\n"));
 	return NULL;
@@ -5030,7 +5030,7 @@ static void fastlane_memory_callback(struct romconfig *rc, uae_u8 *ac, int size)
 		ac[2] = (ac[2] & 0x0f) | (act[2] & 0xf0);
 	}
 }
-static void __attribute__((unused)) hda506_memory_callback(struct romconfig *rc, uae_u8 *ac, int size)
+static void hda506_memory_callback(struct romconfig *rc, uae_u8 *ac, int size)
 {
 	if (currprefs.cs_a1000ram)
 		ac[1] = 1;

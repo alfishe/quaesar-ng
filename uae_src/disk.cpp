@@ -681,7 +681,7 @@ static int get_floppy_speed_from_image(drive *drv)
 	return m;
 }
 
-static const TCHAR *__attribute__((unused)) drive_id_name(drive *drv)
+static const TCHAR *drive_id_name(drive *drv)
 {
 	switch(drv->drive_id)
 	{
@@ -1333,7 +1333,10 @@ static int drive_insert (drive *drv, struct uae_prefs *p, int dnum, const TCHAR 
 {
 	uae_u8 buffer[2 + 2 + 4 + 4];
 	trackid *tid;
-	int num_tracks, size;
+	int size;
+#if defined(CAPS) || defined(SCP)
+	int num_tracks;
+#endif
 	int canauto;
 	TCHAR outname[MAX_DPATH];
 	int dfxtype = p->floppyslots[dnum].dfxtype;
@@ -6257,7 +6260,7 @@ int disk_prevnext (int drive, int dir)
 	return 1;
 }
 
-static int __attribute__((unused)) getdebug(void)
+static int getdebug(void)
 {
 	return floppy[0].mfmpos;
 }

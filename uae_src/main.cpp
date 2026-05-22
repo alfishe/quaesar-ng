@@ -1039,7 +1039,7 @@ static void parse_cmdline (int argc, TCHAR **argv)
 }
 #endif
 
-static void __attribute__((unused)) parse_cmdline_and_init_file(int argc, TCHAR **argv)
+static void parse_cmdline_and_init_file(int argc, TCHAR **argv)
 {
 
 	_tcscpy (optionsfile, _T(""));

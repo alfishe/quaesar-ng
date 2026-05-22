@@ -29,7 +29,7 @@
 #define unpack_log(fmt, ...)
 
 
-static time_t __attribute__((unused)) fromdostime (uae_u32 dd)
+static time_t fromdostime (uae_u32 dd)
 {
 	struct tm tm;
 	time_t t;
@@ -1192,7 +1192,7 @@ static const int secs_per_day = 24 * 60 * 60;
 static const int diff = (8 * 365 + 2) * (24 * 60 * 60);
 static const int diff2 = (-8 * 365 - 2) * (24 * 60 * 60);
 
-static time_t __attribute__((unused)) put_time (long days, long mins, long ticks)
+static time_t put_time (long days, long mins, long ticks)
 {
 	time_t t;
 
@@ -2138,14 +2138,13 @@ struct zfile *archive_unpackzfile (struct zfile *zf)
 		return NULL;
 	unpack_log (_T("delayed unpack '%s'\n"), zf->name);
 	zf->datasize = zf->size;
-	switch (zf->archiveid)
-	{
 #ifdef A_ZIP
-	case ArchiveFormatZIP:
+	if (zf->archiveid == ArchiveFormatZIP) {
 		zout = archive_unpack_zip (zf);
-		break;
-#endif
 	}
+#else
+	(void)zout;
+#endif
 	zfile_fclose (zf->archiveparent);
 	zf->archiveparent = NULL;
 	zf->archiveid = 0;

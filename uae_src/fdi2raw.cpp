@@ -70,7 +70,7 @@ static TCHAR *datalog (uae_u8 *src, int len)
 	return buf + offset2;
 }
 #else
-static const TCHAR *__attribute__((unused)) datalog (uae_u8 *src, int len) { (void)src; (void)len; return _T(""); }
+static const TCHAR *datalog (uae_u8 *src, int len) { (void)src; (void)len; return _T(""); }
 #endif
 
 #ifdef DEBUG
@@ -333,13 +333,13 @@ static void zxx (FDI *fdi)
 	//	return -1;
 }
 /* unsupported track */
-static __attribute__((unused)) void zyy (FDI *fdi)
+static void zyy (FDI *fdi)
 {
 	outlog (_T("track %d: unsupported track type 0x%02X\n"), fdi->current_track, fdi->track_type);
 	//	return -1;
 }
 /* empty track */
-static __attribute__((unused)) void track_empty (FDI *fdi)
+static void track_empty (FDI *fdi)
 {
 	//	return 0;
 }
@@ -351,7 +351,7 @@ static void dxx (FDI *fdi)
 	fdi->err = 1;
 }
 /* unsupported sector described type */
-static void __attribute__((unused)) dyy (FDI *fdi)
+static void dyy (FDI *fdi)
 {
 	outlog (_T("\ntrack %d: unsupported sector described 0x%02X\n"), fdi->current_track, fdi->track_type);
 	fdi->err = 1;
@@ -609,7 +609,7 @@ static uae_u32 getmfmlong (uae_u8 * mbuf)
 	return ((getmfmword (mbuf) << 16) | getmfmword (mbuf + 2)) & MFMMASK;
 }
 
-static int __attribute__((unused)) amiga_check_track (FDI *fdi)
+static int amiga_check_track (FDI *fdi)
 {
 	int i, j, secwritten = 0;
 	int fwlen = fdi->out / 8;

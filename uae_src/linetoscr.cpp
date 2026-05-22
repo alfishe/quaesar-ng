@@ -2202,7 +2202,7 @@ static int NOINLINE linetoscr_16_shrink1f_genlock(int spix, int dpix, int dpix_e
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
 
@@ -2436,7 +2436,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2(int spix, int d
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -2676,7 +2676,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2_genlock(int spi
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2f(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2f(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
 
@@ -3306,7 +3306,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2f(int spix, int 
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2f_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2f_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -5553,7 +5553,7 @@ static int NOINLINE linetoscr_16_shrink1f_spr_genlock(int spix, int dpix, int dp
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2_spr(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2_spr(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
     uae_u8 sprcol;
@@ -5689,7 +5689,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2_spr(int spix, i
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2_spr_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2_spr_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -5836,7 +5836,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2_spr_genlock(int
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2f_spr(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2f_spr(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
     uae_u8 sprcol;
@@ -6086,7 +6086,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2f_spr(int spix, 
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_16_shrink2f_spr_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_16_shrink2f_spr_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u16 *buf = (uae_u16 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -13905,7 +13905,7 @@ static int NOINLINE linetoscr_32_shrink1f_genlock(int spix, int dpix, int dpix_e
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
 
@@ -13995,7 +13995,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2(int spix, int d
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -14091,7 +14091,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2_genlock(int spi
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2f(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2f(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
 
@@ -14280,7 +14280,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2f(int spix, int 
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2f_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2f_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -16086,7 +16086,7 @@ static int NOINLINE linetoscr_32_shrink1f_spr_genlock(int spix, int dpix, int dp
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2_spr(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2_spr(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
     uae_u8 sprcol;
@@ -16222,7 +16222,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2_spr(int spix, i
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2_spr_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2_spr_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;
@@ -16369,7 +16369,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2_spr_genlock(int
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2f_spr(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2f_spr(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
     uae_u8 sprcol;
@@ -16619,7 +16619,7 @@ static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2f_spr(int spix, 
     return spix;
 }
 
-static int NOINLINE __attribute__((unused)) linetoscr_32_shrink2f_spr_genlock(int spix, int dpix, int dpix_end)
+static int NOINLINE linetoscr_32_shrink2f_spr_genlock(int spix, int dpix, int dpix_end)
 {
     uae_u32 *buf = (uae_u32 *) xlinebuffer;
     uae_u8 *genlock_buf = xlinebuffer_genlock;

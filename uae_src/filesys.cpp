@@ -1992,7 +1992,7 @@ static uae_u32 REGPARAM2 debugger_helper(TrapContext *ctx)
 	return 1;
 }
 
-static void __attribute__((unused)) debugger_boot(void)
+static void debugger_boot(void)
 {
 	Unit *u;
 	TrapContext *ctx = NULL;

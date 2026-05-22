@@ -265,7 +265,7 @@ static uae_u32 REGPARAM2 diskdev_expunge(TrapContext *ctx)
 	return 0;
 }
 
-static int __attribute__((unused)) is_async_request(struct devstruct *dev, uaecptr request)
+static int is_async_request(struct devstruct *dev, uaecptr request)
 {
 	int i = 0;
 	while (i < MAX_ASYNC_REQUESTS) {
@@ -1295,7 +1295,7 @@ static uaecptr ROM_diskdev_resname = 0,
 	ROM_diskdev_init = 0;
 
 
-static uaecptr __attribute__((unused)) diskdev_startup (TrapContext *ctx, uaecptr resaddr)
+static uaecptr diskdev_startup (TrapContext *ctx, uaecptr resaddr)
 {
 	/* Build a struct Resident. This will set up and initialize
 	* the cd.device */

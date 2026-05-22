@@ -278,7 +278,7 @@ static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) 
     memcpy(s->pullbuffer + s->pullbufferlen, sndbuffer, sd->sndbufsize);
     s->pullbufferlen += sd->sndbufsize;
 
-    gui_data.sndbuf = (1000.0f * s->pullbufferlen) / s->pullbuffermaxlen;
+    gui_data.sndbuf = static_cast<int>((1000.0f * s->pullbufferlen) / s->pullbuffermaxlen);
 }
 
 static int open_audio_sdl2(struct sound_data* sd, int index) {
@@ -616,7 +616,7 @@ bool audio_is_event_frame_possible(int) {
         return false;
     if (type == SOUND_DEVICE_SDL2) {
         sound_dp* s = sdp->data;
-        int bufsize = reinterpret_cast<uae_u8*>(paula_sndbufpt) - reinterpret_cast<uae_u8*>(paula_sndbuffer);
+        int bufsize = static_cast<int>(reinterpret_cast<uae_u8*>(paula_sndbufpt) - reinterpret_cast<uae_u8*>(paula_sndbuffer));
         bufsize /= sdp->samplesize;
         const int todo = s->sndbufsize - bufsize;
         int samplesperframe = sdp->obtainedfreq / static_cast<int>(vblank_hz);
@@ -702,7 +702,7 @@ static void handle_reset() {
 
 void finish_sound_buffer() {
     static unsigned long tframe;
-    const auto bufsize = reinterpret_cast<uae_u8*>(paula_sndbufpt) - reinterpret_cast<uae_u8*>(paula_sndbuffer);
+    const int bufsize = static_cast<int>(reinterpret_cast<uae_u8*>(paula_sndbufpt) - reinterpret_cast<uae_u8*>(paula_sndbuffer));
 
     if (sdp->reset) {
         handle_reset();

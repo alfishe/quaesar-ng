@@ -2393,14 +2393,14 @@ void checkint(void)
 
 void REGPARAM2 MakeSR(void)
 {
-	regs.sr = ((regs.t1 << 15) | (regs.t0 << 14)
+	regs.sr = static_cast<uae_u16>((regs.t1 << 15) | (regs.t0 << 14)
 		| (regs.s << 13) | (regs.m << 12) | (regs.intmask << 8)
 		| (GET_XFLG() << 4) | (GET_NFLG() << 3)
 		| (GET_ZFLG() << 2) | (GET_VFLG() << 1)
 		|  GET_CFLG());
 }
 
-static void __attribute__((unused)) SetSR(uae_u16 sr)
+static void SetSR(uae_u16 sr)
 {
 	regs.sr &= 0xff00;
 	regs.sr |= sr;
@@ -4340,7 +4340,7 @@ int cpu_sleep_millis(int ms)
 // 1-9 = wait, levels
 // 10 = max wait
 
-static bool __attribute__((unused)) haltloop_do(int vsynctimeline, frame_time_t rpt_end, int lines)
+static bool haltloop_do(int vsynctimeline, frame_time_t rpt_end, int lines)
 {
 	int ovpos = vpos;
 	while (lines-- >= 0) {
@@ -5635,7 +5635,7 @@ static void m68k_run_2 (void)
 
 #else
 
-static void __attribute__((unused)) opcodedebug (uae_u32 pc, uae_u16 opcode, bool full)
+static void opcodedebug (uae_u32 pc, uae_u16 opcode, bool full)
 {
 	struct mnemolookup *lookup;
 	struct instr *dp;

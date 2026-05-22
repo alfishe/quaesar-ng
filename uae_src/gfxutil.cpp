@@ -219,19 +219,19 @@ static float get_y(int r, int g, int b)
 {
 	return 0.2989f * r + 0.5866f * g + 0.1145f * b;
 }
-static uae_u32 __attribute__((unused)) get_yh(int monid, int r, int g, int b)
+static uae_u32 get_yh(int monid, int r, int g, int b)
 {
 	return limit256(monid, get_y (r, g, b) * hf / 256);
 }
-static uae_u32 __attribute__((unused)) get_yl(int monid, int r, int g, int b)
+static uae_u32 get_yl(int monid, int r, int g, int b)
 {
 	return limit256(monid, get_y (r, g, b) * lf / 256);
 }
-static uae_s32 __attribute__((unused)) get_cb(int monid, int r, int g, int b)
+static uae_s32 get_cb(int monid, int r, int g, int b)
 {
 	return limit256rb(monid, -0.168736f * r - 0.331264f * g + 0.5f * b);
 }
-static uae_s32 __attribute__((unused)) get_cr(int monid, int r, int g, int b)
+static uae_s32 get_cr(int monid, int r, int g, int b)
 {
 	return limit256rb(monid, 0.5f * r - 0.418688f * g - 0.081312f * b);
 }
@@ -242,7 +242,7 @@ extern uae_s32 tcbrgb[65536];
 extern uae_s32 tcrrgb[65536];
 extern uae_u32 redc[3 * 256], grec[3 * 256], bluc[3 * 256];
 
-static uae_u32 __attribute__((unused)) lowbits (int v, int shift, int lsize)
+static uae_u32 lowbits (int v, int shift, int lsize)
 {
 	v >>= shift;
 	v &= (1 << lsize) - 1;

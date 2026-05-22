@@ -798,10 +798,14 @@ static bool is_valid_data_sector(int sector)
 /* open device */
 static int sys_cddev_open (void)
 {
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
-	struct device_info di = {}; 
+#endif
+	struct device_info di = {};
+#if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
 	unitnum = get_standard_cd_unit (CD_STANDARD_UNIT_CD32);
 	sys_command_info (unitnum, &di, 0);
 	write_log (_T("CD32: using drive %s (unit %d, media %d)\n"), di.label, unitnum, di.media_inserted);
@@ -2033,8 +2037,10 @@ static void REGPARAM2 akiko_lput (uaecptr addr, uae_u32 v)
 	akiko_bput2 (addr + 0, (v >> 24) & 0xff, 0);
 }
 
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#endif
 addrbank akiko_bank = {
 	akiko_lget, akiko_wget, akiko_bget,
 	akiko_lput, akiko_wput, akiko_bput,
@@ -2048,7 +2054,9 @@ addrbank akiko_bank = {
 	0, // allocated_size initialization
 	0 // reserved_size initialization
 };
+#if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
 
 static const uae_u8 patchdata[] = { 0x0c, 0x82, 0x00, 0x00, 0x03, 0xe8, 0x64, 0x00, 0x00, 0x46 };
 static const uae_u8 patchdata2[] = { 0x0c, 0x82, 0x00, 0x00, 0x03, 0xe8, 0x4e, 0x71, 0x4e, 0x71 };

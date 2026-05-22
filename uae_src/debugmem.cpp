@@ -243,7 +243,7 @@ static struct debugsegtracker **dsegt;
 static int segtrackermax, segtrackerindex;
 static uae_u32 inhibit_break, last_break;
 
-static uae_u8 *__attribute__((unused)) lebx(uae_u8 *p, uae_u32 *v)
+static uae_u8 *lebx(uae_u8 *p, uae_u32 *v)
 {
 	uae_u32 val = 0;
 	for (;;) {
@@ -623,9 +623,6 @@ static bool debugmem_func(uaecptr addr, int rwi, int size, uae_u32 val)
 		int page = addr / PAGE_SIZE;
 		struct debugmemdata *dm = dmd[page];
 		uae_u8 state = dm->state[offset];
-
-		if (!i)
-			;// dmfirst = dm; // dmfirst is not used
 
 		if (!(state & DEBUGMEM_INUSE)) {
 			debugreport(dm, oaddr, rwi, size, _T("Accessing invalid memory"));

@@ -60,7 +60,7 @@ static void virtualfreewithlock (LPVOID addr, SIZE_T size, DWORD freetype)
 	VirtualFree(addr, size, freetype);
 }
 
-static uae_u32 __attribute__((unused)) lowmem (void)
+static uae_u32 lowmem (void)
 {
 	uae_u32 change = 0;
 #if 0
@@ -305,7 +305,7 @@ static void resetmem (bool decommit)
 	}
 }
 
-static uae_u8 * __attribute__((unused)) va (uae_u32 offset, uae_u32 len, DWORD alloc, DWORD protect)
+static uae_u8 * va (uae_u32 offset, uae_u32 len, DWORD alloc, DWORD protect)
 {
 	uae_u8 *addr;
 

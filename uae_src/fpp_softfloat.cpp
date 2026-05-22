@@ -520,7 +520,7 @@ static void fp_sincos(fpdata *a, fpdata *b, fpdata *c)
 /* Functions for converting between float formats */
 static const fptype twoto32 = 4294967296.0;
 
-static void __attribute__((unused)) to_native(fptype *fp, fpdata *fpd)
+static void to_native(fptype *fp, fpdata *fpd)
 {
 	int expon;
 	fptype frac;
@@ -560,7 +560,7 @@ static void __attribute__((unused)) to_native(fptype *fp, fpdata *fpd)
 #endif
 }
 
-static void __attribute__((unused)) from_native(fptype fp, fpdata *fpd)
+static void from_native(fptype fp, fpdata *fpd)
 {
 	int expon;
 	fptype frac;

@@ -1021,7 +1021,7 @@ static uae_u32 readhex(TCHAR **c, bool *err)
 	int size;
 	return readnum(c, &size, '$', err);
 }
-static uae_u32 __attribute__((unused)) readbin(TCHAR **c, bool *err)
+static uae_u32 readbin(TCHAR **c, bool *err)
 {
 	int size;
 	return readnum(c, &size, '%', err);
@@ -1951,7 +1951,7 @@ static struct refdata refreshtable[1024];
 static int refcheck_count;
 #define REFRESH_LINES 64
 
-static void __attribute__((unused)) check_refreshed(void)
+static void check_refreshed(void)
 {
 	int max = ecs_agnus ? 512 : 256;
 	int reffail = 0;
@@ -4200,7 +4200,7 @@ void debug_getpeekdma_chipram(uaecptr addr, uae_u32 mask, int reg, int ptrreg)
 	peekdma_save(2, addr, mask, reg, ptrreg);
 }
 
-static void __attribute__((unused)) debug_putlpeek (uaecptr addr, uae_u32 v)
+static void debug_putlpeek (uaecptr addr, uae_u32 v)
 {
 	if (!memwatch_enabled)
 		return;

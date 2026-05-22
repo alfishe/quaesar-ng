@@ -2301,7 +2301,7 @@ static void pfield_do_linetoscr_spr(int start, int stop, int blank)
 	}
 	src_pixel = pixel;
 }
-static int __attribute__((unused)) pfield_do_nothing(int a, int b, int c)
+static int pfield_do_nothing(int a, int b, int c)
 {
 	return a;
 }
@@ -2707,7 +2707,7 @@ static void pfield_do_linetoscr_bordersprite_aga(int start, int stop, int blank)
 	pfield_do_linetoscr_spriteonly(src_pixel, start, stop, false);
 }
 
-static void __attribute__((unused)) dummy_worker (int start, int stop, int blank)
+static void dummy_worker (int start, int stop, int blank)
 {
 }
 
@@ -2809,7 +2809,7 @@ static void decode_ham_border(int pix, int stoppos, int blank)
 	ham_lastcolor = color_reg_get(&colors_for_drawing, 0);
 }
 
-static void __attribute__((unused)) erase_ham_right_border(int pix, int stoppos, bool blank)
+static void erase_ham_right_border(int pix, int stoppos, bool blank)
 {
 	if (stoppos < playfield_end)
 		return;
@@ -3149,15 +3149,15 @@ static void NOINLINE pfield_doline32_n7(uae_u32 *data, int count, uae_u8* real_b
 static void NOINLINE pfield_doline32_n8(uae_u32 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline32_1(data, count, 8, real_bplpt); }
 #endif
 
-static void NOINLINE __attribute__((unused)) pfield_doline64_n1(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 1, real_bplpt); }
-static void NOINLINE __attribute__((unused)) pfield_doline64_n2(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 2, real_bplpt); }
-static void NOINLINE __attribute__((unused)) pfield_doline64_n3(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 3, real_bplpt); }
-static void NOINLINE __attribute__((unused)) pfield_doline64_n4(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 4, real_bplpt); }
-static void NOINLINE __attribute__((unused)) pfield_doline64_n5(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 5, real_bplpt); }
-static void NOINLINE __attribute__((unused)) pfield_doline64_n6(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 6, real_bplpt); }
+static void NOINLINE pfield_doline64_n1(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 1, real_bplpt); }
+static void NOINLINE pfield_doline64_n2(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 2, real_bplpt); }
+static void NOINLINE pfield_doline64_n3(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 3, real_bplpt); }
+static void NOINLINE pfield_doline64_n4(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 4, real_bplpt); }
+static void NOINLINE pfield_doline64_n5(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 5, real_bplpt); }
+static void NOINLINE pfield_doline64_n6(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 6, real_bplpt); }
 #ifdef AGA
-static void NOINLINE __attribute__((unused)) pfield_doline64_n7(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 7, real_bplpt); }
-static void NOINLINE __attribute__((unused)) pfield_doline64_n8(uae_u64 *data, int count, uae_u8* real_bplpt[8]) { pfield_doline64_1(data, count, 8, real_bplpt); }
+static void NOINLINE pfield_doline64_n7(uae_u64 *data, int count, uae_u8 *real_bplpt[8]) { pfield_doline64_1(data, count, 7, real_bplpt); }
+static void NOINLINE pfield_doline64_n8(uae_u64 *data, int count, uae_u8* real_bplpt[8]) { pfield_doline64_1(data, count, 8, real_bplpt); }
 #endif
 
 static void pfield_doline(int lineno)
@@ -4477,7 +4477,7 @@ static uae_u8 *status_line_ptr(int monid, int line)
 	return xlinebuffer;
 }
 
-static void __attribute__((unused)) draw_status_line(int monid, int line, int statusy)
+static void draw_status_line(int monid, int line, int statusy)
 {
 	struct vidbuf_description *vidinfo = &adisplays[monid].gfxvidinfo;
 	uae_u8 *buf = status_line_ptr(monid, line);

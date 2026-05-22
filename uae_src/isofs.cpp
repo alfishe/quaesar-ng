@@ -259,7 +259,7 @@ static inline int isonum_711(char *p)
 {
 	return *(uae_u8*)p;
 }
-static inline int __attribute__((unused)) isonum_712(char *p)
+static inline int isonum_712(char *p)
 {
 	return *(uae_u8*)p;
 }
@@ -279,12 +279,12 @@ static inline unsigned int isonum_723(char *pp)
 	/* Ignore bigendian datum due to broken mastering programs */
 	return p[0] | (p[1] << 8);
 }
-static inline unsigned int __attribute__((unused)) isonum_731(char *pp)
+static inline unsigned int isonum_731(char *pp)
 {
 	uae_u8 *p = (uae_u8*)pp;
 	return (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | (p[3] << 0);
 }
-static inline unsigned int __attribute__((unused)) isonum_732(char *pp)
+static inline unsigned int isonum_732(char *pp)
 {
 	uae_u8 *p = (uae_u8*)pp;
 	return (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | (p[0] << 0);
@@ -1291,7 +1291,7 @@ eio:
 	goto out;
 }
 
-static char *__attribute__((unused)) get_symlink_chunk(char *rpnt, struct rock_ridge *rr, char *plimit)
+static char *get_symlink_chunk(char *rpnt, struct rock_ridge *rr, char *plimit)
 {
 	int slen;
 	int rootflag;

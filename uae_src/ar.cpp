@@ -465,8 +465,10 @@ static uae_u8 *REGPARAM2 hrtmem_xlate (uaecptr addr)
 	return hrtmemory + addr;
 }
 
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#endif
 static addrbank hrtmem_bank = {
 	hrtmem_lget, hrtmem_wget, hrtmem_bget,
 	hrtmem_lput, hrtmem_wput, hrtmem_bput,
@@ -480,9 +482,6 @@ static addrbank hrtmem_bank = {
 	0, // allocated_size initialization
 	0 // reserved_size initialization
 };
-#pragma clang diagnostic pop
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-field-initializers"
 static addrbank hrtmem2_bank = {
 	hrtmem2_lget, hrtmem2_wget, hrtmem2_bget,
 	hrtmem2_lput, hrtmem2_wput, hrtmem2_bput,
@@ -496,9 +495,6 @@ static addrbank hrtmem2_bank = {
 	0, // allocated_size initialization
 	0 // reserved_size initialization
 };
-#pragma clang diagnostic pop
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-field-initializers"
 static addrbank hrtmem3_bank = {
 	hrtmem3_lget, hrtmem3_wget, hrtmem3_bget,
 	hrtmem3_lput, hrtmem3_wput, hrtmem3_bput,
@@ -512,7 +508,9 @@ static addrbank hrtmem3_bank = {
 	0, // allocated_size initialization
 	0 // reserved_size initialization
 };
+#if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
 
 static void copyfromamiga (uae_u8 *dst, uaecptr src, int len)
 {
@@ -899,8 +897,10 @@ static uae_u8 *REGPARAM2 arrom_xlate (uaecptr addr)
 	return armemory_rom + addr;
 }
 
+#if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
+#endif
 static addrbank arrom_bank = {
 	arrom_lget, arrom_wget, arrom_bget,
 	arrom_lput, arrom_wput, arrom_bput,
@@ -914,9 +914,6 @@ static addrbank arrom_bank = {
 	0, // allocated_size initialization
 	0 // reserved_size initialization
 };
-#pragma clang diagnostic pop
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmissing-field-initializers"
 static addrbank arram_bank = {
 	arram_lget, arram_wget, arram_bget,
 	arram_lput, arram_wput, arram_bput,
@@ -930,7 +927,9 @@ static addrbank arram_bank = {
 	0, // allocated_size initialization
 	0 // reserved_size initialization
 };
+#if defined(__clang__)
 #pragma clang diagnostic pop
+#endif
 
 
 static void action_replay_map_banks (void)

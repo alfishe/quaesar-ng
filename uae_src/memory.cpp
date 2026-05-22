@@ -793,7 +793,7 @@ static uae_u32 REGPARAM2 chipmem_dummy_lget (uaecptr addr)
 	return (chipmem_dummy () << 16) | chipmem_dummy ();
 }
 
-static uae_u32 REGPARAM2 __attribute__((unused)) chipmem_agnus_lget (uaecptr addr)
+static uae_u32 REGPARAM2 chipmem_agnus_lget (uaecptr addr)
 {
 	uae_u32 *m;
 
@@ -823,7 +823,7 @@ static uae_u32 REGPARAM2 chipmem_agnus_bget (uaecptr addr)
 	return chipmem_bank.baseaddr[addr];
 }
 
-static void REGPARAM2 __attribute__((unused)) chipmem_agnus_lput (uaecptr addr, uae_u32 l)
+static void REGPARAM2 chipmem_agnus_lput (uaecptr addr, uae_u32 l)
 {
 	uae_u32 *m;
 
@@ -3741,7 +3741,7 @@ uae_u8 *save_bram(size_t *len)
 	return bogomem_bank.baseaddr;
 }
 
-static uae_u8 *__attribute__((unused)) save_mem25bitram(size_t *len)
+static uae_u8 *save_mem25bitram(size_t *len)
 {
 	*len = mem25bit_bank.allocated_size;
 	return mem25bit_bank.baseaddr;

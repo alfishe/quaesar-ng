@@ -807,7 +807,7 @@ static void alloc_cycle(int hpos, int type)
 	cycle_line_slot[hpos] = type;
 #endif
 }
-static void __attribute__((unused)) alloc_cycle_maybe(int hpos, int type)
+static void alloc_cycle_maybe(int hpos, int type)
 {
 	if ((cycle_line_slot[hpos] & CYCLE_MASK) == 0) {
 		alloc_cycle(hpos, type);
@@ -1812,7 +1812,7 @@ static uae_s8 cycle_diagram_total_cycles[3][3][9];
 static uae_s8 *curr_diagram;
 static const uae_s8 cycle_sequences[3 * 8] = { 2,1,2,1,2,1,2,1, 4,2,3,1,4,2,3,1, 8,4,6,2,7,3,5,1 };
 
-static void __attribute__((unused)) debug_cycle_diagram(void)
+static void debug_cycle_diagram(void)
 {
 	int fm, res, planes, cycle, v;
 	TCHAR aa;
@@ -3262,7 +3262,7 @@ STATIC_INLINE void do_delays_3_aga_hr2(int nbits, int fm)
 }
 
 // This is very very slow. But really rarely needed.
-static void __attribute__((unused)) pull_toscr_output_bits(int nbits, int planes, uae_u32 *ptrs)
+static void pull_toscr_output_bits(int nbits, int planes, uae_u32 *ptrs)
 {
 	uae_u64 mask = (1 << nbits) - 1;
 	if (out_nbits >= nbits) {
@@ -3281,7 +3281,7 @@ static void __attribute__((unused)) pull_toscr_output_bits(int nbits, int planes
 	}
 }
 
-static void __attribute__((unused)) push_toscr_output_bits(int nbits, int planes, uae_u32 *ptrs)
+static void push_toscr_output_bits(int nbits, int planes, uae_u32 *ptrs)
 {
 	uae_u64 mask = (1 << nbits) - 1;
 	if (out_nbits >= nbits) {
@@ -5215,7 +5215,7 @@ static bool isbrdblank(int hpos, uae_u16 bplcon0, uae_u16 bplcon3)
 	return brdblank;
 }
 
-static bool __attribute__((unused)) brdblankactive(void)
+static bool brdblankactive(void)
 {
 	return (bplcon0 & 1) && (bplcon3 & 0x20);
 }
@@ -8564,7 +8564,7 @@ static void check_copper_stop(void)
 	}
 }
 
-static void __attribute__((unused)) copper_stop(void)
+static void copper_stop(void)
 {
 	copper_enabled_thisline = 0;
 	unset_special(SPCFLAG_COPPER);
@@ -8863,7 +8863,7 @@ static void INTENA(uae_u16 v)
 	}
 }
 
-static void __attribute__((unused)) INTREQ_nodelay(uae_u16 v)
+static void INTREQ_nodelay(uae_u16 v)
 {
 	uae_u16 old = intreq;
 	setclr(&intreq, v);
@@ -11829,7 +11829,7 @@ static frame_time_t rpt_vsync(int adjust)
 	return v;
 }
 
-static void __attribute__((unused)) rtg_vsync (void)
+static void rtg_vsync (void)
 {
 #ifdef PICASSO96
 	frame_time_t start, end;
@@ -12557,7 +12557,7 @@ static void vsync_handler_post(void)
 	vsync_cycles = get_cycles();
 }
 
-static void __attribute__((unused)) copper_check(int n)
+static void copper_check(int n)
 {
 	if (cop_state.state == COP_wait) {
 		int vp = vpos & (((cop_state.ir[1] >> 8) & 0x7F) | 0x80);

@@ -638,13 +638,13 @@ static bool parse_values(const TCHAR *ins, TCHAR *out)
 			in[3] = ' ';
 			in[4] = ' ';
         } else if (!_tcsncmp(in, _T("rl("), 3)) {
-            in[0] = 0xf2;
+            in[0] = static_cast<TCHAR>(0xf2);
             in[1] = ' ';
         } else if (!_tcsncmp(in, _T("rw("), 3)) {
-            in[0] = 0xf1;
+            in[0] = static_cast<TCHAR>(0xf1);
             in[1] = ' ';
         } else if (!_tcsncmp(in, _T("rb("), 3)) {
-            in[0] = 0xf0;
+            in[0] = static_cast<TCHAR>(0xf0);
             in[1] = ' ';
         } else if (in[0] == '>' && in[1] == '>') {
             in[0] = (TCHAR)('>' | 0x80);

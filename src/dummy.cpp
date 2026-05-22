@@ -713,8 +713,8 @@ int console_get(char* out, int maxlen) {
         return -1;
     }
 
-    int len = strlen(out);
-    return len - 1;
+    size_t len = strlen(out);
+    return static_cast<int>(len) - 1;
 }
 
 bool console_isch() {

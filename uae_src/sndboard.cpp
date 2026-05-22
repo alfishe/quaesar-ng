@@ -1281,7 +1281,7 @@ struct pmx_data
 };
 static struct pmx_data pmx[MAX_DUPLICATE_SOUND_BOARDS];
 
-static void __attribute__((unused)) pmx_reset_chip(struct pmx_data *data)
+static void pmx_reset_chip(struct pmx_data *data)
 {
 	for (int i = 0; i < 16; i++) {
 		data->regs[i] = 0;
@@ -1393,7 +1393,7 @@ bool pmx_init (struct autoconfig_info *aci)
 	return true;
 }
 
-static void __attribute__((unused)) pmx_free(void)
+static void pmx_free(void)
 {
 	for (int j = 0; j < MAX_DUPLICATE_SOUND_BOARDS; j++) {
 		struct pmx_data *data = &pmx[j];
@@ -1402,7 +1402,7 @@ static void __attribute__((unused)) pmx_free(void)
 	sndboard_rethink();
 }
 
-static void __attribute__((unused)) pmx_reset(int hardreset)
+static void pmx_reset(int hardreset)
 {
 	for (int j = 0; j < MAX_DUPLICATE_SOUND_BOARDS; j++) {
 		struct pmx_data *data = &pmx[j];
