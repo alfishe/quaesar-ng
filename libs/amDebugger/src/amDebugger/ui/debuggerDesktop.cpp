@@ -143,7 +143,7 @@ void DebuggerDesktop::createAllUiWndows()
             continue;
         }
         UiViewCreateCtx cv(this);
-        amD::AmDbgWindow* pCurWnd = pCreateAttr->makeInstance_<amD::AmDbgWindow>(cv);
+        amD::AmDbgWindow* pCurWnd = pCreateAttr->makeInstance_<amD::AmDbgWindow>(&cv);
         assert(pCurWnd);
         addChild(pCurWnd);
     }
