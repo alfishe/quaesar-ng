@@ -10,6 +10,7 @@ class ScreenWnd : public AmDbgWindow
     QDB_WINDOW_REGISTER(WndId::Screen, amD::window::ScreenWnd, amD::AmDbgWindow);
 
     ImTextureID mTextureId = 0;
+    ImVec2 mLastWndSize = {0, 0};
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override

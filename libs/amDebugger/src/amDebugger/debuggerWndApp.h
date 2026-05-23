@@ -59,6 +59,7 @@ public:
 
 public:
     DebuggerApp();
+    SDL_Window* getWindow() const { return m_pWindow; }
     SDL_Renderer* getRenderer() const { return m_pWndRenderer; }
     uint32_t getCurDbgClientIdx() const { return m_nCurDbgClientIdx; }
 
