@@ -131,15 +131,24 @@ void DebuggerApp::destroy()
 
 void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
 {
-    if (isWndVisible())
+    if (!isWndVisible())
     {
-        m_pQimGuiCtx->newFrame();
-        getDbg()->fetchVmState();
-        m_pGui->drawImGuiMainFrame();
-        m_pQimGuiCtx->endFrame();
-    }
-    else
         m_pQimGuiCtx->skipFrame();
+        return;
+    }
+
+    uint64_t now = SDL_GetTicks64();
+    if (now - m_lastRenderTimeMs < kMinFrameIntervalMs)
+    {
+        m_pQimGuiCtx->skipFrame();
+        return;
+    }
+    m_lastRenderTimeMs = now;
+
+    m_pQimGuiCtx->newFrame();
+    getDbg()->fetchVmState();
+    m_pGui->drawImGuiMainFrame();
+    m_pQimGuiCtx->endFrame();
 }
 
 

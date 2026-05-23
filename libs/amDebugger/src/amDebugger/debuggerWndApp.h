@@ -49,6 +49,8 @@ private:
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     uint32_t m_nCurDbgClientIdx = 0;
     int m_init = false;
+    uint64_t m_lastRenderTimeMs = 0;
+    static constexpr uint64_t kMinFrameIntervalMs = 66; // ~15 FPS max
 
 public:
     ref_ptr<amD::Debugger> m_pDebugger = nullptr; // current debugger client
