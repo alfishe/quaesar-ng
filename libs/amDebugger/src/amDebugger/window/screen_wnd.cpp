@@ -23,14 +23,18 @@ void ScreenWnd::drawContentImp()
         ImGui::EndMenuBar();
     }
 
-    grabScreenToTexture(dbg);
+    // Detect resize in progress
+    ImVec2 curWndSize = ImGui::GetWindowSize();
+    bool isResizing = (mLastWndSize.x != curWndSize.x || mLastWndSize.y != curWndSize.y) && mLastWndSize.x > 0;
+    mLastWndSize = curWndSize;
+
+    if (!isResizing)
+        grabScreenToTexture(dbg);
 
     int scrSizeX = vm->getScreenSizeX();
     int scrSizeY = vm->getScreenSizeY();
-    float scrollbarSize = ImGui::GetStyle().ScrollbarSize;
-    ImVec2 scrollingChildSize = ImVec2(ImGui::GetWindowWidth() - scrollbarSize, ImGui::GetWindowHeight() - 30);
-    if (auto bc = qIm::LockChild("##scrolling", scrollingChildSize, ImGuiChildFlags_None,
-            ImGuiWindowFlags_HorizontalScrollbar))
+    ImVec2 availSize = ImGui::GetContentRegionAvail();
+    if (auto bc = qIm::LockChild("##scrolling", availSize, ImGuiChildFlags_None, ImGuiWindowFlags_NoScrollbar))
     {
         int hPos = vm->getHPos();
         int vPos = vm->getVPos();
@@ -38,19 +42,42 @@ void ScreenWnd::drawContentImp()
 
         ImGui::Text("VPos:%i HPos:%i cycle:%i", vPos, hPos, cycle);
 
-        // screen texture
-        ImVec2 p0 = ImGui::GetCursorScreenPos();
-        ImVec2 p1(p0.x + scrSizeX, p0.y + scrSizeY);
-        ImGui::Image(mTextureId, ImVec2((float)scrSizeX, (float)scrSizeY), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
-            ImVec4(1.0f, 1.0f, 1.0f, 1.0f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
-
-        if (g_dbg_cfg->showVHPopsLines)
+        // Calculate scaled size to fit window while preserving aspect ratio
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+        float displayW = (float)scrSizeX;
+        float displayH = (float)scrSizeY;
+        float scale = 1.0f;
+        if (avail.x > 1.0f && avail.y > 1.0f && scrSizeX > 0 && scrSizeY > 0)
         {
+            float scaleX = avail.x / (float)scrSizeX;
+            float scaleY = avail.y / (float)scrSizeY;
+            scale = (scaleX < scaleY) ? scaleX : scaleY;
+            displayW = (float)scrSizeX * scale;
+            displayH = (float)scrSizeY * scale;
+        }
+
+        ImVec2 p0 = ImGui::GetCursorScreenPos();
+        ImVec2 p1(p0.x + displayW, p0.y + displayH);
+
+        if (isResizing)
+        {
+            // During resize: show placeholder frame
             ImDrawList* dr = ImGui::GetWindowDrawList();
-            // VPOS
-            dr->AddLine({p0.x, p0.y + (float)vPos}, {p1.x, p0.y + (float)vPos}, qd::Color::MAGENTA75);
-            // HPOS
-            dr->AddLine({p0.x + (float)hPos, p0.y}, {p0.x + hPos, p1.y}, qd::Color::MAGENTA75);
+            dr->AddRect(p0, p1, IM_COL32(128, 128, 128, 255), 0.0f, 0, 2.0f);
+            ImGui::Dummy(ImVec2(displayW, displayH));
+        }
+        else
+        {
+            // Normal: show scaled image
+            ImGui::Image(mTextureId, ImVec2(displayW, displayH), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f),
+                ImVec4(1.0f, 1.0f, 1.0f, 1.0f), ImGui::GetStyleColorVec4(ImGuiCol_Border));
+
+            if (g_dbg_cfg->showVHPopsLines)
+            {
+                ImDrawList* dr = ImGui::GetWindowDrawList();
+                dr->AddLine({p0.x, p0.y + vPos * scale}, {p1.x, p0.y + vPos * scale}, qd::Color::MAGENTA75);
+                dr->AddLine({p0.x + hPos * scale, p0.y}, {p0.x + hPos * scale, p1.y}, qd::Color::MAGENTA75);
+            }
         }
     }
 }

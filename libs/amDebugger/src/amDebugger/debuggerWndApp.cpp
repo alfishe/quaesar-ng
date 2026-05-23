@@ -23,6 +23,20 @@ namespace amD {
 constexpr uint32_t g_nDebuggerWndSizeX = 1368;
 constexpr uint32_t g_nDebuggerWndSizeY = 800;
 
+static int resizeEventWatcher(void* data, SDL_Event* event)
+{
+    if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    {
+        DebuggerApp* app = static_cast<DebuggerApp*>(data);
+        if (app && SDL_GetWindowID(app->getWindow()) == event->window.windowID)
+        {
+            app->updateAppPart(0, 0);
+            app->renderAppPart();
+        }
+    }
+    return 0;
+}
+
 
 DebuggerApp::DebuggerApp()
 {
@@ -44,6 +58,8 @@ void DebuggerApp::init()
     m_init = true;
     createRenderWindow();
     initImGui();
+
+    SDL_AddEventWatch(resizeEventWatcher, this);
 
     m_pDebugger->setDbgServiceBridge(create_dummy_connection());
 
@@ -111,6 +127,8 @@ qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg
 
 void DebuggerApp::destroy()
 {
+    SDL_DelEventWatch(resizeEventWatcher, this);
+
     if (m_pOperationMgr)
         m_pOperationMgr->destroy();
     m_pOperationMgr = nullptr;
