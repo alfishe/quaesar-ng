@@ -84,6 +84,7 @@ public:
 private:
     void createRenderWindow();
     void initImGui();
+    void loadLayoutSettings();
     virtual ~DebuggerApp() override;
 
 }; // class DebuggerApp

@@ -203,11 +203,18 @@ void DebuggerDesktop::drawImGuiMainFrame()
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoScrollbar;
 
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
+        // Only draw content when VM is fully bound - avoids layout jumps during init
+        if (m_pDbgApp && m_pDbgApp->m_bFullyInitialized)
+        {
+            _drawMainMenuBar();
+            _drawToolBar();
+        }
+
         ImGuiID dockspaceId = ImGui::GetID("DockSpace");
         ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
@@ -225,11 +232,8 @@ void DebuggerDesktop::drawImGuiMainFrame()
             }
         }
 
-        // Only draw content when VM is fully bound - avoids layout jumps during init
         if (m_pDbgApp && m_pDbgApp->m_bFullyInitialized)
         {
-            _drawMainMenuBar();
-            _drawToolBar();
             this->drawContentImp();
 
             qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();

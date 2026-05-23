@@ -69,6 +69,7 @@ void DebuggerApp::init()
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
 
+    loadLayoutSettings();
     m_bFullyInitialized = true;
 }
 
@@ -115,11 +116,15 @@ void DebuggerApp::initImGui()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.IniFilename = "debugger_layout.ini";
 
-    // Load saved layout if exists
-    ImGui::LoadIniSettingsFromDisk(io.IniFilename);
-
     // Setup Dear ImGui style
     qd::imGuiApplyStyleDark();
+}
+
+
+void DebuggerApp::loadLayoutSettings()
+{
+    m_pQimGuiCtx->useCurrent();
+    ImGui::LoadIniSettingsFromDisk(ImGui::GetIO().IniFilename);
 }
 
 
