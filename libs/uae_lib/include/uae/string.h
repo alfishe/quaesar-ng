@@ -7,6 +7,7 @@
 #include "uae/types.h"
 #include <string.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifdef _WIN32
 /* Make sure the real _tcs* functions are already declared before we
@@ -61,7 +62,7 @@
 // mismatches between the format output and buffer size. The destination
 // buffers in UAE code are always large stack arrays (>= 256 bytes).
 // The volatile ensures the compiler can't statically prove the size is too large.
-static inline int _uae_stprintf_impl(char * restrict buf, const char * restrict fmt, ...) {
+static inline int _uae_stprintf_impl(char *buf, const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     int r = vsnprintf(buf, 0x7FFFFFFF, fmt, ap);
