@@ -66,7 +66,7 @@ public:
 
         virtual bool getFlg(ECpuFlg_ f) const override;
         virtual int getIntMask() const override {
-            return 0;  //regs.intmask;
+            return (m_pCpuInfo->sr >> 8) & 7;  // IPL bits from SR
         }
 
         virtual void fetch() override {
@@ -85,28 +85,18 @@ public:
     public:
         virtual void init(IVm::VM* p_vm) override;
         virtual uint8_t* getRealAddr(AddrRef ptr) override;
-        virtual bool getU16(AddrRef addr, uint16_t* out) override {
-            *out = false;  //(uint16_t)::memory_get_word(addr);
-            return true;
-        }
-        virtual uint16_t getU16(AddrRef addr) override {
-            return 0;  //(uint16_t)::memory_get_word(addr);
-        }
-        virtual void setU16(AddrRef addr, uint16_t v) override {
-            //::memory_put_word(addr, v);
-        }
-        virtual uint32_t getU32(AddrRef addr) override {
-            return 0;  //(uint32_t)::memory_get_long(addr);
-        }
-        virtual void setU32(AddrRef addr, uint32_t v) override {
-            //::memory_put_long(addr, v);
-        }
+        virtual bool getU16(AddrRef addr, uint16_t* out) override;
+        virtual uint16_t getU16(AddrRef addr) override;
+        virtual void setU16(AddrRef addr, uint16_t v) override;
+        virtual uint32_t getU32(AddrRef addr) override;
+        virtual void setU32(AddrRef addr, uint32_t v) override;
     };  // struct Memory
     Memory instMemory;
 
 
     //------------------------------------------------------------------------
     struct Blitter final : public IVm::Blitter {
+        VAmVmImp* m_pVm = nullptr;
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
@@ -117,6 +107,8 @@ public:
     class CustomRegs final : public IVm::CustomRegs {
         static constexpr size_t data_offset = 2;
         eastl::array<uint16_t, CustReg::_COUNT_ + data_offset> regsData;
+    public:
+        VAmVmImp* m_pVm = nullptr;
 
     public:
         void fetch() override;
@@ -135,6 +127,8 @@ public:
     //------------------------------------------------------------------------
     class Copper final : public IVm::Copper {
     public:
+        VAmVmImp* m_pVm = nullptr;
+        vamiga::CopperInfo m_copInfo = {};
         virtual void fetch() override;
         virtual AddrRef getCopperAddr(IVm::ECopperAddr_ copno) override;
     };  // class Copper
@@ -150,9 +144,10 @@ public:
         bool isDebugActivatedFull() const;
         bool isDebugActivated() const;
         virtual void getScreenSize(int* out_w, int* out_h) const override {
-            *out_w = 754;
-            *out_h = 576;
+            *out_w = (int)vamiga::HPIXELS;   // 912
+            *out_h = (int)vamiga::VPIXELS;   // 313
         }
+        virtual void initBreakPoints(amD::BreakpointsSortedList& bpList) override;
     };  // class Emu
     Emu instEmu;
 
@@ -161,14 +156,12 @@ public:
     class Floppy : public IVm::Floppy {
         VAmVmImp *m_pVm = nullptr;
         bool m_writeProtect = false;
+        qtd::string m_adfPath;
     public:
         virtual bool getEnabled() override;
         virtual void setEnabled(bool v) override;
-        virtual bool getWriteProtect() override {
-            return false;
-        }
-        virtual void setWriteProtect(bool v) override {
-        }
+        virtual bool getWriteProtect() override;
+        virtual void setWriteProtect(bool v) override;
         virtual qtd::string getAdfPath() override;
         virtual void setAdfPath(const qtd::string& v) override;
 
