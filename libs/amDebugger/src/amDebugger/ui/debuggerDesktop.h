@@ -47,6 +47,7 @@ private:
     void createAllUiWndows();
     void _drawMainMenuBar();
     void _drawToolBar();
+    void _buildDefaultDockLayout(ImGuiID dockspaceId);
 
 }; // class GUIManager
 

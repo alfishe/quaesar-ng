@@ -160,6 +160,40 @@ DebuggerDesktop::~DebuggerDesktop()
 }
 
 
+void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
+{
+    ImGuiID idLeft, idRight;
+    ImGui::DockBuilderSplitNode(dockspaceId, ImGuiDir_Left, 0.48f, &idLeft, &idRight);
+
+    ImGui::DockBuilderDockWindow("Disassembly", idLeft);
+    ImGui::DockBuilderDockWindow("Copper debug", idLeft);
+
+    ImGuiID idRightTop, idRightBottom;
+    ImGui::DockBuilderSplitNode(idRight, ImGuiDir_Up, 0.66f, &idRightTop, &idRightBottom);
+
+    ImGui::DockBuilderDockWindow("Screen", idRightTop);
+    ImGui::DockBuilderDockWindow("Memory graph", idRightTop);
+    ImGui::DockBuilderDockWindow("Console", idRightBottom);
+    ImGui::DockBuilderDockWindow("Memory", idRightBottom);
+
+    ImGuiID idLeftMain, idLeftMid;
+    ImGui::DockBuilderSplitNode(idLeft, ImGuiDir_Left, 0.59f, &idLeftMain, &idLeftMid);
+
+    ImGui::DockBuilderDockWindow("Disassembly", idLeftMain);
+    ImGui::DockBuilderDockWindow("Copper debug", idLeftMain);
+
+    ImGuiID idMidTop, idMidBottom;
+    ImGui::DockBuilderSplitNode(idLeftMid, ImGuiDir_Up, 0.5f, &idMidTop, &idMidBottom);
+
+    ImGui::DockBuilderDockWindow("Registers", idMidTop);
+    ImGui::DockBuilderDockWindow("Palette", idMidTop);
+    ImGui::DockBuilderDockWindow("Blitter", idMidTop);
+    ImGui::DockBuilderDockWindow("Custom regs", idMidBottom);
+
+    ImGui::DockBuilderFinish(dockspaceId);
+}
+
+
 void DebuggerDesktop::drawImGuiMainFrame()
 {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -176,9 +210,19 @@ void DebuggerDesktop::drawImGuiMainFrame()
     {
         _drawMainMenuBar();
         _drawToolBar();
-        ImGui::DockSpace(ImGui::GetID("DockSpace"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+        ImGuiID dockspaceId = ImGui::GetID("DockSpace");
+        ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
-        // draw static nodes
+        static bool s_layoutBuilt = false;
+        if (!s_layoutBuilt)
+        {
+            s_layoutBuilt = true;
+            ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
+            bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
+            if (!hasChildren)
+                _buildDefaultDockLayout(dockspaceId);
+        }
+
         this->drawContentImp();
 
         qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
