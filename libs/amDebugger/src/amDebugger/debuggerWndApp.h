@@ -53,6 +53,7 @@ private:
     static constexpr uint64_t kMinFrameIntervalMs = 66; // ~15 FPS max
 
 public:
+    bool m_bFullyInitialized = false;
     ref_ptr<amD::Debugger> m_pDebugger = nullptr; // current debugger client
     ref_ptr<amD::DebuggerDesktop> m_pGui;
     qd::OperationsRegistry* m_pOperationMgr = nullptr;

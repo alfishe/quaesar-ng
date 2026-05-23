@@ -208,11 +208,10 @@ void DebuggerDesktop::drawImGuiMainFrame()
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
-        _drawMainMenuBar();
-        _drawToolBar();
         ImGuiID dockspaceId = ImGui::GetID("DockSpace");
         ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
+        // Build default layout on first frame if needed
         static bool s_layoutBuilt = false;
         if (!s_layoutBuilt)
         {
@@ -223,21 +222,27 @@ void DebuggerDesktop::drawImGuiMainFrame()
                 _buildDefaultDockLayout(dockspaceId);
         }
 
-        this->drawContentImp();
+        // Only draw content when VM is fully bound - avoids layout jumps during init
+        if (m_pDbgApp && m_pDbgApp->m_bFullyInitialized)
+        {
+            _drawMainMenuBar();
+            _drawToolBar();
+            this->drawContentImp();
 
-        qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
-        pOpMgr->testOperationsShortcuts_<
-            // clang-format off
-              amD::operation::DisasmTraceStepInto
-            , amD::operation::DebugWaitScanLines
-            , amD::operation::VmPlayerWndAlwaysOnTop
-            , amD::operation::DebugTraceContinue
-            , amD::operation::DebugTraceStart
-            , amD::operation::DisasmToggleBreakpoint
-            , amD::operation::CopperTraceStep
-            , amD::operation::CopperToggleBreakpoint
-            // clang-format on
-            >(this);
+            qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
+            pOpMgr->testOperationsShortcuts_<
+                // clang-format off
+                  amD::operation::DisasmTraceStepInto
+                , amD::operation::DebugWaitScanLines
+                , amD::operation::VmPlayerWndAlwaysOnTop
+                , amD::operation::DebugTraceContinue
+                , amD::operation::DebugTraceStart
+                , amD::operation::DisasmToggleBreakpoint
+                , amD::operation::CopperTraceStep
+                , amD::operation::CopperToggleBreakpoint
+                // clang-format on
+                >(this);
+        }
     }
     ImGui::End();
 }

@@ -68,6 +68,8 @@ void DebuggerApp::init()
     m_pGui = mk.make_<amD::DebuggerDesktop>(this, m_pDebugger);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
+
+    m_bFullyInitialized = true;
 }
 
 
@@ -94,6 +96,11 @@ void DebuggerApp::createRenderWindow()
         return;
     }
     m_pWindow = window;
+
+    // Clear framebuffer to gray immediately to avoid red/garbage flash
+    SDL_SetRenderDrawColor(m_pWndRenderer, 128, 128, 128, 255);
+    SDL_RenderClear(m_pWndRenderer);
+    SDL_RenderPresent(m_pWndRenderer);
 }
 
 
@@ -164,8 +171,11 @@ void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
     m_lastRenderTimeMs = now;
 
     m_pQimGuiCtx->newFrame();
-    getDbg()->fetchVmState();
-    m_pGui->drawImGuiMainFrame();
+    if (m_bFullyInitialized && m_pGui && m_pDebugger)
+    {
+        getDbg()->fetchVmState();
+        m_pGui->drawImGuiMainFrame();
+    }
     m_pQimGuiCtx->endFrame();
 }
 
@@ -190,6 +200,11 @@ void DebuggerApp::setWndVisible(bool v)
 {
     if (v)
     {
+        // Clear to gray before showing to avoid uninitialized framebuffer flash
+        SDL_SetRenderDrawColor(m_pWndRenderer, 128, 128, 128, 255);
+        SDL_RenderClear(m_pWndRenderer);
+        SDL_RenderPresent(m_pWndRenderer);
+
         SDL_ShowWindow(m_pWindow);
         setPartRenderable(true);
     }
