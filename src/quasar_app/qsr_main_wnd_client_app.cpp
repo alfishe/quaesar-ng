@@ -98,10 +98,15 @@ void QsrMainClientWndApp::_drawGuiMenus() {
 void QsrMainClientWndApp::renderAppPart() {
     // render VM display texture screen
     IVmClientPlayer* pVmPlayer = getVmProvider();
-    if (pVmPlayer) {
-        uint32_t curFrame = pVmPlayer->getScrFrameNo();
-        if (curFrame != m_renderedFrameNo) {
-            m_renderedFrameNo = curFrame;
+    if (!pVmPlayer)
+        return;
+
+    uint32_t curFrame = pVmPlayer->getScrFrameNo();
+    if (curFrame == m_renderedFrameNo)
+        return;  // No new frame - skip render to avoid flicker
+
+    m_renderedFrameNo = curFrame;
+    {
 
             int curWndSizeX, curWndSizeY;
             SDL_GetRendererOutputSize(m_hWndRenderer, &curWndSizeX, &curWndSizeY);
@@ -145,7 +150,6 @@ void QsrMainClientWndApp::renderAppPart() {
                 SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
                 pVmPlayer->unlockDisplayTexBuf();
             }
-        }
     }
 
     if (m_bShowGui)
