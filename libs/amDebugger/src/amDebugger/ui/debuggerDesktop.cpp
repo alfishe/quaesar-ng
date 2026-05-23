@@ -211,15 +211,18 @@ void DebuggerDesktop::drawImGuiMainFrame()
         ImGuiID dockspaceId = ImGui::GetID("DockSpace");
         ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
 
-        // Build default layout on first frame if needed
-        static bool s_layoutBuilt = false;
-        if (!s_layoutBuilt)
+        // Build default layout if ini was missing/empty/invalid
+        static int s_layoutCheckFrame = 0;
+        if (s_layoutCheckFrame < 2)
         {
-            s_layoutBuilt = true;
-            ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
-            bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
-            if (!hasChildren)
-                _buildDefaultDockLayout(dockspaceId);
+            s_layoutCheckFrame++;
+            if (s_layoutCheckFrame == 2)
+            {
+                ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
+                bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
+                if (!hasChildren)
+                    _buildDefaultDockLayout(dockspaceId);
+            }
         }
 
         // Only draw content when VM is fully bound - avoids layout jumps during init

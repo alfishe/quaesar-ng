@@ -111,9 +111,12 @@ void DebuggerApp::initImGui()
 
     // Setup Dear ImGui context
     ImGuiIO& io = m_pQimGuiCtx->getIO();
-    (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.IniFilename = "debugger_layout.ini";
+
+    // Load saved layout if exists
+    ImGui::LoadIniSettingsFromDisk(io.IniFilename);
 
     // Setup Dear ImGui style
     qd::imGuiApplyStyleDark();
@@ -144,6 +147,12 @@ void DebuggerApp::destroy()
         m_pGui->destroy();
     m_pGui = nullptr;
 
+    // Save layout before destroying context
+    if (m_pQimGuiCtx)
+    {
+        m_pQimGuiCtx->useCurrent();
+        ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
+    }
     SAFE_DESTROY(m_pQimGuiCtx);
     SDL_DestroyRenderer(m_pWndRenderer);
     m_pWndRenderer = nullptr;
@@ -210,6 +219,10 @@ void DebuggerApp::setWndVisible(bool v)
     }
     else
     {
+        // Save layout before hiding
+        m_pQimGuiCtx->useCurrent();
+        ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
+
         SDL_HideWindow(m_pWindow);
         setPartRenderable(false);
     }

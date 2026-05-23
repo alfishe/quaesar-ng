@@ -4,3 +4,13 @@ cmake-build-debug
 .idea
 .vs
 *.pdb
+
+# Binary executables
+quaesar
+quaesar-dbg
+
+# ImGui layout files
+*.ini
+debugger_layout.ini
+imgui.ini
+default_layout.ini
