@@ -27,6 +27,8 @@ class UaeServerThread : public qsr::IVmClientPlayer {
     class UaeConsoleQueue* m_pConsoleQueue = nullptr;
     std::deque<qtd::unique_ptr<qd::operation::BaseOpArgs>> m_pClientOpsStack;
     bool m_isDestroying = false;
+    bool m_isPaused = false;
+    qd::ThreadEvent* m_pauseEvent = nullptr;
 
 public:
     int m_scrWidth = 754;
@@ -52,6 +54,10 @@ public:
     virtual void pushSdlEvent(const SDL_Event& event) override;
     virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) override;
     bool onUaeHandleEvents();
+
+    void pauseEmulation();
+    void resumeEmulation();
+    bool isPaused() const { return m_isPaused; }
 
     void execConsoleCmd(qtd::string&& cmd);
     int uaeWaitConsoleCmdImpl(char* out, int maxlen);

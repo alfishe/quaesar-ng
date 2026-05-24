@@ -35,9 +35,13 @@ qd::EFlow DebuggerDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* a
         if (auto pWnd = findChildByType_<amD::window::DisassemblyView>())
             return pWnd->applyOperationMsgProcImp(args);
     }
-    if (m_pDbg)
-        return m_pDbg->applyOperationMsgProcImp(args);
-    return EFlow::NO_RESULT;
+    // Forward all operations to the real emulator thread.
+    // Do NOT fall through to the dummy VM — it has no real UAE backend
+    // and will crash on emulator-control ops (step, pause, continue, etc.).
+    if (m_pDbgApp)
+        m_pDbgApp->forwardOpToEmulator(args);
+
+    return EFlow::STOP;
 }
 
 
@@ -59,23 +63,29 @@ void DebuggerDesktop::_drawMainMenuBar()
 
         if (auto pm = qIm::LockMenu("Emulator"))
         {
-            qIm::menuItemFromOperationArgs_<amD::operation::VmPlayerWndAlwaysOnTop>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::VmEmuReset>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmPlayerWndAlwaysOnTop>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmEmuReset>(this);
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
             IVm::VM* vm = pDbg->getVm();
             IVm::EVmDebugMode debugMode = vm ? vm->getVmDebugMode().get() : IVm::EVmDebugMode::Live;
-            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(pDbg, "", false,
+            qIm::menuItemFromOperationArgs_<amD::operation::PauseEmulation>(this, "", false,
+                debugMode.isLive());
+            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(this, "", false,
                 debugMode.isBreak());
-            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
+            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(this, "", false, debugMode.isLive());
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepInto>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepOut>(pDbg);
+            // Step/trace commands only make sense when paused (Break mode)
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepInto>(this, "", false,
+                debugMode.isBreak());
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepOut>(this, "", false,
+                debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::DisasmToggleBreakpoint>(this);
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::CopperTraceStep>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::CopperTraceStep>(this, "", false,
+                debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::CopperToggleBreakpoint>(this);
             ImGui::Separator();
 
@@ -244,6 +254,7 @@ void DebuggerDesktop::drawImGuiMainFrame()
                 , amD::operation::VmPlayerWndAlwaysOnTop
                 , amD::operation::DebugTraceContinue
                 , amD::operation::DebugTraceStart
+                , amD::operation::PauseEmulation
                 , amD::operation::DisasmToggleBreakpoint
                 , amD::operation::CopperTraceStep
                 , amD::operation::CopperToggleBreakpoint
@@ -290,10 +301,13 @@ void DebuggerDesktop::_drawToolBar()
         const qd::operation::OpDesc* pOpDesc;
         pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepInto::CID);
         {
+            bool canStep = dbg->isDebugActivated();
+            if (!canStep) { ImGui::BeginDisabled(); }
             if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
             {
                 doOperation_<amD::operation::DisasmTraceStepInto>();
             }
+            if (!canStep) { ImGui::EndDisabled(); }
             ImGui::SetItemTooltipV(CC(pOpDesc->getShortcutGuiStr()), nullptr);
 
             //

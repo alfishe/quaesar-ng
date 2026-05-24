@@ -5,7 +5,7 @@
 #include "qd/base/base.h"
 #include "qd/base/classIdCC.h"
 #include "qd/qui/uiOperation.h"
-#include <EASTL/fixed_set.h>
+#include <functional>
 #include "qd/stl/fixed_vector.h"
 #include "qd/stl/string.h"
 
@@ -80,6 +80,19 @@ public:
     qd::OperationsRegistry* getOperations() const { return m_pOperationMgr; }
 
     qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg) override;
+
+    // Callback to forward operations to the real emulator.
+    // Set by the application to bridge debugger operations to the actual emulator thread.
+    using ForwardOpToEmulatorCb = std::function<void(qd::operation::BaseOpArgs*)>;
+    ForwardOpToEmulatorCb m_forwardOpToEmulatorCb;
+    void setForwardOpToEmulatorCb(ForwardOpToEmulatorCb cb) { m_forwardOpToEmulatorCb = std::move(cb); }
+
+    // Forward an operation to the real emulator via the registered callback.
+    // Called from DebuggerDesktop before dispatching to the dummy VM.
+    void forwardOpToEmulator(qd::operation::BaseOpArgs* args) {
+        if (m_forwardOpToEmulatorCb)
+            m_forwardOpToEmulatorCb(args);
+    }
 
 private:
     void createRenderWindow();

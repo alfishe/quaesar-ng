@@ -136,7 +136,15 @@ DebuggerApp::~DebuggerApp()
 
 qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg)
 {
-    return m_pDebugger->applyOperationMsgProcImp(p_msg);
+    qd::EFlow r = m_pDebugger->applyOperationMsgProcImp(p_msg);
+
+    // Also forward to the real emulator thread (if callback registered)
+    // so that emulator control operations (pause, continue, step, etc.)
+    // reach the actual running emulator, not just the dummy VM.
+    if (m_forwardOpToEmulatorCb)
+        m_forwardOpToEmulatorCb(p_msg);
+
+    return r;
 }
 
 

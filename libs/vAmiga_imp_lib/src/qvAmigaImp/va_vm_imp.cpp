@@ -117,6 +117,10 @@ VAmVmImp* vm = this;
       pVAmiga->warpOn(1);
     }
 
+  } else if (args->cast_<amD::operation::PauseEmulation>()) {
+    r = true;
+    vm->setVmDebugMode(EVmDebugMode::Break);
+
   } else if (args->cast_<amD::operation::VmEmuReset>()) {
     r = true;
     vm->m_vAmiga->hardReset();

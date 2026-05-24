@@ -49,14 +49,17 @@ public:
   }
 
   bool popConsoleCmdWait(qtd::string &out_cmd) {
-    m_pThreadEvent->wait(0);
-    qd::MutexLock ml(*m_pMutex);
-    if (m_consoleCmdQueue.empty())
-      return false;
-    const qtd::string &cmd = m_consoleCmdQueue.front();
-    out_cmd = std::move(cmd);
-    m_consoleCmdQueue.pop();
-    return true;
+    for (;;) {
+      m_pThreadEvent->wait();  // block until set() by addCmdToQueue
+      qd::MutexLock ml(*m_pMutex);
+      if (!m_consoleCmdQueue.empty()) {
+        out_cmd = std::move(m_consoleCmdQueue.front());
+        m_consoleCmdQueue.pop();
+        return true;
+      }
+      // Spurious wake — reset and wait again
+      m_pThreadEvent->reset();
+    }
   }
 
   void destroy() {
@@ -96,6 +99,7 @@ UaeServerThread::UaeServerThread(qsr::UaeServerAppPart *pServerApp)
   assert(!g_pSingleton);
   g_pSingleton = this;
   m_pConsoleQueue = new UaeConsoleQueue();
+  m_pauseEvent = new qd::ThreadEvent(true);  // auto-reset event
 }
 
 void UaeServerThread::initialize() {
@@ -171,8 +175,14 @@ void UaeServerThread::destroy() {
     SAFE_DELETE(m_pConsoleQueue);
     SAFE_DELETE(m_onUaeInitialized);
   }
+
+  // If paused, resume to unblock the UAE thread
+  if (m_isPaused)
+    resumeEmulation();
+
   delete[] m_pAmigaBuffer;
   m_pAmigaBuffer = nullptr;
+  SAFE_DELETE(m_pauseEvent);
 }
 
 UaeServerThread::~UaeServerThread() {
@@ -220,19 +230,48 @@ void UaeServerThread::pushOperationMsg(
 }
 
 bool UaeServerThread::onUaeHandleEvents() {
-  qd::MutexLock ml(m_eventMutex);
-  while (!m_sdlEventsQueue.empty()) {
-    const SDL_Event &event = m_sdlEventsQueue.front();
-    applySdlEventProc(event);
-    m_sdlEventsQueue.pop_front();
+  {
+    qd::MutexLock ml(m_eventMutex);
+    while (!m_sdlEventsQueue.empty()) {
+      const SDL_Event &event = m_sdlEventsQueue.front();
+      applySdlEventProc(event);
+      m_sdlEventsQueue.pop_front();
+    }
+
+    while (!m_pClientOpsStack.empty()) {
+      qd::operation::BaseOpArgs *pCurOpMsg = m_pClientOpsStack.front().get();
+      m_pVm->applyOperationMsgProc(pCurOpMsg);
+      m_pClientOpsStack.pop_front();
+    }
   }
 
-  while (!m_pClientOpsStack.empty()) {
-    qd::operation::BaseOpArgs *pCurOpMsg = m_pClientOpsStack.front().get();
-    m_pVm->applyOperationMsgProc(pCurOpMsg);
-    m_pClientOpsStack.pop_front();
+  // If paused, block here until resumed. This halts the UAE emulation loop.
+  // The resumeEmulation() call from the main thread will set m_isPaused = false
+  // and signal m_pauseEvent, unblocking us.
+  // We use a timeout so we periodically wake up to process queued operations
+  // (e.g., the resume/continue operation itself).
+  while (m_isPaused) {
+    m_pauseEvent->wait(50);  // wake every 50ms to process queued ops
+    // Process any queued operations that arrived while paused
+    qd::MutexLock ml(m_eventMutex);
+    while (!m_pClientOpsStack.empty()) {
+      qd::operation::BaseOpArgs *pCurOpMsg = m_pClientOpsStack.front().get();
+      m_pVm->applyOperationMsgProc(pCurOpMsg);
+      m_pClientOpsStack.pop_front();
+    }
   }
+
   return false;
+}
+
+void UaeServerThread::pauseEmulation() {
+  m_isPaused = true;
+  m_pauseEvent->reset();
+}
+
+void UaeServerThread::resumeEmulation() {
+  m_isPaused = false;
+  m_pauseEvent->set();
 }
 
 IVm::VM *UaeServerThread::getVm() const { return m_pVm; }

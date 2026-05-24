@@ -35,7 +35,11 @@ set(QDICE_SRC)
 
 function(add_source_group SUBDIR)
     set(CURDIR "${QDICE_DIR}/${SUBDIR}")
-    file(GLOB SUB_FILES_SRC "${CURDIR}/*.cpp" "${CURDIR}/*.h")
+    # CONFIGURE_DEPENDS: ensures CMake re-evaluates the glob when source files
+    # are added/removed, so incremental builds always pick up changed sources.
+    # Without it, file(GLOB) is only evaluated at configure time and new/modified
+    # files are silently missed until a full cmake reconfigure.
+    file(GLOB SUB_FILES_SRC CONFIGURE_DEPENDS "${CURDIR}/*.cpp" "${CURDIR}/*.h")
     # Add files to local lists
     list(APPEND QDICE_SRC ${SUB_FILES_SRC})
     # Pass updated lists to the global scope
