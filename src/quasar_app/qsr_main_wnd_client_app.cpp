@@ -109,7 +109,9 @@ void QsrMainClientWndApp::renderAppPart() {
     {
 
             int curWndSizeX, curWndSizeY;
-            SDL_GetRendererOutputSize(m_hWndRenderer, &curWndSizeX, &curWndSizeY);
+            // Use SDL_GetWindowSize (logical points) instead of SDL_GetRendererOutputSize (physical pixels)
+            // This prevents a 4x zoom bug on HighDPI/Retina displays when calculating the destination rect.
+            SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
 
             int bufWidth, bufHeight;
             uint32_t* pSrcDisplayBuf = nullptr;
@@ -117,8 +119,13 @@ void QsrMainClientWndApp::renderAppPart() {
                 if (!bufWidth || !bufHeight)
                     return;
 
-                if (bufHeight < 350)
+                // If the Amiga screen is low-res (e.g. 640x256), we artificially 
+                // double the buffer height to maintain the correct pixel aspect ratio.
+                bool isDoubled = false;
+                if (bufHeight < 350) {
                     bufHeight *= 2;
+                    isDoubled = true;
+                }
 
                 // Maintain aspect ratio
                 float image_aspect = (float)bufWidth / (float)bufHeight;
@@ -142,7 +149,10 @@ void QsrMainClientWndApp::renderAppPart() {
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
                     for (int curY = 0; curY < bufHeight; curY++) {
                         uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
-                        memcpy(dest, &pSrcDisplayBuf[curY / 2 * bufWidth], bufWidth * 4);
+                        // Only duplicate the scanlines (curY / 2) if we actually doubled the buffer height. 
+                        // Otherwise, map 1:1 to prevent vertical cropping on high-res/laced modes.
+                        int srcY = isDoubled ? (curY / 2) : curY;
+                        memcpy(dest, &pSrcDisplayBuf[srcY * bufWidth], bufWidth * 4);
                     }
                     SDL_UnlockTexture(hDisplayTex);
                 }
