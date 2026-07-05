@@ -938,9 +938,12 @@ TCHAR* fsdb_search_dir(const TCHAR* dirname, TCHAR* rel, TCHAR** relalt) {
 }
 
 
-int fsdb_exists(char const*) {
-    UNIMPLEMENTED();
-    //return 0;
+int fsdb_exists(char const* path) {
+    try {
+        return std::filesystem::exists(path) ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
 }
 
 

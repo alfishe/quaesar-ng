@@ -3061,7 +3061,7 @@ static a_inode *lookup_child_aino_for_exnext (Unit *unit, a_inode *base, TCHAR *
 		c->has_dbentry = 0;
 		if (vfso) {
 			c->dir = vfso->dir;
-			c->comment = my_strdup(vfso->comment);
+			c->comment = vfso->comment ? my_strdup(vfso->comment) : 0;
 			c->amigaos_mode = vfso->amigaos_mode;
 			c->vfso = vfso;
 		} else if (!fill_file_attrs (unit, base, c)) {

@@ -37,10 +37,10 @@ void native2amiga_install (void)
 void native2amiga_reset (void)
 {
 	smp_comm_pipe *p = &native2amiga_pending;
-	p->rdp = p->wrp = 0;
+	p->wrp = 0;
+	p->rdp = 0;
 	p->reader_waiting = 0;
 	p->writer_waiting = 0;
-	destroy_comm_pipe(&native2amiga_pending);
 }
 
 /*
