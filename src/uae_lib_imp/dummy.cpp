@@ -626,7 +626,10 @@ void cpuboard_dkb_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 }
 
 bool cpuboard_forced_hardreset() {
-    UNIMPLEMENTED();
+    // DO NOT use UNIMPLEMENTED() here!
+    // The Amiga IDE controller (scsi.device) issues a CPU RESET instruction (0x4e70) 
+    // during initialization or reboot. Returning false allows the normal reset 
+    // sequence to proceed without crashing the emulator.
     return false;
 }
 
