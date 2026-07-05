@@ -5001,22 +5001,43 @@ static struct virtualfilesysobject *create_dynamic_icon(const TCHAR *aname, int 
 		return vfso;
 	}
 
-	if (!(amigaos_mode & A_FIBF_EXECUTE)) {
-		is_tool = true;
-	} else if (ext) {
-		if (!_tcsicmp(ext, _T(".txt")) || !_tcsicmp(ext, _T(".me")) || !_tcsicmp(ext, _T(".md")) || 
-			!_tcsicmp(ext, _T(".readme")) || !_tcsicmp(ext, _T(".doc")) || _tcsstr(aname, _T("readme")) != NULL) {
-			default_tool = _T("SYS:Utilities/More");
-		} else if (!_tcsicmp(ext, _T(".guide"))) {
-			default_tool = _T("C:AmigaGuide");
-		} else if (!_tcsicmp(ext, _T(".iff")) || !_tcsicmp(ext, _T(".ilbm")) || !_tcsicmp(ext, _T(".png")) || 
-				   !_tcsicmp(ext, _T(".jpg")) || !_tcsicmp(ext, _T(".jpeg")) || !_tcsicmp(ext, _T(".gif"))) {
-			default_tool = _T("SYS:Utilities/MultiView");
-		} else if (!_tcsicmp(ext, _T(".lha")) || !_tcsicmp(ext, _T(".lzh")) || !_tcsicmp(ext, _T(".zip"))) {
-			default_tool = _T("SYS:Utilities/UnArc");
+	/* First: extension-based override for known Amiga executable types.
+	 * These always get a Tool icon regardless of host permissions. */
+	bool ext_forced_tool = false;
+	if (ext) {
+		if (!_tcsicmp(ext, _T(".run")) || !_tcsicmp(ext, _T(".exe")) ||
+			!_tcsicmp(ext, _T(".bat")) || !_tcsicmp(ext, _T(".rexx")) ||
+			!_tcsicmp(ext, _T(".rx"))) {
+			ext_forced_tool = true;
 		}
-	} else if (_tcsstr(aname, _T("readme")) != NULL || _tcsstr(aname, _T("README")) != NULL) {
-		default_tool = _T("SYS:Utilities/More");
+	}
+
+	/* AmigaOS protection bits: A_FIBF_EXECUTE=1 means execute-PROTECTED (not executable).
+	 * Non-executable host files → A_FIBF_EXECUTE set → Project icon.
+	 * Executable host files → A_FIBF_EXECUTE clear → Tool icon. */
+	if (ext_forced_tool || !(amigaos_mode & A_FIBF_EXECUTE)) {
+		/* Executable (by extension or host permission) → Tool icon. */
+		is_tool = true;
+	} else {
+		/* Execute-protected: not executable → Project (data file).
+		   Determine a suitable DefaultTool based on extension. */
+		is_tool = false;
+		if (ext) {
+			if (!_tcsicmp(ext, _T(".txt")) || !_tcsicmp(ext, _T(".me")) || !_tcsicmp(ext, _T(".md")) ||
+				!_tcsicmp(ext, _T(".readme")) || !_tcsicmp(ext, _T(".doc")) || _tcsstr(aname, _T("readme")) != NULL ||
+				_tcsstr(aname, _T("README")) != NULL) {
+				default_tool = _T("SYS:Utilities/More");
+			} else if (!_tcsicmp(ext, _T(".guide"))) {
+				default_tool = _T("C:AmigaGuide");
+			} else if (!_tcsicmp(ext, _T(".iff")) || !_tcsicmp(ext, _T(".ilbm")) || !_tcsicmp(ext, _T(".png")) ||
+					   !_tcsicmp(ext, _T(".jpg")) || !_tcsicmp(ext, _T(".jpeg")) || !_tcsicmp(ext, _T(".gif"))) {
+				default_tool = _T("SYS:Utilities/MultiView");
+			} else if (!_tcsicmp(ext, _T(".lha")) || !_tcsicmp(ext, _T(".lzh")) || !_tcsicmp(ext, _T(".zip"))) {
+				default_tool = _T("SYS:Utilities/UnArc");
+			}
+		} else if (_tcsstr(aname, _T("readme")) != NULL || _tcsstr(aname, _T("README")) != NULL) {
+			default_tool = _T("SYS:Utilities/More");
+		}
 	}
 
 	int base_len = is_tool ? def_tool_len : def_project_len;
@@ -6212,6 +6233,15 @@ static void	action_delete_object(TrapContext *ctx, Unit *unit, dpacket *packet)
 	if (a->shlock > 0 || a->elock) {
 		PUT_PCK_RES1 (packet, DOS_FALSE);
 		PUT_PCK_RES2 (packet, ERROR_OBJECT_IN_USE);
+		return;
+	}
+	/* Virtual inodes (injected icons) exist only in memory.
+	 * Recycle them immediately and report success - no host file to delete. */
+	if (a->vfso) {
+		notify_check(ctx, unit, a);
+		de_recycle_aino(unit, a);
+		PUT_PCK_RES1 (packet, DOS_TRUE);
+		gui_flicker_led (UNIT_LED(unit), unit->unit, 2);
 		return;
 	}
 	if (!a->vfso) {
