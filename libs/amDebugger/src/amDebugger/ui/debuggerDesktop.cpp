@@ -1,5 +1,6 @@
 #include "debuggerDesktop.h"
 #include "qd/imGui/imGuiHelperClass.h"
+#include "qd/imGui/faIcons.h"
 #include "qd/log/log.h"
 #include "qd/qui/comps/uiOperationMgrComp.h"
 #include "qd/qui/comps/uiShortcutMgrComp.h"
@@ -271,68 +272,115 @@ void DebuggerDesktop::_drawToolBar()
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
-    if (auto bg = qIm::LockChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.f, 2.f));
+    if (auto bg = qIm::LockChild("ToolBar", ImVec2(rgn.x, 26.f), ImGuiChildFlags_None, wndFlags))
     {
-        ImGuiIO& io = ImGui::GetIO();
-        ImGuiWindow* window = ImGui::GetCurrentWindow();
-
-        window->DC.LayoutType = ImGuiLayoutType_Horizontal;
-
+        // Vertically center: offset cursor by half remaining space
+        float barH = 26.f;
+        float btnH = ImGui::GetFrameHeight();
+        float padY = (barH - btnH) * 0.5f;
+        if (padY > 0.f)
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padY);
         Debugger* dbg = getDbg();
-        qtd::string hint;
-
-        bool isDbgMode = dbg->isDebugActivated();
-        if (ImGui::Checkbox("Trace", &isDbgMode))
-        {
-            dbg->setDebugMode(isDbgMode ? EVmDebugMode::Break : EVmDebugMode::Live);
-        }
-        //
-        ImGui::Separator();
-        //
-        ImTextureID my_tex_id = io.Fonts->TexID;
-        float my_tex_w = (float)io.Fonts->TexWidth;
-        float my_tex_h = (float)io.Fonts->TexHeight;
-        ImVec2 size, uv0, uv1;
-        size = ImVec2(16.0f, 16.0f);
-        uv0 = ImVec2(0.0f, 0.0f); // TODO ICONS
-        uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
+        IVm::VM* vm = dbg->getVm();
+        IVm::EVmDebugMode debugMode = vm ? vm->getVmDebugMode().get() : IVm::EVmDebugMode::Live;
+        bool isPaused = debugMode.isBreak();
 
         qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
         const qd::operation::OpDesc* pOpDesc;
-        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepInto::CID);
-        {
-            bool canStep = dbg->isDebugActivated();
-            if (!canStep) { ImGui::BeginDisabled(); }
-            if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
-            {
-                doOperation_<amD::operation::DisasmTraceStepInto>();
-            }
-            if (!canStep) { ImGui::EndDisabled(); }
-            ImGui::SetItemTooltipV(CC(pOpDesc->getShortcutGuiStr()), nullptr);
 
-            //
-            ImGui::Separator();
-            //
-
-            // wait scanlines
-            pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugWaitScanLines::CID);
-            int nScanLines = dbg->getWaitScanLines();
-            ImGui::SetNextItemWidth(30);
-            if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
-            {
-                qd::clamp_min_inplace(nScanLines, 1);
-                dbg->setWaitScanLines(nScanLines);
-            }
-            hint = qd::string_format("Scanlines number(%s)", pOpDesc->getShortcutGuiStr());
-            ImGui::SetItemTooltipV(hint.c_str(), nullptr);
+        // --- Pause / Continue ---
+        if (!isPaused) {
+            pOpDesc = pOpMgr->findOpDesc(amD::operation::PauseEmulation::CID);
+            if (ImGui::Button(ICON_FA_PAUSE "##Pause"))
+                doOperation_<amD::operation::PauseEmulation>();
+        } else {
+            pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugTraceContinue::CID);
+            if (ImGui::Button(ICON_FA_PLAY "##Continue"))
+                doOperation_<amD::operation::DebugTraceContinue>();
         }
-        // wait button
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
         ImGui::SameLine();
-        if (ImGui::Button("Wait Scanlines"))
+
+        // --- Step Into (enabled only when paused) ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepInto::CID);
+        if (!isPaused) { ImGui::BeginDisabled(); }
+        if (ImGui::Button(ICON_FA_FORWARD_STEP "##StepInto"))
+            doOperation_<amD::operation::DisasmTraceStepInto>();
+        if (!isPaused) { ImGui::EndDisabled(); }
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+
+        // --- Step Out (enabled only when paused) ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepOut::CID);
+        if (!isPaused) { ImGui::BeginDisabled(); }
+        if (ImGui::Button(ICON_FA_ARROW_RIGHT_FROM_BRACKET "##StepOut"))
+            doOperation_<amD::operation::DisasmTraceStepOut>();
+        if (!isPaused) { ImGui::EndDisabled(); }
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Copper Trace Step (enabled only when paused) ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::CopperTraceStep::CID);
+        if (!isPaused) { ImGui::BeginDisabled(); }
+        if (ImGui::Button(ICON_FA_FLAG_CHECKERED "##CopperStep"))
+            doOperation_<amD::operation::CopperTraceStep>();
+        if (!isPaused) { ImGui::EndDisabled(); }
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Reset ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::VmEmuReset::CID);
+        if (ImGui::Button(ICON_FA_ROTATE_RIGHT "##Reset"))
+            doOperation_<amD::operation::VmEmuReset>();
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+
+        // --- Turbo ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::ToggleTurboEmulation::CID);
+        if (ImGui::Button(ICON_FA_BOLT "##Turbo"))
+            doOperation_<amD::operation::ToggleTurboEmulation>();
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Trace checkbox ---
+        bool isDbgMode = dbg->isDebugActivated();
+        if (ImGui::Checkbox("Trace", &isDbgMode))
+            dbg->setDebugMode(isDbgMode ? EVmDebugMode::Break : EVmDebugMode::Live);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Scanlines ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugWaitScanLines::CID);
+        int nScanLines = dbg->getWaitScanLines();
+        ImGui::SetNextItemWidth(30);
+        if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
         {
-            doOperation_<amD::operation::DebugWaitScanLines>();
+            qd::clamp_min_inplace(nScanLines, 1);
+            dbg->setWaitScanLines(nScanLines);
         }
+        qtd::string hint = qd::string_format("Scanlines (%s)", pOpDesc ? pOpDesc->getShortcutGuiStr() : "");
+        ImGui::SetItemTooltipV(hint.c_str(), nullptr);
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_CLOCK " Wait"))
+            doOperation_<amD::operation::DebugWaitScanLines>();
     }
+    ImGui::PopStyleVar();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
 }
 
