@@ -513,12 +513,7 @@ void my_closedir(struct my_opendir_s* mod) {
 }
 
 
-int hdf_write_target(struct hardfiledata* /*hfd*/, void* /*buffer*/, uae_u64 /*offset*/, int /*len*/,
-                     uint32_t* /*error*/) {
-    UNIMPLEMENTED();
-    //if (error) *error = 1;
-    //return 0;
-}
+
 
 
 static void create_uaefsdb(a_inode* aino, uae_u8* buf, int winmode) {
