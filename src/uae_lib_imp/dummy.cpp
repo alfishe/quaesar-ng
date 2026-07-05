@@ -1171,7 +1171,17 @@ void rapidfire_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 }
 
 void release_keys() {
-    UNIMPLEMENTED();
+    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    if (!keystate) {
+        return;
+    }
+    
+    // Release all currently pressed keys
+    for (int scancode = 0; scancode < SDL_NUM_SCANCODES; scancode++) {
+        if (keystate[scancode]) {
+            inputdevice_translatekeycode(0, scancode, 0, true);
+        }
+    }
 }
 
 void restore_cdtv_final() {
