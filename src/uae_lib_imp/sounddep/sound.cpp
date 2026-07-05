@@ -301,8 +301,8 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
     if (sd->sndbufsize > SND_MAX_BUFFER)
         sd->sndbufsize = SND_MAX_BUFFER;
     sd->samplesize = ch * 16 / 8;
-    // TODO: Verify
-    s->pullmode = 1;  // currprefs.sound_pullmode;
+    // Switch to push mode (SDL_QueueAudio) for robust and thread-safe buffering
+    s->pullmode = 0;  // currprefs.sound_pullmode;
 
     SDL_AudioSpec want = {}, have;
     want.freq = freq;
@@ -373,6 +373,7 @@ void resume_sound_device(struct sound_data* sd) {
 }
 
 int get_default_audio_device() {
+#if 0
     int device_idx = -1;
 #if SDL_VERSION_ATLEAST(2, 24, 0)
     SDL_AudioSpec spec;
@@ -388,6 +389,9 @@ int get_default_audio_device() {
     }
 #endif
     return device_idx;
+#else
+    return 0; // The first device (index 0) is now 'System Default'
+#endif
 }
 
 static int open_sound() {
@@ -777,31 +781,51 @@ void finish_sound_buffer() {
 int enumerate_sound_devices() {
     if (!num_sound_devices) {
         write_log("Enumerating SDL2 playback devices...\n");
-        num_sound_devices = SDL_GetNumAudioDevices(SDL_FALSE);
-        write_log("Detected %d sound playback devices\n", num_sound_devices);
-        for (int i = 0; i < num_sound_devices && i < MAX_SOUND_DEVICES; i++) {
+        int sdl_num = SDL_GetNumAudioDevices(SDL_FALSE);
+        write_log("Detected %d sound playback devices\n", sdl_num);
+        
+        sound_devices[0] = xcalloc(struct sound_device, 1);
+        sound_devices[0]->id = 0;
+        sound_devices[0]->cfgname = my_strdup("System Default");
+        sound_devices[0]->type = SOUND_DEVICE_SDL2;
+        sound_devices[0]->name = nullptr;
+        sound_devices[0]->alname = my_strdup("0");
+        num_sound_devices = 1;
+
+        for (int i = 0; i < sdl_num && num_sound_devices < MAX_SOUND_DEVICES; i++) {
             const char* devname = SDL_GetAudioDeviceName(i, SDL_FALSE);
-            write_log("Sound playback device %d: %s\n", i, devname);
-            sound_devices[i] = xcalloc(struct sound_device, 1);
-            sound_devices[i]->id = i;
-            sound_devices[i]->cfgname = my_strdup(devname);
-            sound_devices[i]->type = SOUND_DEVICE_SDL2;
-            sound_devices[i]->name = my_strdup(devname);
-            sound_devices[i]->alname = my_strdup(std::to_string(i).c_str());
+            write_log("Sound playback device %d: %s\n", num_sound_devices, devname);
+            sound_devices[num_sound_devices] = xcalloc(struct sound_device, 1);
+            sound_devices[num_sound_devices]->id = num_sound_devices;
+            sound_devices[num_sound_devices]->cfgname = my_strdup(devname);
+            sound_devices[num_sound_devices]->type = SOUND_DEVICE_SDL2;
+            sound_devices[num_sound_devices]->name = my_strdup(devname);
+            sound_devices[num_sound_devices]->alname = my_strdup(std::to_string(num_sound_devices).c_str());
+            num_sound_devices++;
         }
 
         write_log("Enumerating SDL2 recording devices...\n");
-        num_record_devices = SDL_GetNumAudioDevices(SDL_TRUE);
-        write_log("Detected %d sound recording devices\n", num_record_devices);
-        for (int i = 0; i < num_record_devices && i < MAX_SOUND_DEVICES; i++) {
+        int sdl_rec_num = SDL_GetNumAudioDevices(SDL_TRUE);
+        write_log("Detected %d sound recording devices\n", sdl_rec_num);
+
+        record_devices[0] = xcalloc(struct sound_device, 1);
+        record_devices[0]->id = 0;
+        record_devices[0]->cfgname = my_strdup("System Default");
+        record_devices[0]->type = SOUND_DEVICE_SDL2;
+        record_devices[0]->name = nullptr;
+        record_devices[0]->alname = my_strdup("0");
+        num_record_devices = 1;
+
+        for (int i = 0; i < sdl_rec_num && num_record_devices < MAX_SOUND_DEVICES; i++) {
             const char* devname = SDL_GetAudioDeviceName(i, SDL_TRUE);
-            write_log("Sound recording device %d: %s\n", i, devname);
-            record_devices[i] = xcalloc(struct sound_device, 1);
-            record_devices[i]->id = i;
-            record_devices[i]->cfgname = my_strdup(devname);
-            record_devices[i]->type = SOUND_DEVICE_SDL2;
-            record_devices[i]->name = my_strdup(devname);
-            record_devices[i]->alname = my_strdup(std::to_string(i).c_str());
+            write_log("Sound recording device %d: %s\n", num_record_devices, devname);
+            record_devices[num_record_devices] = xcalloc(struct sound_device, 1);
+            record_devices[num_record_devices]->id = num_record_devices;
+            record_devices[num_record_devices]->cfgname = my_strdup(devname);
+            record_devices[num_record_devices]->type = SOUND_DEVICE_SDL2;
+            record_devices[num_record_devices]->name = my_strdup(devname);
+            record_devices[num_record_devices]->alname = my_strdup(std::to_string(num_record_devices).c_str());
+            num_record_devices++;
         }
 
         write_log(_T("Enumeration end\n"));

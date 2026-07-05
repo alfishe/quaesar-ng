@@ -1192,7 +1192,6 @@ void sampler_free() {
 }
 
 uae_u8 sampler_getsample(int) {
-    UNIMPLEMENTED();
     return 0;
 }
 
