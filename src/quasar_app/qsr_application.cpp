@@ -51,7 +51,10 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
     // Forward debugger ops to the real emulator. When paused via UAE's
     // internal debugger, route step/continue as console commands directly.
     m_pDebuggerApp->setForwardOpToEmulatorCb([this](qd::operation::BaseOpArgs* args) {
-        // Mirror debug mode to the Debugger's dummy VM for menu enable/disable state
+        // Mirror debug mode to the Debugger's UI-only VM for menu enable/disable
+        // state. Debugger::setDebugMode() only updates local mirrored state and
+        // never calls back into the real emulator - the actual pause/continue is
+        // applied exactly once below, queued onto the emulator thread.
         amD::Debugger* pDbg = m_pDebuggerApp->getDbg();
         if (pDbg) {
             if (args->cast_<amD::operation::PauseEmulation>() ||

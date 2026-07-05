@@ -358,8 +358,15 @@ void DebuggerDesktop::_drawToolBar()
 
         // --- Trace checkbox ---
         bool isDbgMode = dbg->isDebugActivated();
-        if (ImGui::Checkbox("Trace", &isDbgMode))
-            dbg->setDebugMode(isDbgMode ? EVmDebugMode::Break : EVmDebugMode::Live);
+        if (ImGui::Checkbox("Trace", &isDbgMode)) {
+            // Route through the operation queue (like every other control here)
+            // instead of calling Debugger::setDebugMode() directly - that call
+            // only mirrors UI state and no longer touches the real emulator.
+            if (isDbgMode)
+                doOperation_<amD::operation::PauseEmulation>();
+            else
+                doOperation_<amD::operation::DebugTraceContinue>();
+        }
 
         ImGui::SameLine();
         ImGui::Separator();

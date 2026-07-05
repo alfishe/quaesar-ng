@@ -84,7 +84,16 @@ bool Debugger::isDebugActivated() const
 
 void Debugger::setDebugMode(EVmDebugMode debug_mode)
 {
-    m_pVm->setVmDebugMode(debug_mode);
+    // m_pVm is a UI-only mirror VM (see DummyVmDbgServiceBridge) used to track
+    // debug mode for menu/toolbar enable state. Its concrete type shares the
+    // same process-global engine state as the real running VM (UAE has no
+    // per-instance state), so calling the virtual setVmDebugMode() here would
+    // re-trigger real engine side effects (activate_debugger_new_pc(), console
+    // commands, ...) from the UI thread, racing with the queued operation that
+    // already does this correctly on the emulator thread. Bypass the virtual
+    // dispatch and only update the mirrored enum.
+    if (m_pVm)
+        m_pVm->IVm::VM::setVmDebugMode(debug_mode);
 }
 
 
