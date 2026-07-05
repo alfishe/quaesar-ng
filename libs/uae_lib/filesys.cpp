@@ -2455,6 +2455,11 @@ static void free_aino(a_inode *aino)
 	xfree(aino->aname);
 	xfree(aino->comment);
 	xfree(aino->nname);
+	if (aino->vfso_dynamic && aino->vfso) {
+		xfree(aino->vfso->data);
+		xfree(aino->vfso->comment);
+		xfree(aino->vfso);
+	}
 	xfree(aino);
 }
 
@@ -3043,13 +3048,24 @@ static a_inode *lookup_child_aino_for_exnext (Unit *unit, a_inode *base, TCHAR *
 			break;
 		c = c->sibling;
 	}
-	if (c != 0)
+	if (c != 0) {
+		if (vfso) {
+			xfree(vfso->data);
+			xfree(vfso->comment);
+			xfree(vfso);
+		}
 		return c;
+	}
 	if (!isvirtual && !vfso)
 		c = fsdb_lookup_aino_nname (base, rel);
 	if (c == 0) {
 		c = xcalloc (a_inode, 1);
 		if (c == 0) {
+			if (vfso) {
+				xfree(vfso->data);
+				xfree(vfso->comment);
+				xfree(vfso);
+			}
 			*err = ERROR_NO_FREE_STORE;
 			return 0;
 		}
@@ -3064,6 +3080,7 @@ static a_inode *lookup_child_aino_for_exnext (Unit *unit, a_inode *base, TCHAR *
 			c->comment = vfso->comment ? my_strdup(vfso->comment) : 0;
 			c->amigaos_mode = vfso->amigaos_mode;
 			c->vfso = vfso;
+			c->vfso_dynamic = true;
 		} else if (!fill_file_attrs (unit, base, c)) {
 			xfree (c);
 			*err = ERROR_NO_FREE_STORE;
@@ -4963,6 +4980,81 @@ static void load_injected_icons(void)
 	load_injected_icon(&vfso_icon_drawer, currprefs.filesys_inject_icons_drawer, def_drawer, def_drawer_len);
 }
 
+static struct virtualfilesysobject *create_dynamic_icon(const TCHAR *aname, int is_dir, uae_u32 amigaos_mode)
+{
+	struct virtualfilesysobject *vfso = xcalloc(struct virtualfilesysobject, 1);
+	if (!vfso)
+		return NULL;
+
+	const TCHAR *ext = _tcsrchr(aname, '.');
+	const TCHAR *default_tool = NULL;
+	bool is_tool = false;
+
+	if (is_dir) {
+		vfso->dir = 1;
+		vfso->size = def_drawer_len;
+		vfso->data = xmalloc(uae_u8, def_drawer_len);
+		if (vfso->data) {
+			memcpy(vfso->data, def_drawer, def_drawer_len);
+		}
+		vfso->amigaos_mode = 0;
+		return vfso;
+	}
+
+	if (!(amigaos_mode & A_FIBF_EXECUTE)) {
+		is_tool = true;
+	} else if (ext) {
+		if (!_tcsicmp(ext, _T(".txt")) || !_tcsicmp(ext, _T(".me")) || !_tcsicmp(ext, _T(".md")) || 
+			!_tcsicmp(ext, _T(".readme")) || !_tcsicmp(ext, _T(".doc")) || _tcsstr(aname, _T("readme")) != NULL) {
+			default_tool = _T("SYS:Utilities/More");
+		} else if (!_tcsicmp(ext, _T(".guide"))) {
+			default_tool = _T("C:AmigaGuide");
+		} else if (!_tcsicmp(ext, _T(".iff")) || !_tcsicmp(ext, _T(".ilbm")) || !_tcsicmp(ext, _T(".png")) || 
+				   !_tcsicmp(ext, _T(".jpg")) || !_tcsicmp(ext, _T(".jpeg")) || !_tcsicmp(ext, _T(".gif"))) {
+			default_tool = _T("SYS:Utilities/MultiView");
+		} else if (!_tcsicmp(ext, _T(".lha")) || !_tcsicmp(ext, _T(".lzh")) || !_tcsicmp(ext, _T(".zip"))) {
+			default_tool = _T("SYS:Utilities/UnArc");
+		}
+	} else if (_tcsstr(aname, _T("readme")) != NULL || _tcsstr(aname, _T("README")) != NULL) {
+		default_tool = _T("SYS:Utilities/More");
+	}
+
+	int base_len = is_tool ? def_tool_len : def_project_len;
+	uae_u8 *base_data = is_tool ? def_tool : def_project;
+
+	if (default_tool) {
+		char tool_ascii[256];
+		for (int i = 0; ; i++) {
+			tool_ascii[i] = (char)default_tool[i];
+			if (!default_tool[i])
+				break;
+		}
+		int tool_len = strlen(tool_ascii) + 1;
+		int padded_tool_len = (tool_len + 1) & ~1;
+
+		vfso->size = base_len + padded_tool_len;
+		vfso->data = xmalloc(uae_u8, vfso->size);
+		if (vfso->data) {
+			memcpy(vfso->data, base_data, base_len);
+			vfso->data[50] = 0x00;
+			vfso->data[51] = 0x00;
+			vfso->data[52] = 0x00;
+			vfso->data[53] = 0x01;
+			memset(vfso->data + base_len, 0, padded_tool_len);
+			memcpy(vfso->data + base_len, tool_ascii, tool_len);
+		}
+	} else {
+		vfso->size = base_len;
+		vfso->data = xmalloc(uae_u8, base_len);
+		if (vfso->data) {
+			memcpy(vfso->data, base_data, base_len);
+		}
+	}
+
+	vfso->amigaos_mode = 0;
+	return vfso;
+}
+
 static void inject_icons_to_directory(Unit *unit, a_inode *base)
 {
 	for (a_inode *aino = base->child; aino; aino = aino->sibling) {
@@ -4979,16 +5071,10 @@ static void inject_icons_to_directory(Unit *unit, a_inode *base)
 		if (match)
 			continue;
 		uae_u32 err;
-		struct virtualfilesysobject *vfso;
-		if (aino->dir) {
-			vfso = &vfso_icon_drawer;
-		} else {
-			if (aino->amigaos_mode & A_FIBF_EXECUTE)
-				vfso = &vfso_icon_project;
-			else
-				vfso = &vfso_icon_tool;
+		struct virtualfilesysobject *vfso = create_dynamic_icon(aino->aname, aino->dir, aino->amigaos_mode);
+		if (vfso) {
+			lookup_child_aino_for_exnext(unit, base, tmp, &err, 0, vfso);
 		}
-		lookup_child_aino_for_exnext(unit, base, tmp, &err, 0, vfso);
 	}
 }
 
