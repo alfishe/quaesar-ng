@@ -169,38 +169,36 @@ static void dummy_read(void) {
 
 // Dummy function to get the number of input devices
 static int dummy_get_num(void) {
-    TRACE();
-    return 0;
+    return 1;
 }
 
 // Dummy function to get the friendly name of an input device
 static TCHAR* dummy_get_friendlyname(int /*device_id*/) {
-    UNIMPLEMENTED();
-    return nullptr;
+    return const_cast<TCHAR*>("Quaesar SDL Virtual Device");
 }
 
 // Dummy function to get the unique name of an input device
 static TCHAR* dummy_get_uniquename(int /*device_id*/) {
-    UNIMPLEMENTED();
-    return nullptr;
+    return const_cast<TCHAR*>("Quaesar SDL Virtual Device");
 }
 
 // Dummy function to get the number of widgets (input elements) in an input device
 static int dummy_get_widget_num(int /*device_id*/) {
-    UNIMPLEMENTED();
-    return 4;  // Return the number of widgets
+    return 10;  // Return the number of widgets
 }
 
 // Dummy function to get the type and name of a widget
-static int dummy_get_widget_type(int /*device_id*/, int /*widget_id*/, TCHAR* /*widget_name*/,
-                                 uae_u32* /*widget_type*/) {
-    UNIMPLEMENTED();
-    return 0;  // Return 0 for success, -1 for failure
+static int dummy_get_widget_type(int /*device_id*/, int widget_id, TCHAR* /*widget_name*/,
+                                 uae_u32* widget_type) {
+    if (widget_type) *widget_type = widget_id;
+    if (widget_id < 2) return 2; // IDEV_WIDGET_AXIS
+    return 1; // IDEV_WIDGET_BUTTON
 }
 
 // Dummy function to get the first widget (input element) in an input device
-static int dummy_get_widget_first(int /*device_id*/, int /*widget_type*/) {
-    UNIMPLEMENTED();
+static int dummy_get_widget_first(int /*device_id*/, int widget_type) {
+    if (widget_type == 2) return 0; // IDEV_WIDGET_AXIS
+    if (widget_type == 1) return 2; // IDEV_WIDGET_BUTTON
     return 0;
 }
 
@@ -290,9 +288,21 @@ bool my_issamepath(const TCHAR* /*path1*/, const TCHAR* /*path2*/) {
     return false;
 }
 
-int input_get_default_joystick(struct uae_input_device* /*uid*/, int /*i*/, int /*port*/, int /*af*/, int /*mode*/,
-                               bool /*gp*/, bool /*joymouseswap*/) {
-    UNIMPLEMENTED();
+int input_get_default_joystick(struct uae_input_device* uid, int i, int port, int af, int mode,
+                               bool gp, bool joymouseswap) {
+    uid[i].eventid[ID_AXIS_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_HORIZ : INPUTEVENT_JOY1_HORIZ;
+    uid[i].port[ID_AXIS_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_AXIS_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_VERT : INPUTEVENT_JOY1_VERT;
+    uid[i].port[ID_AXIS_OFFSET + 1][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_FIRE_BUTTON : INPUTEVENT_JOY1_FIRE_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_2ND_BUTTON : INPUTEVENT_JOY1_2ND_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 1][0] = port + 1;
+
+    if (i == 0) return 1;
     return 0;
 }
 
@@ -1305,12 +1315,10 @@ float target_adjust_vblank_hz(int, float hz) {
 }
 
 bool target_can_autoswitchdevice() {
-    UNIMPLEMENTED();
     return false;
 }
 
 int target_checkcapslock(int, int*) {
-    UNIMPLEMENTED();
     return 0;
 }
 
@@ -1634,17 +1642,30 @@ int handle_msgpump(bool) {
 }
 
 int input_get_default_joystick_analog(uae_input_device*, int, int, int, bool, bool) {
-    UNIMPLEMENTED();
     return 0;
 }
 
 int input_get_default_lightpen(uae_input_device*, int, int, int, bool, bool, int) {
-    UNIMPLEMENTED();
     return 0;
 }
 
-int input_get_default_mouse(uae_input_device*, int, int, int, bool, bool, bool) {
-    UNIMPLEMENTED();
+int input_get_default_mouse(uae_input_device* uid, int i, int port, int af, bool gp, bool wheel, bool joymouseswap) {
+    uid[i].eventid[ID_AXIS_OFFSET + 0][0] = port ? INPUTEVENT_MOUSE2_HORIZ : INPUTEVENT_MOUSE1_HORIZ;
+    uid[i].port[ID_AXIS_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_AXIS_OFFSET + 1][0] = port ? INPUTEVENT_MOUSE2_VERT : INPUTEVENT_MOUSE1_VERT;
+    uid[i].port[ID_AXIS_OFFSET + 1][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_FIRE_BUTTON : INPUTEVENT_JOY1_FIRE_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_2ND_BUTTON : INPUTEVENT_JOY1_2ND_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 1][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 2][0] = port ? INPUTEVENT_JOY2_3RD_BUTTON : INPUTEVENT_JOY1_3RD_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 2][0] = port + 1;
+
+    if (i == 0) return 1;
     return 0;
 }
 

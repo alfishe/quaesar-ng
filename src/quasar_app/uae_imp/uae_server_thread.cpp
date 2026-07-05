@@ -308,6 +308,29 @@ void UaeServerThread::applySdlEventProc(const SDL_Event &event) {
     const bool alwaysrelease = false;
     inputdevice_translatekeycode(keyboard, scancode, newstate, alwaysrelease);
   } break;
+  case SDL_MOUSEMOTION: {
+    setmousestate(0, 0, event.motion.xrel, 0);
+    setmousestate(0, 1, event.motion.yrel, 0);
+  } break;
+  case SDL_MOUSEBUTTONDOWN:
+  case SDL_MOUSEBUTTONUP: {
+    int button = 0;
+    if (event.button.button == SDL_BUTTON_LEFT) button = JOYBUTTON_1;
+    else if (event.button.button == SDL_BUTTON_RIGHT) button = JOYBUTTON_2;
+    else if (event.button.button == SDL_BUTTON_MIDDLE) button = JOYBUTTON_3;
+    setmousebuttonstate(0, button, event.type == SDL_MOUSEBUTTONDOWN ? 1 : 0);
+  } break;
+  case SDL_MOUSEWHEEL: {
+    if (event.wheel.y > 0)
+        setmousebuttonstate(0, 3, 1); // Wheel Up
+    else if (event.wheel.y < 0)
+        setmousebuttonstate(0, 4, 1); // Wheel Down
+    // Note: Wheel events are usually instantly released in UAE
+    if (event.wheel.y != 0) {
+        setmousebuttonstate(0, 3, 0);
+        setmousebuttonstate(0, 4, 0);
+    }
+  } break;
   default:
     break;
   }

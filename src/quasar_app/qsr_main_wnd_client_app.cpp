@@ -234,18 +234,48 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                 if (sym.mod & KMOD_SHIFT) {
                     // Handle shift + F12
                     doOperation_<qsr::operations::ShowDebuggerWnd>();
-                } else
+                } else {
                     setShowImgui(!m_bShowGui);
+                    if (m_bShowGui) {
+                        SDL_SetRelativeMouseMode(SDL_FALSE); // Release mouse when UI opens
+                    }
+                }
                 return qd::EFlow::STOP;
             } else if (sym.sym == SDLK_ESCAPE) {
                 if (g_cfg_vm_wnd.quitByEsc) {
                     getApp()->requestAppToQuit();
                     return qd::EFlow::STOP;
                 }
+                // Also release mouse on ESC
+                SDL_SetRelativeMouseMode(SDL_FALSE);
             }
             if (pVmProvider)
                 pVmProvider->pushSdlEvent(event);
             return qd::EFlow::STOP;
+        } break;
+
+        case SDL_MOUSEMOTION:
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEWHEEL: {
+            // For motion/wheel events, the windowID is inside event.motion/event.wheel.
+            // For simplicity, if the UI is open, let ImGui consume the mouse entirely.
+            if (m_bShowGui) {
+                return m_pQimGuiCtx->onSdlEventProc(event);
+            }
+
+            // Capture mouse if clicked inside the emulator screen
+            if (event.type == SDL_MOUSEBUTTONDOWN && !SDL_GetRelativeMouseMode()) {
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+            }
+
+            // If captured (or wheel event), forward to UAE core
+            if (SDL_GetRelativeMouseMode() || event.type == SDL_MOUSEWHEEL) {
+                if (pVmProvider)
+                    pVmProvider->pushSdlEvent(event);
+                return qd::EFlow::STOP;
+            }
+            return qd::EFlow::CONTINUE;
         } break;
 
         case SDL_KEYUP: {
