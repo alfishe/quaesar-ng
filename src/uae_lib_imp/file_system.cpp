@@ -1097,7 +1097,10 @@ int fsdb_fill_file_attrs(a_inode* base, a_inode* aino) {
         }
 
         oldamode = aino->amigaos_mode;
-        aino->amigaos_mode = A_FIBF_EXECUTE | A_FIBF_READ;
+        aino->amigaos_mode = A_FIBF_READ;
+        if (((int)perms & (int)std::filesystem::perms::owner_exec) != 0) {
+            aino->amigaos_mode |= A_FIBF_EXECUTE;
+        }
         if (((int)perms & (int)std::filesystem::perms::owner_write) != 0) {
             aino->amigaos_mode |= A_FIBF_WRITE | A_FIBF_DELETE;
         }

@@ -134,10 +134,7 @@ bool preinit_shm (void)
 	uae_u32 max_allowed_mman;
 
 	if (natmem_reserved)
-#ifdef _WIN32
 		VirtualFree (natmem_reserved, 0, MEM_RELEASE);
-#else
-#endif
 	natmem_reserved = NULL;
 	natmem_offset = NULL;
 #if 0
