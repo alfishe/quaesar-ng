@@ -51,6 +51,23 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
     // Forward debugger ops to the real emulator. When paused via UAE's
     // internal debugger, route step/continue as console commands directly.
     m_pDebuggerApp->setForwardOpToEmulatorCb([this](qd::operation::BaseOpArgs* args) {
+        // Lazy: replace the dummy VM bridge with the real UAE VM.
+        // The debugger starts with create_dummy_connection() which creates a
+        // separate UaeVmImp instance with m_pUaeThread=nullptr — that instance
+        // reads the same global UAE state (so PC/memory values are correct)
+        // but CANNOT control the emulator (pause/step/continue are no-ops).
+        // As soon as the UAE server thread is up, swap to the real instance.
+        if (!m_bDebuggerVmConnected) {
+            if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
+                UaeServerThread* pUae = dynamic_cast<UaeServerThread*>(pVmPlayer);
+                if (pUae && pUae->getVm()) {
+                    m_pDebuggerApp->getDbg()->setDbgServiceBridge(
+                        amD::create_shared_connection(pUae->getVm()));
+                    m_bDebuggerVmConnected = true;
+                }
+            }
+        }
+
         // Mirror debug mode to the Debugger's UI-only VM for menu enable/disable
         // state. Debugger::setDebugMode() only updates local mirrored state and
         // never calls back into the real emulator - the actual pause/continue is
