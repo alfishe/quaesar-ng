@@ -310,7 +310,12 @@ uint32_t UaeVmImp::Cpu::getRegD(int i) const {
 
 
 AddrRef UaeVmImp::Cpu::getPC() const {
-    return m68k_getpc();
+    // Use instruction_pc (the start of the current instruction) instead of
+    // m68k_getpc() which returns regs.pc + (pc_p - pc_oldp) — a mid-instruction
+    // address when words have been prefetched. Disassembly requires the true
+    // instruction boundary; using the mid-fetch address produces garbage because
+    // capstone starts decoding from the middle of an opcode word.
+    return regs.instruction_pc;
 }
 
 

@@ -45,6 +45,14 @@ target_link_options(${PROJECT_NAME} INTERFACE "/WHOLEARCHIVE:${PROJECT_NAME}")
 endif()
 
 # Include dirs
+# IMPORTANT: bundled capstone include MUST come BEFORE ${SDL2_INCLUDE_DIRS},
+# because on macOS homebrew installs /opt/homebrew/include/capstone/capstone.h
+# (v5.0.9, no alias_id field) which silently shadows our bundled v6-next
+# header. The struct layout mismatch (248 vs 256 bytes) corrupts every
+# cs_insn field after 'id', producing garbage addresses/mnemonics.
+get_filename_component(CAPSTONE_BUNDLED_INCLUDE_DIR
+    ${CMAKE_SOURCE_DIR}/external/capstone/include ABSOLUTE)
+target_include_directories(${PROJECT_NAME} BEFORE PUBLIC ${CAPSTONE_BUNDLED_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${AM_SRC_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 
 #dependencies
