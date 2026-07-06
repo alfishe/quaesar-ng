@@ -1,6 +1,7 @@
 output
 build
-cmake-build-debug
+**/cmake-build-*
+**/scratch
 .idea
 .vs
 *.pdb
@@ -14,4 +15,7 @@ quaesar-dbg
 debugger_layout.ini
 imgui.ini
 default_layout.ini
+
+# OS-specific
 .DS_Store
+
