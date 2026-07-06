@@ -305,7 +305,7 @@ uint32_t UaeVmImp::Cpu::getRegA(int i) const {
 
 
 uint32_t UaeVmImp::Cpu::getRegD(int i) const {
-    return m68k_dreg(regs, i);
+    return m68k_dreg(::regs, i);
 }
 
 
@@ -315,12 +315,12 @@ AddrRef UaeVmImp::Cpu::getPC() const {
     // address when words have been prefetched. Disassembly requires the true
     // instruction boundary; using the mid-fetch address produces garbage because
     // capstone starts decoding from the middle of an opcode word.
-    return regs.instruction_pc;
+    return ::regs.instruction_pc;
 }
 
 
 int UaeVmImp::Cpu::getIntMask() const {
-    return regs.intmask;
+    return ::regs.intmask;
 }
 
 
