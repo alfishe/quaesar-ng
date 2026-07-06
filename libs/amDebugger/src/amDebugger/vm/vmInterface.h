@@ -86,6 +86,9 @@ public:
     virtual IVm::EVmDebugMode getVmDebugMode() const { return m_debugMode; }
     virtual void setVmDebugMode(IVm::EVmDebugMode debug_mode) { m_debugMode = debug_mode; }; // base
 
+    // Returns 0=OCS, 1=ECS, 2=AGA
+    virtual int getChipsetLevel() const { return 0; }
+
     IVm::IModule* m_modSectBeg = nullptr;
     IVm::Memory* mem = nullptr;
     IVm::Cpu* cpu = nullptr;

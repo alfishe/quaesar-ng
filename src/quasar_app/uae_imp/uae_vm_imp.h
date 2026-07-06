@@ -39,6 +39,7 @@ public:
     virtual int getCurCycle() override;
     virtual int getVPos() override;
     virtual int getHPos() override;
+    virtual int getChipsetLevel() const override;
 
 
     //------------------------------------------------------------------------

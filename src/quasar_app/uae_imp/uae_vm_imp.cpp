@@ -170,22 +170,27 @@ bool UaeVmImp::Blitter::isBlitterActive() const {
 
 
 void UaeVmImp::CustomRegs::fetch() {
-    size_t dump_len;
-    ::save_custom(&dump_len, (uae_u8*)regsData.data(), 1);
-    for (size_t i = 0; i < regsData.size(); ++i)
-        qd::swapBytes_<2>(&regsData[i]);
+    // Read custom register values directly from UAE's internal
+    // custom_storage[] array. This avoids memory_get_word() which
+    // dispatches through the custom bank and triggers hardware side
+    // effects (event scheduling, interrupt clears, etc.) causing
+    // "out of event2's!" crashes when called from the UI thread.
+    regsData[0] = 0;
+    regsData[1] = 0;
+    for (int i = 0; i < IVm::CustReg::_COUNT_; ++i) {
+        uint32_t addr = IVm::CustReg::cust_reg_data[i].addr;
+        regsData[i + data_offset] = ::custom_storage[(addr & 0x1FE) >> 1].value;
+    }
 }
 
 
 void UaeVmImp::CustomRegs::commit() {
-    eastl::fixed_vector<uint16_t, CustReg::_COUNT_ + data_offset, false> dst = {regsData.begin(), regsData.end()};
-    uint8_t* beg = (uint8_t*)dst.begin();
-    dst.erase((uint16_t*)(beg + 0x120), (uint16_t*)(beg + 0x180));
-    dst.erase((uint16_t*)(beg + 0x0A0), (uint16_t*)(beg + 0x0E0));
-
-    for (size_t i = 0; i < dst.size(); ++i)
-        qd::swapBytes_<2>(&dst[i]);
-    ::restore_custom((uae_u8*)dst.data());
+    // Write back via memory_put_word which properly dispatches through
+    // UAE's custom register write path (only safe when emulator is paused).
+    for (int i = 0; i < IVm::CustReg::_COUNT_; ++i) {
+        uint32_t addr = IVm::CustReg::cust_reg_data[i].addr;
+        ::memory_put_word(addr, regsData[i + data_offset]);
+    }
 }
 
 
@@ -233,6 +238,15 @@ int UaeVmImp::getHPos() {
 int UaeVmImp::getCurCycle() {
     int c = (int)((::get_cycles() - ::vsync_cycles) / CYCLE_UNIT);
     return c;
+}
+
+
+int UaeVmImp::getChipsetLevel() const {
+    if (::currprefs.chipset_mask & CSMASK_AGA)
+        return 2;  // AGA (A1200/A4000): Alice + Lisa
+    if (::currprefs.chipset_mask & (CSMASK_ECS_AGNUS | CSMASK_ECS_DENISE))
+        return 1;  // ECS (A500+/A600/A3000): Super Agnus + Super Denise
+    return 0;       // OCS (A1000/A500/A2000): Agnus + Denise
 }
 
 
