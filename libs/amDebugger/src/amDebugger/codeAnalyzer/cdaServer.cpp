@@ -209,15 +209,27 @@ void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, 
         }
     }
 
-    // Defensive: disasmStart must never end up past startAddr - guard against
-    // it regardless, since the byte-count math below is unsigned and would
-    // otherwise underflow into a huge garbage value.
-    if (disasmStart > startAddr)
-        disasmStart = startAddr;
+    // Fallback: if backward walk and local probe both failed, use the
+    // anchor as the disassembly start. The anchor (typically the live PC)
+    // is always a genuine instruction boundary, so disassembling from it
+    // is guaranteed correct. We lose the context lines above startAddr,
+    // but the anchor itself always appears in the output — which is what
+    // the caller relies on for address matching (find_disasm_addr_line_idx).
+    if (!anchored && pProvedInstructionStart && *pProvedInstructionStart)
+    {
+        AddrRef anchor = *pProvedInstructionStart;
+        if (anchor >= startAddr)
+        {
+            disasmStart = anchor;
+            anchored = true;
+        }
+    }
 
-    // Generous estimate of bytes needed to produce nLines instructions past
-    // startAddr, widened below if capstone decodes fewer viable ones than needed.
-    uint32_t neededBytes = (startAddr - disasmStart) + (uint32_t)nLines * 6u;
+    // Byte count from disasmStart to startAddr. disasmStart can legitimately
+    // be > startAddr (anchor fallback), in which case prefixBytes is 0 and
+    // the output starts at the anchor.
+    uint32_t prefixBytes = (startAddr > disasmStart) ? (uint32_t)(startAddr - disasmStart) : 0;
+    uint32_t neededBytes = prefixBytes + (uint32_t)nLines * 6u;
     constexpr uint32_t maxNeededBytes = 64u * 1024u; // sane upper bound on a single disasm window
 
     for (int attempt = 0; attempt < 6; ++attempt)
@@ -245,19 +257,6 @@ void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, 
             break;
 
         neededBytes *= 2; // didn't get enough lines - widen the window and retry
-    }
-
-    // TEMPORARY DIAGNOSTIC - remove once the empty-widget issue is confirmed fixed.
-    {
-        static AddrRef s_lastLoggedStart = 0xFFFFFFFF;
-        static size_t s_lastLoggedCount = (size_t)-1;
-        if (disasmStart != s_lastLoggedStart || outItems->size() != s_lastLoggedCount)
-        {
-            s_lastLoggedStart = disasmStart;
-            s_lastLoggedCount = outItems->size();
-            qd::logInfo("cda-diag: startAddr=%08X disasmStart=%08X anchored=%d wanted=%d got=%d",
-                (uint32_t)startAddr, (uint32_t)disasmStart, (int)anchored, nLines, (int)outItems->size());
-        }
     }
 }
 

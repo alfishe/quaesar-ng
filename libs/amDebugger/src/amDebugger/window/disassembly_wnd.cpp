@@ -40,14 +40,6 @@ AddrRef DisassemblyView::getCursorAddr() const
 
 void DisassemblyView::drawContentImp()
 {
-    // TEMPORARY DIAGNOSTIC - remove once the empty-widget issue is confirmed fixed.
-    {
-        static int s_callCount = 0;
-        ++s_callCount;
-        if ((s_callCount % 120) == 1)
-            qd::logInfo("disasm-diag: drawContentImp called (call #%d)", s_callCount);
-    }
-
     Debugger* dbg = getDbg();
     IVm::VM* vm = dbg->getVm();
     ImGuiContext& g = *ImGui::GetCurrentContext();
@@ -67,6 +59,8 @@ void DisassemblyView::drawContentImp()
             m_addrViewExtraStart = m_mustViewAddr;
             m_nMustViewAddrDesiredLine = g_extraScrollLines;
             m_bSnapViewPc = false;
+            m_bViewNeedsAdjust = true;
+            m_nAdjustAttempts = 0;
         }
         else
             m_viewBaseAddr.reset();
@@ -76,7 +70,10 @@ void DisassemblyView::drawContentImp()
     ImGui::SameLine();
 
     AddrRef regPc = vm->cpu->getPC();
-    if (ImGui::Button("PC") || (m_prevRegPc != regPc))
+    bool bPcChanged = (m_prevRegPc != regPc);
+    m_prevRegPc = regPc;
+
+    if (ImGui::Button("PC") || bPcChanged)
     {
         m_viewBaseAddr.reset();
         m_bSnapViewPc = true;
@@ -87,34 +84,48 @@ void DisassemblyView::drawContentImp()
             m_nMustViewAddrDesiredLine = (int)m_nPrevLineCount / 2; // center of disasm
             m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - m_nMustViewAddrDesiredLine * 8u, m_mustViewAddr);
         }
+        m_bViewNeedsAdjust = true;
+        m_nAdjustAttempts = 0;
     }
-    m_prevRegPc = regPc;
 
     float disWndSizeY = ImGui::GetWindowHeight() - 64.f;
     float lineSizeY = ImGui::GetFrameHeightWithSpacing();
     if (disWndSizeY <= 0 || lineSizeY <= 0)
-    {
-        // TEMPORARY DIAGNOSTIC - remove once the empty-widget issue is confirmed fixed.
-        static bool s_loggedBail = false;
-        if (!s_loggedBail)
-        {
-            s_loggedBail = true;
-            qd::logErr("disasm-diag: BAILING (disWndSizeY=%.2f lineSizeY=%.2f winH=%.2f) - "
-                "will not log again for repeats of this exact bail",
-                disWndSizeY, lineSizeY, ImGui::GetWindowHeight());
-        }
         return;
-    }
 
     int nLinesReq = (int)ceilf(disWndSizeY / lineSizeY) + g_extraScrollLines * 2;
 
-    // request cached disasm lines
+    // Window resize changes the number of visible lines
+    if (nLinesReq != m_nPrevLinesReq)
+    {
+        m_nPrevLinesReq = nLinesReq;
+        m_bViewNeedsAdjust = true;
+        m_nAdjustAttempts = 0;
+    }
+
+    // request cached disasm lines — ONLY re-fetch when inputs changed.
+    // This is the key fix for the pause-stability issue: when UAE is paused,
+    // regPc, m_addrViewExtraStart, and nLinesReq don't change between frames,
+    // so the cache stays valid and the widget renders identical content
+    // without rebuilding capstone output or the ImGui table rows.
     cda::M68CodeDisassembler* pCodeServer = &cda::M68CodeDisassembler::get();
     AddrRef topViewAddr = m_viewBaseAddr ? *m_viewBaseAddr : regPc;
     // Anchor on the real CPU PC (always a genuine instruction boundary), not
     // topViewAddr - that can be a user-typed "go to address" target which
     // isn't necessarily aligned to a real instruction at all.
-    pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, &regPc);
+    {
+        bool bCacheHit = m_bDisasmValid
+            && m_lastDisasmStart == m_addrViewExtraStart
+            && m_lastDisasmLines == nLinesReq
+            && m_lastDisasmAnchor == regPc;
+        if (!bCacheHit) {
+            pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, &regPc);
+            m_lastDisasmStart  = m_addrViewExtraStart;
+            m_lastDisasmLines  = nLinesReq;
+            m_lastDisasmAnchor = regPc;
+            m_bDisasmValid = true;
+        }
+    }
 
     static float row_min_height = 0.0f; // for auto height
     int flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable |
@@ -216,45 +227,63 @@ void DisassemblyView::drawContentImp()
                     m_nMustViewAddrDesiredLine = nReqLine - 1;
                     m_mustViewAddr = m_vDisasmLines[nReqLine - 1]->m_addr;
                 }
-                //else //assert(0);
             }
             else
             { // SCROLL UP (MWHEEL: BACKWARD)
-                // nReqLine is -1 whenever m_mustViewAddr isn't found in the
-                // current list (which can legitimately happen, e.g. when the
-                // list came back empty) - nReqLine+1 must stay a valid index.
-                if (nReqLine + 1 >= 0 && (size_t)(nReqLine + 1) < m_vDisasmLines.size())
+                if (nReqLine >= 0 && (size_t)(nReqLine + 1) < m_vDisasmLines.size())
                     m_mustViewAddr = m_vDisasmLines[nReqLine + 1]->m_addr;
             }
-            //qd::logDebug("Wheel:%f", wheel);
+            m_bViewNeedsAdjust = true;
+            m_nAdjustAttempts = 0;
         }
         //ImGui::SetKeyOwner(wheel_key, ImGui::GetItemID());
     }
 
-    AddrRef prevExtraStart = m_addrViewExtraStart;
-    if (!m_vDisasmLines.empty())
+    // View position adjustment — ONLY when something changed.
+    // This gate prevents the per-frame feedback loop that caused address drift:
+    // the adjustment would fire every frame even when paused, modifying
+    // m_addrViewExtraStart, which changed the disasm output next frame,
+    // which triggered another adjustment, etc.
+    if (m_bViewNeedsAdjust && !m_vDisasmLines.empty())
     {
-        if (nReqLine < 0)
-            m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - cda::g_maxOpSize, m_mustViewAddr);
+        bool bAdjusted = false;
 
+        if (nReqLine < 0)
+        {
+            // Target address not in current view — recenter on it.
+            m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - cda::g_maxOpSize, m_mustViewAddr);
+            bAdjusted = true;
+        }
         else if (m_nMustViewAddrDesiredLine < g_extraScrollLines)
         {
-            // request little more next time
+            // Need more context above the target — shift view up.
             m_addrViewExtraStart = qd::clamp_max(m_addrViewExtraStart - cda::g_maxOpSize, m_addrViewExtraStart);
             m_nMustViewAddrDesiredLine = g_extraScrollLines + 1;
+            bAdjusted = true;
         }
-        else if (nReqLine > g_extraScrollLines)
+        else if (nReqLine > g_extraScrollLines + 1)
+        {
+            // Target is too far down — shift view so it sits g_extraScrollLines
+            // from the top. The +1 deadzone prevents oscillation between two
+            // adjacent positions due to variable instruction sizes.
             m_addrViewExtraStart = m_vDisasmLines[nReqLine - g_extraScrollLines]->m_addr;
+            bAdjusted = true;
+        }
+
+        if (!bAdjusted || ++m_nAdjustAttempts >= m_nMaxAdjustAttempts)
+            m_bViewNeedsAdjust = false;
+
+        // If the view start changed, invalidate the disasm cache so the
+        // next frame re-fetches with the new address range.
+        if (bAdjusted && m_addrViewExtraStart != m_lastDisasmStart)
+            m_bDisasmValid = false;
     }
-    // TEMPORARY DIAGNOSTIC - remove once the widget is confirmed stable.
-    if (m_addrViewExtraStart != prevExtraStart)
-    {
-        qd::logInfo("disasm-diag: extraStart %08X -> %08X (regPc=%08X mustView=%08X nReqLine=%d desiredLine=%d nLines=%d)",
-            (uint32_t)prevExtraStart, (uint32_t)m_addrViewExtraStart, (uint32_t)regPc, (uint32_t)m_mustViewAddr,
-            nReqLine, m_nMustViewAddrDesiredLine, (int)m_vDisasmLines.size());
-    }
+
     m_nPrevLineCount = (int)m_vDisasmLines.size();
-    m_vDisasmLines.clear();
+    // NOTE: do NOT clear m_vDisasmLines here. The pointers are owned by
+    // M68CodeDisassembler::m_curItems, which stays alive until the next
+    // requestM68DisasmLines() call. Keeping the vector allows the cache
+    // check to skip re-fetching when nothing changed (paused state).
 }
 
 

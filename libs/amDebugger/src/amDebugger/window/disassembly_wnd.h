@@ -23,7 +23,26 @@ class DisassemblyView : public amD::AmDbgWindow {
     AddrRef m_addrViewEnd = 0;
     AddrRef m_prevRegPc = 0;
     int m_nPrevLineCount = 0;
+    int m_nPrevLinesReq = 0;
     constexpr static int g_extraScrollLines = 4;
+
+    // View convergence state: the view adjustment (m_addrViewExtraStart)
+    // only runs when m_bViewNeedsAdjust is true, preventing per-frame drift.
+    // Set true when PC changes, user scrolls, goto, or window resizes.
+    // Cleared when the adjustment converges (no change needed) or after
+    // m_nMaxAdjustAttempts frames to prevent infinite loops.
+    bool m_bViewNeedsAdjust = true; // start dirty to trigger initial layout
+    int m_nAdjustAttempts = 0;
+    static constexpr int m_nMaxAdjustAttempts = 5;
+
+    // Disassembly cache: requestM68DisasmLines() is expensive (backward walk
+    // + capstone decode). Only re-fetch when inputs actually change.
+    // When paused, none of these change, so the cache stays valid and the
+    // widget renders identical content without rebuilding the ImGui table.
+    AddrRef m_lastDisasmStart = (AddrRef)-1;   // last m_addrViewExtraStart
+    int     m_lastDisasmLines = -1;            // last nLinesReq
+    AddrRef m_lastDisasmAnchor = (AddrRef)-1;  // last regPc (anchor)
+    bool    m_bDisasmValid = false;            // false = needs re-fetch
 
 
 public:
