@@ -77,6 +77,13 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 static int uae_thread_main_func(void *) {
+  // Apply Quaesar user-facing defaults BEFORE -s parsing so the user can
+  // override any of them from the command line.
+  currprefs.cpu_cycle_exact = true;
+  currprefs.cpu_memory_cycle_exact = true;
+  currprefs.blitter_cycle_exact = true;
+  currprefs.sound_stereo_separation = 0;
+
   std::vector<const char *> argv;
   argv.push_back("quaesar.exe");
   argv.reserve(g_cfg_startup.uaeExtArgs.size() * 2 + 1);
@@ -86,6 +93,20 @@ static int uae_thread_main_func(void *) {
     argv.push_back(s.c_str());
   }
   quae__parseCmdLine((int)argv.size(), const_cast<char **>(&argv[0]));
+
+  // Reconcile: cpu_speed=max (m68k_speed<0) is semantically incompatible with
+  // cpu_cycle_exact. The UAE config parser treats them as independent fields,
+  // so cpu_speed=max only sets m68k_speed=-1 without clearing cycle-exact —
+  // leaving the CPU locked to real 68000 bus cycles (negligible speedup).
+  // When the user requests max speed, honor that intent by switching to
+  // cpu_compatible mode: chipset timing stays precise (copper/DMA/blitter via
+  // the event scheduler), CPU runs ~21x faster (cycles_mult = CYCLES_DIV / 21).
+  if (currprefs.m68k_speed < 0) {
+    currprefs.cpu_cycle_exact = false;
+    currprefs.cpu_memory_cycle_exact = false;
+    currprefs.blitter_cycle_exact = false;
+    currprefs.cpu_compatible = true;
+  }
 
   ::real_main(0, nullptr); // call main function of UAE emulator
   return 0;
@@ -129,17 +150,10 @@ void UaeServerThread::initialize() {
     strcpy(currprefs.sername, g_cfg_startup.serialPort.c_str());
   }
 
-  // Most compatible mode
-  currprefs.cpu_cycle_exact = true;
-  currprefs.cpu_memory_cycle_exact = true;
-  currprefs.blitter_cycle_exact = true;
-  currprefs.floppy_speed = 100;
-  //    currprefs.turbo_emulation = 1; // it disables sound
-  currprefs.sound_stereo_separation = 0;
+  // Infrastructure settings (not user-overridable via -s)
   currprefs.uaeboard = 1;
   currprefs.win32_filesystem_mangle_reserved_names = true; // required for FS
-  currprefs.filesys_custom_uaefsdb =
-      false; // hack to not implement 'custom_fsdb_*' funcs now
+  currprefs.filesys_custom_uaefsdb = false; // hack to not implement 'custom_fsdb_*' funcs now
 
   strcpy(currprefs.romfile, g_cfg_startup.kickRomPath.c_str());
 
@@ -252,6 +266,7 @@ bool UaeServerThread::onUaeHandleEvents() {
   // (e.g., the resume/continue operation itself).
   while (m_isPaused) {
     m_pauseEvent->wait(50);  // wake every 50ms to process queued ops
+    
     // Process any queued operations that arrived while paused
     qd::MutexLock ml(m_eventMutex);
     while (!m_pClientOpsStack.empty()) {

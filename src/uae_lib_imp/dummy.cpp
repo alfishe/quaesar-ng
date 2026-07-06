@@ -1249,12 +1249,15 @@ void setup_brkhandler() {
 }
 
 bool show_screen_maybe(int, bool) {
-    UNIMPLEMENTED();
-    return false;
+    // Screen presentation is handled by the UI thread via
+    // UaeServerThread::fetchScreenBufferToTexture(), so this is a no-op.
+    // Return true to indicate the frame was "shown" (prevents UAE from
+    // retrying frame presentation every vsync).
+    return true;
 }
 
 int sleep_millis_main(int) {
-    UNIMPLEMENTED();
+    // No-op: the main loop is driven by SDL events on the UI thread.
     return 0;
 }
 
