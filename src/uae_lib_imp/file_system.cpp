@@ -62,6 +62,23 @@ static char evilchars[NUM_EVILCHARS] = {'\\', '*', '?', '\"', '<', '>', '|'};
 #define PATHPREFIX _T("\\\\?\\")
 
 
+// Guarded: on Windows, makesafefilename is provided by fsdb_win32.cpp.
+#ifndef _WIN32
+void makesafefilename(TCHAR* s, bool evilonly) {
+    TCHAR* c;
+    for (int i = 0; i < NUM_EVILCHARS; i++)
+        while ((c = _tcschr(s, evilchars[i])) != 0)
+            *c = '_';
+    if (!evilonly) {
+        while ((c = _tcschr(s, '.')) != 0)
+            *c = '_';
+        while ((c = _tcschr(s, ' ')) != 0)
+            *c = '_';
+    }
+}
+#endif
+
+
 #define UAEFSDB2_LEN 1632
 #define UAEFSDB_LEN 604
 
@@ -813,25 +830,60 @@ int fsdb_name_invalid_dir(a_inode* aino, const TCHAR* n) {
 }
 
 
-int fsdb_mode_supported(const a_inode*) {
-    UNIMPLEMENTED();
-    //return 0;
+int fsdb_mode_supported(const a_inode* aino) {
+    int mask = aino->amigaos_mode;
+    if (fsdb_mode_representable_p(aino, mask))
+        return mask;
+    mask &= ~(A_FIBF_SCRIPT | A_FIBF_READ | A_FIBF_EXECUTE);
+    if (fsdb_mode_representable_p(aino, mask))
+        return mask;
+    mask &= ~A_FIBF_WRITE;
+    if (fsdb_mode_representable_p(aino, mask))
+        return mask;
+    mask &= ~A_FIBF_DELETE;
+    if (fsdb_mode_representable_p(aino, mask))
+        return mask;
+    return 0;
 }
 
 
-TCHAR* fsdb_create_unique_nname(a_inode_struct*, char const*) {
-    UNIMPLEMENTED();
-    //return nullptr;
+TCHAR* fsdb_create_unique_nname(a_inode* base, const TCHAR* suggestion) {
+    char tmp[256] = "__uae___";
+    strncat(tmp, suggestion, 240);
+    makesafefilename(tmp, false);
+    for (;;) {
+        TCHAR* p = build_nname(base->nname, tmp);
+        if (!fsdb_exists(p)) {
+            return p;
+        }
+        xfree(p);
+        for (int i = 0; i < 8; i++) {
+            tmp[i + 8] = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[rand() % 63];
+        }
+    }
 }
 
-int fsdb_mode_representable_p(a_inode_struct const*, int) {
-    UNIMPLEMENTED();
-    //return 0;
+int fsdb_mode_representable_p(const a_inode* aino, int amigaos_mode) {
+    int mask = amigaos_mode ^ 15;
+    if (mask & A_FIBF_SCRIPT)
+        return 0;
+    if ((mask & 15) == 15)
+        return 1;
+    if (!(mask & A_FIBF_EXECUTE))
+        return 0;
+    if (!(mask & A_FIBF_READ))
+        return 0;
+    if ((mask & 15) == (A_FIBF_READ | A_FIBF_EXECUTE))
+        return 1;
+    return 0;
 }
 
-int fsdb_name_invalid(a_inode_struct*, char const*) {
-    UNIMPLEMENTED();
-    //return 0;
+int fsdb_name_invalid(a_inode* aino, const TCHAR* n) {
+    int v = fsdb_name_invalid_2(aino, (const char*)n, 0);
+    if (v <= 0)
+        return v;
+    SDL_Log("FILESYS: '%s' illegal filename", n);
+    return v;
 }
 
 

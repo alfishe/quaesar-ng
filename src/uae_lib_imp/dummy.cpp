@@ -10,12 +10,14 @@ EA_DISABLE_VC_WARNING(4702 4244) /*unreachable code*/ /*conversion from 'uae_u32
 #include <cstdlib>
 
 #include <sys/timeb.h>
+#include <sys/time.h>  // utimes(), struct timeval
 #include "sysdeps.h"
 #include "options.h"
 #include "memory.h"
 #include "inputdevice.h"
 #include "autoconf.h"
 #include "fsdb.h"
+#include "zfile.h"  // struct mytimeval definition
 #include "uae/slirp.h"
 #include "driveclick.h"
 #include "pci_hw.h"
@@ -243,8 +245,16 @@ void cpuboard_ncr9x_scsi_put(uaecptr /*addr*/, uae_u32 /*v*/) {
     UNIMPLEMENTED();
 }
 
-void getfilepart(TCHAR* /*out*/, int /*size*/, const TCHAR* /*path*/) {
-    UNIMPLEMENTED();
+// POSIX: extract filename component from path.
+// Win32 (win32.cpp:3991) uses '\\' separator; POSIX uses '/'.
+void getfilepart(TCHAR* out, int size, const TCHAR* path) {
+    out[0] = 0;
+    const TCHAR* p = strrchr(path, '/');
+    if (p)
+        _tcsncpy(out, p + 1, size - 1);
+    else
+        _tcsncpy(out, path, size - 1);
+    out[size - 1] = 0;
 }
 
 void toggle_fullscreen(int /*monid*/, int) {
@@ -278,14 +288,33 @@ void target_addtorecent(const TCHAR* /*name*/, int /*t*/) {
     TRACE();
 }
 
-int my_truncate(const TCHAR* /*name*/, uae_u64 /*len*/) {
+// POSIX implementation: uses truncate() to set file length.
+// On Windows, fsdb_mywin32.cpp provides this via CreateFile + SetEndOfFile.
+int my_truncate(const TCHAR* name, uae_u64 len) {
+#ifndef _WIN32
+    return truncate(name, (off_t)len);
+#else
     UNIMPLEMENTED();
     return 0;
+#endif
 }
 
-bool my_issamepath(const TCHAR* /*path1*/, const TCHAR* /*path2*/) {
-    UNIMPLEMENTED();
-    return false;
+// POSIX: compare two paths after canonicalization.
+// Win32 (fsdb_mywin32.cpp:782) canonicalizes then does case-insensitive compare.
+// POSIX filesystems are case-sensitive, so we do case-sensitive comparison.
+bool my_issamepath(const TCHAR* path1, const TCHAR* path2) {
+#ifndef _WIN32
+    TCHAR p1[MAX_DPATH], p2[MAX_DPATH];
+    my_canonicalize_path(path1, p1, sizeof p1 / sizeof(TCHAR));
+    my_canonicalize_path(path2, p2, sizeof p2 / sizeof(TCHAR));
+    return strcmp(p1, p2) == 0;
+#else
+    // Win32 uses _tcsicmp for case-insensitive NTFS/FAT paths
+    TCHAR p1[MAX_DPATH], p2[MAX_DPATH];
+    my_canonicalize_path(path1, p1, sizeof p1 / sizeof(TCHAR));
+    my_canonicalize_path(path2, p2, sizeof p2 / sizeof(TCHAR));
+    return _tcsicmp(p1, p2) == 0;
+#endif
 }
 
 int input_get_default_joystick(struct uae_input_device* uid, int i, int port, int af, int mode,
@@ -315,8 +344,21 @@ void getgfxoffset(int /*monid*/, float* /*dxp*/, float* /*dyp*/, float* /*mxp*/,
     UNIMPLEMENTED();
 }
 
-void fixtrailing(TCHAR* /*p*/) {
-    UNIMPLEMENTED();
+// POSIX: append trailing path separator if missing.
+// Win32 (win32.cpp:3888) appends '\\'; POSIX appends '/'.
+void fixtrailing(TCHAR* p) {
+    size_t len = _tcslen(p);
+    if (len == 0)
+        return;
+#ifndef _WIN32
+    if (p[len - 1] == '/')
+        return;
+    _tcscat(p, _T("/"));
+#else
+    if (p[len - 1] == '/' || p[len - 1] == '\\')
+        return;
+    _tcscat(p, _T("\\"));
+#endif
 }
 
 int uae_slirp_redir(int /*is_udp*/, int /*host_port*/, struct in_addr /*guest_addr*/, int /*guest_port*/) {
@@ -343,9 +385,25 @@ void refreshtitle() {
     UNIMPLEMENTED();
 }
 
-bool my_utime(const TCHAR* /*name*/, struct mytimeval* /*tv*/) {
+// POSIX implementation: uses utimes() to set file modification/access times.
+// mytimeval (tv_sec: uae_s64, tv_usec: uae_s32) maps directly to struct timeval.
+// When tv is NULL, utimes() sets the current time.
+bool my_utime(const TCHAR* name, struct mytimeval* tv) {
+#ifndef _WIN32
+    if (tv == nullptr) {
+        // NULL tv = set to current time (matches Win32 behavior)
+        return utimes(name, nullptr) == 0;
+    }
+    struct timeval times[2];
+    times[0].tv_sec = tv->tv_sec;       // access time
+    times[0].tv_usec = tv->tv_usec;
+    times[1].tv_sec = tv->tv_sec;       // modification time
+    times[1].tv_usec = tv->tv_usec;
+    return utimes(name, times) == 0;
+#else
     UNIMPLEMENTED();
     return false;
+#endif
 }
 
 bool my_resolvesoftlink(char*, int, bool) {
@@ -353,9 +411,16 @@ bool my_resolvesoftlink(char*, int, bool) {
     return true;
 }
 
-int my_rename(char const*, char const*) {
+// POSIX: rename a file or directory.
+// Win32 (fsdb_mywin32.cpp:174) handles reserved name mangling first.
+// POSIX rename() handles both files and directories atomically.
+int my_rename(const TCHAR* oldname, const TCHAR* newname) {
+#ifndef _WIN32
+    return rename(oldname, newname);
+#else
     UNIMPLEMENTED();
     return 0;
+#endif
 }
 
 void masoboshi_ncr9x_scsi_put(unsigned int, unsigned int, int) {
@@ -1256,9 +1321,10 @@ bool show_screen_maybe(int, bool) {
     return true;
 }
 
-int sleep_millis_main(int) {
-    // No-op: the main loop is driven by SDL events on the UI thread.
-    return 0;
+int sleep_millis_main(int ms) {
+    // Delegate to sleep_millis (SDL_Delay). The emulator thread runs
+    // independently of the UI thread and needs real sleeps for frame pacing.
+    return sleep_millis(ms);
 }
 
 void sndboard_free_capture() {
