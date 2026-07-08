@@ -89,7 +89,19 @@ void DebuggerApp::createRenderWindow()
         fprintf(stderr, "Error creating window.\n");
         return;
     }
-    m_pWndRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    // NO vsync on the debugger renderer.
+    //
+    // The main window renderer (QsrMainClientWnd) is the SOLE vsync authority —
+    // its SDL_RENDERER_PRESENTVSYNC call paces the entire main loop. The main
+    // loop renders BOTH windows sequentially in one iteration:
+    //
+    //   iteration:  updateAppPart(main)  → renderAppPart(main)  → [vsync block]
+    //              updateAppPart(debugger) → renderAppPart(debugger) → [no block]
+    //
+    // If this debugger renderer also had vsync, each iteration would block on
+    // two independent vsync waits (~33ms total at 60Hz), halving the effective
+    // frame rate. The emulator produces 50fps; a 30fps loop would drop half.
+    m_pWndRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!m_pWndRenderer)
     {
         SDL_DestroyWindow(window);
@@ -183,14 +195,6 @@ void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
         m_pQimGuiCtx->skipFrame();
         return;
     }
-
-    uint64_t now = SDL_GetTicks64();
-    if (now - m_lastRenderTimeMs < kMinFrameIntervalMs)
-    {
-        m_pQimGuiCtx->skipFrame();
-        return;
-    }
-    m_lastRenderTimeMs = now;
 
     m_pQimGuiCtx->newFrame();
     if (m_bFullyInitialized && m_pGui && m_pDebugger)
