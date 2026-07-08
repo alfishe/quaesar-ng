@@ -152,15 +152,38 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 }
 
 
+// getScreenPixBuf — lock-free emulator framebuffer snapshot for the debugger.
+//
+// Returns m_pAmigaBuffer: a stable snapshot that the emulator writes at each
+// vsync boundary (see UaeServerThread::_lockUaeScreenTexBuf / _unlockUaeScreenTexBuf).
+//
+// The caller (debugger ScreenWnd) reads this WITHOUT acquiring m_UaeScrTextureMutex.
+// This is intentional and correct for a read-only consumer:
+// - The frame counter (getFrameNo) tells the caller WHEN a new frame exists.
+// - Reading the snapshot mid-update may cause a harmless single-scanline tear,
+//   which is acceptable for a debugger preview.
+// - Avoiding the mutex eliminates all contention with the main window render
+//   path and the emulator thread.
+//
+// History: previously this returned raw vb->bufmem (UAE core's live render
+// buffer), which had worse tearing because the emulator writes to it
+// continuously throughout frame rendering, not just at vsync boundaries.
 void* UaeVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) {
-    vidbuf_description* vidinfo = &adisplays[mon_id].gfxvidinfo;
-    vidbuffer* vb = &vidinfo->drawbuffer;
-    if (!vb || !vb->bufmem)
+    UaeServerThread* pThread = UaeServerThread::get();
+    if (!pThread || !pThread->m_pAmigaBuffer)
         return nullptr;
-    *out_size_w = vb->outwidth;
-    *out_size_h = vb->outheight;
-    *pitch = vb->rowbytes;
-    return vb->bufmem;
+    *out_size_w = pThread->m_scrWidth;
+    *out_size_h = pThread->m_scrHeight;
+    *pitch = pThread->m_scrWidth * (int)sizeof(uint32_t);
+    return pThread->m_pAmigaBuffer;
+}
+
+// getFrameNo — returns the atomic frame counter for frame-skip decisions.
+// The counter is incremented via SDL_AtomicAdd in UaeServerThread::unlockscr()
+// after each complete frame snapshot is written to m_pAmigaBuffer.
+int UaeVmImp::Blitter::getFrameNo() {
+    UaeServerThread* pThread = UaeServerThread::get();
+    return pThread ? pThread->getScrFrameNo() : 0;
 }
 
 

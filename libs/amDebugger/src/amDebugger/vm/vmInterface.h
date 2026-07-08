@@ -203,6 +203,9 @@ class Blitter : public IModule
 public:
     virtual bool isBlitterActive() const = 0;
     virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) = 0;
+    // Returns the current frame counter (monotonically increasing).
+    // Used to skip redundant reads when no new frame has been produced.
+    virtual int getFrameNo() { return 0; }
 }; // class Blitter
 //////////////////////////////////////////////////////////////////////////
 

@@ -73,6 +73,7 @@ public:
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
+        virtual int getFrameNo() override;
     } instBlitter;
 
 
