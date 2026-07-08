@@ -5,6 +5,11 @@ build
 .idea
 .vs
 *.pdb
+*.o
+*.obj
+
+# clangd cache
+**/.cache
 
 # Binary executables
 quaesar
@@ -18,4 +23,5 @@ default_layout.ini
 
 # OS-specific
 .DS_Store
+Thumbs.db
 
