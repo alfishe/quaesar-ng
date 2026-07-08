@@ -52,7 +52,7 @@
 
 #define BPL_ERASE_TEST 0
 
-#define FRAMEWAIT_MIN_MS 2
+#define FRAMEWAIT_MIN_MS 4
 #define FRAMEWAIT_SPLIT 4
 
 #define CYCLE_CONFLICT_LOGGING 0
@@ -12040,20 +12040,45 @@ static bool framewait(void)
 			t = read_processor_time() - start;
 		}
 		if (!currprefs.cpu_thread) {
+			int spin_count = 0;
 			while (!currprefs.turbo_emulation) {
+				// rpt_vsync() returns the offset from the target frame time in processor ticks.
+				// If negative, it means we are early and need to wait.
+				// syncbase represents 1000ms worth of ticks, which dynamically adjusts
+				// for 50Hz (PAL) vs 60Hz (NTSC). Therefore, 'v' is always the remaining
+				// time accurately represented in milliseconds.
 				float v = rpt_vsync(clockadjust) / (syncbase / 1000.0f);
+				
+				// Break out to the high-precision spin loop when we are within the minimum threshold
 				if (v >= -FRAMEWAIT_MIN_MS)
 					break;
+					
 				rtg_vsynccheck();
 				maybe_process_pull_audio();
-				if (cpu_sleep_millis(1) < 0)
-					break;
+				
+				// Sleep for the bulk of the remaining time to yield the CPU back to the OS.
+				// This drastically reduces CPU consumption compared to waking up every 1ms.
+				int sleep_time = (int)(-v) - FRAMEWAIT_MIN_MS;
+				if (sleep_time > 1) {
+					if (cpu_sleep_millis(sleep_time) < 0)
+						break;
+				} else {
+					if (cpu_sleep_millis(1) < 0)
+						break;
+				}
 			}
 			while (rpt_vsync(clockadjust) < 0) {
 				rtg_vsynccheck();
 				if (audio_is_pull_event()) {
 					maybe_process_pull_audio();
 					break;
+				}
+				// Safety valve: cap unbounded spinning on platforms where
+				// show_screen() is a no-op (macOS). After ~2ms of spinning,
+				// yield to avoid burning CPU.
+				if (++spin_count > 2000) {
+					sleep_millis(0);
+					spin_count = 0;
 				}
 			}
 		}
