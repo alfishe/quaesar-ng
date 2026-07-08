@@ -61,7 +61,24 @@ void QsrMainClientWndApp::_createMainOsWindow() {
         return;
     }
 
-    m_hWndRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED);
+    // VSYNC pacing for the entire application.
+    //
+    // This is the ONLY renderer in the application that requests
+    // SDL_RENDERER_PRESENTVSYNC. The debugger window renderer (see
+    // DebuggerApp::createRenderWindow in debuggerWndApp.cpp) intentionally
+    // does NOT use vsync.
+    //
+    // The main loop calls updateAppPart + renderAppPart for BOTH windows
+    // in a single iteration. If both renderers had vsync, each iteration
+    // would block on two independent vsync waits (~33ms total at 60Hz),
+    // cutting the effective frame rate in half. With vsync only here,
+    // the loop blocks once (~16.6ms) and the debugger's RenderPresent
+    // returns immediately.
+    //
+    // Without vsync, SDL_RenderPresent returns instantly and the main
+    // loop would spin at 100% CPU re-rendering the same frame thousands
+    // of times per second.
+    m_hWndRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (!m_hWndRenderer) {
         SDL_Log("Could not create renderer: %s", SDL_GetError());
         SDL_DestroyWindow(m_pWindow);
@@ -119,16 +136,17 @@ void QsrMainClientWndApp::renderAppPart() {
                 if (!bufWidth || !bufHeight)
                     return;
 
-                // If the Amiga screen is low-res (e.g. 640x256), we artificially 
-                // double the buffer height to maintain the correct pixel aspect ratio.
-                bool isDoubled = false;
-                if (bufHeight < 350) {
-                    bufHeight *= 2;
-                    isDoubled = true;
-                }
+                // Detect PAL low-res modes (e.g. 640x256) where the Amiga only
+                // outputs half the vertical lines. Instead of CPU-side scanline
+                // doubling (which doubled both the texture upload size and the
+                // memcpy work), we upload only the original lines and let the
+                // GPU scale vertically for free via SDL_RenderCopy's src/dst rects.
+                bool isLowRes = (bufHeight < 350);
+                int origHeight = bufHeight;
+                int texHeight = isLowRes ? (bufHeight * 2) : bufHeight;
 
-                // Maintain aspect ratio
-                float image_aspect = (float)bufWidth / (float)bufHeight;
+                // Maintain aspect ratio using the doubled height (display size)
+                float image_aspect = (float)bufWidth / (float)texHeight;
                 float window_aspect = (float)curWndSizeX / (float)curWndSizeY;
                 int new_width = 0, new_height = 0;
 
@@ -139,25 +157,39 @@ void QsrMainClientWndApp::renderAppPart() {
                     new_height = curWndSizeY;
                     new_width = (int)(curWndSizeY * image_aspect);
                 }
-                SDL_Rect rect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
+                SDL_Rect dstRect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
                 SDL_RenderClear(m_hWndRenderer);
 
+                // The texture stores only the original (non-doubled) lines.
+                // The GPU scales them to the destination rect at zero CPU cost.
                 SDL_Texture* hDisplayTex =
-                    tryRecreateEmuScreenTexture(bufWidth, bufHeight);  // Recreate texture if needed
+                    tryRecreateEmuScreenTexture(bufWidth, origHeight);
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                    for (int curY = 0; curY < bufHeight; curY++) {
-                        uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
-                        // Only duplicate the scanlines (curY / 2) if we actually doubled the buffer height. 
-                        // Otherwise, map 1:1 to prevent vertical cropping on high-res/laced modes.
-                        int srcY = isDoubled ? (curY / 2) : curY;
-                        memcpy(dest, &pSrcDisplayBuf[srcY * bufWidth], bufWidth * 4);
+                    // Bulk fast path: when pitch matches the source row size,
+                    // a single flat memcpy is much faster than a per-scanline
+                    // loop — the C library can issue wide SIMD (NEON/SSE) copies.
+                    // This is the primary fix for the _platform_memmove hot-spot
+                    // (980 samples in the profiling report).
+                    if (pitch == bufWidth * 4) {
+                        memcpy(texture_pixels, pSrcDisplayBuf, (size_t)origHeight * pitch);
+                    } else {
+                        // Pitch mismatch fallback: per-scanline copy.
+                        // The GPU texture's pitch may differ from the source
+                        // row stride on some backends (e.g. alignment padding).
+                        for (int curY = 0; curY < origHeight; curY++) {
+                            uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
+                            memcpy(dest, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
+                        }
                     }
                     SDL_UnlockTexture(hDisplayTex);
                 }
 
-                SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
+                // GPU does the vertical scaling: src rect covers only the
+                // original scanlines, dst rect covers the full display area.
+                // For low-res modes this doubles the height for free.
+                SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &dstRect);
                 pVmPlayer->unlockDisplayTexBuf();
             }
     }
