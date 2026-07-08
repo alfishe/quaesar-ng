@@ -121,6 +121,34 @@ void QuaesarApplication::onSdlEventProc(SDL_Event& event) {
 }
 
 
+// Eagerly swap the debugger's dummy VM bridge to the real UAE VM.
+// The debugger starts with create_dummy_connection() which creates a
+// separate UaeVmImp with m_pUaeThread=nullptr. That instance reads the
+// same process-global UAE state (so PC/memory are correct) but cannot
+// control the emulator or access the mutex-protected framebuffer.
+//
+// We check every frame until the swap succeeds — this ensures the real
+// VM is wired before ANY debugger window tries to render or lock the
+// framebuffer, eliminating the black-screen issue in the Screen window.
+//
+// After the swap, the dummy instance is fully replaced: all debugger
+// windows, operations, and framebuffer access go through the real VM.
+void QuaesarApplication::onFrameUpdate(float dt, float time) {
+    TSuper::onFrameUpdate(dt, time);
+
+    if (!m_bDebuggerVmConnected) {
+        if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
+            UaeServerThread* pUae = dynamic_cast<UaeServerThread*>(pVmPlayer);
+            if (pUae && pUae->getVm()) {
+                m_pDebuggerApp->getDbg()->setDbgServiceBridge(
+                    amD::create_shared_connection(pUae->getVm()));
+                m_bDebuggerVmConnected = true;
+            }
+        }
+    }
+}
+
+
 void* QuaesarApplication::getInterface(const qd::TypeInfo& p_interface) {
     return TSuper::getInterface(p_interface);
 }

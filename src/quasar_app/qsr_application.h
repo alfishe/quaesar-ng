@@ -48,6 +48,11 @@ public:
 
     virtual void onSdlEventProc(SDL_Event& event) override;
 
+    // Called every frame. Used to eagerly swap the debugger's dummy VM
+    // bridge to the real UAE VM as soon as the emulator thread is ready —
+    // before any debugger window tries to render.
+    virtual void onFrameUpdate(float dt, float time) override;
+
     virtual void* getInterface(const qd::TypeInfo& p_interface) override;
 
     amD::DebuggerApp* getDebuggerApp() const {
