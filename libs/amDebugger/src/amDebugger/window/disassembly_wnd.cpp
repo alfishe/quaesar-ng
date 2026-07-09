@@ -73,7 +73,7 @@ void DisassemblyView::drawContentImp()
     bool bPcChanged = (m_prevRegPc != regPc);
     m_prevRegPc = regPc;
 
-    if (ImGui::Button("PC") || bPcChanged)
+    if (ImGui::Button("PC") || (m_bSnapViewPc && bPcChanged))
     {
         m_viewBaseAddr.reset();
         m_bSnapViewPc = true;
@@ -110,16 +110,17 @@ void DisassemblyView::drawContentImp()
     // without rebuilding capstone output or the ImGui table rows.
     cda::M68CodeDisassembler* pCodeServer = &cda::M68CodeDisassembler::get();
     AddrRef topViewAddr = m_viewBaseAddr ? *m_viewBaseAddr : regPc;
-    // Anchor on the real CPU PC (always a genuine instruction boundary), not
-    // topViewAddr - that can be a user-typed "go to address" target which
-    // isn't necessarily aligned to a real instruction at all.
+    // Anchor on the real CPU PC (always a genuine instruction boundary) if we are snapped to PC.
+    // If not snapped, don't anchor, so we decode exactly from the requested address.
+    const AddrRef* pAnchor = m_bSnapViewPc ? &regPc : nullptr;
+    AddrRef anchorVal = pAnchor ? *pAnchor : (AddrRef)-1;
     {
         bool bCacheHit = m_bDisasmValid
             && m_lastDisasmStart == m_addrViewExtraStart
             && m_lastDisasmLines == nLinesReq
-            && m_lastDisasmAnchor == regPc;
+            && m_lastDisasmAnchor == anchorVal;
         if (!bCacheHit) {
-            pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, &regPc);
+            pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, pAnchor);
 
 #ifndef NDEBUG
             // Sanity: verify addresses are monotonically increasing.
@@ -137,7 +138,7 @@ void DisassemblyView::drawContentImp()
 
             m_lastDisasmStart  = m_addrViewExtraStart;
             m_lastDisasmLines  = nLinesReq;
-            m_lastDisasmAnchor = regPc;
+            m_lastDisasmAnchor = anchorVal;
             m_bDisasmValid = true;
         }
     }

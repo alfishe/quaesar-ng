@@ -19,7 +19,7 @@ namespace qsr {
 
 struct CfgQsrMain : public CfgBase {
     CFG_DECLARE(qsr::CfgQsrMain);
-    bool quitByEsc = true;
+    bool quitByEsc = false;
 
     int mainWndSizeX = 754;
     int mainWndSizeY = 576;
