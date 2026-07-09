@@ -22,8 +22,8 @@ class Application
     bool m_bQuitRequestPosted = false;
     bool m_bActive = true;
 
-
 public:
+    uint32_t m_lastTick = 0;
     Application();
     virtual ~Application();
     inline static Application* g_pInstance = nullptr;

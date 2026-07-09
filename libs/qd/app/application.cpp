@@ -82,10 +82,39 @@ void Application::onFrameRender() {
 }
 
 
+#if QD_USE_SDL
+static int AppEventWatch(void* userdata, SDL_Event* event) {
+    qd::Application* app = static_cast<qd::Application*>(userdata);
+    if (event->type == SDL_WINDOWEVENT) {
+        if (event->window.event == SDL_WINDOWEVENT_EXPOSED ||
+            event->window.event == SDL_WINDOWEVENT_RESIZED ||
+            event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+            // macOS/Windows modal resize loop blocks the main thread in SDL_PollEvent.
+            // This event watch is called synchronously from the OS event tracker.
+            // We force a render here to keep the window updating while dragging.
+            uint32_t now = SDL_GetTicks();
+            uint32_t elapsed = now - app->m_lastTick;
+            // Rate-limit rendering to ~60Hz (15ms) during live resize. 
+            // Calling SDL_RenderPresent blocks the main thread for vsync. 
+            // If we don't rate-limit, we choke the OS window manager's high-frequency 
+            // event tracker (e.g. on 120Hz+ displays), making the drag feel choppy.
+            if (elapsed >= 15) {
+                app->onFrameUpdate(elapsed, (float)now / 1000.0f);
+                app->onFrameRender();
+                app->m_lastTick = now;
+            }
+        }
+    }
+    return 0;
+}
+#endif
+
 void Application::doMainLoop() {
 #if QD_USE_SDL
+    SDL_AddEventWatch(AppEventWatch, this);
+
     SDL_Event event;
-    uint32_t lastTick = SDL_GetTicks();
+    m_lastTick = SDL_GetTicks();
 
     for (;;) {
         while (SDL_PollEvent(&event) != 0) {
@@ -100,7 +129,7 @@ void Application::doMainLoop() {
         // animation/timing logic correct values at any refresh rate
         // (60/120/144/240/360 Hz, or frame skip under load).
         uint32_t now = SDL_GetTicks();
-        uint32_t elapsed = now - lastTick;
+        uint32_t elapsed = now - m_lastTick;
 
         // Safety net: if the frame completed in under 1ms, it means
         // SDL_RenderPresent returned instantly — vsync is either
@@ -116,7 +145,7 @@ void Application::doMainLoop() {
         if (elapsed < 1) {
             SDL_Delay(1);
             now = SDL_GetTicks();
-            elapsed = now - lastTick;
+            elapsed = now - m_lastTick;
         }
 
         // Pass real elapsed ms and absolute time (seconds) to update.
@@ -125,8 +154,9 @@ void Application::doMainLoop() {
         // rate or frame drops.
         onFrameUpdate(elapsed, (float)now / 1000.0f);
         onFrameRender();
-        lastTick = now;
+        m_lastTick = now;
     }
+    SDL_DelEventWatch(AppEventWatch, this);
 #endif
 }
 
