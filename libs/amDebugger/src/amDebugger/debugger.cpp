@@ -13,6 +13,8 @@ Debugger::Debugger(DebuggerApp* _app)
 {
 }
 
+Debugger::~Debugger() = default;
+
 
 
 
@@ -60,10 +62,13 @@ void Debugger::setDbgServiceBridge(ref_ptr<IVmDbgServiceBridge> pCon)
     if (m_pConnection == pCon)
         return;
     m_pConnection = pCon;
-    if (m_pConnection)
+    if (m_pConnection) {
         m_pVm = m_pConnection->getClientVm();
-    else
+        m_pOsIntro = std::make_unique<os::OsIntrospector>(m_pVm.get());
+    } else {
         m_pVm = nullptr;
+        m_pOsIntro.reset();
+    }
 }
 
 

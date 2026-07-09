@@ -565,7 +565,8 @@ static void subfunc (uae_u8 *data, int cnt)
 #endif
 	if (subcodebufferinuse[subcodebufferoffsetw]) {
 		memset (subcodebufferinuse, 0,sizeof (subcodebufferinuse));
-		subcodebufferoffsetw = subcodebufferoffset = 0;
+		subcodebufferoffset = 0;
+		subcodebufferoffsetw = 0;
 		uae_sem_post (&sub_sem);
 		//write_log (_T("CD32: subcode buffer overflow 1\n"));
 		return;
@@ -1492,9 +1493,9 @@ static void AKIKO_hsync_handler (void)
 				put_long (subcode_address + cdrom_subcodeoffset + SUB_CHANNEL_SIZE, 0xffff0000);
 				subcodebufferinuse[subcodebufferoffset] = 0;
 				cdrom_subcodeoffset += 100;
-				subcodebufferoffset++;
+				subcodebufferoffset = subcodebufferoffset + 1;
 				if (subcodebufferoffset >= MAX_SUBCODEBUFFER)
-					subcodebufferoffset -= MAX_SUBCODEBUFFER;
+					subcodebufferoffset = subcodebufferoffset - MAX_SUBCODEBUFFER;
 				set_status (CDINTERRUPT_SUBCODE);
 				//write_log (_T("*"));
 			}
@@ -1504,9 +1505,9 @@ static void AKIKO_hsync_handler (void)
 	}
 
 	if (frame2counter > 0)
-		frame2counter--;
+		frame2counter = frame2counter - 1;
 	if (mediacheckcounter > 0)
-		mediacheckcounter--;
+		mediacheckcounter = mediacheckcounter - 1;
 
 	akiko_internal ();
 	akiko_handler (framesync);
@@ -1956,7 +1957,8 @@ static void akiko_bput2 (uaecptr addr, uae_u32 v, int msg)
 		if ((cdrom_flags & CDFLAG_SUBCODE) && !(tmp & CDFLAG_SUBCODE)) {
 			uae_sem_wait (&sub_sem);
 			memset (subcodebufferinuse, 0, sizeof subcodebufferinuse);
-			subcodebufferoffset = subcodebufferoffsetw = 0;
+			subcodebufferoffsetw = 0;
+			subcodebufferoffset = 0;
 			uae_sem_post (&sub_sem);
 		}
 		cdrom_flags &= 0xff800000;

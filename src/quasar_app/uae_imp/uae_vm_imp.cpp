@@ -381,6 +381,11 @@ uint16_t UaeVmImp::Memory::getU16(AddrRef addr) {
 }
 
 
+uint8_t UaeVmImp::Memory::getU8(AddrRef addr) {
+    return (uint8_t)::memory_get_byte(addr);
+}
+
+
 void UaeVmImp::Memory::setU16(AddrRef addr, uint16_t v) {
     ::memory_put_word(addr, v);
 }

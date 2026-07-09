@@ -155,6 +155,7 @@ public:
     virtual uint8_t* getRealAddr(AddrRef ptr) = 0;
     virtual bool getU16(AddrRef addr, uint16_t* out) = 0;
     virtual uint16_t getU16(AddrRef addr) = 0;
+    virtual uint8_t getU8(AddrRef addr) = 0;
     virtual void setU16(AddrRef addr, uint16_t v) = 0;
     virtual uint32_t getU32(AddrRef addr) = 0;
     virtual void setU32(AddrRef addr, uint32_t v) = 0;

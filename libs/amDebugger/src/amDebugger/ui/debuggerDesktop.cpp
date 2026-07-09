@@ -176,10 +176,16 @@ void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
     ImGuiID idLeft, idRight;
     ImGui::DockBuilderSplitNode(dockspaceId, ImGuiDir_Left, 0.48f, &idLeft, &idRight);
 
+    ImGuiID idRightTop, idRightBottom;
+    
+    // NOTE: We must dock these windows into the root `idLeft` node *before* it gets mathematically
+    // split by ImGui::DockBuilderSplitNode below. If we don't "seed" the root node first, ImGui 
+    // fails to resolve the internal layout tree for these tabs when we explicitly assign them to 
+    // the split `idLeftMain` node later, causing them to spawn floating/undocked.
     ImGui::DockBuilderDockWindow("Disassembly", idLeft);
     ImGui::DockBuilderDockWindow("Copper debug", idLeft);
+    ImGui::DockBuilderDockWindow("OS Modules", idLeft);
 
-    ImGuiID idRightTop, idRightBottom;
     ImGui::DockBuilderSplitNode(idRight, ImGuiDir_Up, 0.66f, &idRightTop, &idRightBottom);
 
     ImGui::DockBuilderDockWindow("Screen", idRightTop);
@@ -190,8 +196,12 @@ void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
     ImGuiID idLeftMain, idLeftMid;
     ImGui::DockBuilderSplitNode(idLeft, ImGuiDir_Left, 0.59f, &idLeftMain, &idLeftMid);
 
+    // NOTE: Here we explicitly assign the windows to `idLeftMain` (the left half of the split).
+    // Because we previously "seeded" them in the root `idLeft` node above, ImGui's layout engine
+    // now successfully resolves their placement into this child node, resulting in a clean tab bar.
     ImGui::DockBuilderDockWindow("Disassembly", idLeftMain);
     ImGui::DockBuilderDockWindow("Copper debug", idLeftMain);
+    ImGui::DockBuilderDockWindow("OS Modules", idLeftMain);
 
     ImGuiID idMidTop, idMidBottom;
     ImGui::DockBuilderSplitNode(idLeftMid, ImGuiDir_Up, 0.5f, &idMidTop, &idMidBottom);

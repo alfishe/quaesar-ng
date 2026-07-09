@@ -372,6 +372,10 @@ uint16_t VAmVmImp::Memory::getU16(AddrRef addr) {
   return m_pVm->m_vAmiga->mem.debugger.spypeek16(vamiga::Accessor::CPU, (uint32_t)addr);
 }
 
+uint8_t VAmVmImp::Memory::getU8(AddrRef addr) {
+  return m_pVm->m_vAmiga->mem.debugger.spypeek8(vamiga::Accessor::CPU, (uint32_t)addr);
+}
+
 bool VAmVmImp::Memory::getU16(AddrRef addr, uint16_t* out) {
   *out = getU16(addr);
   return true;

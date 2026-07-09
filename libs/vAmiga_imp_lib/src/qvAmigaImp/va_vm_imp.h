@@ -87,6 +87,7 @@ public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override;
         virtual bool getU16(AddrRef addr, uint16_t* out) override;
         virtual uint16_t getU16(AddrRef addr) override;
+        virtual uint8_t getU8(AddrRef addr) override;
         virtual void setU16(AddrRef addr, uint16_t v) override;
         virtual uint32_t getU32(AddrRef addr) override;
         virtual void setU32(AddrRef addr, uint32_t v) override;

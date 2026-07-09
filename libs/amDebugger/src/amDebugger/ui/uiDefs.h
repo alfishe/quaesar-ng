@@ -13,6 +13,7 @@ enum class WndId {
     MemoryGraph,
     CustomRegsWnd,
     BlitterWnd,
+    OsModules,
 
     ImGuiDemo,
     MostCommonCount,
