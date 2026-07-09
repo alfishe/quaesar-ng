@@ -24,7 +24,7 @@ struct CfgQsrMain : public CfgBase {
     int mainWndSizeX = 754;
     int mainWndSizeY = 576;
 
-    std::string vmPlayerId = "uae";  // "vamiga";
+    EngineId engine = EngineId::WinUae;  // default emulation engine
 };
 inline static CfgQsrMain& g_cfg_vm_wnd = CfgQsrMain::get();
 

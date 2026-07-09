@@ -212,6 +212,19 @@ elseif(LINUX OR UNIX)
         "-Wl,--whole-archive" "$<TARGET_FILE:amDebugger>" "-Wl,--no-whole-archive")
 endif()
 
+# Same problem for VAmigaImpLib: its VAmigaServerProviderFactory registers via a
+# static RegOnLoadAppPartServerFactory initializer. On Windows this is handled by
+# /WHOLEARCHIVE in libs/vAmiga_imp_lib/CMakeLists.txt. On macOS/Linux the linker
+# strips the TU unless force-loaded, so --engine vamiga finds no factory.
+if(TARGET VAmigaImpLib)
+    if(APPLE)
+        target_link_options(quaesar PRIVATE "-Wl,-force_load,$<TARGET_FILE:VAmigaImpLib>")
+    elseif(LINUX OR UNIX)
+        target_link_options(quaesar PRIVATE
+            "-Wl,--whole-archive" "$<TARGET_FILE:VAmigaImpLib>" "-Wl,--no-whole-archive")
+    endif()
+endif()
+
 
 #if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")
 # file(COPY_FILE "${CMAKE_CURRENT_LIST_DIR}/bin/install/default_layout.ini" "${CMAKE_CURRENT_BINARY_DIR}/imgui.ini")

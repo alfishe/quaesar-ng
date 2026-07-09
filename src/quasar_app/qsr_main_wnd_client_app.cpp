@@ -38,7 +38,7 @@ void QsrMainClientWndApp::init() {
     m_pDesktop = mk.make_<qsr::QsrVmClientPlayerGuiDesktop>(this);
     m_pDesktop->init();
 
-    m_nCurVmPlayterId = m_vmSelector.activateVmPlayerByIdStr(getApp(), g_cfg_vm_wnd.vmPlayerId.c_str());
+    m_nCurVmPlayterId = m_vmSelector.activateVmPlayerByIdStr(getApp(), engineIdToStr(g_cfg_vm_wnd.engine));
 }
 
 

@@ -12,6 +12,8 @@
 #include "qsr_application.h"
 #include "qsr_config.h"
 #include "quaesar.h"
+#include "qsr_main_wnd_client_app.h"  // g_cfg_vm_wnd (CfgQsrMain)
+#include "vm_player_selector.h"       // VmPlayersSelector::isKnownCoreId
 
 
 #ifdef WIN32
@@ -41,10 +43,27 @@ int SDL_main(int argc, char* argv[]) {
     cliApp.add_option("-s", g_cfg_startup.uaeExtArgs,
                       "key followed by the original WinUAE commands. Example:\n"
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
+
+    std::string engineId;
+    cliApp.add_option("--engine", engineId, "Emulation engine to use (uae, vamiga, ...)");
     try {
         cliApp.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
         return cliApp.exit(e);
+    }
+
+    // Apply --engine selection with validation.
+    // Default engine is already WinUae (set in CfgQsrMain); only override
+    // if the user passed --engine and the id maps to a known engine.
+    // Lookup is case-insensitive ("vAmiga", "VAMIGA", "vamiga" all work).
+    if (!engineId.empty()) {
+        qsr::EngineId engine = qsr::engineIdFromStr(engineId.c_str());
+        if (engine == qsr::EngineId::Unknown) {
+            SDL_Log("Unknown engine '%s', falling back to 'uae'", engineId.c_str());
+            qsr::g_cfg_vm_wnd.engine = qsr::EngineId::WinUae;
+        } else {
+            qsr::g_cfg_vm_wnd.engine = engine;
+        }
     }
 
     // initialize SDL

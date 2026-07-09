@@ -6,6 +6,21 @@
 
 namespace qsr {
 
+//------------------------------------------------------------------------
+// Known emulation engines.  The factory registry is string-based (for plugin
+// extensibility) but internally we use this enum for type safety.
+//------------------------------------------------------------------------
+enum class EngineId : uint8_t {
+    WinUae,
+    VAmiga,
+    Unknown,  // returned by engineIdFromStr when no known id matches
+};
+
+// String <-> EngineId conversions.  engineIdFromStr is case-insensitive.
+const char* engineIdToStr(EngineId id);
+EngineId engineIdFromStr(const char* str);
+
+
 class VmPlayersSelector {
     struct ProviderItem {
         BaseVmServerAppPart* pServerApp = nullptr;
@@ -19,6 +34,8 @@ public:
     }
 
     int activateVmPlayerByIdStr(QuaesarApplication* pApp, const char* vmProviderId);
+
+
 
     qsr::IVmClientPlayer* getVmPlayer(int hIdx) {
         const ProviderItem* provItem = &m_vmServerAppParts[hIdx];

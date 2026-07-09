@@ -1,6 +1,8 @@
 #include "vm_player_selector.h"
 #include "qd/app/appPartsMgr.h"
 
+#include <strings.h>  // strcasecmp
+
 
 namespace qsr {
 
@@ -22,12 +24,19 @@ public:
         m_appPartServerFactoryList.push_back(std::unique_ptr<IAppPartServerProviderFactory>(factory));
     }
 
+    // Case-insensitive factory lookup so "vAmiga", "VAMIGA", "vamiga" all match.
     IAppPartServerProviderFactory* findFactoryByIdStr(const char* id) const {
         for (const auto& factory : m_appPartServerFactoryList) {
-            if (factory->id == id)
+            if (factory->id.size() == strlen(id) &&
+                strcasecmp(factory->id.c_str(), id) == 0)
                 return factory.get();
         }
         return nullptr;
+    }
+
+    // Read-only access to all registered factories (for UI enumeration).
+    const qtd::vector<std::unique_ptr<IAppPartServerProviderFactory>>& getFactories() const {
+        return m_appPartServerFactoryList;
     }
 
 };  // class AppPartServerFactoryListMgr
@@ -70,6 +79,31 @@ int VmPlayersSelector::activateVmPlayerByIdStr(QuaesarApplication* pApp, const c
         return (int)m_vmServerAppParts.size() - 1;
     }
     return -1;
+}
+
+
+//------------------------------------------------------------------------
+// EngineId conversion helpers
+//------------------------------------------------------------------------
+const char* engineIdToStr(EngineId id) {
+    switch (id) {
+        case EngineId::WinUae: return "uae";
+        case EngineId::VAmiga: return "vamiga";
+        default:               return nullptr;
+    }
+}
+
+EngineId engineIdFromStr(const char* str) {
+    if (!str || !*str)
+        return EngineId::Unknown;
+    for (const auto& factory : plugin_api::AppPartServerFactoryListMgr::get().m_appPartServerFactoryList) {
+        if (factory->id.size() == strlen(str) &&
+            strcasecmp(factory->id.c_str(), str) == 0) {
+            if (factory->id == "uae")    return EngineId::WinUae;
+            if (factory->id == "vamiga") return EngineId::VAmiga;
+        }
+    }
+    return EngineId::Unknown;
 }
 
 
