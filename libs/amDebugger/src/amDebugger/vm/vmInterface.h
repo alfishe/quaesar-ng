@@ -6,6 +6,7 @@
 #include <qd/stl/span.h>
 #include <qd/stl/array.h>
 #include <qd/stl/string.h>
+#include <SDL_pixels.h>
 #include <qd/qui/uiOperation.h>
 
 
@@ -226,6 +227,10 @@ class Blitter : public IModule
 public:
     virtual bool isBlitterActive() const = 0;
     virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) = 0;
+    // Returns SDL pixel format constant (default: SDL_PIXELFORMAT_ARGB8888).
+    // vAmiga overrides to SDL_PIXELFORMAT_ABGR8888 so the GPU handles
+    // channel order conversion for free — no per-pixel CPU swap.
+    virtual uint32_t getScreenPixelFormat() const { return SDL_PIXELFORMAT_ARGB8888; }
 }; // class Blitter
 //////////////////////////////////////////////////////////////////////////
 

@@ -48,6 +48,7 @@ private:
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_hWndRenderer = nullptr;
     SDL_Texture* m_hVmDisplayTx = nullptr;
+    Uint32 m_displayFormat = SDL_PIXELFORMAT_ARGB8888;  // updated from IVmClientPlayer::getDisplayPixelFormat()
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     VmPlayersSelector m_vmSelector;
     int m_nCurVmPlayterId = -1;

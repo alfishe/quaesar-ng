@@ -113,8 +113,10 @@ void ScreenWnd::grabScreenToTexture(Debugger* dbg)
     if (!scrBuf || vbSizeX <= 0 || vbSizeY <= 0)
         return;
 
-    // (Re)create texture when dimensions change (first frame or engine switch).
-    if (!mTextureId || m_texWidth != vbSizeX || m_texHeight != vbSizeY)
+    Uint32 vmFormat = vm->blitter->getScreenPixelFormat();
+
+    // (Re)create texture when dimensions or format change (first frame, engine switch).
+    if (!mTextureId || m_texWidth != vbSizeX || m_texHeight != vbSizeY || m_texFormat != vmFormat)
     {
         if (mTextureId)
             SDL_DestroyTexture((SDL_Texture*)mTextureId);
@@ -123,12 +125,13 @@ void ScreenWnd::grabScreenToTexture(Debugger* dbg)
             return;
 
         SDL_Texture* scrTexture = SDL_CreateTexture(dbg->getDbgApp()->getRenderer(),
-            SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, vbSizeX, vbSizeY);
+            vmFormat, SDL_TEXTUREACCESS_STREAMING, vbSizeX, vbSizeY);
         if (scrTexture)
         {
             mTextureId = (ImTextureID)scrTexture;
             m_texWidth = vbSizeX;
             m_texHeight = vbSizeY;
+            m_texFormat = vmFormat;
             SDL_SetTextureBlendMode(scrTexture, SDL_BLENDMODE_NONE);
             SDL_SetTextureScaleMode(scrTexture, SDL_ScaleModeLinear);
         }

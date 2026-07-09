@@ -125,6 +125,7 @@ void QsrMainClientWndApp::renderAppPart() {
         int bufWidth, bufHeight;
         uint32_t* pSrcDisplayBuf = nullptr;
         if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
+            m_displayFormat = pVmPlayer->getDisplayPixelFormat();
             m_renderedFrameNo = curFrame;
             if (bufWidth && bufHeight) {
                 int curWndSizeX, curWndSizeY;
@@ -197,14 +198,14 @@ SDL_Texture* QsrMainClientWndApp::tryRecreateEmuScreenTexture(int newWidth, int 
     Uint32 format;
     if (SDL_QueryTexture(m_hVmDisplayTx, &format, &access, &currentWidth, &currentHeight) != 0)
         return m_hVmDisplayTx;
-    if (newWidth == currentWidth && newHeight == currentHeight) {
+    if (newWidth == currentWidth && newHeight == currentHeight && format == m_displayFormat) {
         return m_hVmDisplayTx;
     }
     // Destroy the old texture
     SDL_DestroyTexture(m_hVmDisplayTx);
-    // Create a new texture with the desired dimensions
-    m_hVmDisplayTx = SDL_CreateTexture(m_hWndRenderer, format,
-                                       access,  // Using the same access pattern as the original
+    // Create a new texture with the desired dimensions and pixel format
+    m_hVmDisplayTx = SDL_CreateTexture(m_hWndRenderer, m_displayFormat,
+                                       SDL_TEXTUREACCESS_STREAMING,
                                        newWidth, newHeight);
     return m_hVmDisplayTx;
 }
