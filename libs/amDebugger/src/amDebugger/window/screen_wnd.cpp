@@ -83,33 +83,14 @@ void ScreenWnd::drawContentImp()
 }
 
 
-// grabScreenToTexture — lock-free emulator framebuffer snapshot for debugger preview.
-//
-// Design principles:
-// 1. NO mutex lock — we read m_pAmigaBuffer directly. This is a read-only
-//    snapshot captured by the emulator at the last vsync boundary. The worst
-//    case is a harmless single-scanline tear, which is acceptable for a
-//    debugger preview and eliminates all mutex contention with the main
-//    window render path.
-//
-// 2. Frame-skip via atomic counter — getFrameNo() is atomically incremented
-//    at each vsync boundary. We skip the texture upload entirely if no new
-//    frame exists, avoiding unnecessary SDL_LockTexture/memcpy work.
-//
-// 3. No artificial frame-rate limiter — the main window's vsync paces the
-//    entire main loop (see Section 10 of ui_render_optimization.md). The
-//    debugger renders at whatever rate the loop iterates, which is already
-//    capped to the display refresh rate by the main window's RenderPresent.
+// grabScreenToTexture — reads the emulator framebuffer snapshot.
+// Called from drawContentImp() which is already gated by the centralized
+// 15fps refresh trigger in DebuggerApp::updateAppPart(). No separate
+// frame-skip logic needed here — the whole ImGui frame only runs when
+// the trigger fires.
 void ScreenWnd::grabScreenToTexture(Debugger* dbg)
 {
     IVm::VM* vm = dbg->getVm();
-
-    // Frame-skip: only grab when the emulator has produced a new frame.
-    // The frame counter is atomically incremented at each vsync boundary
-    // (see UaeServerThread::unlockscr / VAmServerThread equivalent).
-    uint32_t curFrame = (uint32_t)vm->blitter->getFrameNo();
-    if (curFrame == m_lastRenderedFrameNo)
-        return;
 
     int scrSizeX = vm->getScreenSizeX();
     int scrSizeY = vm->getScreenSizeY();
@@ -145,8 +126,6 @@ void ScreenWnd::grabScreenToTexture(Debugger* dbg)
         //
         // There is a ~1% chance of catching a partially-updated buffer (rare
         // horizontal tearing), which is acceptable for a debugger preview.
-        // The frame-skip check above ensures we only read once per emulator
-        // frame, minimizing this window.
         int vbSizeX = 0;
         int vbSizeY = 0;
         int vbPitch = 0;
@@ -154,8 +133,6 @@ void ScreenWnd::grabScreenToTexture(Debugger* dbg)
 
         if (scrBuf)
         {
-            m_lastRenderedFrameNo = curFrame;
-
             SDL_Texture* scrTexture = (SDL_Texture*)(mTextureId);
             void* pixels = nullptr;
             int pitch;

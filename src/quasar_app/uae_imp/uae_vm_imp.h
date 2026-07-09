@@ -43,7 +43,25 @@ public:
 
 
     //------------------------------------------------------------------------
+    // Cpu module — snapshots register state in fetch() so that widgets
+    // see stable values between fetchVmState() calls (~15fps throttle).
+    // Without this snapshot, getters read the live UAE ::regs global which
+    // changes continuously as the emulator runs, causing register and
+    // disassembly widgets to flicker at 60fps.
     struct Cpu : public IVm::Cpu {
+        // Snapshot populated by fetch(). Reads from getters return these
+        // cached values, not live emulator state.
+        uint32_t snap_regs_d[8] = {};
+        uint32_t snap_regs_a[8] = {};
+        uint32_t snap_pc = 0;
+        uint32_t snap_intmask = 0;
+        bool snap_flg_z = false;
+        bool snap_flg_c = false;
+        bool snap_flg_v = false;
+        bool snap_flg_n = false;
+        bool snap_flg_x = false;
+
+        void fetch() override;
         uint32_t getRegA(int i) const override;
         uint32_t getRegD(int i) const override;
         AddrRef getPC() const override;
@@ -73,7 +91,6 @@ public:
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
-        virtual int getFrameNo() override;
     } instBlitter;
 
 

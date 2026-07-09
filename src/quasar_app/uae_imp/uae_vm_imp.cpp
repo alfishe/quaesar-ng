@@ -158,12 +158,10 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 // vsync boundary (see UaeServerThread::_lockUaeScreenTexBuf / _unlockUaeScreenTexBuf).
 //
 // The caller (debugger ScreenWnd) reads this WITHOUT acquiring m_UaeScrTextureMutex.
-// This is intentional and correct for a read-only consumer:
-// - The frame counter (getFrameNo) tells the caller WHEN a new frame exists.
-// - Reading the snapshot mid-update may cause a harmless single-scanline tear,
-//   which is acceptable for a debugger preview.
-// - Avoiding the mutex eliminates all contention with the main window render
-//   path and the emulator thread.
+// This is intentional and correct for a read-only consumer: reading the snapshot
+// mid-update may cause a harmless single-scanline tear, which is acceptable for
+// a debugger preview. Avoiding the mutex eliminates all contention with the main
+// window render path and the emulator thread.
 //
 // History: previously this returned raw vb->bufmem (UAE core's live render
 // buffer), which had worse tearing because the emulator writes to it
@@ -176,14 +174,6 @@ void* UaeVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* out_s
     *out_size_h = pThread->m_scrHeight;
     *pitch = pThread->m_scrWidth * (int)sizeof(uint32_t);
     return pThread->m_pAmigaBuffer;
-}
-
-// getFrameNo — returns the atomic frame counter for frame-skip decisions.
-// The counter is incremented via SDL_AtomicAdd in UaeServerThread::unlockscr()
-// after each complete frame snapshot is written to m_pAmigaBuffer.
-int UaeVmImp::Blitter::getFrameNo() {
-    UaeServerThread* pThread = UaeServerThread::get();
-    return pThread ? pThread->getScrFrameNo() : 0;
 }
 
 
@@ -318,18 +308,37 @@ void UaeVmImp::Floppy::setAdfPath(const qtd::string& v) {
 }
 
 
+// Snapshot all CPU registers from the live UAE ::regs global.
+// Called by fetchVmState() at the throttled rate (~15fps).
+// Getters below read from this snapshot, so widgets see stable values
+// between fetches instead of flickering at the emulator's execution rate.
+void UaeVmImp::Cpu::fetch() {
+    for (int i = 0; i < 8; i++) {
+        snap_regs_d[i] = m68k_dreg(::regs, i);
+        snap_regs_a[i] = m68k_areg(::regs, i);
+    }
+    snap_pc = ::regs.instruction_pc;
+    snap_intmask = ::regs.intmask;
+    snap_flg_z = GET_ZFLG();
+    snap_flg_c = GET_CFLG();
+    snap_flg_v = GET_VFLG();
+    snap_flg_n = GET_NFLG();
+    snap_flg_x = GET_XFLG();
+}
+
+
 bool UaeVmImp::Cpu::getFlg(ECpuFlg_ f) const {
     switch (f) {
         case IVm::CpuFlg_Z:
-            return GET_ZFLG();
+            return snap_flg_z;
         case IVm::CpuFlg_C:
-            return GET_CFLG();
+            return snap_flg_c;
         case IVm::CpuFlg_V:
-            return GET_VFLG();
+            return snap_flg_v;
         case IVm::CpuFlg_N:
-            return GET_NFLG();
+            return snap_flg_n;
         case IVm::CpuFlg_X:
-            return GET_XFLG();
+            return snap_flg_x;
         default:
             return false;
     }
@@ -337,27 +346,22 @@ bool UaeVmImp::Cpu::getFlg(ECpuFlg_ f) const {
 
 
 uint32_t UaeVmImp::Cpu::getRegA(int i) const {
-    return m68k_areg(::regs, i);
+    return snap_regs_a[i];
 }
 
 
 uint32_t UaeVmImp::Cpu::getRegD(int i) const {
-    return m68k_dreg(::regs, i);
+    return snap_regs_d[i];
 }
 
 
 AddrRef UaeVmImp::Cpu::getPC() const {
-    // Use instruction_pc (the start of the current instruction) instead of
-    // m68k_getpc() which returns regs.pc + (pc_p - pc_oldp) — a mid-instruction
-    // address when words have been prefetched. Disassembly requires the true
-    // instruction boundary; using the mid-fetch address produces garbage because
-    // capstone starts decoding from the middle of an opcode word.
-    return ::regs.instruction_pc;
+    return snap_pc;
 }
 
 
 int UaeVmImp::Cpu::getIntMask() const {
-    return ::regs.intmask;
+    return snap_intmask;
 }
 
 

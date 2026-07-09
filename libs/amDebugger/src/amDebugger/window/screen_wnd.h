@@ -11,7 +11,6 @@ class ScreenWnd : public AmDbgWindow
 
     ImTextureID mTextureId = 0;
     ImVec2 mLastWndSize = {0, 0};
-    uint32_t m_lastRenderedFrameNo = 0;  // Frame-skip: only grab when emulator produced a new frame
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override

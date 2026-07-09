@@ -167,11 +167,6 @@ bool VAmVmImp::Blitter::isBlitterActive() const {
   return m_pVm->m_vAmiga->agnus.blitter.getInfo().bbusy;
 }
 
-int VAmVmImp::Blitter::getFrameNo() {
-  VAmServerThread* pThread = m_pVm->m_pVAmThread;
-  return pThread ? pThread->getScrFrameNo() : 0;
-}
-
 void VAmVmImp::CustomRegs::fetch() {
   // Read each custom register via vAmiga's spypeek16 API
   // cust_reg_data maps each CustReg enum to its hardware address (0xDFFxxx)

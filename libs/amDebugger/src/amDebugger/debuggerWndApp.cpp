@@ -196,10 +196,27 @@ void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
         return;
     }
 
+    // ── Centralized refresh trigger ──────────────────────────────────────
+    // fetchVmState() snapshots ALL VM data (registers, memory, custom regs)
+    // into module caches at a fixed ~15fps. Between ticks, every widget
+    // reads the same stale cached values — fully synchronized, no per-widget
+    // flags. The Cpu module's fetch() override snapshots registers too, so
+    // even getters like getPC()/getRegD() return stable values between ticks.
+    //
+    // The ImGui frame always renders (never skipFrame) because skipping
+    // SDL_RenderPresent on macOS Metal causes an implicit vsync stall that
+    // halves the effective frame rate. Redrawing stale cached text at 60fps
+    // is negligible CPU — it's just vertex generation for cached glyphs.
+    uint64_t now = SDL_GetTicks64();
+    if (now - m_lastStateFetchMs >= kStateFetchIntervalMs)
+    {
+        m_lastStateFetchMs = now;
+        getDbg()->fetchVmState();
+    }
+
     m_pQimGuiCtx->newFrame();
     if (m_bFullyInitialized && m_pGui && m_pDebugger)
     {
-        getDbg()->fetchVmState();
         m_pGui->drawImGuiMainFrame();
     }
     m_pQimGuiCtx->endFrame();

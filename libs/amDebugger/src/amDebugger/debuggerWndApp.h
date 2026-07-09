@@ -49,6 +49,10 @@ private:
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     uint32_t m_nCurDbgClientIdx = 0;
     int m_init = false;
+    // Centralized refresh trigger: entire debugger UI (registers, disassembly,
+    // memory, screen preview) refreshes at this rate. See updateAppPart().
+    uint64_t m_lastStateFetchMs = 0;
+    static constexpr uint64_t kStateFetchIntervalMs = 66; // ~15 FPS
 
 public:
     bool m_bFullyInitialized = false;
