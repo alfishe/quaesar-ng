@@ -81,5 +81,11 @@ protected:
 
 private:
     void fetchScreenBufferToTexture(const uint32_t* pCurDisplayTexBuf, bool lof);
+
+    // Copy visible portion from vAmiga's raw 912x313 texture into m_pAmigaBuffer.
+    // Extracts only the displayable area (skipping hblank/vblank), swaps R/B
+    // channels (vAmiga uses ABGR, SDL expects ARGB), and doubles scanlines if
+    // non-interlaced so the output matches UAE's format.
+    void copyVisibleArea(const uint32_t* pSrc, int rawWidth, int rawHeight, bool lof);
 };  // class VAmServerThread
 //////////////////////////////////////////////////////////////////////////

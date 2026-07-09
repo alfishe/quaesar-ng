@@ -11,6 +11,8 @@ class ScreenWnd : public AmDbgWindow
 
     ImTextureID mTextureId = 0;
     ImVec2 mLastWndSize = {0, 0};
+    int m_texWidth = 0;
+    int m_texHeight = 0;
 
 public:
     virtual void onCreate(UiViewCreateCtx* cp) override

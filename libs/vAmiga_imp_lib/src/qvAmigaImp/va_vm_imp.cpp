@@ -153,12 +153,14 @@ VAmVmImp* vm = this;
 
 void* VAmVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w,
                                          int* out_size_h, int* pitch) {
-  // Access the display texture buffer from VAmServerThread
+  // Return the visible-area buffer (already channel-swapped to ARGB).
+  // copyVisibleArea() in VAmServerThread extracts the displayable portion
+  // from vAmiga's raw 912x313 texture and swaps R/B channels.
   VAmServerThread* pThread = m_pVm->m_pVAmThread;
   if (!pThread || !pThread->m_pAmigaBuffer) return nullptr;
 
-  *out_size_w = pThread->m_scrWidth;   // HPIXELS (912)
-  *out_size_h = pThread->m_scrHeight;  // VPIXELS (313)
+  *out_size_w = pThread->m_scrWidth;
+  *out_size_h = pThread->m_scrHeight;
   *pitch = pThread->m_scrWidth * sizeof(uint32_t);
   return pThread->m_pAmigaBuffer;
 }

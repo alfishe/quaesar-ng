@@ -77,25 +77,18 @@ VAmServerThread::VAmServerThread(qsr::VAmServerAppPart *pServerApp)
     g_pSingleton = this;
     m_pConsoleQueue = new VAmConsoleQueue();
 
-    m_scrWidth = vamiga::HPIXELS;
-    m_scrHeight = vamiga::VPIXELS;
+    // Visible screen dimensions after extracting from the raw 912x313 texture.
+    // vAmiga's raw texture includes hblank/vblank areas filled with a checkerboard.
+    // We only copy the visible portion, matching what UAE produces.
+    // xstart = (HBLANK_MAX + 1) * 4, ystart = VBLANK_MAX + 1 (PAL)
+    m_scrWidth = vamiga::HPIXELS - (vamiga::HBLANK_MAX + 1) * 4;   // 912 - 144 = 768
+    m_scrHeight = (vamiga::VPIXELS - 2 - (vamiga::PAL::VBLANK_MAX + 1));  // ~285
+    m_pAmigaBuffer = new uint32_t[m_scrWidth * m_scrHeight];
+    SDL_AtomicSet(&m_scrFrameNo, 0);
 }
 
 void VAmServerThread::initialize() {
-  //     ::syncbase = 1000000;
-  //     qs_keyboard_set_translation();
-  //     ::default_prefs(&::currprefs, true, 0);
-  //     ::fixup_prefs(&::currprefs, true);
-
-  // const QuaesarOptions& options = g_initOptions;
-
-  // Most compatible mode
-  //     m_scrWidth = 754;
-  //     m_scrHeight = 576;
-  //     assert(!m_pAmigaBuffer);
-  //     m_pAmigaBuffer = new uint32_t[m_scrWidth * m_scrHeight];
-  //     SDL_AtomicSet(&m_scrFrameNo, 0);
-
+  // m_pAmigaBuffer and screen dimensions are set up in the constructor.
   // start VAMIGA Thread
     m_onVAmInitialized = new qd::ThreadEvent(true);
     m_uaeThread =
@@ -309,8 +302,9 @@ void VAmServerThread::onVAmigaThreadMain() {
                 SDL_Delay(5);
             }
             else {
-                //pPrevDispTexBuf = pCurDisplayTexBuf;
-                m_pAmigaBuffer = const_cast<uint32_t *>(pCurDisplayTexBuf);
+                // Copy visible portion from vAmiga's raw 912x313 texture into
+                // our display buffer, swapping R/B channels (vAmiga=ABGR, SDL=ARGB).
+                copyVisibleArea(pCurDisplayTexBuf, vamiga::HPIXELS, vamiga::VPIXELS, lof);
                 SDL_AtomicSet(&m_scrFrameNo, (int)nr);
                 vVideoPort.unlockTexture();
                 pVAmiga->wakeUp();
@@ -327,9 +321,56 @@ void VAmServerThread::onVAmigaThreadMain() {
     qd::logDbg("VAmigaServerThread: Done...");
 }
 
+void VAmServerThread::copyVisibleArea(const uint32_t* pSrc, int rawWidth,
+                                       int rawHeight, bool lof) {
+    using namespace vamiga;
+
+    // Visible area boundaries in the raw texture
+    const int xstart = (HBLANK_MAX + 1) * 4;       // 144
+    const int ystart = PAL::VBLANK_MAX + 1;          // 26
+    const int yend   = rawHeight - 2;                // 311
+
+    const int visWidth  = rawWidth - xstart;          // 768
+    const int visHeight = yend - ystart;             // 285
+
+    m_VAmScrTextureMutex.lock();
+
+    // Reallocate if dimensions changed (e.g. PAL <-> NTSC switch)
+    if (m_scrWidth != visWidth || m_scrHeight != visHeight) {
+        delete[] m_pAmigaBuffer;
+        m_scrWidth = visWidth;
+        m_scrHeight = visHeight;
+        m_pAmigaBuffer = new uint32_t[m_scrWidth * m_scrHeight];
+    }
+
+    // Copy visible scanlines, swapping R/B channels.
+    // vAmiga pixel format: 0xAABBGGRR (ABGR)
+    // SDL ARGB8888:        0xAARRGGBB
+    // Swap bytes 0 and 2 (R and B) while preserving A and G.
+    for (int y = 0; y < visHeight; y++) {
+        const uint32_t* srcRow = pSrc + (ystart + y) * rawWidth + xstart;
+        uint32_t* dstRow = m_pAmigaBuffer + y * visWidth;
+        for (int x = 0; x < visWidth; x++) {
+            uint32_t px = srcRow[x];
+            // Swap R (byte 0) and B (byte 2), keep A (byte 3) and G (byte 1)
+            dstRow[x] = (px & 0xFF00FF00)
+                      | ((px & 0x00FF0000) >> 16)
+                      | ((px & 0x000000FF) << 16);
+        }
+    }
+
+    m_VAmScrTextureMutex.unlock();
+    // Frame number is set by caller to match vAmiga's internal nr
+}
+
+
 bool VAmServerThread::lockDisplayTexBuf(int *out_width, int *out_height,
                                         uint32_t **out_pixels) {
     m_VAmScrTextureMutex.lock();
+    if (!m_pAmigaBuffer) {
+        m_VAmScrTextureMutex.unlock();
+        return false;
+    }
     *out_width = m_scrWidth;
     *out_height = m_scrHeight;
     *out_pixels = m_pAmigaBuffer;
