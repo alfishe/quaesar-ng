@@ -119,22 +119,17 @@ void QsrMainClientWndApp::renderAppPart() {
         return;
 
     uint32_t curFrame = pVmPlayer->getScrFrameNo();
-    if (curFrame == m_renderedFrameNo)
-        return;  // No new frame - skip render to avoid flicker
-
-    m_renderedFrameNo = curFrame;
+    if (curFrame != m_renderedFrameNo)
     {
+        // New emulator frame available — upload it to the texture.
+        m_renderedFrameNo = curFrame;
 
-            int curWndSizeX, curWndSizeY;
-            // Use SDL_GetWindowSize (logical points) instead of SDL_GetRendererOutputSize (physical pixels)
-            // This prevents a 4x zoom bug on HighDPI/Retina displays when calculating the destination rect.
-            SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
-
-            int bufWidth, bufHeight;
-            uint32_t* pSrcDisplayBuf = nullptr;
-            if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
-                if (!bufWidth || !bufHeight)
-                    return;
+        int bufWidth, bufHeight;
+        uint32_t* pSrcDisplayBuf = nullptr;
+        if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
+            if (bufWidth && bufHeight) {
+                int curWndSizeX, curWndSizeY;
+                SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
 
                 // Detect PAL low-res modes (e.g. 640x256) where the Amiga only
                 // outputs half the vertical lines. Instead of CPU-side scanline
@@ -157,27 +152,18 @@ void QsrMainClientWndApp::renderAppPart() {
                     new_height = curWndSizeY;
                     new_width = (int)(curWndSizeY * image_aspect);
                 }
-                SDL_Rect dstRect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
-                SDL_RenderClear(m_hWndRenderer);
+                m_lastDstRect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
+                m_lastTexW = bufWidth;
+                m_lastTexH = origHeight;
 
-                // The texture stores only the original (non-doubled) lines.
-                // The GPU scales them to the destination rect at zero CPU cost.
                 SDL_Texture* hDisplayTex =
                     tryRecreateEmuScreenTexture(bufWidth, origHeight);
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                    // Bulk fast path: when pitch matches the source row size,
-                    // a single flat memcpy is much faster than a per-scanline
-                    // loop — the C library can issue wide SIMD (NEON/SSE) copies.
-                    // This is the primary fix for the _platform_memmove hot-spot
-                    // (980 samples in the profiling report).
                     if (pitch == bufWidth * 4) {
                         memcpy(texture_pixels, pSrcDisplayBuf, (size_t)origHeight * pitch);
                     } else {
-                        // Pitch mismatch fallback: per-scanline copy.
-                        // The GPU texture's pitch may differ from the source
-                        // row stride on some backends (e.g. alignment padding).
                         for (int curY = 0; curY < origHeight; curY++) {
                             uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
                             memcpy(dest, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
@@ -185,14 +171,18 @@ void QsrMainClientWndApp::renderAppPart() {
                     }
                     SDL_UnlockTexture(hDisplayTex);
                 }
-
-                // GPU does the vertical scaling: src rect covers only the
-                // original scanlines, dst rect covers the full display area.
-                // For low-res modes this doubles the height for free.
-                SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &dstRect);
-                pVmPlayer->unlockDisplayTexBuf();
             }
+            pVmPlayer->unlockDisplayTexBuf();
+        }
     }
+
+    // ALWAYS render: clear + copy texture + present.
+    // On macOS Metal, presenting without draw commands shows black.
+    // When no new frame exists, the texture still holds the last frame's
+    // data so RenderCopy redraws it — keeping the drawable alive.
+    SDL_RenderClear(m_hWndRenderer);
+    if (m_hVmDisplayTx && m_lastTexW > 0)
+        SDL_RenderCopy(m_hWndRenderer, m_hVmDisplayTx, nullptr, &m_lastDstRect);
 
     if (m_bShowGui)
         m_pQimGuiCtx->render();
