@@ -185,6 +185,7 @@ void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
     ImGui::DockBuilderDockWindow("Disassembly", idLeft);
     ImGui::DockBuilderDockWindow("Copper debug", idLeft);
     ImGui::DockBuilderDockWindow("OS Modules", idLeft);
+    ImGui::DockBuilderDockWindow("MMU", idLeft);
 
     ImGui::DockBuilderSplitNode(idRight, ImGuiDir_Up, 0.66f, &idRightTop, &idRightBottom);
 
@@ -202,6 +203,7 @@ void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
     ImGui::DockBuilderDockWindow("Disassembly", idLeftMain);
     ImGui::DockBuilderDockWindow("Copper debug", idLeftMain);
     ImGui::DockBuilderDockWindow("OS Modules", idLeftMain);
+    ImGui::DockBuilderDockWindow("MMU", idLeftMain);
 
     ImGuiID idMidTop, idMidBottom;
     ImGui::DockBuilderSplitNode(idLeftMid, ImGuiDir_Up, 0.5f, &idMidTop, &idMidBottom);

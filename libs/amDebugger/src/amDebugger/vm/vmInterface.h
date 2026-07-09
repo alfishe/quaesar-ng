@@ -168,11 +168,33 @@ public:
 class Cpu : public IVm::IModule
 {
 public:
+    struct MmuPage {
+        AddrRef logical;
+        AddrRef physical;
+        uint32_t size;          // in bytes (e.g. 4096 or 8192)
+        uint32_t flags;         // original page descriptor or derived flags
+        bool cacheable;
+        bool writeProtected;
+        bool superOnly;
+        bool modified;
+    };
+
+    struct MmuStats {
+        uint32_t numRootTables = 0;
+        uint32_t numPtrTables = 0;
+        uint32_t numPageTables = 0;
+        uint32_t totalMemoryBytes = 0;
+    };
+
     virtual uint32_t getRegA(int i) const = 0;
     virtual uint32_t getRegD(int i) const = 0;
     virtual AddrRef getPC() const = 0;
     virtual bool getFlg(IVm::ECpuFlg_ f) const = 0;
     virtual int getIntMask() const = 0;
+    
+    virtual bool isMmuEnabled() const = 0;
+    virtual int getCpuModel() const = 0;
+    virtual void getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats = nullptr) const = 0;
 }; // class Cpu
 //////////////////////////////////////////////////////////////////////////
 

@@ -14,6 +14,7 @@ enum class WndId {
     CustomRegsWnd,
     BlitterWnd,
     OsModules,
+    MmuWnd,
 
     ImGuiDemo,
     MostCommonCount,

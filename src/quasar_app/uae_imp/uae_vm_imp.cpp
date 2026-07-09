@@ -8,6 +8,9 @@
 #include <uae_lib/include/options.h>
 #include <uae_lib/include/memory.h>
 #include <uae_lib/include/newcpu.h>
+#include <uae_lib/include/mmu_common.h>
+#include <uae_lib/include/cpummu.h>
+#include <uae_lib/include/cpummu030.h>
 #include <keyboard.h>
 #include <inputdevice.h>
 #include <inputrecord.h>
@@ -36,7 +39,7 @@
 #include "qsr_operations.h"
 #include "quasar_app/quaesar.h"
 #include "uae_server_thread.h"
-
+#include <set>
 
 extern int vpos;
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
@@ -362,6 +365,95 @@ AddrRef UaeVmImp::Cpu::getPC() const {
 
 int UaeVmImp::Cpu::getIntMask() const {
     return snap_intmask;
+}
+
+
+bool UaeVmImp::Cpu::isMmuEnabled() const {
+    if (::currprefs.mmu_model == 0) return false;
+    if (::currprefs.mmu_model == 68030) {
+        return (tc_030 & 0x80000000) != 0;
+    }
+    return ::regs.mmu_enabled != 0;
+}
+
+int UaeVmImp::Cpu::getCpuModel() const {
+    return ::currprefs.cpu_model;
+}
+
+void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats) const {
+    if (!isMmuEnabled()) return;
+    
+    // Safety check - avoid running if CPU isn't 68030/040/060
+    if (::currprefs.cpu_model < 68030) return;
+
+    std::set<uaecptr> seenPtrTables;
+    std::set<uaecptr> seenPageTables;
+
+    auto walk_table = [&](uaecptr root_ptr, bool super) {
+        if (outStats) outStats->numRootTables++;
+
+        const int ROOT_TABLE_SIZE = 128, PTR_TABLE_SIZE = 128, PAGE_TABLE_SIZE = 64;
+        const int ROOT_INDEX_SHIFT = 25, PTR_INDEX_SHIFT = 18;
+
+        for (int root_idx = 0; root_idx < ROOT_TABLE_SIZE; root_idx++) {
+            uae_u32 root_des = ::x_phys_get_long(root_ptr + root_idx * 4);
+            if ((root_des & 2) == 0) continue;
+
+            uaecptr root_log = root_idx << ROOT_INDEX_SHIFT;
+            uaecptr ptr_des_addr = root_des & MMU_ROOT_PTR_ADDR_MASK;
+
+            if (outStats && seenPtrTables.insert(ptr_des_addr).second) {
+                outStats->numPtrTables++;
+            }
+
+            for (int ptr_idx = 0; ptr_idx < PTR_TABLE_SIZE; ptr_idx++) {
+                uae_u32 ptr_des = ::x_phys_get_long(ptr_des_addr + ptr_idx * 4);
+                if ((ptr_des & 2) == 0) continue;
+
+                uaecptr ptr_log = root_log | (ptr_idx << PTR_INDEX_SHIFT);
+                uaecptr page_addr = ptr_des & (::mmu_pagesize_8k ? MMU_PTR_PAGE_ADDR_MASK_8 : MMU_PTR_PAGE_ADDR_MASK_4);
+
+                if (outStats && seenPageTables.insert(page_addr).second) {
+                    outStats->numPageTables++;
+                }
+
+                for (int page_idx = 0; page_idx < PAGE_TABLE_SIZE; page_idx++) {
+                    uae_u32 page_des = ::x_phys_get_long(page_addr + page_idx * 4);
+                    if ((page_des & 3) == 0) continue;
+                    if ((page_des & 3) == 2) {
+                        uae_u32 indirect_addr = page_des & MMU_PAGE_INDIRECT_MASK;
+                        page_des = ::x_phys_get_long(indirect_addr);
+                        if ((page_des & 3) == 0) continue;
+                    }
+
+                    uaecptr page_log = ptr_log | (page_idx << (::mmu_pagesize_8k ? 13 : 12));
+                    
+                    MmuPage mp;
+                    mp.logical = page_log;
+                    mp.physical = page_des & (::mmu_pagesize_8k ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+                    mp.size = ::mmu_pagesize_8k ? 8192 : 4096;
+                    mp.flags = page_des;
+                    mp.cacheable = ((page_des & MMU_TTR_CACHE_MASK) >> MMU_TTR_CACHE_SHIFT) != 1;
+                    mp.writeProtected = (page_des & MMU_DES_WP) != 0;
+                    mp.superOnly = (page_des & MMU_DES_SUPER) != 0 || super;
+                    mp.modified = (page_des & MMU_DES_MODIFIED) != 0;
+                    
+                    outPages.push_back(mp);
+                }
+            }
+        }
+    };
+
+    walk_table(::regs.urp, false);
+    if (::regs.srp != ::regs.urp) {
+        walk_table(::regs.srp, true);
+    }
+
+    if (outStats) {
+        outStats->totalMemoryBytes = (outStats->numRootTables * 128 * 4) +
+                                     (outStats->numPtrTables * 128 * 4) +
+                                     (outStats->numPageTables * 64 * 4);
+    }
 }
 
 

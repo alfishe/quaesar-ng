@@ -73,6 +73,9 @@ public:
             m_pCpuInfo = &m_pVAmiga->cpu.getInfo();
         }
 
+        virtual bool isMmuEnabled() const override;
+        virtual int getCpuModel() const override;
+        virtual void getMmuPages(qtd::vector<MmuPage>& outPages, ::IVm::Cpu::MmuStats* outStats = nullptr) const override;
     };  // struct Cpu
     Cpu instCpu;
 

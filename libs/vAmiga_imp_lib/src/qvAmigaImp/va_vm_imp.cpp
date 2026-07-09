@@ -333,6 +333,18 @@ bool VAmVmImp::Cpu::getFlg(ECpuFlg_ f) const {
   }
 }
 
+bool VAmVmImp::Cpu::isMmuEnabled() const {
+  return false;
+}
+
+int VAmVmImp::Cpu::getCpuModel() const {
+  return 68000;
+}
+
+void VAmVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, ::IVm::Cpu::MmuStats* outStats) const {
+  // vAmiga (68000/68010) has no MMU
+}
+
 uint8_t* VAmVmImp::Memory::getRealAddr(AddrRef ptr) {
   vamiga::Memory& mem = m_pVm->main->mem;
   uint32_t addr = (ptr & 0xFFFFFF);

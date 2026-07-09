@@ -68,6 +68,10 @@ public:
 
         virtual bool getFlg(IVm::ECpuFlg_ f) const override;
         virtual int getIntMask() const override;
+
+        virtual bool isMmuEnabled() const override;
+        virtual int getCpuModel() const override;
+        virtual void getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats = nullptr) const override;
     };  // struct Cpu
     Cpu instCpu;
 

@@ -56,7 +56,7 @@ void OsModulesWnd::drawContentImp() {
                 ImGui::TableSetupColumn("LVO Base");
                 ImGui::TableSetupColumn("Version");
                 ImGui::TableSetupColumn("OpenCnt");
-                ImGui::TableSetupColumn("Size");
+                ImGui::TableSetupColumn("Struct Size");
                 ImGui::TableSetupScrollFreeze(0, 1);
                 ImGui::TableHeadersRow();
 
