@@ -122,11 +122,10 @@ void QsrMainClientWndApp::renderAppPart() {
     if (curFrame != m_renderedFrameNo)
     {
         // New emulator frame available — upload it to the texture.
-        m_renderedFrameNo = curFrame;
-
         int bufWidth, bufHeight;
         uint32_t* pSrcDisplayBuf = nullptr;
         if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
+            m_renderedFrameNo = curFrame;
             if (bufWidth && bufHeight) {
                 int curWndSizeX, curWndSizeY;
                 SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);

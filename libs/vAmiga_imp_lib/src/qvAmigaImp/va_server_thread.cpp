@@ -328,14 +328,12 @@ void VAmServerThread::onVAmigaThreadMain() {
 }
 
 bool VAmServerThread::lockDisplayTexBuf(int *out_width, int *out_height,
-    uint32_t **out_pixels) {
-    if (m_VAmScrTextureMutex.tryLock()) {
-        *out_width = m_scrWidth;
-        *out_height = m_scrHeight;
-        *out_pixels = m_pAmigaBuffer;
-        return true;
-    }
-    return false;
+                                        uint32_t **out_pixels) {
+    m_VAmScrTextureMutex.lock();
+    *out_width = m_scrWidth;
+    *out_height = m_scrHeight;
+    *out_pixels = m_pAmigaBuffer;
+    return true;
 }
 
 void VAmServerThread::unlockDisplayTexBuf() { m_VAmScrTextureMutex.unlock(); }

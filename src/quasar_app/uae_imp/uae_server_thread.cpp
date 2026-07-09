@@ -293,8 +293,7 @@ IVm::VM *UaeServerThread::getVm() const { return m_pVm; }
 
 bool UaeServerThread::lockDisplayTexBuf(int *width, int *height,
                                         uint32_t **out_pixels) {
-  if (!m_UaeScrTextureMutex.tryLock())
-    return false;
+  m_UaeScrTextureMutex.lock();
   if (!m_pAmigaBuffer) {
     unlockDisplayTexBuf();
     return false;
