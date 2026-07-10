@@ -104,7 +104,20 @@ void VAmServerThread::initialize() {
 void VAmServerThread::destroy() {
     if (m_pConsoleQueue) {
         qd::logDbg("Waiting VAMIGA thread over ...");
-        execConsoleCmd("q");
+
+        // Signal the thread loop to exit. The loop checks m_bRequestToQuit
+        // at the top of each iteration (worst-case latency: one SDL_Delay(5)
+        // = 5ms). The old code used execConsoleCmd("q") but the thread loop
+        // never read from the console queue, so the signal was lost and
+        // SDL_WaitThread hung indefinitely.
+        m_bRequestToQuit = true;
+
+        // Stop vAmiga's internal emulator thread so it stops producing
+        // frames. This ensures the thread loop's texture-poll path exits
+        // quickly instead of blocking on getTexture()/lockTexture().
+        if (m_pVAmiga)
+            m_pVAmiga->powerOff();
+
         // wait VAMIGA done
         SDL_WaitThread(m_uaeThread, nullptr);
 
@@ -268,46 +281,46 @@ void VAmServerThread::onVAmigaThreadMain() {
                 m_threadErr = 1;
                 SAFE_DELETE(m_pVAmiga);
                 m_onVAmInitialized->set();  // sync with main thread
-                return;
+                // Fall through to cleanup below (m_pVAmiga is already nullptr)
             }
         }
         else
             logWarn("VAMIGA: Loading Kick.rom not set - skipped");
 
-        m_pVAmiga->powerOn();
-        m_pVAmiga->run();
+        // Skip initialization if ROM load failed (m_pVAmiga was deleted)
+        if (m_pVAmiga) {
+            m_pVAmiga->powerOn();
+            m_pVAmiga->run();
 
-        m_pVm = new IVm::imp::VAmVmImp(this, m_pVAmiga);
+            m_pVm = new IVm::imp::VAmVmImp(this, m_pVAmiga);
 
-        setVAmInitialized(true);
-        m_onVAmInitialized->set();  // sync with main thread
+            setVAmInitialized(true);
+            m_onVAmInitialized->set();  // sync with main thread
 
-        //const uint32_t *pPrevDispTexBuf = nullptr;
-        for (;;) {
-            if (m_bRequestToQuit) break;
+            for (;;) {
+                if (m_bRequestToQuit) break;
 
-            // Process debugger operations and keyboard events
-            onVAmHandleEvents();
+                // Process debugger operations and keyboard events
+                onVAmHandleEvents();
 
-            vamiga::VAmiga *pVAmiga = m_pVAmiga;
-            vamiga::VideoPortAPI &vVideoPort = pVAmiga->videoPort;
-            bool lof, prevlof;
-            vamiga::isize nr;
+                vamiga::VAmiga *pVAmiga = m_pVAmiga;
+                vamiga::VideoPortAPI &vVideoPort = pVAmiga->videoPort;
+                bool lof, prevlof;
+                vamiga::isize nr;
 
-            vVideoPort.lockTexture();
-            const uint32_t *pCurDisplayTexBuf =
-                vVideoPort.getTexture(&nr, &lof, &prevlof);
-            if (getScrFrameNo() == (int)nr) {
-                vVideoPort.unlockTexture();
-                SDL_Delay(5);
-            }
-            else {
-                // Copy visible portion from vAmiga's raw 912x313 texture into
-                // our display buffer, swapping R/B channels (vAmiga=ABGR, SDL=ARGB).
-                copyVisibleArea(pCurDisplayTexBuf, vamiga::HPIXELS, vamiga::VPIXELS, lof);
-                SDL_AtomicSet(&m_scrFrameNo, (int)nr);
-                vVideoPort.unlockTexture();
-                pVAmiga->wakeUp();
+                vVideoPort.lockTexture();
+                const uint32_t *pCurDisplayTexBuf =
+                    vVideoPort.getTexture(&nr, &lof, &prevlof);
+                if (getScrFrameNo() == (int)nr) {
+                    vVideoPort.unlockTexture();
+                    SDL_Delay(5);
+                }
+                else {
+                    copyVisibleArea(pCurDisplayTexBuf, vamiga::HPIXELS, vamiga::VPIXELS, lof);
+                    SDL_AtomicSet(&m_scrFrameNo, (int)nr);
+                    vVideoPort.unlockTexture();
+                    pVAmiga->wakeUp();
+                }
             }
         }
     }
@@ -318,6 +331,17 @@ void VAmServerThread::onVAmigaThreadMain() {
         m_threadErr = 1;
         //assert2(0, "VAmiga thread Exception: '%s'", ex.what());
     }
+    // --- Cleanup (reached on both normal loop exit and exception) ---
+    // Halt vAmiga's internal emulator thread and delete instances.
+    // m_pVAmiga and m_pVm were created in this thread; they must be
+    // destroyed here, not in destroy() (which runs on the main thread).
+    // halt() is idempotent — safe even if powerOff() already stopped it.
+    if (m_pVAmiga) {
+        m_pVAmiga->halt();   // sends HALT cmd + joins internal thread
+        SAFE_DELETE(m_pVAmiga);
+    }
+    m_pVm = nullptr;  // release ref_ptr
+
     qd::logDbg("VAmigaServerThread: Done...");
 }
 
@@ -343,24 +367,17 @@ void VAmServerThread::copyVisibleArea(const uint32_t* pSrc, int rawWidth,
         m_pAmigaBuffer = new uint32_t[m_scrWidth * m_scrHeight];
     }
 
-    // Copy visible scanlines, swapping R/B channels.
-    // vAmiga pixel format: 0xAABBGGRR (ABGR)
-    // SDL ARGB8888:        0xAARRGGBB
-    // Swap bytes 0 and 2 (R and B) while preserving A and G.
+    // Plain memcpy per scanline — no per-pixel R/B swap.
+    // SDL textures use ABGR8888 (matching vAmiga's native format), so the
+    // GPU handles channel conversion for free.
+    const size_t rowBytes = (size_t)visWidth * sizeof(uint32_t);
     for (int y = 0; y < visHeight; y++) {
-        const uint32_t* srcRow = pSrc + (ystart + y) * rawWidth + xstart;
-        uint32_t* dstRow = m_pAmigaBuffer + y * visWidth;
-        for (int x = 0; x < visWidth; x++) {
-            uint32_t px = srcRow[x];
-            // Swap R (byte 0) and B (byte 2), keep A (byte 3) and G (byte 1)
-            dstRow[x] = (px & 0xFF00FF00)
-                      | ((px & 0x00FF0000) >> 16)
-                      | ((px & 0x000000FF) << 16);
-        }
+        memcpy(m_pAmigaBuffer + y * visWidth,
+               pSrc + (ystart + y) * rawWidth + xstart,
+               rowBytes);
     }
 
     m_VAmScrTextureMutex.unlock();
-    // Frame number is set by caller to match vAmiga's internal nr
 }
 
 

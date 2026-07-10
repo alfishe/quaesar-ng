@@ -61,6 +61,7 @@ public:
     virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) override;
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) override;
     virtual void unlockDisplayTexBuf() override;
+    virtual Uint32 getDisplayPixelFormat() const override { return SDL_PIXELFORMAT_ABGR8888; }
 
     void vAmigaMsgQueueProc(const vamiga::MessageFwd& msg);
     bool onVAmHandleEvents();

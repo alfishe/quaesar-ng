@@ -104,6 +104,7 @@ public:
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
+        virtual uint32_t getScreenPixelFormat() const override { return SDL_PIXELFORMAT_ABGR8888; }
     } instBlitter;
 
 
