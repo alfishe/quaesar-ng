@@ -180,13 +180,13 @@ void QsrMainClientWndApp::renderAppPart() {
                     SDL_UnlockTexture(hDisplayTex);
 
                     // Always store current frame for next frame's temporal blend
-                    if (!m_pPrevFrameBuf || m_prevBufWidth != bufWidth || m_prevBufHeight != srcHeight) {
+                    if (!m_pPrevFrameBuf || m_prevBufWidth != bufWidth || m_prevBufHeight != origHeight) {
                         delete[] m_pPrevFrameBuf;
-                        m_pPrevFrameBuf = new uint32_t[bufWidth * srcHeight];
+                        m_pPrevFrameBuf = new uint32_t[bufWidth * origHeight];
                         m_prevBufWidth = bufWidth;
-                        m_prevBufHeight = srcHeight;
+                        m_prevBufHeight = origHeight;
                     }
-                    memcpy(m_pPrevFrameBuf, pSrcDisplayBuf, bufWidth * srcHeight * sizeof(uint32_t));
+                    memcpy(m_pPrevFrameBuf, pSrcDisplayBuf, bufWidth * origHeight * sizeof(uint32_t));
                 }
             }
             pVmPlayer->unlockDisplayTexBuf();

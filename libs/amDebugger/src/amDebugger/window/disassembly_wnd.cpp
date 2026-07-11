@@ -85,7 +85,6 @@ void DisassemblyView::drawContentImp()
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
     ImGui::SameLine();
 
-    AddrRef regPc = vm->cpu->getPC();
     bool bPcChanged = (m_prevRegPc != regPc);
     m_prevRegPc = regPc;
 
