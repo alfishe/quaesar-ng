@@ -13,17 +13,17 @@ When a **folder** is dropped, the launcher identifies the largest executable by 
 - [1. Amiga Hunk Format Background](#1-amiga-hunk-format-background)
 - [2. Requirements & Use Cases](#2-requirements--use-cases)
 - [3. Architecture Overview](#3-architecture-overview)
-- [4. File Staging & Volume Injection](#4-file-staging--volume-injection)
-  - [4.1 Staging Directory Layout](#41-staging-directory-layout)
-  - [4.2 Host-Directory Volume Mount (UAE)](#42-host-directory-volume-mount-uae)
-  - [4.3 RAM-Disk Alternative](#43-ram-disk-alternative)
-- [5. Executable Detection & Selection](#5-executable-detection--selection)
-  - [5.1 Hunk Format Validation](#51-hunk-format-validation)
-  - [5.2 Folder Drop: Largest-Executable Heuristic](#52-folder-drop-largest-executable-heuristic)
-- [6. Execution Strategies](#6-execution-strategies)
-  - [6.1 Strategy A: OS-Cooperative (ShellExecute via native2amiga)](#61-strategy-a-os-cooperative-shellexecute-via-native2amiga)
-  - [6.2 Strategy B: Direct LoadSeg + CreateProc](#62-strategy-b-direct-loadseg--createproc)
-  - [6.3 Strategy Comparison & Recommendation](#63-strategy-comparison--recommendation)
+- [4. Executable Detection & Selection](#4-executable-detection--selection)
+  - [4.1 Hunk Format Validation](#41-hunk-format-validation)
+  - [4.2 Folder Drop: Largest-Executable Heuristic](#42-folder-drop-largest-executable-heuristic)
+- [5. Host-Side File Stager Component](#5-host-side-file-stager-component)
+  - [5.1 Staging Directory Layout & Sanitization](#51-staging-directory-layout--sanitization)
+  - [5.2 Protection Bits & Stack Scripts](#52-protection-bits--stack-scripts)
+- [6. Guest Injection & Execution Strategies](#6-guest-injection--execution-strategies)
+  - [6.1 The "Pause, Inject, Unpause" Mechanic](#61-the-pause-inject-unpause-mechanic)
+  - [6.2 Strategy 1: UAE Staging Mount + ShellExecute](#62-strategy-1-uae-staging-mount--shellexecute)
+  - [6.3 Strategy 2: Direct RAM Disk Injection](#63-strategy-2-direct-ram-disk-injection)
+  - [6.4 Strategy 3: Direct Task Creation (Host-Side Loader)](#64-strategy-3-direct-task-creation-host-side-loader)
 - [7. OS Boot Detection & Wait Gate](#7-os-boot-detection--wait-gate)
 - [8. Trigger Sources](#8-trigger-sources)
   - [8.1 Drag-and-Drop Integration](#81-drag-and-drop-integration)
@@ -197,116 +197,9 @@ graph TB
 
 ---
 
-## 4. File Staging & Volume Injection
+## 4. Executable Detection & Selection
 
-The core challenge is making host files visible to the guest AmigaOS. There are two approaches, which can be combined:
-
-1. **Host-directory volume mount** — map a temporary host folder to an AmigaOS device/volume via UAE's `filesystem2` mechanism. The guest sees the files immediately through the UAE filesystem handler (`filesys.cpp`).
-2. **RAM-disk write** — copy file bytes directly into the guest's `RAM:` device by writing to guest memory and calling `dos.library/Write()` through traps.
-
-### 4.1 Staging Directory Layout
-
-For both single-file and folder drops, the stager creates a temporary directory on the host and copies files there with sanitized AmigaDOS-safe names.
-
-```
-$TMPDIR/quaesar_hunk_<timestamp>/
-├── myprogram          ← the executable to run (largest if folder drop)
-├── data.dat           ← sibling files (folder drop)
-├── gfx/
-│   ├── sprite.spr
-│   └── font.fnt
-└── mods/
-    └── music.mod
-```
-
-**Name sanitization rules:**
-- Uppercase is preferred (AmigaDOS is case-insensitive by default but Workbench displays uppercase).
-- Path components limited to 30 characters (AmigaDOS filename limit).
-- Characters invalid on AmigaDOS (`*`, `"`, `/`, `?`, `:`) are replaced with `_`.
-
-```mermaid
-flowchart TD
-    DROP["Drop received<br/>(file or folder path)"]
-    DROP --> MKDIR["Create temp host dir<br/>quaesar_hunk_&lt;timestamp&gt;"]
-    MKDIR --> SINGLE{Single file<br/>or folder?}
-    SINGLE -->|File| COPY1["Copy file to temp dir<br/>with sanitized name"]
-    SINGLE -->|Folder| WALK["Walk folder recursively"]
-    WALK --> COPYALL["Copy all files to temp dir<br/>preserving subdir structure<br/>sanitizing each component"]
-    COPY1 --> IDENTIFY["Identify target exe<br/>(the file itself, or largest hunk)"]
-    COPYALL --> IDENTIFY
-    IDENTIFY --> RESULT["StagingResult{<br/>tempDir,<br/>targetExeName,<br/>allFileCount<br/>}"]
-```
-
-### 4.2 Host-Directory Volume Mount (UAE)
-
-UAE's filesystem handler (`filesys.cpp`, `hardfile.cpp`) supports mapping a host directory to an AmigaOS volume at runtime. The existing configuration path (`filesystem2=` in `cfgfile.cpp`) does this at startup; for runtime injection we need the **dynamic mount** path.
-
-UAE supports runtime device mounting via the `filesys_devkick` / `add_filesys_unit` mechanism. The mount is performed by writing a `uaedev_config_info` struct and calling `add_filesys_config()`, followed by triggering the filesystem handler to re-enumerate.
-
-```mermaid
-sequenceDiagram
-    participant UI as UI Thread
-    participant Op as Emulator Op Queue
-    participant Uae as UAE Emu Thread
-    participant FS as filesys.cpp
-
-    UI->>Op: pushOperationMsg(InjectHunkVolume{tempDir, volName})
-    Op-->>Uae: drained at frame boundary
-    Uae->>FS: add_filesys_config(<br/>type=UAEDEV_DIR,<br/>rootdir=tempDir,<br/>volname=QHUNK)
-    FS->>FS: mount unit as QHUNK:<br/>bootpri=0 (don't boot from it)
-    FS-->>Uae: unit mounted, dos.library sees QHUNK:
-    Uae->>Uae: proceed to LoadSeg("QHUNK:myprogram")
-```
-
-**Volume naming:** The injected volume is named `QHUNK:` (Quaesar Hunk) to avoid collision with `DH0:`, `DH1:`, `RAM:`, etc. The boot priority is set low (e.g., -10) so it never becomes the boot device.
-
-> **Important:** The `filesystem2` mount must happen **on the UAE emulation thread** (it mutates `currprefs.mountconfig` and `mountinfo`), just like all UAE state mutations. This is why it goes through the operation queue.
-
-### 4.3 RAM-Disk Alternative
-
-Instead of (or in addition to) a host-directory mount, files can be written directly into the guest `RAM:` disk. This is the ideal approach for the following reasons:
-
-| Advantage | Explanation |
-|---|---|
-| No host dir cleanup | `RAM:` is volatile — files vanish on reset, no temp dir to clean |
-| Faster access | No filesystem handler round-trips; files are in chip/fast RAM |
-| Portable across backends | Both UAE and vAmiga have `RAM:` — no UAE-specific `filesys` dependency |
-| Works without filesystem handler | Even if `FILESYS` is not compiled in, `RAM:` is always available via dos.library |
-
-**Implementation via traps:** Writing to `RAM:` requires opening the file from the guest side (`dos.library/Open("RAM:myprogram", MODE_NEWFILE)`), then writing bytes in chunks via `dos.library/Write()`, then `dos.library/Close()`. Each of these is a `CallLib()` trap call.
-
-```mermaid
-flowchart TD
-    STAGED["Staged file bytes<br/>in host buffer"]
-    STAGED --> OPEN["CallLib: dos/Open<br/>(RAM:myprogram, MODE_NEWFILE)"]
-    OPEN --> FH{BPTR != 0?}
-    FH -->|No| ERR["Error: cannot create file in RAM:"]
-    FH -->|Yes| LOOP["Chunk loop:<br/>write 4096 bytes per iteration"]
-    LOOP --> WRITE["CallLib: dos/Write<br/>(fh, buffer, chunkSize)"]
-    WRITE --> MORE{More data?}
-    MORE -->|Yes| LOOP
-    MORE -->|No| CLOSE["CallLib: dos/Close(fh)"]
-    CLOSE --> DONE["File in RAM:<br/>ready for LoadSeg"]
-```
-
-> **Chunk size note:** `dos.library/Write()` takes a guest-side buffer pointer. We must first write the chunk bytes into guest memory via `uae_AllocMem()` + `trap_put_long()` / block writes, then call `dos/Write()` pointing to the guest buffer. This is an N-step process per chunk: alloc guest buffer → fill from host → call Write → (optionally free buffer).
-
-### 4.4 Hybrid Recommendation
-
-**Use RAM-disk staging as the primary method**, with host-directory mount as a fallback for large files:
-
-```
-file_size < 512KB  →  RAM: write  (fast, no cleanup, portable)
-file_size >= 512KB →  host-dir mount  (avoids expensive trap-put-byte loops)
-```
-
-For folder drops with many files, the **entire folder** is host-dir mounted (one mount, all files visible), and only the target executable is additionally copied to `RAM:` if it's small enough — so `LoadSeg` can reference it by a short path.
-
----
-
-## 5. Executable Detection & Selection
-
-### 5.1 Hunk Format Validation
+### 4.1 Hunk Format Validation
 
 Before staging or running anything, we must confirm that a file is a valid AmigaOS hunk executable. The check is simple and reliable: **read the first 4 bytes and compare to the big-endian magic `0x000003F3` (`HUNK_HEADER`)**.
 
@@ -324,205 +217,96 @@ bool isHunkExecutable(const std::string& hostPath) {
 }
 ```
 
-**Additional secondary signatures** (optional, for robustness):
+> **ELF vs Hunk:** AmigaOS `ELF` executables start with `0x7F454C46` (`\x7FELF`). These are NOT loadable by `dos.library/LoadSeg` on classic m68k AmigaOS and should be rejected with a clear error message.
 
-Some toolchains produce files with an additional `HUNK_OVERLAY` or `HUNK_LIB` wrapper. These are rare and start with `0x000003F0` before the inner `HUNK_HEADER`. For a first implementation, we detect only the standard `0x000003F3` magic. If the secondary case becomes important, a second check for the overlay header can be added.
+### 4.2 Folder Drop: Largest-Executable Heuristic
 
-> **ELF vs Hunk:** AmigaOS `ELF` executables (produced by some modern toolchains targeting AmigaOS 4 or AROS) start with `0x7F454C46` (`\x7FELF`). These are NOT loadable by `dos.library/LoadSeg` on classic m68k AmigaOS and should be rejected with a clear error message. The detection function should explicitly check for and reject ELF.
+When a folder is dropped, we use a **size-based heuristic** to pick the target. AmigaOS hunk executables from C compilers are typically the largest compiled binary in a project folder. 
 
-```mermaid
-flowchart TD
-    READ["Read first 4 bytes"]
-    READ --> CHK_ELF{0x7FELF?}
-    CHK_ELF -->|Yes| REJECT_ELF["Reject: ELF format<br/>not supported on m68k AmigaOS"]
-    CHK_ELF -->|No| CHK_HUNK{0x000003F3?}
-    CHK_HUNK -->|Yes| VALID["Valid hunk executable"]
-    CHK_HUNK -->|No| CHK_EXT{Extension .exe/.amiga?}
-    CHK_EXT -->|Yes| WARN["Warning: extension suggests exe<br/>but magic mismatch — possibly corrupt<br/>or non-standard format"]
-    CHK_EXT -->|No| REJECT["Not a hunk executable"]
-```
-
-### 5.2 Folder Drop: Largest-Executable Heuristic
-
-When a folder is dropped, the user intent is typically "run the program in this folder." Since a folder may contain multiple executables, build artifacts, and data files, we use a **size-based heuristic** to pick the target.
-
-**Rationale:** AmigaOS hunk executables from C compilers (vbcc, m68k-amigaos-gcc, SAS/C, Aztec C) are typically the largest compiled binary in a project folder. The "main program" is almost always larger than helper tools, libraries, or data files in a typical dev/demo/disk-mag distribution.
-
-```mermaid
-flowchart TD
-    DROP["Folder dropped"]
-    DROP --> WALK["Walk folder recursively<br/>collect all files"]
-    WALK --> LOOP["For each file:"]
-    LOOP --> ISHUNK{Valid hunk magic<br/>0x000003F3?}
-    ISHUNK -->|Yes| RECORD["Record candidate:<br/>path, size"]
-    ISHUNK -->|No| SKIP["Skip (data/asset file)"]
-    SKIP --> NEXT{More files?}
-    RECORD --> NEXT
-    NEXT -->|Yes| LOOP
-    NEXT -->|No| SORT["Sort candidates by size<br/>descending"]
-    SORT --> COUNT{How many candidates?}
-    COUNT -->|0| ERR["Error: no hunk executables<br/>found in folder"]
-    COUNT -->|1| ONE["Use the single candidate<br/>as target"]
-    COUNT -->|Multiple| PICK["Pick largest by size"]
-    PICK --> TIE{Tie in size?}
-    TIE -->|No| TARGET["Target selected"]
-    TIE -->|Yes| ALPHA["Pick alphabetically first<br/>among tied largest"]
-    ALPHA --> TARGET
-    ONE --> TARGET
-```
-
-**Tie-breaking:** If two or more executables have identical sizes (unlikely but possible), pick alphabetically by sanitized filename. This is deterministic and avoids nondeterministic file-system iteration order affecting the result.
-
-**Multiple executables displayed to user (optional enhancement):** Instead of silently picking one, the launcher could show a small ImGui popup listing the candidates (name + size) and let the user choose. This is a **future enhancement** — the initial implementation uses the largest-size heuristic automatically, with a brief "Launched X (largest of N executables)" notification.
-
-### 5.3 Data files alongside the executable
-
-When a folder is dropped, **all** files (not just the target executable) must be made available to the guest AmigaOS. This is critical because many Amiga programs load data files relative to their current directory or from the same volume.
-
-If using the **host-directory mount** approach (section 4.2), all files are automatically visible. If using the **RAM-disk** approach (section 4.3), all files must be individually written to `RAM:` — this is expensive for many files. The hybrid approach (section 4.4) handles this: mount the folder as `QHUNK:` so all data is visible, optionally copy the target exe to `RAM:` for a short load path.
-
-The program's **current directory** should be set to the volume root (`QHUNK:`) when it starts, so relative file paths resolve correctly.
+1. Walk folder recursively.
+2. Filter for valid `0x000003F3` magic.
+3. Sort by file size descending.
+4. Target is the largest. Tie-break alphabetically.
 
 ---
 
-## 6. Execution Strategies
+## 5. Host-Side File Stager Component
 
-Once the file is staged and visible to the guest, we need to actually load and run it. There are two viable strategies, differing in complexity, robustness, and how much AmigaOS machinery they reuse.
+Once the target executable is identified, the **File Stager** prepares the payload on the host side. It isolates the emulator's guest environment from raw host paths and ensures the files are Amiga-ready.
 
-### 6.1 Strategy A: OS-Cooperative (ShellExecute via native2amiga)
+### 5.1 Staging Directory Layout & Sanitization
 
-This strategy leverages the **existing `uae_ShellExecute()` infrastructure** in [native2amiga.cpp](file:///Volumes/TB4-4Tb/Projects/emulators/github/quaesar-ng/libs/uae_lib/native2amiga.cpp#L129). It pushes a shell command string into the `native2amiga_pending` pipe (case 5), which is drained by `exter_int_helper()` in `filesys.cpp`. The UAE core then creates an AmigaOS Shell process that executes the command line via `dos.library/SystemTagList()`.
-
-**The command we inject is simply the guest-side path to the executable:**
+The stager creates a temporary directory on the host and copies files there with sanitized AmigaDOS-safe names.
 
 ```
-QHUNK:myprogram
+$TMPDIR/quaesar_hunk_<timestamp>/
+├── myprogram          ← the executable to run (largest if folder drop)
+├── data.dat           ← sibling files (folder drop)
+└── launch.bat         ← generated script to ensure proper stack size
 ```
 
-or, if staged in RAM:
+**Name sanitization rules:**
+- Characters invalid on AmigaDOS (`*`, `"`, `/`, `?`, `:`) are replaced with `_`.
+- Long path components must be truncated safely, **preserving the file extension** to avoid breaking assets (e.g., `very_long_data_file..._1.dat`).
 
-```
-RAM:myprogram
-```
+### 5.2 Protection Bits & Stack Scripts
 
-```mermaid
-sequenceDiagram
-    participant App as QuaesarApplication
-    participant N2A as native2amiga pipe
-    participant Emu as UAE Emu Thread
-    participant Shell as AmigaOS Shell Process
-    participant Dos as dos.library
+The stager is responsible for ensuring the file is ready for execution on AmigaOS:
+1. **Protection Bits:** It explicitly sets the host-side executable permissions (`chmod +x` or equivalent) on the staged target file. Without this, `dos.library` will refuse to execute it, throwing a "File is not executable" error.
+2. **Stack Size Management:** The default Amiga shell stack (4096 bytes) is too small for modern compiled C programs, often leading to Guru Meditations. The stager generates a `launch.bat` script in the staging directory:
+   ```bash
+   Stack 32768
+   QHUNK:myprogram
+   ```
+3. **Temp Icons (Optional):** Generates `.info` files if graphical Workbench launching is desired.
 
-    App->>N2A: uae_ShellExecute("QHUNK:myprogram")
-    N2A->>N2A: write_comm_pipe(cmd=5, ptr=command)
-    N2A->>N2A: do_uae_int_requested() — trigger EXTER interrupt
-    Emu->>N2A: exter_int_helper drains pipe (case 5)
-    Emu->>Shell: create Shell process (if not exists)
-    Emu->>Shell: signal shell_execute_process (bit 13)
-    Shell->>Dos: SystemTagList("QHUNK:myprogram", tags)
-    Dos->>Dos: LoadSeg("QHUNK:myprogram")
-    Dos->>Dos: CreateProc(name, seglist, stack=4096)
-    Dos-->>Shell: child process running
-    Shell-->>Emu: shell returns
-```
+---
 
-**Advantages:**
-- **Minimal new code** — `uae_ShellExecute()` already exists and is proven.
-- **Full OS integration** — `SystemTagList` handles stack allocation, current directory, input/output streams, and cleanup automatically.
-- **Output capture** — the Shell process has stdin/stdout connected to `CON:`, so any `printf` output from the program appears in a console window on the Amiga screen.
-- **Error propagation** — if `LoadSeg` fails, `SystemTagList` returns a non-zero error code and the Shell prints a DOS error message.
+## 6. Guest Injection & Execution Strategies
 
-**Disadvantages:**
-- **Creates a transient Shell process** — extra task overhead; the Shell process stays alive until the launched program exits.
-- **Command string must be guest-path** — the host-side command string must be translated to a guest-volume path (`QHUNK:` or `RAM:`).
-- **No return code** — `uae_ShellExecute` is fire-and-forget; we don't get the LoadSeg BPTR or the process struct address back. We can't easily inspect or control the launched program from the host side.
-- **Startup latency** — the Shell process must be created on first call (the `shell_execute_data` / `shell_execute_process` mechanism in `filesys.cpp:7082`).
+Once files are staged on the host, we must inject them into the guest and start execution.
 
-**Command string construction:**
+### 6.1 The "Pause, Inject, Unpause" Mechanic
 
-```cpp
-std::string buildGuestCommand(const StagingResult& staged) {
-    // e.g., "QHUNK:MYPROGRAM" or "RAM:MYPROGRAM"
-    std::string vol = staged.usedRamDisk ? "RAM:" : "QHUNK:";
-    return vol + staged.targetExeName;
-}
-```
+Traditional methods rely on asynchronous guest cooperation (e.g. asking a running AmigaOS Shell to do work). However, because we control the emulator, we can utilize a much more powerful synchronous mechanic: **Pause the emulation, directly access/mutate guest memory, and then unpause.**
 
-### 6.2 Strategy B: Direct LoadSeg + CreateProc
+This unlocks injection vectors that require zero guest-side cooperative code and execute instantly. 
 
-This strategy calls `dos.library` functions **directly** via the `CallLib()` trap mechanism, bypassing the Shell entirely. This gives us full control and access to the return values.
+We support three primary strategies for injection and execution:
 
-The sequence of guest calls is:
+### 6.2 Strategy 1: UAE Staging Mount + ShellExecute
 
-1. `dos.library/OpenLibrary()` — ensure dos is available (we already know from the OS boot gate, but this is the formal check).
-2. `dos.library/LoadSeg("QHUNK:myprogram")` — returns `BPTR` to seglist.
-3. `dos.library/CreateProc("myprogram", priority=0, seglist, stack=8192)` — creates the process.
-4. Optionally: `dos.library/CurrentDir()` — set the process's current directory to `QHUNK:`.
+This is the traditional, OS-cooperative approach.
+- **Injection:** Mount the staging folder as an AmigaOS volume (`QHUNK:`). To avoid hot-plugging limitations, `QHUNK:` is ideally mounted persistently at emulator boot, pointing to a static staging directory that the File Stager clears and populates.
+- **Execution:** Push a command to the `native2amiga` pipe: `uae_ShellExecute("Execute QHUNK:launch.bat")`.
+- **Pros:** Full OS integration (stdin/stdout hooked to `CON:`).
+- **Cons:** Transient Shell process overhead; relies on AmigaOS being fully responsive.
 
-```mermaid
-sequenceDiagram
-    participant Emu as UAE Emu Thread
-    participant Trap as CallLib traps
-    participant Dos as dos.library
+### 6.3 Strategy 2: Direct RAM Disk Injection
 
-    Emu->>Trap: CallLib(dosbase, -411) OpenDosLibrary
-    Trap->>Dos: returns dosbase
-    Emu->>Trap: write guest path string to AllocMem
-    Emu->>Trap: CallLib(dosbase, -443) LoadSeg(path)
-    Trap->>Dos: parses hunk file, returns BPTR seglist
-    alt LoadSeg failed (BPTR == 0)
-        Dos-->>Trap: returns 0 (IoErr has reason)
-        Trap-->>Emu: error — read IoErr for fault code
-    else LoadSeg succeeded
-        Dos-->>Trap: returns seglist BPTR
-        Emu->>Trap: CallLib(dosbase, -376) CreateProc(name, 0, seglist, 8192)
-        Trap->>Dos: creates Process, adds to ExecBase TaskReady
-        Dos-->>Trap: returns process BPTR (or 0 on failure)
-        Trap-->>Emu: process running
-    end
-```
+Instead of mounting a host directory, files are injected directly into the AmigaOS `RAM:` drive.
+- **Injection:** We pause the emulator. Using direct memory access (`vm->mem->setU8()`, etc.), we allocate guest RAM, construct AmigaOS `FileSysRes` and `ram-handler` nodes manually, link the file's data segments into the `RAM:` linked list, and update the handler's size counters.
+- **Execution:** Once the file exists in `RAM:`, we can execute it via `CallLib(LoadSeg)` traps or `uae_ShellExecute("RAM:myprogram")`.
+- **Pros:** Ultra-fast, no host directory cleanup, zero disk I/O simulated in the guest. Works across all backends (UAE/vAmiga).
+- **Cons:** Requires deep knowledge of the `ram-handler` internal data structures to manually construct valid file entries.
 
-**LVO offsets used:**
+### 6.4 Strategy 3: Direct Task Creation (Host-Side Loader)
 
-| Function | LVO offset (negative) | Purpose |
-|---|---|---|
-| `dos.library/OpenLibrary` | exec `-408` (via exec/AVL) | Not needed — dos is always open |
-| `dos.library/LoadSeg` | `-443` (via dos LVO) | Load hunk → seglist BPTR |
-| `dos.library/CreateProc` | `-376` | Create task from seglist |
-| `dos.library/UnLoadSeg` | `-449` | Free seglist (if CreateProc fails) |
-| `dos.library/IoErr` | `-462` | Get last error code |
-| `dos.library/CurrentDir` | `-378` | Set current directory (takes lock BPTR) |
+This is the ultimate, fastest, and most invasive approach, completely bypassing `dos.library/LoadSeg` and the Shell.
+- **Injection & Loading:** 
+  1. Pause the emulator.
+  2. The host-side File Stager parses the Hunk format directly.
+  3. The host calls `uae_AllocMem()` to grab guest memory for the code/data/BSS segments.
+  4. The host copies the hunks into guest RAM and applies all 32-bit/16-bit relocations itself.
+- **Execution:**
+  1. The host constructs an AmigaOS Exec `Process` or `Task` structure in guest memory.
+  2. Sets the initial registers (PC to the relocated code entry point, SP to a newly allocated guest stack).
+  3. Inserts the Task into the `ExecBase->TaskReady` queue.
+  4. Unpause the emulator.
+- **Pros:** Instantaneous execution. No dos.library parsing. Gives the host 100% control over the seglist, making it trivial to insert breakpoints right at the entry point for debugging.
+- **Cons:** Host must implement a complete Hunk relocator and AmigaOS Task constructor. Lacks default console streams (`pr_CIS`/`pr_COS`) unless manually mapped to a `CON:` window.
 
-> **Note:** The exact LVO offsets must be verified against the dos.library FD file (`dos_lib.fd`). The offsets above are from the standard Amiga NDK. The [os_introspection_design.md](os_introspection_design.md) section 1.5 describes embedding FD tables for exact LVO resolution.
-
-**Advantages:**
-- **Full control** — we get the seglist BPTR and process BPTR, enabling future features like "break at entry point" (set PC to seglist first instruction, then break).
-- **No Shell overhead** — directly creates the process; lower latency.
-- **Programmatic error handling** — we can read `IoErr()` and map fault codes to specific messages.
-
-**Disadvantages:**
-- **More trap plumbing** — each CallLib requires register setup (`trap_set_dreg`, `trap_set_areg`), a trap function registration (`deftrap2`), and careful A6=dosbase setup.
-- **Stack management** — must allocate a stack (or use `TRAPFLAG_EXTRA_STACK`) since `CreateProc` requires a stack size argument but the trap context provides the stack.
-- **No stdout** — without a Shell, the program has no console output unless we explicitly set up `pr_CIS`/`pr_COS` to a `CON:` window.
-
-### 6.3 Strategy Comparison & Recommendation
-
-| Aspect | Strategy A (ShellExecute) | Strategy B (LoadSeg+CreateProc) |
-|---|---|---|
-| **Lines of new code** | ~20 (command string + call) | ~80 (register setup, trap registration, error handling) |
-| **Robustness** | High — battle-tested `SystemTagList` | Medium — trap plumbing is error-prone |
-| **Console output** | Yes (Shell opens CON:) | No (must manually wire) |
-| **Return value access** | No | Yes (seglist BPTR, process BPTR) |
-| **Current directory** | Set to SYS: by Shell | Must set manually |
-| **Debugger integration potential** | Low | High (can breakpoint at entry) |
-| **Backend portability** | UAE only (native2amiga pipe) | UAE (CallLib); vAmiga has own API |
-
-**Recommendation: Start with Strategy A, prepare for Strategy B.**
-
-- **Phase 1:** Use `uae_ShellExecute()` — it's the lowest-risk path with the least new trap code. It covers 95% of use cases (running a compiled program with its data files).
-- **Phase 2:** Add Strategy B for the "break at entry point" debugger feature, where we need the seglist BPTR to set the breakpoint before the first instruction executes.
-
-Both strategies share the same staging and injection infrastructure (sections 4–5), so the execution strategy is swappable without reworking the pipeline.
+**Recommendation:** Strategy 1 is the easiest path for general usage. Strategy 3 is the ultimate goal for the debugger, allowing instant breakpoint-at-entry capabilities.
 
 ---
 
@@ -739,7 +523,7 @@ The pending launch is checked on **every frame drain** (each `onUaeHandleEvents(
 
 ## 9. Threading, Pause & Resume Model
 
-The hunk launcher spans two threads: the **UI thread** (where SDL events arrive and operations are dispatched) and the **emulator thread** (where guest memory and AmigaOS state live). Getting the threading model right is critical — UAE's state is process-global and must only be touched on the emulation thread.
+The hunk launcher spans two threads: the **UI thread** (where SDL events arrive and operations are dispatched) and the **emulator thread** (where guest memory and AmigaOS state live). 
 
 ### 9.1 Thread Responsibilities
 
@@ -759,8 +543,7 @@ graph LR
     subgraph "Emulator Thread"
         DRAIN["onUaeHandleEvents()<br/>drain operation queue"]
         GATE["OS Boot Gate<br/>isOsBooted() poll"]
-        INJECT_UAE["UAE filesys mount<br/>or RAM: write"]
-        EXEC["uae_ShellExecute()<br/>or CallLib LoadSeg"]
+        INJECT["Inject Strategy<br/>Mount/RAM/Direct Task"]
     end
 
     SDL --> APP
@@ -768,65 +551,39 @@ graph LR
     APP --> QUEUE
     QUEUE --> DRAIN
     DRAIN --> GATE
-    GATE --> INJECT_UAE
-    INJECT_UAE --> EXEC
-    EXEC -.->|"notification"| UI
+    GATE --> INJECT
+    INJECT -.->|"notification"| UI
 ```
 
-### 9.2 What Happens on Each Thread
+### 9.2 The "Pause -> Inject -> Unpause" Flow
 
-| Action | Thread | Why |
-|---|---|---|
-| SDL_DROPFILE parsing, hunk magic check | UI thread | Read-only file access, no emulator state |
-| Folder walk, staging (file copy to temp dir) | UI thread | Host filesystem only, no emulator state |
-| `doOperation_<LaunchHunk>()` dispatch | UI thread | Just queues to the operation pipe |
-| `isOsBooted()` memory read | **Emulator thread** | Reads guest memory (`IVm::Memory::getU32`) |
-| UAE `filesys` volume mount | **Emulator thread** | Mutates `currprefs`, `mountinfo` — global singletons |
-| RAM: file write (AllocMem + trap writes) | **Emulator thread** | Calls guest functions via `native2amiga` pipe |
-| `uae_ShellExecute()` | **Emulator thread** | Pushes to `native2amiga_pending`, triggers EXTER interrupt |
-| `CallLib(LoadSeg)` | **Emulator thread** | Trap execution requires emulator context |
+As introduced in Strategy 2 and 3, manipulating guest state directly (writing to RAM, constructing OS structures) must happen safely. The safest and most robust way to perform complex guest manipulation is:
 
-### 9.3 Pause Before Execution?
-
-A key design question: **should we pause the emulator before calling ShellExecute/LoadSeg?**
-
-**Answer: No — we do NOT pause.** Unlike snapshot save/restore (which needs a frozen state for consistency), launching a program is a **guest-initiated action**. The guest is alive and running. We simply call `uae_ShellExecute()`, which pushes a command to the `native2amiga` pipe; the EXTER interrupt is processed naturally at the next interrupt-safe point in the guest's execution.
+1. **Pause Emulation:** Halt the 68k execution loop. This guarantees guest memory and OS structures (like `TaskReady` or `ram-handler` lists) will not mutate while we work.
+2. **Inject:** Read/Write guest memory directly from the emulator thread's operation handler. Perform allocations, relocations, and struct linkage.
+3. **Unpause Emulation:** Resume the 68k loop. The guest OS immediately picks up the new state (e.g., executing the newly inserted Task).
 
 ```mermaid
 sequenceDiagram
     participant UI as UI Thread
     participant Op as Op Queue
     participant Emu as UAE Emu Thread
-    participant N2A as native2amiga pipe
-
-    UI->>Op: pushOperationMsg(LaunchHunk{path})
-    Note over Emu: Emulator running normally<br/>(NOT paused)
-
-    Op-->>Emu: drained at frame boundary
-    Emu->>Emu: isOsBooted()? → Yes
-    Emu->>Emu: mount QHUNK: (filesys)
-    Emu->>N2A: uae_ShellExecute("QHUNK:myprogram")
-    N2A->>N2A: write_comm_pipe(cmd=5)
-    N2A->>N2A: do_uae_int_requested()
-    Note over Emu: Return from operation handler<br/>Emulator continues running
-
-    Note over Emu: At next EXTER interrupt:<br/>exter_int_helper drains pipe<br/>Shell process created<br/>LoadSeg called<br/>Program starts
+    
+    UI->>Op: pushOperation(DirectTaskCreate{path})
+    Emu->>Emu: Drain Op Queue
+    Emu->>Emu: uae_pause()
+    Emu->>Emu: Host parses hunk, allocates RAM
+    Emu->>Emu: Host copies data & relocates
+    Emu->>Emu: Host creates Exec Task & links to TaskReady
+    Emu->>Emu: uae_resume()
+    Note over Emu: Guest immediately schedules new Task
 ```
 
-**Why no pause works:**
-- `uae_ShellExecute()` is explicitly designed to be called from any thread — it uses the `native2amiga_pending` pipe with a semaphore (`n2asem`) for thread safety.
-- The actual guest function call happens **inside** the emulator thread when it processes the EXTER interrupt — the natural guest execution context.
-- The filesystem mount (`add_filesys_config`) is done on the emulator thread during operation drain, so there's no race with guest filesystem access.
+**Exception — Strategy 1 (ShellExecute):** If using `uae_ShellExecute()`, pausing is NOT required. The shell execute pipe (`native2amiga`) is designed to be written to concurrently, and the UAE core processes it safely during an `EXTER` interrupt.
 
-**Exception — Strategy B (direct LoadSeg):** If we later implement the `CallLib(LoadSeg)` path, the trap execution framework may need the emulator in a specific state. The `CallLib()` mechanism requires a `TrapContext` which is only valid during trap function execution. This means Strategy B's `LoadSeg` call must happen **inside a registered trap handler**, which is already on the emulator thread. No pause needed here either — trap handlers run synchronously within guest execution.
+### 9.3 Resume / Continue After Launch
 
-### 9.4 Resume / Continue After Launch
-
-After `uae_ShellExecute()` returns, the operation handler is done. The emulator continues running normally — the launched program will start within a few frames as the Shell process boots, calls LoadSeg, and CreateProc. No resume step is needed.
-
-If the emulator **was paused** (e.g., the user had the debugger open and paused the CPU), the `uae_ShellExecute` command sits in the pipe until the emulator is unpaused. The UI should detect this and either:
-- **Auto-resume** the emulator so the program can start, or
-- **Inform the user**: "Program queued. Resume emulation to start it."
+If the emulator **was paused** by the user (e.g., stepping through code in the debugger), the UI should automatically unpause or ask the user to resume so the new program can execute.
 
 ---
 
