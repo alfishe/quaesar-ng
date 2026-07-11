@@ -1460,7 +1460,12 @@ void audio_deactivate (void)
 	gui_data.sndbuf_status = 3;
 	gui_data.sndbuf = 0;
 	audio_work_to_do = 0;
-	pause_sound_buffer ();
+	// Don't pause the sound buffer — let it drain naturally.
+	// pause_sound_buffer() sets sdp->deactive=true, which blocks
+	// all audio output until audio_activate() is called again.
+	// On CPU halt, channels go silent naturally (no DMA), so
+	// the buffer fills with zeros. Forcing a pause creates a
+	// hard stop that's worse than a brief silence tail.
 	clear_sound_buffers ();
 	audio_event_reset ();
 }
@@ -1781,7 +1786,7 @@ static bool audio_state_channel2 (int nr, bool perfin)
 			cdp->state = 2;
 			setirq(nr, 0);
 			loaddat(nr);
-			if (usehacks() && cdp->per < 10 * CYCLE_UNIT) {
+			if (usehacks() && cdp->per < 2 * CYCLE_UNIT) {
 				static int warned = 100;
 				// make sure audio.device AUDxDAT startup returns to idle state before DMA is enabled
 				newsample(nr, (cdp->dat2 >> 0) & 0xff);
@@ -2006,7 +2011,9 @@ void audio_reset (void)
 	ahi_close_sound ();
 	free_ahi_v2 ();
 #endif
-	reset_sound ();
+	// Don't clear the output buffer — the Paula state reset below
+	// will naturally produce silence for reset channels. Clearing
+	// the buffer mid-stream causes audio gaps on every reset.
 	memset (sound_filter_state, 0, sizeof sound_filter_state);
 	if (!isrestore ()) {
 		for (i = 0; i < AUDIO_CHANNELS_PAULA; i++) {

@@ -1010,7 +1010,8 @@ void graphics_leave() {
     int monitor_id = 0;
     struct vidbuf_description* avidinfo = &adisplays[monitor_id].gfxvidinfo;
 
-    reset_sound();
+    // reset_sound() removed — close_sound() in do_leave_program()
+    // handles full audio shutdown.
     freevidbuffer(monitor_id, &avidinfo->drawbuffer);
     freevidbuffer(monitor_id, &avidinfo->tempbuffer);
 }
