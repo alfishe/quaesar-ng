@@ -1,5 +1,6 @@
 #include "qsr_main_wnd_client_app.h"
 #include <SDL.h>
+#include "amDebugger/debuggerOps.h"
 #include "qd/app/appMessages.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/imGui/imGuiHelperClass.h"
@@ -264,6 +265,13 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                     }
                 }
                 return qd::EFlow::STOP;
+            } else if (sym.sym == SDLK_r && (sym.mod & KMOD_CTRL)) {
+                // Ctrl+R: Reset Amiga core (works without GUI overlay)
+                if (pVmProvider)
+                    pVmProvider->pushOperationMsg(
+                        qtd::unique_ptr<qd::operation::BaseOpArgs>(
+                            new amD::operation::VmEmuReset()));
+                return qd::EFlow::STOP;
             } else if (sym.sym == SDLK_ESCAPE) {
                 if (g_cfg_vm_wnd.quitByEsc) {
                     getApp()->requestAppToQuit();
@@ -314,6 +322,39 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                 return qd::EFlow::STOP;
             if (pVmProvider)
                 pVmProvider->pushSdlEvent(event);
+        } break;
+
+        case SDL_DROPFILE: {
+            // Mount dropped ADF/IMG/DMS into df0 and reboot
+            if (event.drop.windowID != uaeWndId)
+                return qd::EFlow::CONTINUE;
+
+            char* droppedFile = event.drop.file;
+            if (droppedFile) {
+                std::string path(droppedFile);
+                SDL_free(droppedFile);
+
+                // Only accept floppy image extensions
+                bool isFloppy = qd::ends_with(path, ".adf") ||
+                                qd::ends_with(path, ".img") ||
+                                qd::ends_with(path, ".dms");
+                if (!isFloppy) {
+                    SDL_Log("Drag-and-drop: '%s' is not a floppy image", path.c_str());
+                    return qd::EFlow::STOP;
+                }
+
+                IVm::VM* vm = pVmProvider ? pVmProvider->getVm() : nullptr;
+                if (vm && vm->floppy0) {
+                    vm->floppy0->setAdfPath(path.c_str());
+                    SDL_Log("Drag-and-drop: Mounted '%s' into df0", path.c_str());
+                    // Trigger Amiga reset so it boots from the new disk
+                    if (IVmClientPlayer* pProvider = getVmProvider())
+                        pProvider->pushOperationMsg(
+                            qtd::unique_ptr<qd::operation::BaseOpArgs>(
+                                new amD::operation::VmEmuReset()));
+                }
+            }
+            return qd::EFlow::STOP;
         } break;
 
         case SDL_WINDOWEVENT: {

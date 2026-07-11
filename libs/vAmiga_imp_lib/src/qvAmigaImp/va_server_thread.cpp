@@ -192,6 +192,38 @@ public:
 };  // class VAmConsoleQueue
 //////////////////////////////////////////////////////////////////////////
 
+// SDL audio callback: runs on SDL's audio thread.
+// SDL calls this at its own precise cadence, eliminating timing jitter
+// from the emulator's irregular main loop.
+//
+// IMPORTANT: We use copyStereo (not copyInterleaved) because copyStereo is
+// the only variant that feeds the SampleRateDetector. The detector measures
+// the real interval between calls and enables ASR (Adaptive Sample Rate)
+// correction so the emulator produces audio at exactly the rate SDL consumes
+// it. Without detector feedback, the emulator's production rate drifts and
+// periodic underflows cause audio stutter.
+void SDLCALL vamiga_audio_callback(void *userdata, Uint8 *stream, int len) {
+    auto *pThis = static_cast<VAmServerThread *>(userdata);
+    vamiga::VAmiga *pVAmiga = pThis->m_pVAmiga;
+    if (!pVAmiga) {
+        memset(stream, 0, (size_t)len);
+        return;
+    }
+    // F32 stereo: each frame = 8 bytes (2 * sizeof(float))
+    int nFrames = len / (2 * (int)sizeof(float));
+
+    // Pull separate L/R streams — copyStereo feeds the SampleRateDetector
+    float left[2048], right[2048];
+    pVAmiga->audioPort.copyStereo(left, right, nFrames);
+
+    // Interleave for SDL
+    float *out = reinterpret_cast<float *>(stream);
+    for (int i = 0; i < nFrames; i++) {
+        out[i * 2]     = left[i];
+        out[i * 2 + 1] = right[i];
+    }
+}
+
 static int vamiga_thread_main_func(void *pThreadData) {
     VAmServerThread *pThis = static_cast<VAmServerThread *>(pThreadData);
     pThis->onVAmigaThreadMain();
@@ -520,8 +552,46 @@ void VAmServerThread::onVAmigaThreadMain() {
             // and does not support host serial paths like UAE. The --serial_port CLI arg
             // is a UAE-specific feature and is not applicable here.
 
+            // Configure audio pipeline BEFORE powerOn so the emulator starts
+            // with correct parameters from the first frame.
+            //
+            // HOST_SAMPLE_RATE: Tell vAmiga the exact rate SDL will consume at.
+            //   Default is 0 (unknown), which causes unstable ASR behavior.
+            //
+            // AUD_BUFFER_SIZE: Larger ringbuffer absorbs timing jitter from
+            //   the emulator's bursty frame-based production pattern.
+            //   Default is 4096 (~93ms); 8192 (~186ms) gives more headroom.
+            //
+            // AUD_SAMPLING_METHOD: LINEAR interpolation for smoother output.
+            //   Default is NONE (no resampling).
+            m_pVAmiga->set(vamiga::Opt::HOST_SAMPLE_RATE, 44100);
+            m_pVAmiga->set(vamiga::Opt::AUD_BUFFER_SIZE, 8192);
+            m_pVAmiga->set(vamiga::Opt::AUD_SAMPLING_METHOD, (vamiga::i64)vamiga::SamplingMethod::LINEAR);
+
             m_pVAmiga->powerOn();
             m_pVAmiga->run();
+
+            // Open SDL audio device in callback (pull) mode.
+            // SDL invokes vamiga_audio_callback at its own precise timing,
+            // which pulls F32 stereo samples directly from vAmiga's AudioPort
+            // ringbuffer. The callback uses copyStereo to feed the
+            // SampleRateDetector for ASR correction.
+            {
+                SDL_AudioSpec want = {}, have;
+                want.freq = 44100;
+                want.format = AUDIO_F32SYS;
+                want.channels = 2;
+                want.samples = 2048;  // ~46ms per callback invocation
+                want.callback = vamiga_audio_callback;
+                want.userdata = this;
+                m_audioDev = SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0);
+                if (m_audioDev != 0) {
+                    SDL_PauseAudioDevice(m_audioDev, 0);  // start playback
+                    logDbg("VAmiga audio: opened device at %d Hz, callback mode", have.freq);
+                } else {
+                    logErr("VAmiga audio: failed to open SDL audio device: %s", SDL_GetError());
+                }
+            }
 
             m_pVm = new IVm::imp::VAmVmImp(this, m_pVAmiga);
 
@@ -552,6 +622,7 @@ void VAmServerThread::onVAmigaThreadMain() {
                     vVideoPort.unlockTexture();
                     pVAmiga->wakeUp();
                 }
+
             }
         }
     }
@@ -568,6 +639,13 @@ void VAmServerThread::onVAmigaThreadMain() {
     // m_pVAmiga and m_pVm were created in this thread; they must be
     // destroyed here, not in destroy() (which runs on the main thread).
     // halt() is idempotent — safe even if powerOff() already stopped it.
+    // Close SDL audio device
+    if (m_audioDev != 0) {
+        SDL_PauseAudioDevice(m_audioDev, 1);
+        SDL_CloseAudioDevice(m_audioDev);
+        m_audioDev = 0;
+    }
+
     if (m_pVAmiga) {
         m_pVAmiga->halt();   // sends HALT cmd + joins internal thread
         SAFE_DELETE(m_pVAmiga);

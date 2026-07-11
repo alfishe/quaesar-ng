@@ -23,6 +23,7 @@ FORWARD_DECLARATION_2S(vamiga, MessageFwd);
 // (it works in the same thread as VAMIGA)
 //
 class VAmServerThread : public qsr::IVmClientPlayer {
+    friend void SDLCALL vamiga_audio_callback(void *userdata, Uint8 *stream, int len);
     struct SDL_Thread* m_uaeThread = nullptr;  // start VAMIGA in separate thread
     inline static VAmServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;
@@ -33,6 +34,7 @@ class VAmServerThread : public qsr::IVmClientPlayer {
     bool m_bRequestToQuit = false;
     bool power_is_on_ = true;
     qtd::string m_threadErrStr;
+    SDL_AudioDeviceID m_audioDev = 0;  // SDL audio device for vAmiga sound output
 
 public:
     int m_scrWidth = 754;

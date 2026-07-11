@@ -25,7 +25,7 @@ namespace shortcut {
         [](qd::Shortcut& s) { s.addKey(ImGuiKey_F9).addKey(ImGuiMod_Shift).setRepeat(); })                        \
     SHORTCUT(CopperTraceStep, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F11).addKey(ImGuiMod_Shift).setRepeat(); }) \
     SHORTCUT(ToggleTurboEmulation, [](qd::Shortcut& s) { s.addKey(ImGuiKey_NumLock); })                           \
-    SHORTCUT(ResetAmigaEmu, [](qd::Shortcut&) {})                                                                 \
+    SHORTCUT(ResetAmigaEmu, [](qd::Shortcut& s) { s.addKey(ImGuiKey_R).addKey(ImGuiMod_Ctrl); })                                                                 \
     SHORTCUT(PauseEmulation, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F8).addKey(ImGuiMod_Ctrl); })                 \
     SHORTCUT(AlwaysOnTopEmu, [](qd::Shortcut& s) { s.addKey(ImGuiKey_T).addKey(ImGuiMod_Ctrl); })                 \
     SHORTCUT(ShowDebuggerWnd, [](qd::Shortcut& s) { s.addKey(ImGuiKey_F12).addKey(ImGuiMod_Shift); })             \
