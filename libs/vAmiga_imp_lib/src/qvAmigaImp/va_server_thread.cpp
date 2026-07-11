@@ -252,13 +252,70 @@ void VAmServerThread::execConsoleCmd(qtd::string &&cmd) {
 
 int VAmServerThread::uaeWaitConsoleCmdImpl(char *out, int maxlen) { return -1; }
 
+#include "va_config_bridge.h"
+
+namespace vamiga { extern int HDR_ACCEPT_ALL; }
+
 void VAmServerThread::onVAmigaThreadMain() {
     try {
       // using namespace vamiga;
         logDbg("VAmigaServerThread: Initializing...");
 
         m_pVAmiga = new vamiga::VAmiga();
+
+        struct VAmigaExtConfig ext_cfg;
+        qsr_bridge_get_vamiga_config(&ext_cfg);
+
+        if (ext_cfg.cpu_model != 68000) {
+            logWarn("VAmiga Server: Requested CPU %d, but vAmiga only supports 68000. Forcing 68000.", ext_cfg.cpu_model);
+        }
+        
         m_pVAmiga->set(vamiga::ConfigScheme::A500_OCS_1MB);
+
+        // Bypass hardcoded geometry limitations (e.g. max 16 heads or 504MB size limits)
+        // By default vAmiga will refuse to mount disks like the 30GB OS 3.2.3 VHD with 32 heads
+        vamiga::HDR_ACCEPT_ALL = 1;
+
+        for (int i = 0; i < ext_cfg.num_hds; i++) {
+            if (ext_cfg.hd_paths[i]) {
+                try {
+                    // Connect the HdController (Zorro board) so the drive is visible
+                    // to AmigaOS via autoconf. HDC_CONNECT defaults to true only for
+                    // slot 0; slots 1-3 default to false and need explicit connection.
+                    m_pVAmiga->set(vamiga::Opt::HDC_CONNECT, 1, (long)i);
+
+                    if (ext_cfg.hd_types[i] == 0) { // HDF/VHD
+                        logDbg("VAmiga Server: Attaching file-backed hard drive: %s", ext_cfg.hd_paths[i]);
+                        m_pVAmiga->hd[i]->attachFileBacked(ext_cfg.hd_paths[i]);
+                    } else if (ext_cfg.hd_types[i] == 1) { // DIR
+                        logDbg("VAmiga Server: Importing directory to virtual hard drive: %s", ext_cfg.hd_paths[i]);
+                        // Create a 500MB virtual drive: 1000 Cylinders, 16 Heads, 63 Sectors (1000 * 16 * 63 * 512 = ~504 MB)
+                        m_pVAmiga->hd[i]->attach(1000, 16, 63, 512); 
+                        m_pVAmiga->hd[i]->format(vamiga::FSFormat::FFS, ext_cfg.hd_volnames[i] ? ext_cfg.hd_volnames[i] : "DH");
+                        m_pVAmiga->hd[i]->importFiles(ext_cfg.hd_paths[i]);
+                    }
+                } catch (const std::exception &ex) {
+                    logErr("VAmiga Server: Failed to attach hard drive '%s'. Reason: %s", ext_cfg.hd_paths[i], ex.what());
+                } catch (...) {
+                    logErr("VAmiga Server: Failed to attach hard drive '%s'. Reason: Unknown error", ext_cfg.hd_paths[i]);
+                }
+                
+                free((void*)ext_cfg.hd_paths[i]);
+                if (ext_cfg.hd_volnames[i]) {
+                    free((void*)ext_cfg.hd_volnames[i]);
+                }
+            }
+        }
+
+        // Queue a hard reset so HdController re-evaluates pluggedIn() with HDC_CONNECT
+        // set to true for all populated slots. During initialize(), revertToDefaultConfig()
+        // resets HDC_CONNECT to defaults (true for slot 0, false for slots 1-3). The
+        // HDC_CONNECT commands queued above are processed after initialize(). This
+        // hardReset ensures _didReset() runs again with the correct HDC_CONNECT values,
+        // setting all HdController boards with attached drives to AUTOCONF state.
+        if (ext_cfg.num_hds > 0) {
+            m_pVAmiga->hardReset();
+        }
 
         auto vaimga_delegate_cb = [](const void *ptr, vamiga::Message in_msg) {
             auto pThis = reinterpret_cast<VAmServerThread *>(const_cast<void *>(ptr));
@@ -329,6 +386,7 @@ void VAmServerThread::onVAmigaThreadMain() {
         qd::logErr("VAmiga threadInit exception: '%s'", errStr).ASSERT_DLG();
         m_threadErrStr = ex.what();
         m_threadErr = 1;
+        m_onVAmInitialized->set();  // Unblock main thread on failure
         //assert2(0, "VAmiga thread Exception: '%s'", ex.what());
     }
     // --- Cleanup (reached on both normal loop exit and exception) ---

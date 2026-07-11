@@ -16,6 +16,9 @@
 #include "Buffer.h"
 #include "MemUtils.h"
 
+#include <fstream>
+#include <string>
+
 namespace vamiga {
 
 class HardDrive final : public Drive, public Inspectable<HardDriveInfo> {
@@ -80,9 +83,17 @@ class HardDrive final : public Drive, public Inspectable<HardDriveInfo> {
     // Loadable file system drivers
     std::vector <DriverDescriptor> drivers;
 
-    // Disk data
+    // Disk data (in-memory buffer; empty when file-backed)
     util::Buffer<u8> data;
-    
+
+    // File-backed mode: large HDF/VHD files are accessed on-demand via fstream
+    // instead of being fully loaded into the data buffer. This is essential for
+    // disk images larger than available RAM (e.g. multi-GB VHD files).
+    bool fileBacked = false;
+    std::fstream fileStream;
+    isize fileNumBytes = 0;  // Total size of the backing file (for bounds checks)
+    std::string filePath;     // Source file path (for re-opening if needed)
+
     // Keeps track of modified blocks (to update the run-ahead instance)
     util::Buffer<bool> dirty;
 
@@ -125,6 +136,9 @@ public:
 
     // Creates a hard drive with the contents of an HDF file
     void init(const fs::path &path) throws;
+
+    // Creates a file-backed hard drive (on-demand I/O, no full load into RAM)
+    void initFileBacked(const fs::path &path) throws;
 
     const HardDriveTraits &getTraits() const {
 

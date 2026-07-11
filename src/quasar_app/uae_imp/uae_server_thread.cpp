@@ -112,6 +112,46 @@ static int uae_thread_main_func(void *) {
   return 0;
 }
 
+#include "../../../libs/vAmiga_imp_lib/src/qvAmigaImp/va_config_bridge.h"
+
+extern "C" void qsr_bridge_get_vamiga_config(struct VAmigaExtConfig* out_config) {
+    // 0. Initialize required subsystem globals for UAE
+    qs_keyboard_set_translation();
+
+    // 1. Initialize UAE preferences
+    ::default_prefs(&::currprefs, true, 0);
+    ::fixup_prefs(&::currprefs, true);
+
+    // 2. Parse arguments from Quaesar CLI
+    std::vector<const char *> argv;
+    argv.push_back("quaesar.exe");
+    for (const auto &s : g_cfg_startup.uaeExtArgs) {
+        argv.push_back("-s");
+        argv.push_back(s.c_str());
+    }
+    quae__parseCmdLine((int)argv.size(), const_cast<char **>(&argv[0]));
+
+    // 3. Populate out_config for vAmiga
+    out_config->cpu_model = currprefs.cpu_model;
+    out_config->num_hds = 0;
+    
+    for (int i = 0; i < MOUNT_CONFIG_SIZE && out_config->num_hds < 4; i++) {
+        struct uaedev_config_info *ci = &currprefs.mountconfig[i].ci;
+        if (ci->rootdir[0] == '\0') continue; // Skip empty entries
+        if (ci->type == UAEDEV_HDF) {
+            out_config->hd_paths[out_config->num_hds] = strdup(ci->rootdir);
+            out_config->hd_types[out_config->num_hds] = 0; // HDF
+            out_config->hd_volnames[out_config->num_hds] = (ci->volname[0] != '\0') ? strdup(ci->volname) : strdup("DH");
+            out_config->num_hds++;
+        } else if (ci->type == UAEDEV_DIR) {
+            out_config->hd_paths[out_config->num_hds] = strdup(ci->rootdir);
+            out_config->hd_types[out_config->num_hds] = 1; // DIR
+            out_config->hd_volnames[out_config->num_hds] = (ci->volname[0] != '\0') ? strdup(ci->volname) : strdup("DH");
+            out_config->num_hds++;
+        }
+    }
+}
+
 UaeServerThread::UaeServerThread(qsr::UaeServerAppPart *pServerApp)
     : m_pServerApp(pServerApp) {
   m_pVm = new IVm::imp::UaeVmImp();
