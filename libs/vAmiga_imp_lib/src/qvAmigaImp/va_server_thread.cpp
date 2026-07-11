@@ -173,27 +173,38 @@ bool VAmServerThread::onVAmHandleEvents() {
 IVm::VM *VAmServerThread::getVm() const { return m_pVm; }
 
 void VAmServerThread::applySdlEventProc(const SDL_Event &event) {
+    if (!m_pVAmiga) return;
+
     switch (event.type) {
-        case SDL_KEYDOWN:
-        {
-// const SDL_Keycode scancode = event.key.keysym.scancode;
-//              const int keyboard = 0;
-//              const bool newstate = true;
-//              const bool alwaysrelease = true;
-//              inputdevice_translatekeycode(keyboard, scancode, newstate,
-//              alwaysrelease);
+        case SDL_MOUSEMOTION: {
+            // Forward relative mouse movement to vAmiga
+            m_pVAmiga->controlPort1.mouse.setDxDy(
+                static_cast<double>(event.motion.xrel),
+                static_cast<double>(event.motion.yrel));
         } break;
-        case SDL_KEYUP:
-        {
-// const SDL_Keycode scancode = event.key.keysym.scancode;
-//              const int keyboard = 0;
-//              const bool newstate = false;
-//              const bool alwaysrelease = false;
-//              inputdevice_translatekeycode(keyboard, scancode, newstate,
-//              alwaysrelease);
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP: {
+            bool pressed = (event.type == SDL_MOUSEBUTTONDOWN);
+            using GA = vamiga::GamePadAction;
+            switch (event.button.button) {
+                case SDL_BUTTON_LEFT:
+                    m_pVAmiga->controlPort1.mouse.trigger(
+                        pressed ? GA::PRESS_LEFT : GA::RELEASE_LEFT);
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    m_pVAmiga->controlPort1.mouse.trigger(
+                        pressed ? GA::PRESS_RIGHT : GA::RELEASE_RIGHT);
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    m_pVAmiga->controlPort1.mouse.trigger(
+                        pressed ? GA::PRESS_MIDDLE : GA::RELEASE_MIDDLE);
+                    break;
+                default:
+                    break;
+            }
         } break;
         default:
-        break;
+            break;
     }
 }
 
