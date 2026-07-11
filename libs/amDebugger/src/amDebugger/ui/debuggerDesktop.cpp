@@ -317,7 +317,7 @@ void DebuggerDesktop::_drawToolBar()
             if (ImGui::Button(ICON_FA_PLAY "##Continue"))
                 doOperation_<amD::operation::DebugTraceContinue>();
         }
-        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+        ImGui::SetItemTooltip("%s", CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""));
 
         ImGui::SameLine();
 
@@ -327,7 +327,7 @@ void DebuggerDesktop::_drawToolBar()
         if (ImGui::Button(ICON_FA_FORWARD_STEP "##StepInto"))
             doOperation_<amD::operation::DisasmTraceStepInto>();
         if (!isPaused) { ImGui::EndDisabled(); }
-        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+        ImGui::SetItemTooltip("%s", CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""));
 
         ImGui::SameLine();
 
@@ -337,7 +337,7 @@ void DebuggerDesktop::_drawToolBar()
         if (ImGui::Button(ICON_FA_ARROW_RIGHT_FROM_BRACKET "##StepOut"))
             doOperation_<amD::operation::DisasmTraceStepOut>();
         if (!isPaused) { ImGui::EndDisabled(); }
-        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+        ImGui::SetItemTooltip("%s", CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""));
 
         ImGui::SameLine();
         ImGui::Separator();
@@ -349,7 +349,7 @@ void DebuggerDesktop::_drawToolBar()
         if (ImGui::Button(ICON_FA_FLAG_CHECKERED "##CopperStep"))
             doOperation_<amD::operation::CopperTraceStep>();
         if (!isPaused) { ImGui::EndDisabled(); }
-        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+        ImGui::SetItemTooltip("%s", CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""));
 
         ImGui::SameLine();
         ImGui::Separator();
@@ -359,7 +359,7 @@ void DebuggerDesktop::_drawToolBar()
         pOpDesc = pOpMgr->findOpDesc(amD::operation::VmEmuReset::CID);
         if (ImGui::Button(ICON_FA_ROTATE_RIGHT "##Reset"))
             doOperation_<amD::operation::VmEmuReset>();
-        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+        ImGui::SetItemTooltip("%s", CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""));
 
         ImGui::SameLine();
 
@@ -367,7 +367,7 @@ void DebuggerDesktop::_drawToolBar()
         pOpDesc = pOpMgr->findOpDesc(amD::operation::ToggleTurboEmulation::CID);
         if (ImGui::Button(ICON_FA_BOLT "##Turbo"))
             doOperation_<amD::operation::ToggleTurboEmulation>();
-        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+        ImGui::SetItemTooltip("%s", CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""));
 
         ImGui::SameLine();
         ImGui::Separator();
@@ -399,7 +399,7 @@ void DebuggerDesktop::_drawToolBar()
             dbg->setWaitScanLines(nScanLines);
         }
         qtd::string hint = qd::string_format("Scanlines (%s)", pOpDesc ? pOpDesc->getShortcutGuiStr() : "");
-        ImGui::SetItemTooltipV(hint.c_str(), nullptr);
+        ImGui::SetItemTooltip("%s", hint.c_str());
         ImGui::SameLine();
         if (ImGui::Button(ICON_FA_CLOCK " Wait"))
             doOperation_<amD::operation::DebugWaitScanLines>();

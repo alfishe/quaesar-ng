@@ -1,0 +1,10 @@
+.git
+cmake-build-debug
+cmake-build-release
+build
+*.o
+*.a
+*.so
+*.dylib
+quaesar
+quaesar-dbg

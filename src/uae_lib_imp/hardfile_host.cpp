@@ -371,7 +371,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
             low &= ~(hfd->ci.blocksize - 1);
             hfd->physsize = hfd->virtsize = low;
             if (g_debug) {
-                write_log("set physsize = virtsize = %lld (low)\n", hfd->virtsize);
+                write_log("set physsize = virtsize = %lld (low)\n", (long long)hfd->virtsize);
             }
             hfd->handle_valid = HDF_HANDLE_LINUX;
             if (hfd->physsize < 64 * 1024 * 1024 && zmode) {
@@ -385,7 +385,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
                 zfile_fseek(hfd->handle->zf, 0, SEEK_END);
                 hfd->physsize = hfd->virtsize = zfile_ftell(hfd->handle->zf);
                 if (g_debug) {
-                    write_log("set physsize = virtsize = %lld\n", hfd->virtsize);
+                    write_log("set physsize = virtsize = %lld\n", (long long)hfd->virtsize);
                 }
                 zfile_fseek(hfd->handle->zf, 0, SEEK_SET);
                 hfd->handle_valid = HDF_HANDLE_ZFILE;
@@ -606,7 +606,7 @@ static int hdf_read_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, in
         memcpy(buffer, hfd->cache + coffset, len);
         return len;
     }
-    write_log("hdf_read: cache bug! offset=0x%llx len=%d\n", offset, len);
+    write_log("hdf_read: cache bug! offset=0x%llx len=%d\n", (unsigned long long)offset, len);
     hfd->cache_valid = 0;
     return 0;
 }
@@ -682,7 +682,7 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
         // which MAP_SHARED then reflects.
         fflush(hfd->handle->h);
         if (g_debug) {
-            write_log("wrote %u bytes (wanted %d) at offset %llx\n", (uint32_t)outlen, len, offset);
+            write_log("wrote %u bytes (wanted %d) at offset %llx\n", (uint32_t)outlen, len, (unsigned long long)offset);
         }
         const TCHAR* name = hfd->emptyname == NULL ? _T("<unknown>") : hfd->emptyname;
         if (offset == 0) {
@@ -708,8 +708,8 @@ int hdf_write_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int
     uae_u8* p = (uae_u8*)buffer;
 
     if (g_debug) {
-        write_log("hdf_write_target off %llx len %d virtual size %lld\n", (int64_t)offset, len,
-                  (int64_t)hfd->virtual_size);
+        write_log("hdf_write_target off %llx len %d virtual size %lld\n", (unsigned long long)offset, len,
+                  (long long)hfd->virtual_size);
     }
     if (hfd->drive_empty) {
         if (g_debug) {
@@ -750,10 +750,10 @@ int hdf_resize_target(struct hardfiledata* hfd, uae_u64 newsize) {
         uae_log(
             "hdf_resize_target: failed to write byte at position "
             "%lld errno %d\n",
-            (uae_s64)newsize - 1, (int)errno);
+            (long long)((uae_s64)newsize - 1), (int)errno);
         return 0;
     }
-    uae_log("hdf_resize_target: %lld -> %lld\n", (int64_t)hfd->physsize, (int64_t)newsize);
+    uae_log("hdf_resize_target: %lld -> %lld\n", (long long)hfd->physsize, (long long)newsize);
 
     // Remap the mmap region to cover the new file size
     if (hfd->handle && hfd->handle->mmap_base && hfd->handle->mmap_base != MAP_FAILED) {

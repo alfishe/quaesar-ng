@@ -207,7 +207,7 @@ bool preinit_shm (void)
 	}
 
 	write_log (_T("MMAN: Total physical RAM %llu MB, all RAM %llu MB\n"),
-				  totalphys64 >> 20, total64 >> 20);
+				  (unsigned long long)(totalphys64 >> 20), (unsigned long long)(total64 >> 20));
 	write_log(_T("MMAN: Attempting to reserve: %u MB\n"), natmem_size >> 20);
 
 #if 1

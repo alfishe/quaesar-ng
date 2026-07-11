@@ -747,7 +747,7 @@ int hdf_open (struct hardfiledata *hfd, const TCHAR *pname)
 	}
 	write_log (_T("HDF is VHD %s image, virtual size=%lldK (%llx %lld)\n"),
 		hfd->hfd_type == HFD_VHD_FIXED ? _T("fixed") : _T("dynamic"),
-		hfd->virtsize / 1024, hfd->virtsize, hfd->virtsize);
+		(unsigned long long)(hfd->virtsize / 1024), (unsigned long long)hfd->virtsize, (unsigned long long)hfd->virtsize);
 	hdf_init_cache (hfd);
 	return 1;
 nonvhd:

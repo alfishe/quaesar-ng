@@ -674,12 +674,21 @@ void VAmServerThread::copyVisibleArea(const uint32_t* pSrc, int rawWidth,
     using namespace vamiga;
 
     // Visible area boundaries in the raw texture
-    const int xstart = (HBLANK_MAX + 1) * 4;       // 144
-    const int ystart = PAL::VBLANK_MAX + 1;          // 26
-    const int yend   = rawHeight - 2;                // 311
+    // vAmiga's raw texture is 912 pixels wide (HPIXELS).
+    // The first 72 pixels (HBLANK_CNT) are the HBLANK area.
+    // The remaining 840 pixels are the visible scanline from left to right.
+    const int hblankPixels = HBLANK_CNT * 4;         // 72
+    const int activeWidth = rawWidth - hblankPixels; // 840
 
-    const int visWidth  = rawWidth - xstart;          // 768
-    const int visHeight = yend - ystart;             // 285
+    // UAE's high-res width is 754 (AMIGA_WIDTH_MAX * 2).
+    // We center a 754-pixel window in the 840-pixel active area to perfectly match UAE scaling.
+    const int visWidth  = 754;
+    const int xstart = hblankPixels + (activeWidth - visWidth) / 2; // 72 + 43 = 115
+
+    bool isPal = (rawHeight > 300);
+    const int ystart = isPal ? (PAL::VBLANK_MAX + 1) : (NTSC::VBLANK_MAX + 1);
+    const int yend   = rawHeight - 2;
+    const int visHeight = yend - ystart;
 
     m_VAmScrTextureMutex.lock();
 
