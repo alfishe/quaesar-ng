@@ -94,19 +94,59 @@ set(bin2c_cmdline
   "-DINPUT_FILES=${resources_string}"
   -P "${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/bin2c.cmake")
 
-# Run bin2c immediately at configure time
-message(STATUS "Running bin2c (configure-time)...('${CMAKE_COMMAND} ${bin2c_cmdline}')")
-execute_process(
-    COMMAND ${CMAKE_COMMAND} ${bin2c_cmdline}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    RESULT_VARIABLE bin2c_result
-    OUTPUT_VARIABLE bin2c_stdout
-    ERROR_VARIABLE bin2c_stderr
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_STRIP_TRAILING_WHITESPACE
-)
-if (NOT bin2c_result EQUAL 0)
-    message(FATAL_ERROR "bin2c failed (exit ${bin2c_result})\nstdout:\n${bin2c_stdout}\nstderr:\n${bin2c_stderr}")
+# Run bin2c at configure time, but only if resources changed (or files were added/removed/renamed).
+# This prevents full rebuilds on every CMake re-run (triggered by CONFIGURE_DEPENDS)
+# by checking:
+# 1. Whether the list of resources has changed.
+# 2. Whether the newest resource is newer than the generated output.
+set(_resources_changed FALSE)
+set(_newest_resource 0)
+foreach(_res ${resources})
+    get_filename_component(_res_abs "${_res}" ABSOLUTE)
+    file(TIMESTAMP "${_res_abs}" _res_mtime "%s")
+    if(_res_mtime GREATER _newest_resource)
+        set(_newest_resource ${_res_mtime})
+    endif()
+endforeach()
+
+set(_resources_list_file "${CMAKE_CURRENT_BINARY_DIR}/resources_list.txt")
+set(_resources_list_changed FALSE)
+if(EXISTS "${_resources_list_file}")
+    file(READ "${_resources_list_file}" _old_resources_list)
+    if(NOT "${_old_resources_list}" STREQUAL "${resources}")
+        set(_resources_list_changed TRUE)
+    endif()
+else()
+    set(_resources_list_changed TRUE)
+endif()
+
+set(_output_c "${CMAKE_CURRENT_BINARY_DIR}/resources_inc.cpp")
+if(EXISTS "${_output_c}")
+    file(TIMESTAMP "${_output_c}" _out_mtime "%s")
+    if(_newest_resource GREATER _out_mtime)
+        set(_resources_changed TRUE)
+    endif()
+else()
+    set(_resources_changed TRUE)
+endif()
+
+if(_resources_changed OR _resources_list_changed)
+    message(STATUS "Running bin2c (resources changed)...")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} ${bin2c_cmdline}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        RESULT_VARIABLE bin2c_result
+        OUTPUT_VARIABLE bin2c_stdout
+        ERROR_VARIABLE bin2c_stderr
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_STRIP_TRAILING_WHITESPACE
+    )
+    if (NOT bin2c_result EQUAL 0)
+        message(FATAL_ERROR "bin2c failed (exit ${bin2c_result})\nstdout:\n${bin2c_stdout}\nstderr:\n${bin2c_stderr}")
+    endif()
+    file(WRITE "${_resources_list_file}" "${resources}")
+else()
+    message(STATUS "bin2c: resources unchanged, skipping regeneration")
 endif()
 
 # Create a custom target for nanogui_resources
