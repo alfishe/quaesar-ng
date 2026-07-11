@@ -2290,7 +2290,7 @@ const TCHAR* specialmonitorconfignames[] = {_T("none"), NULL};
 TCHAR avioutput_filename_gui[MAX_DPATH];
 void* pushall_call_handler = nullptr;
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 void gettimeofday(struct timeval* tv, void* blah) {
 #if 1
     struct timeb time;

@@ -3011,15 +3011,18 @@ static void snd_init(void)
 
 #ifdef _WIN32
 
+#include <initguid.h>
 #include <mmdeviceapi.h>
 #include <Audioclient.h>
 
 #define REFTIMES_PER_SEC  10000000
 
+#ifdef _MSC_VER
 static const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 static const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 static const IID IID_IAudioClient = __uuidof(IAudioClient);
 static const IID IID_IAudioCaptureClient = __uuidof(IAudioCaptureClient);
+#endif
 
 #define EXIT_ON_ERROR(hres) if (FAILED(hres)) { goto Exit; }
 #define SAFE_RELEASE(punk)  if ((punk) != NULL) { (punk)->Release(); (punk) = NULL; }
