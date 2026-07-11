@@ -137,8 +137,7 @@ DiskController::computeDSKBYTR() const
     if (dsklen & 0x4000) SET_BIT(result, 13);
     
     // WORDEQUAL
-    assert(agnus.clock >= syncCycle);
-    if (agnus.clock - syncCycle <= USEC(2)) SET_BIT(result, 12);
+    if (agnus.clock >= syncCycle && agnus.clock - syncCycle <= USEC(2)) SET_BIT(result, 12);
     
     return result;
 }

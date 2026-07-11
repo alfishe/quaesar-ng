@@ -286,10 +286,17 @@ void VAmVmImp::Floppy::setEnabled(bool v) {
 void VAmVmImp::Floppy::setAdfPath(const qtd::string &v)
 {
     m_adfPath = v;
+    vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
     if (v.empty()) {
-        m_pVm->m_vAmiga->df[m_nFloppy]->ejectDisk();
+        df->ejectDisk();
     } else {
-        vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
+        // Eject any existing disk first so swapDisk uses delay=0 (immediate
+        // insertion).  Without this, swapDisk schedules the insertion with a
+        // 1.8 s delay when a disk is already present, and a subsequent hard
+        // reset clears the pending Agnus event — leaving the drive empty.
+        if (df->getInfo().hasDisk) {
+            df->ejectDisk();
+        }
         df->insert(v.c_str(), m_writeProtect);
     }
 }
