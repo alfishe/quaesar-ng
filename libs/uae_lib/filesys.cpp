@@ -821,7 +821,7 @@ TCHAR *filesys_createvolname (const TCHAR *volname, const TCHAR *rootdir, struct
 		return nvol;
 	}
 
-	if ((!volname || uaetcslen (volname) == 0) && path && archivehd >= 0) {
+	if ((!volname || uaetcslen (volname) == 0) && path[0] && archivehd >= 0) {
 		p = my_strdup (path);
 		for (i = uaetcslen (p) - 1; i >= 0; i--) {
 			TCHAR c = p[i];
@@ -2238,7 +2238,7 @@ int filesys_media_change (const TCHAR *rootdir, int inserted, struct uaedev_conf
 			// inserted >= 2: drag&drop insert, do not replace existing normal drives
 			if (inserted < 2 && ui->rootdir && !memcmp (ui->rootdir, rootdir, uaetcslen (rootdir)) && uaetcslen (rootdir) + 3 >= uaetcslen (ui->rootdir)) {
 				if (filesys_isvolume(u) && inserted) {
-					if (uci)ctx, 
+					if (uci)
 						filesys_delayed_change (u, 50, rootdir, uci->ci.volname, uci->ci.readonly, 0);
 					return 0;
 				}
@@ -6100,7 +6100,7 @@ static void	action_set_file_size(TrapContext *ctx, Unit *unit, dpacket *packet)
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_SET_FILE_SIZE(0x%lx, %d, 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
+	TRACE((_T("ACTION_SET_FILE_SIZE(0x%x, %lld, 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
 
 	k = lookup_key (unit, GET_PCK_ARG1 (packet));
 	if (k == 0) {
@@ -7313,7 +7313,7 @@ static int filesys_iteration(UnitInfo *ui)
 		mdcnt = 2;
 	}
 	/* Acquire the message lock, so that we know we can safely send the message. */
-	ui->self->cmds_sent++;
+	ui->self->cmds_sent = ui->self->cmds_sent + 1;
 
 	/* Send back the locks. */
 	trap_multi(ctx, mdp, mdcnt);
@@ -10429,7 +10429,7 @@ static void shellexecute2_free(struct ShellExecute2 *se2)
 		return;
 	}
 	if (se2->file) {
-		write_log(_T("filesys_shellexecute2_process slot %d free\n"), se2 - shellexecute2);
+		write_log(_T("filesys_shellexecute2_process slot %ld free\n"), se2 - shellexecute2);
 	}
 	xfree(se2->file);
 	xfree(se2->currentdir);
@@ -10474,7 +10474,7 @@ static uae_u32 filesys_shellexecute2_process(int mode, TrapContext *ctx)
 
 	oldks = kickstart_version < 37 && se2->currentdir[0];
 
-	write_log(_T("filesys_shellexecute2_process. slot %d, state %d, function %d\n"), se2 - shellexecute2, se2->state, mode);
+	write_log(_T("filesys_shellexecute2_process. slot %ld, state %d, function %d\n"), se2 - shellexecute2, se2->state, mode);
 
 	if (mode == 30) {
 		// request Amiga side buffer size
@@ -10678,7 +10678,7 @@ void filesys_shellexecute2_run_queue(void)
 		if (se2->state < 0) {
 			if (filesys_shellexecute2_canrun(se2->id)) {
 				se2->state = 1;
-				shellexecute2_queued--;
+				shellexecute2_queued = shellexecute2_queued - 1;
 				shellexec2_boot(se2);
 				write_log("filesys_shellexecute2 queued executed: %d\n", shellexecute2_queued);
 				return;
@@ -10734,7 +10734,7 @@ int filesys_shellexecute2(TCHAR *file, TCHAR *currentdir, TCHAR *parms, uae_u32 
 				write_log("filesys_shellexecute2 run\n");
 				shellexec2_boot(se2);
 			} else {
-				shellexecute2_queued++;
+				shellexecute2_queued = shellexecute2_queued + 1;
 				write_log("filesys_shellexecute2 queued: %d\n", shellexecute2_queued);
 			}
 			ret = 1;

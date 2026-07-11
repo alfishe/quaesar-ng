@@ -205,6 +205,8 @@ endif()
 
 if (APPLE)
     target_compile_options(quaesar PRIVATE -Wno-macro-redefined -Wno-deprecated-declarations)
+    # Silence macOS ld informational "ignoring duplicate libraries" for static libs linked multiple times
+    target_link_options(quaesar PRIVATE "-Wl,-no_warn_duplicate_libraries")
 endif()
 
 if (LINUX OR UNIX)

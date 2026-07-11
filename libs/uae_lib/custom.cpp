@@ -7049,7 +7049,7 @@ void compute_framesync(void)
 		hblank_hz,
 		maxhpos, maxvpos, lof_store ? 1 : 0,
 		cr ? cr->index : -1,
-		cr != NULL && cr->label != NULL ? cr->label : _T("<?>"),
+		cr != NULL && cr->label[0] != 0 ? cr->label : _T("<?>"),
 		currprefs.gfx_apmode[ad->picasso_on ? 1 : 0].gfx_display, ad->picasso_on, ad->picasso_requested_on
 	);
 
@@ -8519,6 +8519,8 @@ static void COPJMP(int num, int vblank)
 				case copper_states::COP_read2:
 					// Wake up is delayed by 1 copper cycle if copper is currently loading words
 					cop_state.state = COP_strobe_delay4;
+					break;
+				default:
 					break;
 			}
 		} else {
@@ -11281,6 +11283,8 @@ next:
 				// Wait 1 copper cycle doing nothing
 				cop_state.state = COP_strobe_delay1;
 				break;
+			default:
+				break;
 			}
 		}
 
@@ -11964,7 +11968,7 @@ static bool framewait(void)
 
 #ifdef DEBUGGER
 		if (0 || (log_vsync & 2)) {
-			write_log (_T("%06d %06d/%06d %03d%%\n"), t, vsynctimeperline, vsynctimebase, t * 100 / vsynctimebase);
+			write_log (_T("%06lld %06lld/%06lld %03lld%%\n"), t, vsynctimeperline, vsynctimebase, t * 100 / vsynctimebase);
 		}
 #endif
 
@@ -12028,7 +12032,7 @@ static bool framewait(void)
 		vsyncmaxtime = curr_time + max;
 
 		if (1)
-			write_log (_T("%06d:%06d/%06d %d %d\n"), adjust, vsynctimeperline, vstb, max, maxvpos_display);
+			write_log (_T("%06lld:%06lld/%06lld %d %d\n"), adjust, vsynctimeperline, vstb, (int)max, maxvpos_display);
 	
 	} else {
 

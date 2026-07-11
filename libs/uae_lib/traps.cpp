@@ -570,7 +570,7 @@ static void hardware_trap_ack(TrapContext *ctx)
 		set_special_exter(SPCFLAG_UAEINT);
 	}
 	if (!trap_in_use[ctx->trap_slot])
-		write_log(_T("TRAP SLOT %d ACK WIIHOUT ALLOCATION!\n"));
+		write_log(_T("TRAP SLOT %d ACK WIIHOUT ALLOCATION!\n"), ctx->trap_slot);
 	trap_in_use[ctx->trap_slot] = false;
 	xfree(ctx);
 }
@@ -584,14 +584,15 @@ static void hardware_trap_thread(void *arg)
 			break;
 
 		if (trap_in_use[ctx->trap_slot]) {
-			write_log(_T("TRAP SLOT %d ALREADY IN USE!\n"));
+			write_log(_T("TRAP SLOT %d ALREADY IN USE!\n"), ctx->trap_slot);
 		}
 		trap_in_use[ctx->trap_slot] = true;
 
 		uae_u8 *data = ctx->host_trap_data;
 		uae_u8 *status = ctx->host_trap_status;
 		ctx->tindex = tid;
-		ctx->tcnt = ++trap_cnt;
+		trap_cnt = trap_cnt + 1;
+		ctx->tcnt = trap_cnt;
 
 		for (int i = 0; i < 16; i++) {
 			uae_u32 v = get_long_host(data + 4 + i * 4);
@@ -646,7 +647,7 @@ void trap_background_set_complete(TrapContext *ctx)
 	atomic_dec(&ctx->trap_background);
 	if (!ctx->trap_background) {
 		if (!ctx->trap_done) {
-			write_log(_T("trap_background_set_complete(%d) still waiting!?\n"), ctx->tindex);
+			write_log(_T("trap_background_set_complete(%zu) still waiting!?\n"), ctx->tindex);
 			while (!ctx->trap_done);
 		}
 		hardware_trap_ack(ctx);

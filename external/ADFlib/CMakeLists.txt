@@ -37,7 +37,7 @@ if ( NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
       -Werror-implicit-function-declaration
       -Werror=format-security
       -Wno-unused-parameter
-      -Wno-enum-int-mismatch
+      $<$<C_COMPILER_ID:GNU>:-Wno-enum-int-mismatch>
       -Wno-sign-conversion
     #  -pedantic-errors
     #  $<$<CONFIG:DEBUG>:-g3>

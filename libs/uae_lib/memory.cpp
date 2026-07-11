@@ -2254,7 +2254,7 @@ bool mapped_malloc (addrbank *ab)
 	if (id == -1) {
 		nocanbang ();
 		if (recurse)
-			return NULL;
+			return false;
 		recurse++;
 		mapped_malloc (ab);
 		recurse--;
@@ -2308,7 +2308,7 @@ bool mapped_malloc (addrbank *ab)
 		return ab->baseaddr != NULL;
 	}
 	if (recurse)
-		return NULL;
+		return false;
 	nocanbang ();
 	recurse++;
 	mapped_malloc (ab);

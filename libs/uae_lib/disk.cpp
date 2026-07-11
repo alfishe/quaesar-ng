@@ -779,6 +779,8 @@ static void drive_image_free (drive *drv)
 		drv->fdi = 0;
 #endif
 		break;
+	default:
+		break;
 	}
 	drv->filetype = ADF_NONE;
 	zfile_fclose(drv->diskfile);
@@ -1830,7 +1832,7 @@ static void drive_step(drive *drv, int step_direction)
 #endif
 
 	if (drv->steplimit && get_cycles() - drv->steplimitcycle < MIN_STEPLIMIT_CYCLE) {
-		write_log (_T(" step ignored drive %ld, %lu\n"),
+		write_log (_T(" step ignored drive %ld, %lld\n"),
 			drv - floppy, (get_cycles() - drv->steplimitcycle) / CYCLE_UNIT);
 		return;
 	}
@@ -2953,6 +2955,8 @@ static void drive_write_data (drive * drv)
 		}
 		break;
 #endif
+	default:
+		break;
 	}
 	drv->tracktiming[0] = 0;
 }
@@ -3878,6 +3882,8 @@ static void fetchnextrevolution (drive *drv)
 		drv->trackspeed = get_floppy_speed_from_image(drv);
 		break;
 #endif
+	default:
+		break;
 	}
 }
 
@@ -6315,7 +6321,7 @@ bool disk_reserved_getinfo(int num, struct floppy_reserved *fr)
 				drv->cyl = cyl;
 				side = side2;
 				if (ok) {
-					write_log(_T("Created  internal PC disk image cyl=%d secs=%d size=%d\n"), drv->num_tracks / 2, drv->num_secs, zfile_size(z));
+					write_log(_T("Created  internal PC disk image cyl=%d secs=%d size=%lld\n"), drv->num_tracks / 2, drv->num_secs, zfile_size(z));
 					drv->pcdecodedfile = z;
 				} else {
 					write_log(_T("Failed to create internal PC disk image\n"));

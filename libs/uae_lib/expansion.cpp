@@ -513,13 +513,13 @@ static void call_card_init(int index)
 					expamem_write(i * 4, aci->autoconfig_bytes[i]);
 				}
 				expamem_autoconfig_mode = 1;
-			} else if (aci->autoconfig_bytes) {
+			} else if (aci->autoconfig_bytes[0]) {
 				memset(expamem, 0xff, AUTOMATIC_AUTOCONFIG_MAX_ADDRESS);
 				for (int i = 0; i < 16; i++) {
 					expamem_write(i * 4, aci->autoconfig_bytes[i]);
 				}
 				expamem_autoconfig_mode = 1;
-			} else if (aci->autoconfig_raw) {
+			} else if (aci->autoconfig_raw[0]) {
 				memcpy(expamem, aci->autoconfig_raw, sizeof aci->autoconfig_raw);
 			}
 		} else {
@@ -2763,7 +2763,7 @@ bool alloc_expansion_bank(addrbank *bank, struct autoconfig_info *aci)
 void free_expansion_bank(addrbank *bank)
 {
 	mapped_free(bank);
-	bank->start = NULL;
+	bank->start = 0;
 	bank->reserved_size = 0;
 }
 
@@ -3199,7 +3199,7 @@ static void expansion_parse_cards(struct uae_prefs *p, bool log)
 				aci->parent_of_previous = true;
 		} else {
 			if (log)
-				write_log(_T("init failed.\n"), i);
+				write_log(_T("init failed.\n"));
 		}
 	}
 	if (log)
@@ -5012,7 +5012,7 @@ void ethernet_updateselection(void)
 
 static void fastlane_memory_callback(struct romconfig *rc, uae_u8 *ac, int size)
 {
-	struct zfile *z = read_device_from_romconfig(rc, NULL);
+	struct zfile *z = read_device_from_romconfig(rc, 0);
 	if (z) {
 		// load autoconfig data from rom file
 		uae_u8 act[16] = { 0 };
@@ -5672,7 +5672,7 @@ const struct expansionromtype expansionroms[] = {
 		{ 0xd1, 0x31, 0x00, 0x00, 0x08, 0x40, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00 },
 	},
 	{
-		_T("kommos"), _T("Kommos A500/A2000 SCSI"), _T("Jürgen Kommos"),
+		_T("kommos"), _T("Kommos A500/A2000 SCSI"), _T("Jurgen Kommos"),
 		NULL, kommos_init, NULL, kommos_add_scsi_unit, ROMTYPE_KOMMOS, 0, 0, BOARD_NONAUTOCONFIG_BEFORE, true,
 		NULL, 0,
 		false, EXPANSIONTYPE_SCSI
@@ -5906,7 +5906,7 @@ const struct expansionromtype expansionroms[] = {
 		true, 0, alf3_settings
 	},
 	{
-		_T("promigos"), _T("Promigos"), _T("Flesch und Hörnemann"),
+		_T("promigos"), _T("Promigos"), _T("Flesch und Hoernemann"),
 		NULL, promigos_init, NULL, promigos_add_scsi_unit, ROMTYPE_PROMIGOS | ROMTYPE_NOT, 0, 0, BOARD_NONAUTOCONFIG_BEFORE, true,
 		NULL, 0,
 		false, EXPANSIONTYPE_CUSTOM | EXPANSIONTYPE_SCSI
@@ -6626,7 +6626,7 @@ static const struct cpuboardsubtype macrosystem_sub[] = {
 		_T("Falcon 040"),
 		_T("Falcon040"),
 		ROMTYPE_CB_FALCON40, 0,
-		NULL, 0,
+		0, 0,
 		0,
 		128 * 1024 * 1024,
 	},
@@ -6787,7 +6787,7 @@ static const struct cpuboardsubtype hardital_sub[] = {
 		_T("TQM"),
 		_T("tqm"),
 		ROMTYPE_CB_TQM, 0,
-		NULL, 0,
+		0, 0,
 		BOARD_MEMORY_HIGHMEM,
 		128 * 1024 * 1024,
 	},
@@ -7067,7 +7067,7 @@ const struct cpuboardtype cpuboards[] = {
 		harms_sub, 0
 	},
 	{
-		NULL
+		0
 	}
 };
 
