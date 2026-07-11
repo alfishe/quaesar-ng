@@ -614,14 +614,24 @@ void VAmServerThread::onVAmigaThreadMain() {
                     vVideoPort.getTexture(&nr, &lof, &prevlof);
                 if (getScrFrameNo() == (int)nr) {
                     vVideoPort.unlockTexture();
-                    SDL_Delay(5);
+                    SDL_Delay(2);
                 }
                 else {
                     copyVisibleArea(pCurDisplayTexBuf, vamiga::HPIXELS, vamiga::VPIXELS, lof);
                     SDL_AtomicSet(&m_scrFrameNo, (int)nr);
                     vVideoPort.unlockTexture();
-                    pVAmiga->wakeUp();
                 }
+
+                // Wake up the emulator on EVERY iteration.
+                //
+                // vAmiga's internal thread sleeps with a 50ms timeout between
+                // frames. Without frequent wakeUp() calls, it batches 2-3
+                // frames per 50ms cycle. Our loop only catches the latest,
+                // effectively halving the visible frame rate (25fps instead of
+                // 50fps). Calling wakeUp() every poll iteration keeps the
+                // emulator's missingFrames() check ticking at ~500Hz, so it
+                // produces exactly one frame at the correct 50Hz cadence.
+                pVAmiga->wakeUp();
 
             }
         }
