@@ -4324,6 +4324,10 @@ int cpu_sleep_millis(int ms)
 //	} else {
 		ret = sleep_millis_main(ms);
 //	}
+#elif !defined(WITH_PPC)
+	// macOS / Linux: sleep_millis_main is a no-op stub, so call
+	// sleep_millis directly to enable real frame pacing in framewait().
+	ret = sleep_millis(ms);
 #endif
 #ifdef WITH_PPC
 	if (state)

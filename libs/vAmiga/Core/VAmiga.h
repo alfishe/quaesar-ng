@@ -797,6 +797,13 @@ public:
      */
     void attach(isize c, isize h, isize s, isize b = 512);
 
+    /** @brief  Attaches a hard drive file in file-backed mode (on-demand I/O).
+     *  Unlike attach(path), this does not load the file into RAM. Instead,
+     *  read/write operations access the backing file directly.
+     *  @param  path    Path to the HDF/VHD/IMG file.
+     */
+    void attachFileBacked(const fs::path &path);
+
     /** @brief  Imports files from a folder
      *  @note   All existing files are deleted prior to importing the folder.
      */

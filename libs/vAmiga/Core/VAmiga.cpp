@@ -1323,6 +1323,13 @@ HardDriveAPI::attach(isize c, isize h, isize s, isize b)
     drive->init(geometry);
 }
 
+void
+HardDriveAPI::attachFileBacked(const fs::path &path)
+{
+    VAMIGA_PUBLIC_SUSPEND
+    drive->initFileBacked(path);
+}
+
 void 
 HardDriveAPI::format(FSFormat fs, const string &name)
 {

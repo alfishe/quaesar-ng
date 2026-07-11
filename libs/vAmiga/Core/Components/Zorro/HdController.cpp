@@ -144,7 +144,7 @@ HdController::setOption(Opt option, i64 value)
 bool
 HdController::pluggedIn() const
 {
-    return drive.isConnected() && !drive.data.empty();
+    return drive.isConnected() && (!drive.data.empty() || drive.fileBacked);
 }
 
 void
@@ -343,18 +343,11 @@ HdController::processCmd(u32 ptr)
     auto offset = isize(stdReq.io_Offset);
     auto length = isize(stdReq.io_Length);
     auto addr = u32(stdReq.io_Data);
-    
-    if (HDR_DEBUG) {
+    //auto unit = mem.spypeek32 <Accessor::CPU> (stdReq.io_Unit + 0x2A);
 
-        [[maybe_unused]] auto unit = mem.spypeek32 <Accessor::CPU> (stdReq.io_Unit + 0x2A);
-        [[maybe_unused]] auto blck = offset / 512;
-        
-        debug(HDR_DEBUG, "%d.%ld: %s\n", unit, blck, IoCommandEnum::key(cmd));
-    }
-    
     // Update the usage profile
     if (IoCommandEnum::isValid(cmd)) stats.cmdCount[long(cmd)]++;
-    
+
     switch (cmd) {
             
         case IoCommand::READ:
@@ -413,6 +406,10 @@ HdController::processInit(u32 ptr)
         if (objid >= 2) partition += amiga.hd1.numPartitions();
         if (objid >= 3) partition += amiga.hd2.numPartitions();
 
+        // Use the partition name from the RDB if available
+        if (partition < isize(drive.ptable.size()) && !drive.ptable[partition].name.empty()) {
+            return drive.ptable[partition].name + (char)0;
+        }
         return string("DH") + std::to_string(partition) + (char)0;
     };
 
@@ -446,9 +443,8 @@ HdController::processInit(u32 ptr)
         changeHdcState(HdcState::INITIALIZING);
         
         // Collect hard drive information
-        auto &geometry = drive.geometry;
         auto &part = drive.ptable[unit];
-        auto dosName = assignDosName(unit);
+        auto dosName = part.name.empty() ? assignDosName(unit) : (part.name + (char)0);
 
         u32 name_ptr = mem.spypeek32 <Accessor::CPU> (ptr + devn_dosName);
         for (usize i = 0; i < dosName.length(); i++) {
@@ -475,22 +471,22 @@ HdController::processInit(u32 ptr)
         mem.patch(ptr + devn_flags,         u32(part.flags));
         mem.patch(ptr + devn_sizeBlock,     u32(part.sizeBlock));
         mem.patch(ptr + devn_secOrg,        u32(0));
-        mem.patch(ptr + devn_numHeads,      u32(geometry.heads));
-        mem.patch(ptr + devn_secsPerBlk,    u32(1));
-        mem.patch(ptr + devn_blkTrack,      u32(geometry.sectors));
-        mem.patch(ptr + devn_interleave,    u32(0));
+        mem.patch(ptr + devn_numHeads,      u32(part.heads));
+        mem.patch(ptr + devn_secsPerBlk,    u32(part.sectorPerBlock));
+        mem.patch(ptr + devn_blkTrack,      u32(part.sectors));
+        mem.patch(ptr + devn_interleave,    u32(part.interleave));
         mem.patch(ptr + devn_resBlks,       u32(part.reserved));
         mem.patch(ptr + devn_lowCyl,        u32(part.lowCyl));
         mem.patch(ptr + devn_upperCyl,      u32(part.highCyl));
-        mem.patch(ptr + devn_numBuffers,    u32(30));
-        mem.patch(ptr + devn_memBufType,    u32(0));
-        mem.patch(ptr + devn_transferSize,  u32(0x7FFFFFFF));
-        mem.patch(ptr + devn_addMask,       u32(0xFFFFFFFE));
-        mem.patch(ptr + devn_bootPrio,      u32(0));
+        mem.patch(ptr + devn_numBuffers,    u32(part.numBuffers));
+        mem.patch(ptr + devn_memBufType,    u32(part.bufMemType));
+        mem.patch(ptr + devn_transferSize,  u32(part.maxTransfer));
+        mem.patch(ptr + devn_addMask,       u32(part.mask));
+        mem.patch(ptr + devn_bootPrio,      u32(part.bootPri));
         mem.patch(ptr + devn_dName,         u32(part.dosType));
         mem.patch(ptr + devn_bootflags,     u32(bootFlag)); // u32(part.flags & 1));
         mem.patch(ptr + devn_segList,       u32(segList));
-        
+
         if ((part.dosType & 0xFFFFFFF0) != 0x444f5300) {
             debug(HDR_DEBUG, "Unusual DOS type %x\n", part.dosType);
         }

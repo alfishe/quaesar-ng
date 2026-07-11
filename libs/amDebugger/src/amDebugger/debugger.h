@@ -5,6 +5,8 @@
 #include <EASTL/fixed_set.h>
 #include "qd/stl/fixed_vector.h"
 #include "qd/qui/uiOperation.h"
+#include <memory>
+#include "amDebugger/os/os_introspector.h"
 
 
 namespace amD {
@@ -62,13 +64,15 @@ class Debugger
     DebuggerApp* m_pDbgApp = nullptr;
     ref_ptr<IVmDbgServiceBridge> m_pConnection;
     ref_ptr<IVm::VM> m_pVm = nullptr; // owner
+    std::unique_ptr<os::OsIntrospector> m_pOsIntro;
 
 public:
     Debugger(DebuggerApp* _app);
-    virtual ~Debugger() override = default;
+    virtual ~Debugger() override;
 
     IVm::VM* getVm() const;
     amD::DebuggerApp* getDbgApp() const { return m_pDbgApp; }
+    os::OsIntrospector* getOsIntro() const { return m_pOsIntro.get(); }
 
     void setDbgServiceBridge(ref_ptr<IVmDbgServiceBridge> pCon);
 

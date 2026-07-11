@@ -171,6 +171,16 @@ struct CopperToggleBreakpoint : public amD::operation::OperationArgs {
 };
 
 
+struct PauseEmulation : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(amD::operation::PauseEmulation);
+    static void setup(qd::operation::OpDesc& d)
+    {
+        d.m_name = "Pause";
+        d.addShortcut(amD::shortcut::EId::PauseEmulation);
+    }
+};
+
+
 struct ToggleTurboEmulation : public amD::operation::OperationArgs {
     DECLARE_OPERATION_1(amD::operation::ToggleTurboEmulation);
     static void setup(qd::operation::OpDesc& d)

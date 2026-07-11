@@ -1457,10 +1457,16 @@ static void audio_event_reset (void)
 
 void audio_deactivate (void)
 {
+	write_log(_T("AUDIO DEACTIVATE: frame=%lu PC=%08x\n"), (unsigned long)timeframes, M68K_GETPC);
 	gui_data.sndbuf_status = 3;
 	gui_data.sndbuf = 0;
 	audio_work_to_do = 0;
-	pause_sound_buffer ();
+	// Don't pause the sound buffer — let it drain naturally.
+	// pause_sound_buffer() sets sdp->deactive=true, which blocks
+	// all audio output until audio_activate() is called again.
+	// On CPU halt, channels go silent naturally (no DMA), so
+	// the buffer fills with zeros. Forcing a pause creates a
+	// hard stop that's worse than a brief silence tail.
 	clear_sound_buffers ();
 	audio_event_reset ();
 }
@@ -1781,7 +1787,7 @@ static bool audio_state_channel2 (int nr, bool perfin)
 			cdp->state = 2;
 			setirq(nr, 0);
 			loaddat(nr);
-			if (usehacks() && cdp->per < 10 * CYCLE_UNIT) {
+			if (usehacks() && cdp->per < 2 * CYCLE_UNIT) {
 				static int warned = 100;
 				// make sure audio.device AUDxDAT startup returns to idle state before DMA is enabled
 				newsample(nr, (cdp->dat2 >> 0) & 0xff);
@@ -1997,16 +2003,26 @@ void audio_state_machine (void)
 	events_schedule ();
 }
 
+static int s_audio_reset_log_throttle = 0;
+
 void audio_reset (void)
 {
 	int i;
 	struct audio_channel_data *cdp;
 
+	if (s_audio_reset_log_throttle <= 0) {
+		write_log(_T("AUDIO RESET: frame=%lu restore=%d\n"), (unsigned long)timeframes, isrestore() ? 1 : 0);
+		s_audio_reset_log_throttle = 50;
+	}
+	if (s_audio_reset_log_throttle > 0) s_audio_reset_log_throttle--;
+
 #ifdef AHI
 	ahi_close_sound ();
 	free_ahi_v2 ();
 #endif
-	reset_sound ();
+	// Don't clear the output buffer — the Paula state reset below
+	// will naturally produce silence for reset channels. Clearing
+	// the buffer mid-stream causes audio gaps on every reset.
 	memset (sound_filter_state, 0, sizeof sound_filter_state);
 	if (!isrestore ()) {
 		for (i = 0; i < AUDIO_CHANNELS_PAULA; i++) {
@@ -2089,6 +2105,7 @@ void check_prefs_changed_audio (void)
 	if (sound_available) {
 		ch = sound_prefs_changed ();
 		if (ch > 0) {
+			write_log(_T("AUDIO prefs changed (major): frame=%lu\n"), (unsigned long)timeframes);
 #ifdef AVIOUTPUT
 			AVIOutput_Restart(true);
 #endif

@@ -17,6 +17,10 @@ public:
     virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs>) = 0;
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) = 0;
     virtual void unlockDisplayTexBuf() = 0;
+    // Returns SDL pixel format constant (SDL_PIXELFORMAT_ARGB8888 by default).
+    // vAmiga overrides to SDL_PIXELFORMAT_ABGR8888 — GPU converts for free,
+    // no per-pixel CPU swap needed.
+    virtual Uint32 getDisplayPixelFormat() const { return SDL_PIXELFORMAT_ARGB8888; }
     virtual ~IVmClientPlayer() = default;
 
 };  // class IVmClientPlayer

@@ -32,6 +32,7 @@ class QuaesarApplication : public qd::Application {
 public:
     amD::DebuggerApp* m_pDebuggerApp = nullptr;
     qsr::QsrMainClientWndApp* m_pVmPlayerWndAppPart = nullptr;
+    bool m_bDebuggerVmConnected = false; // true once the real VM replaces the dummy bridge
 
 public:
     QuaesarApplication();
@@ -46,6 +47,11 @@ public:
     virtual void destroyImp() override;
 
     virtual void onSdlEventProc(SDL_Event& event) override;
+
+    // Called every frame. Used to eagerly swap the debugger's dummy VM
+    // bridge to the real emulator VM as soon as the thread is ready —
+    // before any debugger window tries to render.
+    virtual void onFrameUpdate(float dt, float time) override;
 
     virtual void* getInterface(const qd::TypeInfo& p_interface) override;
 

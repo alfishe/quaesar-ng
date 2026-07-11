@@ -24,6 +24,20 @@ namespace amD {
 constexpr uint32_t g_nDebuggerWndSizeX = 1368;
 constexpr uint32_t g_nDebuggerWndSizeY = 800;
 
+static int resizeEventWatcher(void* data, SDL_Event* event)
+{
+    if (event->type == SDL_WINDOWEVENT && event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    {
+        DebuggerApp* app = static_cast<DebuggerApp*>(data);
+        if (app && SDL_GetWindowID(app->getWindow()) == event->window.windowID)
+        {
+            app->updateAppPart(0, 0);
+            app->renderAppPart();
+        }
+    }
+    return 0;
+}
+
 
 // Persistent storage for the ini filename (must outlive the ImGui context).
 static char g_iniFilename[2048] = "";
@@ -91,7 +105,8 @@ void DebuggerApp::init()
     createRenderWindow();
     initImGui();
 
-    // Create dummy connection initially - will be replaced with real VM later
+    SDL_AddEventWatch(resizeEventWatcher, this);
+
     m_pDebugger->setDbgServiceBridge(create_dummy_connection());
 
     assert(m_pDebugger);
@@ -99,16 +114,9 @@ void DebuggerApp::init()
     m_pGui = mk.make_<amD::DebuggerDesktop>(this, m_pDebugger);
     m_pOperationMgr = m_pGui->getOperationMgr();
     assert(m_pOperationMgr);
-    // m_bFullyInitialized will be set to true when real VM is bound (see onVmBound)
-}
 
-
-void DebuggerApp::onVmBound()
-{
-    // This is called AFTER the real emulator VM is wired up via setDbgServiceBridge().
-    // At this point the VM's sub-modules (cpu, mem, custom) are initialized.
+    loadLayoutSettings();
     m_bFullyInitialized = true;
-    SDL_Log("DebuggerApp: Real VM bound, debugger windows can now render");
 }
 
 
@@ -127,7 +135,19 @@ void DebuggerApp::createRenderWindow()
         fprintf(stderr, "Error creating window.\n");
         return;
     }
-    m_pWndRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+    // NO vsync on the debugger renderer.
+    //
+    // The main window renderer (QsrMainClientWnd) is the SOLE vsync authority —
+    // its SDL_RENDERER_PRESENTVSYNC call paces the entire main loop. The main
+    // loop renders BOTH windows sequentially in one iteration:
+    //
+    //   iteration:  updateAppPart(main)  → renderAppPart(main)  → [vsync block]
+    //              updateAppPart(debugger) → renderAppPart(debugger) → [no block]
+    //
+    // If this debugger renderer also had vsync, each iteration would block on
+    // two independent vsync waits (~33ms total at 60Hz), halving the effective
+    // frame rate. The emulator produces 50fps; a 30fps loop would drop half.
+    m_pWndRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (!m_pWndRenderer)
     {
         SDL_DestroyWindow(window);
@@ -150,9 +170,9 @@ void DebuggerApp::initImGui()
 
     // Setup Dear ImGui context
     ImGuiIO& io = m_pQimGuiCtx->getIO();
-    (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.IniFilename = "debugger_layout.ini";
 
     // Setup Dear ImGui style
     qd::imGuiApplyStyleDark();
@@ -166,6 +186,13 @@ void DebuggerApp::initImGui()
 }
 
 
+void DebuggerApp::loadLayoutSettings()
+{
+    m_pQimGuiCtx->useCurrent();
+    ImGui::LoadIniSettingsFromDisk(ImGui::GetIO().IniFilename);
+}
+
+
 DebuggerApp::~DebuggerApp()
 {
     assert(!m_init);
@@ -174,12 +201,22 @@ DebuggerApp::~DebuggerApp()
 
 qd::EFlow DebuggerApp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg)
 {
-    return m_pDebugger->applyOperationMsgProcImp(p_msg);
+    qd::EFlow r = m_pDebugger->applyOperationMsgProcImp(p_msg);
+
+    // Also forward to the real emulator thread (if callback registered)
+    // so that emulator control operations (pause, continue, step, etc.)
+    // reach the actual running emulator, not just the dummy VM.
+    if (m_forwardOpToEmulatorCb)
+        m_forwardOpToEmulatorCb(p_msg);
+
+    return r;
 }
 
 
 void DebuggerApp::destroy()
 {
+    SDL_DelEventWatch(resizeEventWatcher, this);
+
     if (m_pOperationMgr)
         m_pOperationMgr->destroy();
     m_pOperationMgr = nullptr;
@@ -188,6 +225,12 @@ void DebuggerApp::destroy()
         m_pGui->destroy();
     m_pGui = nullptr;
 
+    // Save layout before destroying context
+    if (m_pQimGuiCtx)
+    {
+        m_pQimGuiCtx->useCurrent();
+        ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
+    }
     SAFE_DESTROY(m_pQimGuiCtx);
 
     SDL_DestroyRenderer(m_pWndRenderer);
@@ -207,19 +250,27 @@ void DebuggerApp::updateAppPart(float /*dt*/, float /*time*/)
         return;
     }
 
-    // Throttle to ~15 FPS to reduce flickering
+    // ── Centralized refresh trigger ──────────────────────────────────────
+    // fetchVmState() snapshots ALL VM data (registers, memory, custom regs)
+    // into module caches at a fixed ~15fps. Between ticks, every widget
+    // reads the same stale cached values — fully synchronized, no per-widget
+    // flags. The Cpu module's fetch() override snapshots registers too, so
+    // even getters like getPC()/getRegD() return stable values between ticks.
+    //
+    // The ImGui frame always renders (never skipFrame) because skipping
+    // SDL_RenderPresent on macOS Metal causes an implicit vsync stall that
+    // halves the effective frame rate. Redrawing stale cached text at 60fps
+    // is negligible CPU — it's just vertex generation for cached glyphs.
     uint64_t now = SDL_GetTicks64();
-    if (now - m_lastRenderTimeMs < kMinFrameIntervalMs)
+    if (now - m_lastStateFetchMs >= kStateFetchIntervalMs)
     {
-        m_pQimGuiCtx->skipFrame();
-        return;
+        m_lastStateFetchMs = now;
+        getDbg()->fetchVmState();
     }
-    m_lastRenderTimeMs = now;
 
     m_pQimGuiCtx->newFrame();
     if (m_bFullyInitialized && m_pGui && m_pDebugger)
     {
-        getDbg()->fetchVmState();
         m_pGui->drawImGuiMainFrame();
     }
     m_pQimGuiCtx->endFrame();
@@ -256,6 +307,10 @@ void DebuggerApp::setWndVisible(bool v)
     }
     else
     {
+        // Save layout before hiding
+        m_pQimGuiCtx->useCurrent();
+        ImGui::SaveIniSettingsToDisk(ImGui::GetIO().IniFilename);
+
         SDL_HideWindow(m_pWindow);
         setPartRenderable(false);
     }

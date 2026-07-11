@@ -19,12 +19,12 @@ namespace qsr {
 
 struct CfgQsrMain : public CfgBase {
     CFG_DECLARE(qsr::CfgQsrMain);
-    bool quitByEsc = true;
+    bool quitByEsc = false;
 
     int mainWndSizeX = 754;
     int mainWndSizeY = 576;
 
-    std::string vmPlayerId = "uae";  // "vamiga";
+    EngineId engine = EngineId::WinUae;  // default emulation engine
 };
 inline static CfgQsrMain& g_cfg_vm_wnd = CfgQsrMain::get();
 
@@ -42,9 +42,13 @@ private:
     qsr::QsrVmClientPlayerGuiDesktop* m_pDesktop = nullptr;
     bool m_bShowGui = false;
     uint32_t m_renderedFrameNo = ~0u;
+    SDL_Rect m_lastDstRect = {0, 0, 0, 0};  // Cached dst rect for re-drawing last frame when no new emulator frame exists
+    int m_lastTexW = 0;
+    int m_lastTexH = 0;
     SDL_Window* m_pWindow = nullptr;
     SDL_Renderer* m_hWndRenderer = nullptr;
     SDL_Texture* m_hVmDisplayTx = nullptr;
+    Uint32 m_displayFormat = SDL_PIXELFORMAT_ARGB8888;  // updated from IVmClientPlayer::getDisplayPixelFormat()
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     VmPlayersSelector m_vmSelector;
     int m_nCurVmPlayterId = -1;

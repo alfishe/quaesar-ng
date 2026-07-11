@@ -2,12 +2,19 @@
 #include <vector>
 #include "SDL.h"
 #include "amDebugger/dbgConnection.h"
+#include "amDebugger/debugger.h"
+#include "amDebugger/debuggerOps.h"
 #include "amDebugger/debuggerServer.h"
 #include "amDebugger/debuggerWndApp.h"
 #include "qd/app/appPartsMgr.h"
 #include "qd/imGui/imGuiContextManager.h"
+#include "qd/qui/uiOperation.h"
 #include "qsr_main_wnd_client_app.h"
 #include "uae_imp/uae_server_app_part.h"
+#include "uae_imp/uae_server_thread.h"
+
+// UAE debugger state (defined in debug.cpp)
+extern int debugger_active;
 
 
 namespace amD::uae {
@@ -41,18 +48,58 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
     m_pDebuggerApp = getAppParts()->createPart_<amD::DebuggerApp>("Quaesar Debugger");
     m_pDebuggerApp->init();
 
-    // Wire the debugger to the real UAE VM via the shared-memory connection bridge.
-    // The main client window's init() has already called activateVmPlayerByIdStr()
-    // which created the UaeServerThread and its UaeVmImp.
-    qsr::VmPlayersSelector& vmSel = m_pVmPlayerWndAppPart->getVmSelector();
-    int vmPlayerId = m_pVmPlayerWndAppPart->getCurVmPlayerId();
-    if (auto pBridge = vmSel.createVmDebuggerConnection(vmPlayerId)) {
-        m_pDebuggerApp->getDbg()->setDbgServiceBridge(pBridge);
-        // Signal that the real VM is now bound - debugger windows can start rendering
-        m_pDebuggerApp->onVmBound();
-    } else {
-        SDL_Log("Quaesar: no VM debugger connection available — debugger uses dummy connection");
-    }
+    // Forward debugger ops to the real emulator. When paused via UAE's
+    // internal debugger, route step/continue as console commands directly.
+    m_pDebuggerApp->setForwardOpToEmulatorCb([this](qd::operation::BaseOpArgs* args) {
+        // Lazy: replace the dummy VM bridge with the real VM instance.
+        // The debugger starts with create_dummy_connection() which creates a
+        // backend-specific VM instance with no thread binding. As soon as the
+        // emulator server thread is up, swap to the real instance.
+        // Engine-agnostic: IVmClientPlayer::getVm() works for all backends.
+        if (!m_bDebuggerVmConnected) {
+            if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
+                IVm::VM* vm = pVmPlayer->getVm();
+                if (vm) {
+                    m_pDebuggerApp->getDbg()->setDbgServiceBridge(
+                        amD::create_shared_connection(vm));
+                    m_bDebuggerVmConnected = true;
+                }
+            }
+        }
+
+        // Mirror debug mode to the Debugger's UI-only VM for menu enable/disable
+        // state. Debugger::setDebugMode() only updates local mirrored state and
+        // never calls back into the real emulator - the actual pause/continue is
+        // applied exactly once below, queued onto the emulator thread.
+        amD::Debugger* pDbg = m_pDebuggerApp->getDbg();
+        if (pDbg) {
+            if (args->cast_<amD::operation::PauseEmulation>() ||
+                args->cast_<amD::operation::DebugTraceStart>())
+                pDbg->setDebugMode(IVm::EVmDebugMode::Break);
+            else if (args->cast_<amD::operation::DebugTraceContinue>())
+                pDbg->setDebugMode(IVm::EVmDebugMode::Live);
+        }
+        if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
+            UaeServerThread* pUae = dynamic_cast<UaeServerThread*>(pVmPlayer);
+            // When UAE's debug_1() is blocking (debugger_active), the ops queue
+            // is stuck. Route step/continue directly via execConsoleCmd().
+            if (pUae && debugger_active) {
+                if (args->cast_<amD::operation::DisasmTraceStepInto>())
+                    pUae->execConsoleCmd("t");
+                else if (args->cast_<amD::operation::DisasmTraceStepOut>())
+                    pUae->execConsoleCmd("z");
+                else if (args->cast_<amD::operation::CopperTraceStep>())
+                    pUae->execConsoleCmd("ot");
+                else if (args->cast_<amD::operation::DebugTraceContinue>())
+                    pUae->execConsoleCmd("g");
+                // Other ops while paused: clone and push (will be processed after resume)
+                else if (qd::operation::BaseOpArgs* pCloned = args->clone())
+                    pVmPlayer->pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs>(pCloned));
+            } else if (qd::operation::BaseOpArgs* pCloned = args->clone()) {
+                pVmPlayer->pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs>(pCloned));
+            }
+        }
+    });
 
     m_pVmPlayerWndAppPart->bringWndToFront();
 }
@@ -70,6 +117,30 @@ void QuaesarApplication::destroyImp() {
 
 void QuaesarApplication::onSdlEventProc(SDL_Event& event) {
     TSuper::onSdlEventProc(event);
+}
+
+
+// Eagerly swap the debugger's dummy VM bridge to the real emulator VM.
+// The debugger starts with create_dummy_connection() which creates a
+// backend-specific VM with no thread binding. We check every frame until
+// the swap succeeds — this ensures the real VM is wired before ANY debugger
+// window tries to render or lock the framebuffer.
+//
+// After the swap, the dummy instance is fully replaced: all debugger
+// windows, operations, and framebuffer access go through the real VM.
+void QuaesarApplication::onFrameUpdate(float dt, float time) {
+    TSuper::onFrameUpdate(dt, time);
+
+    if (!m_bDebuggerVmConnected) {
+        if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
+            IVm::VM* vm = pVmPlayer->getVm();
+            if (vm) {
+                m_pDebuggerApp->getDbg()->setDbgServiceBridge(
+                    amD::create_shared_connection(vm));
+                m_bDebuggerVmConnected = true;
+            }
+        }
+    }
 }
 
 

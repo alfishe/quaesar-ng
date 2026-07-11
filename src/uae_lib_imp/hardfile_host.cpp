@@ -24,6 +24,9 @@
 #include <sys/stat.h>
 #endif
 
+#include <sys/mman.h>
+#include <unistd.h>
+
 #ifdef OPENBSD
 #include <fcntl.h>
 #include <sys/disklabel.h>
@@ -51,6 +54,10 @@ struct hardfilehandle {
     int zfile;
     struct zfile* zf;
     FILE* h;
+    // Memory-mapped view of the file for zero-copy reads.
+    // When non-NULL, reads bypass fseeko64/fread and use direct pointer access.
+    uae_u8* mmap_base;
+    uae_u64 mmap_len;
 };
 
 struct uae_driveinfo {
@@ -387,6 +394,28 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
             write_log("HDF '%s' failed to open. error = %d\n", name, errno);
         }
     }
+    // Memory-map the file for zero-copy reads.
+    // Only for HDF_HANDLE_LINUX (real file, not zfile). VHD dynamic images
+    // do their own offset translation and call hdf_read_target per-sector,
+    // so mmap still helps there. MAP_SHARED ensures writes via fwrite are
+    // visible through the mmap without explicit invalidation.
+    if (hfd->handle_valid == HDF_HANDLE_LINUX && hfd->handle && hfd->handle->h && hfd->physsize > 0) {
+        // Get the fd from FILE*
+        int fd = fileno(hfd->handle->h);
+        if (fd >= 0) {
+            void* mapped = mmap(NULL, (size_t)hfd->physsize, PROT_READ, MAP_SHARED, fd, 0);
+            if (mapped != MAP_FAILED) {
+                hfd->handle->mmap_base = (uae_u8*)mapped;
+                hfd->handle->mmap_len = hfd->physsize;
+                // Advise the kernel: we will access this randomly
+                madvise(mapped, (size_t)hfd->physsize, MADV_RANDOM);
+                hfd_log("HDF mmap: mapped %lld bytes for zero-copy reads\n", (long long)hfd->physsize);
+            } else {
+                hfd_log("HDF mmap: failed (errno=%d), falling back to fread\n", errno);
+            }
+        }
+    }
+
     if (hfd->handle_valid || hfd->drive_empty) {
         hfd_log("HDF '%s' opened, size=%dK mode=%d empty=%d\n", name, (int)(hfd->physsize / 1024), hfd->handle_valid,
                 hfd->drive_empty);
@@ -415,9 +444,16 @@ static void freehandle (struct hardfilehandle *h)
 
 void hdf_close_target(struct hardfiledata* hfd) {
     write_log("hdf_close_target\n");
-    if (hfd->handle && hfd->handle->h) {
-        write_log("closing file handle %p\n", hfd->handle->h);
-        fclose(hfd->handle->h);
+    if (hfd->handle) {
+        // Unmap memory-mapped region if active
+        if (hfd->handle->mmap_base && hfd->handle->mmap_base != MAP_FAILED) {
+            munmap(hfd->handle->mmap_base, (size_t)hfd->handle->mmap_len);
+            hfd->handle->mmap_base = NULL;
+        }
+        if (hfd->handle->h) {
+            write_log("closing file handle %p\n", hfd->handle->h);
+            fclose(hfd->handle->h);
+        }
     }
     // freehandle (hfd->handle);
     xfree(hfd->handle);
@@ -535,6 +571,16 @@ static int hdf_read_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, in
     size_t outlen = 0;
     int coffset;
 
+    // mmap fast path: zero-copy read directly from the mapped region.
+    // This avoids fseeko64/fread entirely — the OS page cache handles
+    // demand paging, making scattered 512-byte reads nearly free when
+    // pages are already cached, and ~microseconds even on page fault.
+    if (hfd->handle && hfd->handle->mmap_base &&
+        offset + len <= hfd->handle->mmap_len) {
+        memcpy(buffer, hfd->handle->mmap_base + offset, len);
+        return len;
+    }
+
     if (offset == 0)
         hfd->cache_valid = 0;
     coffset = isincache(hfd, offset, len);
@@ -572,6 +618,15 @@ int hdf_read_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int 
 
     if (hfd->drive_empty)
         return 0;
+
+    // mmap fast path: handle the entire read in one memcpy, bypassing
+    // the 16KB cache-chunk loop entirely.
+    if (hfd->handle && hfd->handle->mmap_base &&
+        offset + len <= hfd->handle->mmap_len) {
+        memcpy(buffer, hfd->handle->mmap_base + offset, len);
+        return len;
+    }
+
     while (len > 0) {
         size_t maxlen;
         size_t ret = 0;
@@ -621,7 +676,11 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
     memcpy(hfd->cache, buffer, len);
     if (hfd->handle_valid == HDF_HANDLE_LINUX) {
         outlen = fwrite(hfd->cache, 1, len, hfd->handle->h);
-        // fflush(hfd->handle->h);
+        // Flush to ensure the mmap view sees the written data.
+        // On macOS/Linux, fwrite goes through the stdio buffer.
+        // We need fflush so the kernel page cache is updated,
+        // which MAP_SHARED then reflects.
+        fflush(hfd->handle->h);
         if (g_debug) {
             write_log("wrote %u bytes (wanted %d) at offset %llx\n", (uint32_t)outlen, len, offset);
         }
@@ -644,7 +703,7 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
     }
     return (int)outlen;
 }
-int hdf_write_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int len) {
+int hdf_write_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int len, uae_u32* /*error*/) {
     int got = 0;
     uae_u8* p = (uae_u8*)buffer;
 
@@ -695,6 +754,24 @@ int hdf_resize_target(struct hardfiledata* hfd, uae_u64 newsize) {
         return 0;
     }
     uae_log("hdf_resize_target: %lld -> %lld\n", (int64_t)hfd->physsize, (int64_t)newsize);
+
+    // Remap the mmap region to cover the new file size
+    if (hfd->handle && hfd->handle->mmap_base && hfd->handle->mmap_base != MAP_FAILED) {
+        munmap(hfd->handle->mmap_base, (size_t)hfd->handle->mmap_len);
+        hfd->handle->mmap_base = NULL;
+    }
+    if (hfd->handle && hfd->handle->h) {
+        int fd = fileno(hfd->handle->h);
+        if (fd >= 0) {
+            void* mapped = mmap(NULL, (size_t)newsize, PROT_READ, MAP_SHARED, fd, 0);
+            if (mapped != MAP_FAILED) {
+                hfd->handle->mmap_base = (uae_u8*)mapped;
+                hfd->handle->mmap_len = newsize;
+                madvise(mapped, (size_t)newsize, MADV_RANDOM);
+            }
+        }
+    }
+
     hfd->physsize = newsize;
     return 1;
 }

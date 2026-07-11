@@ -65,6 +65,17 @@ FloppyDrive::_initialize()
 }
 
 void
+FloppyDrive::_willReset(bool hard)
+{
+    if (hard && diskToInsert) {
+
+        // Complete the pending disk insertion immediately
+        disk = std::move(diskToInsert);
+        head.offset = 0;
+    }
+}
+
+void
 FloppyDrive::_didReset(bool hard)
 {    
     if (hard) assert(diskToInsert == nullptr);

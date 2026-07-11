@@ -85,6 +85,7 @@ struct PartitionDescriptor : SerializableStruct
     string name;
     u32 flags = 0;
     u32 sizeBlock = 128;
+    u32 sectorPerBlock = 1;
     u32 heads = 0;
     u32 sectors = 0;
     u32 reserved = 2;
@@ -106,6 +107,7 @@ struct PartitionDescriptor : SerializableStruct
         << name
         << flags
         << sizeBlock
+        << sectorPerBlock
         << heads
         << sectors
         << reserved

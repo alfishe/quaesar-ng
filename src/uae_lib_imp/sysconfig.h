@@ -617,8 +617,13 @@ typedef long uae_atomic;
 /* Define if you have the <windows.h> header file.  */
 // #define HAVE_WINDOWS_H 1
 
+#ifdef _WIN32
 #define FSDB_DIR_SEPARATOR '\\'
 #define FSDB_DIR_SEPARATOR_S _T("\\")
+#else
+#define FSDB_DIR_SEPARATOR '/'
+#define FSDB_DIR_SEPARATOR_S _T("/")
+#endif
 
 
 #if !defined(_MSC_VER) && !defined(__MINGW32__)

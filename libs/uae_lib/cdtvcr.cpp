@@ -406,7 +406,7 @@ static void subfunc(uae_u8 *data, int cnt)
 	if (subcodebufferinuse[subcodebufferoffsetw]) {
 		memset (subcodebufferinuse, 0,sizeof (subcodebufferinuse));
 		subcodebufferoffset = 0;
-	subcodebufferoffsetw = 0;
+		subcodebufferoffsetw = 0;
 	} else {
 		int offset = subcodebufferoffsetw;
 		while (cnt > 0) {

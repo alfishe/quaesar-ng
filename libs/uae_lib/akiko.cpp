@@ -1492,7 +1492,7 @@ static void AKIKO_hsync_handler (void)
 					put_byte (subcode_address + cdrom_subcodeoffset + i, subcodebuffer[subcodebufferoffset * SUB_CHANNEL_SIZE + i]);
 				put_long (subcode_address + cdrom_subcodeoffset + SUB_CHANNEL_SIZE, 0xffff0000);
 				subcodebufferinuse[subcodebufferoffset] = 0;
-				cdrom_subcodeoffset = cdrom_subcodeoffset + 100;
+				cdrom_subcodeoffset += 100;
 				subcodebufferoffset = subcodebufferoffset + 1;
 				if (subcodebufferoffset >= MAX_SUBCODEBUFFER)
 					subcodebufferoffset = subcodebufferoffset - MAX_SUBCODEBUFFER;

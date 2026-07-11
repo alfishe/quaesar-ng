@@ -114,6 +114,7 @@ typedef struct a_inode_struct {
     unsigned int mountcount;
 	uae_u64 uniq_external;
 	struct virtualfilesysobject *vfso;
+	bool vfso_dynamic;
 #ifdef AINO_DEBUG
     uae_u32 checksum2;
 #endif

@@ -5,7 +5,7 @@
 #include "qd/base/base.h"
 #include "qd/base/classIdCC.h"
 #include "qd/qui/uiOperation.h"
-#include <EASTL/fixed_set.h>
+#include <functional>
 #include "qd/stl/fixed_vector.h"
 #include "qd/stl/string.h"
 
@@ -50,8 +50,10 @@ private:
     qd::QImGuiContext* m_pQimGuiCtx = nullptr;
     uint32_t m_nCurDbgClientIdx = 0;
     int m_init = false;
-    uint64_t m_lastRenderTimeMs = 0;
-    static constexpr uint64_t kMinFrameIntervalMs = 66; // ~15 FPS max
+    // Centralized refresh trigger: entire debugger UI (registers, disassembly,
+    // memory, screen preview) refreshes at this rate. See updateAppPart().
+    uint64_t m_lastStateFetchMs = 0;
+    static constexpr uint64_t kStateFetchIntervalMs = 66; // ~15 FPS
 
 public:
     bool m_bFullyInitialized = false;
@@ -61,6 +63,7 @@ public:
 
 public:
     DebuggerApp();
+    SDL_Window* getWindow() const { return m_pWindow; }
     SDL_Renderer* getRenderer() const { return m_pWndRenderer; }
     uint32_t getCurDbgClientIdx() const { return m_nCurDbgClientIdx; }
 
@@ -88,9 +91,23 @@ public:
 
     qd::EFlow applyOperationMsgProcImp(qd::operation::BaseOpArgs* p_msg) override;
 
+    // Callback to forward operations to the real emulator.
+    // Set by the application to bridge debugger operations to the actual emulator thread.
+    using ForwardOpToEmulatorCb = std::function<void(qd::operation::BaseOpArgs*)>;
+    ForwardOpToEmulatorCb m_forwardOpToEmulatorCb;
+    void setForwardOpToEmulatorCb(ForwardOpToEmulatorCb cb) { m_forwardOpToEmulatorCb = std::move(cb); }
+
+    // Forward an operation to the real emulator via the registered callback.
+    // Called from DebuggerDesktop before dispatching to the dummy VM.
+    void forwardOpToEmulator(qd::operation::BaseOpArgs* args) {
+        if (m_forwardOpToEmulatorCb)
+            m_forwardOpToEmulatorCb(args);
+    }
+
 private:
     void createRenderWindow();
     void initImGui();
+    void loadLayoutSettings();
     virtual ~DebuggerApp() override;
 
 }; // class DebuggerApp

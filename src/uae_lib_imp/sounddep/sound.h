@@ -27,6 +27,7 @@ extern void sound_mute(int);
 extern void sound_volume(int);
 extern void set_volume(int, int);
 extern void master_sound_volume(int);
+extern int audio_callback_sync_wait_ms(int max_wait_ms);
 
 struct sound_dp;
 

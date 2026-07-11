@@ -1,11 +1,10 @@
 #pragma once
-#include <EASTL/intrusive_list.h>
-#include "amDebugger/base.h"
-#include "amDebugger/codeAnalyzer/quadTreeAddrMap.h"
-#include "amDebugger/vm/vmInterface.h"
 #include "qd/base/baseTypes.h"
 #include "qd/base/compiler.h"
+#include "qd/stl/unique_ptr.h"
 #include "qd/stl/vector.h"
+#include "amDebugger/base.h"
+#include "amDebugger/vm/vmInterface.h"
 
 typedef size_t csh;
 
@@ -17,46 +16,9 @@ class CodeItem;
 
 static constexpr uint32_t g_minOpSize = 2;
 static constexpr uint32_t g_maxOpSize = 24; // max for M68
-static constexpr uint32_t g_chunkSizeInBits = 6; // for quad tree depth
-static constexpr uint32_t g_chunkSize = (1 << g_chunkSizeInBits); // 64 bytes per chunk
-static constexpr uint32_t g_chunkMask = g_chunkSize - 1;
-static constexpr uint32_t g_maxPages = 64;
-
-
-struct CodeChunk : public eastl::intrusive_list_node {
-    AddrRef m_addr = 0;
-    qtd::array<uint8_t, cda::g_chunkSize> m_bytes = {}; // copy of memory for comparison
-    qtd::array<cda::CodeItem*, cda::g_chunkSize / 2> m_codeItems = {};
-    uint16_t m_idx = 0;
-    QD_PUSH_VC_WARNING(4201) // nameless struct/union
-    union {
-        uint16_t m_flags = 0;
-        struct {
-            bool m_bAddrValid :1;
-            bool m_bCodeValid :1;
-            bool m_bBytesValid :1;
-        };
-    };
-    QD_POP_VC_WARNING()
-
-    bool isValid() const { return m_bCodeValid; }
-    bool isIn(AddrRef addr) const { return addr >= m_addr && (uint64_t)addr < ((uint64_t)m_addr + cda::g_chunkSize); }
-    bool empty() const { return m_bAddrValid == false; }
-    void removeCodeItems();
-
-    void reset()
-    {
-        m_addr = 0;
-        m_flags = 0;
-        removeCodeItems();
-    }
-
-    AddrRef getDisasmCodeValidAddr(int off = 0) const;
-
-    ~CodeChunk() { reset(); }
-
-}; // struct CodeChunk
-//////////////////////////////////////////////////////////////////////////
+// How far behind the view's left edge we're willing to walk to find a real
+// instruction boundary (anchor) to disassemble forward from.
+static constexpr uint32_t g_maxAnchorBackGap = 4096;
 
 
 class M68CodeDisassembler
@@ -65,25 +27,28 @@ class M68CodeDisassembler
 
 public:
     csh* m_pCapstone = nullptr;
-    qtd::array<CodeChunk, g_maxPages> m_disasmChunkStorage; // Cached storage disasm lines as pages
-    eastl::intrusive_list<CodeChunk> m_chunkUseHistory;
-    amD::QuadTreeAddrMap<uint16_t, (32 - g_chunkSizeInBits) / g_minOpSize> m_chunksQuadTree;
+
+    // Backing storage for the items handed out via requestM68DisasmLines()'s
+    // outItems. Rebuilt in full on every call.
+    qtd::vector<qtd::unique_ptr<cda::CodeItem>> m_curItems;
 
 public:
     M68CodeDisassembler()
-        : m_chunksQuadTree(0u, ~0u)
     {
         init();
     }
 
     void init();
     void destroy();
-    void requestM68DisasmLines(IVm::VM* vm, AddrRef addr, int nItems, qtd::vector<amD::cda::Item*>* outItems,
-        const AddrRef* pCheckAddr = nullptr);
 
-protected:
-    CodeChunk& requestCodeChunk(IVm::VM* vm, AddrRef addr);
-    CodeChunk& getOrCreateCodePage(AddrRef addr, bool* bOutPageWasFound = nullptr);
+    // Disassembles a single, contiguous, monotonically-increasing run of
+    // instructions covering [addr, ...) - at least nItems of them when the
+    // underlying memory bank has enough room. When pProvedInstructionStart
+    // points at a known-good instruction boundary (typically the current PC)
+    // at or before addr, disassembly is anchored there so every boundary in
+    // between is exact instead of guessed.
+    void requestM68DisasmLines(IVm::VM* vm, AddrRef addr, int nItems, qtd::vector<amD::cda::Item*>* outItems,
+        const AddrRef* pProvedInstructionStart = nullptr);
 
 }; // class M68CodeDisassembler
 //////////////////////////////////////////////////////////////////////////

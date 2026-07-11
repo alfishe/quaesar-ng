@@ -1,5 +1,6 @@
 #include "qsr_main_wnd_client_app.h"
 #include <SDL.h>
+#include "amDebugger/debuggerOps.h"
 #include "qd/app/appMessages.h"
 #include "qd/imGui/imGuiContextManager.h"
 #include "qd/imGui/imGuiHelperClass.h"
@@ -38,7 +39,7 @@ void QsrMainClientWndApp::init() {
     m_pDesktop = mk.make_<qsr::QsrVmClientPlayerGuiDesktop>(this);
     m_pDesktop->init();
 
-    m_nCurVmPlayterId = m_vmSelector.activateVmPlayerByIdStr(getApp(), g_cfg_vm_wnd.vmPlayerId.c_str());
+    m_nCurVmPlayterId = m_vmSelector.activateVmPlayerByIdStr(getApp(), engineIdToStr(g_cfg_vm_wnd.engine));
 }
 
 
@@ -61,7 +62,24 @@ void QsrMainClientWndApp::_createMainOsWindow() {
         return;
     }
 
-    m_hWndRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    // VSYNC pacing for the entire application.
+    //
+    // This is the ONLY renderer in the application that requests
+    // SDL_RENDERER_PRESENTVSYNC. The debugger window renderer (see
+    // DebuggerApp::createRenderWindow in debuggerWndApp.cpp) intentionally
+    // does NOT use vsync.
+    //
+    // The main loop calls updateAppPart + renderAppPart for BOTH windows
+    // in a single iteration. If both renderers had vsync, each iteration
+    // would block on two independent vsync waits (~33ms total at 60Hz),
+    // cutting the effective frame rate in half. With vsync only here,
+    // the loop blocks once (~16.6ms) and the debugger's RenderPresent
+    // returns immediately.
+    //
+    // Without vsync, SDL_RenderPresent returns instantly and the main
+    // loop would spin at 100% CPU re-rendering the same frame thousands
+    // of times per second.
+    m_hWndRenderer = SDL_CreateRenderer(m_pWindow, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
     if (!m_hWndRenderer) {
         SDL_Log("Could not create renderer: %s", SDL_GetError());
         SDL_DestroyWindow(m_pWindow);
@@ -105,31 +123,33 @@ void QsrMainClientWndApp::renderAppPart() {
 
     // render VM display texture screen
     IVmClientPlayer* pVmPlayer = getVmProvider();
-    if (pVmPlayer) {
-        uint32_t curFrame = pVmPlayer->getScrFrameNo();
-        if (curFrame != m_renderedFrameNo) {
+    if (!pVmPlayer)
+        return;
+
+    uint32_t curFrame = pVmPlayer->getScrFrameNo();
+    if (curFrame != m_renderedFrameNo)
+    {
+        // New emulator frame available — upload it to the texture.
+        int bufWidth, bufHeight;
+        uint32_t* pSrcDisplayBuf = nullptr;
+        if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
+            m_displayFormat = pVmPlayer->getDisplayPixelFormat();
             m_renderedFrameNo = curFrame;
-            hasNewEmuFrame = true;
+            if (bufWidth && bufHeight) {
+                int curWndSizeX, curWndSizeY;
+                SDL_GetWindowSize(m_pWindow, &curWndSizeX, &curWndSizeY);
 
-            int curWndSizeX, curWndSizeY;
-            SDL_GetRendererOutputSize(m_hWndRenderer, &curWndSizeX, &curWndSizeY);
+                // Detect PAL low-res modes (e.g. 640x256) where the Amiga only
+                // outputs half the vertical lines. Instead of CPU-side scanline
+                // doubling (which doubled both the texture upload size and the
+                // memcpy work), we upload only the original lines and let the
+                // GPU scale vertically for free via SDL_RenderCopy's src/dst rects.
+                bool isLowRes = (bufHeight < 350);
+                int origHeight = bufHeight;
+                int texHeight = isLowRes ? (bufHeight * 2) : bufHeight;
 
-            int bufWidth, bufHeight;
-            uint32_t* pSrcDisplayBuf = nullptr;
-            if (pVmPlayer->lockDisplayTexBuf(&bufWidth, &bufHeight, &pSrcDisplayBuf)) {
-                if (!bufWidth || !bufHeight) {
-                    pVmPlayer->unlockDisplayTexBuf();
-                    return;
-                }
-
-                // Amiga PAL non-interlaced produces ~288 visible lines (half-frame).
-                // Double the source lines to fill the display properly.
-                const bool bNeedsLineDoubling = (bufHeight < 350);
-                const int srcHeight = bNeedsLineDoubling ? bufHeight : bufHeight;
-                const int dstHeight = bNeedsLineDoubling ? bufHeight * 2 : bufHeight;
-
-                // Maintain aspect ratio
-                float image_aspect = (float)bufWidth / (float)dstHeight;
+                // Maintain aspect ratio using the doubled height (display size)
+                float image_aspect = (float)bufWidth / (float)texHeight;
                 float window_aspect = (float)curWndSizeX / (float)curWndSizeY;
                 int new_width = 0, new_height = 0;
 
@@ -140,55 +160,19 @@ void QsrMainClientWndApp::renderAppPart() {
                     new_height = curWndSizeY;
                     new_width = (int)(curWndSizeY * image_aspect);
                 }
-                SDL_Rect rect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
+                m_lastDstRect = {(curWndSizeX - new_width) / 2, (curWndSizeY - new_height) / 2, new_width, new_height};
+                m_lastTexW = bufWidth;
+                m_lastTexH = origHeight;
 
                 SDL_Texture* hDisplayTex =
-                    tryRecreateEmuScreenTexture(bufWidth, dstHeight);
+                    tryRecreateEmuScreenTexture(bufWidth, origHeight);
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
-                    // Ensure prev frame buffer matches source dimensions
-                    const bool bPrevValid = (m_prevBufWidth == bufWidth && m_prevBufHeight == srcHeight && m_pPrevFrameBuf);
-
-                    if (bNeedsLineDoubling) {
-                        // Line-doubling with temporal blending for non-interlaced:
-                        // odd lines = current frame, even lines = blend(prev, current)
-                        for (int curY = 0; curY < srcHeight; curY++) {
-                            const uint32_t* srcRow = &pSrcDisplayBuf[curY * bufWidth];
-                            uint8_t* dest1 = (uint8_t*)texture_pixels + (curY * 2 * pitch);
-                            uint8_t* dest2 = (uint8_t*)texture_pixels + ((curY * 2 + 1) * pitch);
-
-                            if (bPrevValid) {
-                                const uint32_t* prevRow = &m_pPrevFrameBuf[curY * bufWidth];
-                                for (int x = 0; x < bufWidth; x++) {
-                                    ((uint32_t*)dest1)[x] = srcRow[x];
-                                    ((uint32_t*)dest2)[x] = ((srcRow[x] >> 1) & 0x7F7F7F7F)
-                                                           + ((prevRow[x] >> 1) & 0x7F7F7F7F);
-                                }
-                            } else {
-                                memcpy(dest1, srcRow, bufWidth * 4);
-                                memcpy(dest2, srcRow, bufWidth * 4);
-                            }
-                        }
-                    } else if (bPrevValid) {
-                        // Full-resolution interlaced mode: blend 75% current + 25% previous
-                        // This simulates CRT phosphor persistence, hiding the interlace
-                        // flicker caused by alternating odd/even fields each frame
-                        for (int curY = 0; curY < srcHeight; curY++) {
-                            const uint32_t* srcRow = &pSrcDisplayBuf[curY * bufWidth];
-                            const uint32_t* prevRow = &m_pPrevFrameBuf[curY * bufWidth];
-                            uint32_t* dest = (uint32_t*)((uint8_t*)texture_pixels + (curY * pitch));
-                            for (int x = 0; x < bufWidth; x++) {
-                                uint32_t s = srcRow[x];
-                                uint32_t p = prevRow[x];
-                                // 75% current + 25% previous: (s*3 + p) / 4
-                                // Equivalent to: (s - (s>>2)) + (p>>2)
-                                dest[x] = s - (s >> 2) + (p >> 2);
-                            }
-                        }
+                    if (pitch == bufWidth * 4) {
+                        memcpy(texture_pixels, pSrcDisplayBuf, (size_t)origHeight * pitch);
                     } else {
-                        // First frame — straight copy
-                        for (int curY = 0; curY < srcHeight; curY++) {
+                        for (int curY = 0; curY < origHeight; curY++) {
                             uint8_t* dest = (uint8_t*)texture_pixels + (curY * pitch);
                             memcpy(dest, &pSrcDisplayBuf[curY * bufWidth], bufWidth * 4);
                         }
@@ -204,12 +188,18 @@ void QsrMainClientWndApp::renderAppPart() {
                     }
                     memcpy(m_pPrevFrameBuf, pSrcDisplayBuf, bufWidth * srcHeight * sizeof(uint32_t));
                 }
-
-                SDL_RenderCopy(m_hWndRenderer, hDisplayTex, nullptr, &rect);
-                pVmPlayer->unlockDisplayTexBuf();
             }
+            pVmPlayer->unlockDisplayTexBuf();
         }
     }
+
+    // ALWAYS render: clear + copy texture + present.
+    // On macOS Metal, presenting without draw commands shows black.
+    // When no new frame exists, the texture still holds the last frame's
+    // data so RenderCopy redraws it — keeping the drawable alive.
+    SDL_RenderClear(m_hWndRenderer);
+    if (m_hVmDisplayTx && m_lastTexW > 0)
+        SDL_RenderCopy(m_hWndRenderer, m_hVmDisplayTx, nullptr, &m_lastDstRect);
 
     if (m_bShowGui)
         m_pQimGuiCtx->render();
@@ -228,14 +218,14 @@ SDL_Texture* QsrMainClientWndApp::tryRecreateEmuScreenTexture(int newWidth, int 
     Uint32 format;
     if (SDL_QueryTexture(m_hVmDisplayTx, &format, &access, &currentWidth, &currentHeight) != 0)
         return m_hVmDisplayTx;
-    if (newWidth == currentWidth && newHeight == currentHeight) {
+    if (newWidth == currentWidth && newHeight == currentHeight && format == m_displayFormat) {
         return m_hVmDisplayTx;
     }
     // Destroy the old texture
     SDL_DestroyTexture(m_hVmDisplayTx);
-    // Create a new texture with the desired dimensions
-    m_hVmDisplayTx = SDL_CreateTexture(m_hWndRenderer, format,
-                                       access,  // Using the same access pattern as the original
+    // Create a new texture with the desired dimensions and pixel format
+    m_hVmDisplayTx = SDL_CreateTexture(m_hWndRenderer, m_displayFormat,
+                                       SDL_TEXTUREACCESS_STREAMING,
                                        newWidth, newHeight);
     return m_hVmDisplayTx;
 }
@@ -285,19 +275,65 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
             if (sym.sym == SDLK_F12) {
                 if (sym.mod & KMOD_SHIFT) {
                     // Handle shift + F12
+                    SDL_SetRelativeMouseMode(SDL_FALSE); // Release mouse for debugger
                     doOperation_<qsr::operations::ShowDebuggerWnd>();
-                } else
+                } else {
                     setShowImgui(!m_bShowGui);
+                    if (m_bShowGui) {
+                        SDL_SetRelativeMouseMode(SDL_FALSE); // Release mouse when UI opens
+                    }
+                }
+                return qd::EFlow::STOP;
+            } else if (sym.sym == SDLK_r && (sym.mod & KMOD_CTRL)) {
+                // Ctrl+R: Reset Amiga core (works without GUI overlay)
+                if (pVmProvider)
+                    pVmProvider->pushOperationMsg(
+                        qtd::unique_ptr<qd::operation::BaseOpArgs>(
+                            new amD::operation::VmEmuReset()));
                 return qd::EFlow::STOP;
             } else if (sym.sym == SDLK_ESCAPE) {
                 if (g_cfg_vm_wnd.quitByEsc) {
                     getApp()->requestAppToQuit();
                     return qd::EFlow::STOP;
                 }
+                // Also release mouse on ESC
+                SDL_SetRelativeMouseMode(SDL_FALSE);
             }
             if (pVmProvider)
                 pVmProvider->pushSdlEvent(event);
             return qd::EFlow::STOP;
+        } break;
+
+        case SDL_MOUSEMOTION:
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+        case SDL_MOUSEWHEEL: {
+            uint32_t eventWndId = 0;
+            if (event.type == SDL_MOUSEMOTION) eventWndId = event.motion.windowID;
+            else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) eventWndId = event.button.windowID;
+            else if (event.type == SDL_MOUSEWHEEL) eventWndId = event.wheel.windowID;
+
+            // For simplicity, if the UI is open, let ImGui consume the mouse entirely.
+            if (m_bShowGui) {
+                return m_pQimGuiCtx->onSdlEventProc(event);
+            }
+
+            if (eventWndId != uaeWndId) {
+                return qd::EFlow::CONTINUE;
+            }
+
+            // Capture mouse if clicked inside the emulator screen
+            if (event.type == SDL_MOUSEBUTTONDOWN && !SDL_GetRelativeMouseMode()) {
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+            }
+
+            // If captured (or wheel event), forward to UAE core
+            if (SDL_GetRelativeMouseMode() || event.type == SDL_MOUSEWHEEL) {
+                if (pVmProvider)
+                    pVmProvider->pushSdlEvent(event);
+                return qd::EFlow::STOP;
+            }
+            return qd::EFlow::CONTINUE;
         } break;
 
         case SDL_KEYUP: {
@@ -307,12 +343,47 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                 pVmProvider->pushSdlEvent(event);
         } break;
 
+        case SDL_DROPFILE: {
+            // Mount dropped ADF/IMG/DMS into df0 and reboot
+            if (event.drop.windowID != uaeWndId)
+                return qd::EFlow::CONTINUE;
+
+            char* droppedFile = event.drop.file;
+            if (droppedFile) {
+                std::string path(droppedFile);
+                SDL_free(droppedFile);
+
+                // Only accept floppy image extensions
+                bool isFloppy = qd::ends_with(path, ".adf") ||
+                                qd::ends_with(path, ".img") ||
+                                qd::ends_with(path, ".dms");
+                if (!isFloppy) {
+                    SDL_Log("Drag-and-drop: '%s' is not a floppy image", path.c_str());
+                    return qd::EFlow::STOP;
+                }
+
+                IVm::VM* vm = pVmProvider ? pVmProvider->getVm() : nullptr;
+                if (vm && vm->floppy0) {
+                    vm->floppy0->setAdfPath(path.c_str());
+                    SDL_Log("Drag-and-drop: Mounted '%s' into df0", path.c_str());
+                    // Trigger Amiga reset so it boots from the new disk
+                    if (IVmClientPlayer* pProvider = getVmProvider())
+                        pProvider->pushOperationMsg(
+                            qtd::unique_ptr<qd::operation::BaseOpArgs>(
+                                new amD::operation::VmEmuReset()));
+                }
+            }
+            return qd::EFlow::STOP;
+        } break;
+
         case SDL_WINDOWEVENT: {
             if (event.window.windowID != uaeWndId)
                 return qd::EFlow::CONTINUE;
             uint8_t wndEvent = event.window.event;
             if (wndEvent == SDL_WINDOWEVENT_CLOSE) {
                 getApp()->requestAppToQuit();
+            } else if (wndEvent == SDL_WINDOWEVENT_FOCUS_LOST) {
+                SDL_SetRelativeMouseMode(SDL_FALSE);
             }
             break;
         }

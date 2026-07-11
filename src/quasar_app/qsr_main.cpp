@@ -12,6 +12,8 @@
 #include "qsr_application.h"
 #include "qsr_config.h"
 #include "quaesar.h"
+#include "qsr_main_wnd_client_app.h"  // g_cfg_vm_wnd (CfgQsrMain)
+#include "vm_player_selector.h"       // VmPlayersSelector::isKnownCoreId
 
 
 #ifdef WIN32
@@ -41,13 +43,39 @@ int SDL_main(int argc, char* argv[]) {
     cliApp.add_option("-s", g_cfg_startup.uaeExtArgs,
                       "key followed by the original WinUAE commands. Example:\n"
                       "   quaesar.exe -k c:\\Amiga\\KICK13.rom -s filesystem=rw,dh0:c:\\Amiga\\hd0");
+
+    std::string engineId;
+    cliApp.add_option("--engine", engineId, "Emulation engine to use (uae, vamiga, ...)");
     try {
         cliApp.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
         return cliApp.exit(e);
     }
 
+    // Apply --engine selection with validation.
+    // Default engine is already WinUae (set in CfgQsrMain); only override
+    // if the user passed --engine and the id maps to a known engine.
+    // Lookup is case-insensitive ("vAmiga", "VAMIGA", "vamiga" all work).
+    if (!engineId.empty()) {
+        qsr::EngineId engine = qsr::engineIdFromStr(engineId.c_str());
+        if (engine == qsr::EngineId::Unknown) {
+            SDL_Log("Unknown engine '%s', falling back to 'uae'", engineId.c_str());
+            qsr::g_cfg_vm_wnd.engine = qsr::EngineId::WinUae;
+        } else {
+            qsr::g_cfg_vm_wnd.engine = engine;
+        }
+    }
+
     // initialize SDL
+    
+    // Suppress SDL's built-in NSLog output — write_log() routes through
+    // SDL_LogMessageV which triggers NSLog on macOS. NSLog is extremely
+    // expensive (CoreFoundation + mutex + kdebug_trace syscall) and the
+    // emulator generates thousands of log lines per second during boot,
+    // burning a full CPU core. The qd::logConsole() path in write_log()
+    // still works for internal debug output.
+    // SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_ERROR);
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return 1;

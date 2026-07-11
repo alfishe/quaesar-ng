@@ -12039,21 +12039,45 @@ static bool framewait(void)
 			frame_rendered = crender_screen(0, 1, false);
 			t = read_processor_time() - start;
 		}
+
 		if (!currprefs.cpu_thread) {
-			while (!currprefs.turbo_emulation && !quit_program) {
-				float v = rpt_vsync(clockadjust) / (syncbase / 1000.0f);
-				if (v >= -FRAMEWAIT_MIN_MS)
-					break;
-				rtg_vsynccheck();
-				maybe_process_pull_audio();
-				if (cpu_sleep_millis(1) < 0)
-					break;
-			}
-			while (rpt_vsync(clockadjust) < 0 && !quit_program) {
-				rtg_vsynccheck();
-				if (audio_is_pull_event()) {
+			// Audio-callback-driven frame sync (pull/callback mode).
+			// The SDL audio callback posts a semaphore when the pull buffer
+			// drops below 50%, driven by the sound card crystal oscillator.
+			// This provides sub-frame-precision timing locked to the audio clock.
+
+			int audio_wait = audio_callback_sync_wait_ms(20);
+			if (audio_wait >= 0) {
+				// Audio clock available — semaphore wait already done inside
+				// audio_callback_sync_wait_ms(). Proceed with next frame.
+			} else {
+				// Fallback: wall-clock spin loop (no audio or pull mode)
+				int spin_count = 0;
+				while (!currprefs.turbo_emulation) {
+					float v = rpt_vsync(clockadjust) / (syncbase / 1000.0f);
+					if (v >= -FRAMEWAIT_MIN_MS)
+						break;
+					rtg_vsynccheck();
 					maybe_process_pull_audio();
-					break;
+					int sleep_time = (int)(-v) - FRAMEWAIT_MIN_MS;
+					if (sleep_time > 1) {
+						if (cpu_sleep_millis(sleep_time) < 0)
+							break;
+					} else {
+						if (cpu_sleep_millis(1) < 0)
+							break;
+					}
+				}
+				while (rpt_vsync(clockadjust) < 0) {
+					rtg_vsynccheck();
+					if (audio_is_pull_event()) {
+						maybe_process_pull_audio();
+						break;
+					}
+					if (++spin_count > 2000) {
+						sleep_millis(0);
+						spin_count = 0;
+					}
 				}
 			}
 		}
@@ -12062,8 +12086,10 @@ static bool framewait(void)
 		vsyncmintime = curr_time;
 		vsyncmaxtime = vsyncwaittime = curr_time + vstb;
 		if (frame_rendered) {
+			frame_time_t show_t0 = read_processor_time();
 			show_screen(0, 0);
-			t += read_processor_time() - curr_time;
+			frame_time_t show_end = read_processor_time();
+			t += show_end - show_t0;
 		}
 		t += frameskipt_avg;
 

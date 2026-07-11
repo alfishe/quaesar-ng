@@ -39,16 +39,39 @@ public:
     virtual int getCurCycle() override;
     virtual int getVPos() override;
     virtual int getHPos() override;
+    virtual int getChipsetLevel() const override;
 
 
     //------------------------------------------------------------------------
+    // Cpu module — snapshots register state in fetch() so that widgets
+    // see stable values between fetchVmState() calls (~15fps throttle).
+    // Without this snapshot, getters read the live UAE ::regs global which
+    // changes continuously as the emulator runs, causing register and
+    // disassembly widgets to flicker at 60fps.
     struct Cpu : public IVm::Cpu {
+        // Snapshot populated by fetch(). Reads from getters return these
+        // cached values, not live emulator state.
+        uint32_t snap_regs_d[8] = {};
+        uint32_t snap_regs_a[8] = {};
+        uint32_t snap_pc = 0;
+        uint32_t snap_intmask = 0;
+        bool snap_flg_z = false;
+        bool snap_flg_c = false;
+        bool snap_flg_v = false;
+        bool snap_flg_n = false;
+        bool snap_flg_x = false;
+
+        void fetch() override;
         uint32_t getRegA(int i) const override;
         uint32_t getRegD(int i) const override;
         AddrRef getPC() const override;
 
         virtual bool getFlg(IVm::ECpuFlg_ f) const override;
         virtual int getIntMask() const override;
+
+        virtual bool isMmuEnabled() const override;
+        virtual int getCpuModel() const override;
+        virtual void getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats = nullptr) const override;
     };  // struct Cpu
     Cpu instCpu;
 
@@ -60,6 +83,7 @@ public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override;
         virtual bool getU16(AddrRef addr, uint16_t* out) override;
         virtual uint16_t getU16(AddrRef addr) override;
+        virtual uint8_t getU8(AddrRef addr) override;
         virtual void setU16(AddrRef addr, uint16_t v) override;
         virtual uint32_t getU32(AddrRef addr) override;
         virtual void setU32(AddrRef addr, uint32_t v) override;

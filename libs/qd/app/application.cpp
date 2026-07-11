@@ -4,6 +4,7 @@
 #include "qd/typeSystem/typeInfoBuilder.h"
 #if QD_USE_SDL
 #include "SDL_events.h"
+#include "SDL_timer.h"  // SDL_GetTicks(), SDL_Delay()
 #endif // QD_USE_SDL
 
 namespace qd {
@@ -81,9 +82,40 @@ void Application::onFrameRender() {
 }
 
 
+#if QD_USE_SDL
+static int AppEventWatch(void* userdata, SDL_Event* event) {
+    qd::Application* app = static_cast<qd::Application*>(userdata);
+    if (event->type == SDL_WINDOWEVENT) {
+        if (event->window.event == SDL_WINDOWEVENT_EXPOSED ||
+            event->window.event == SDL_WINDOWEVENT_RESIZED ||
+            event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+            // macOS/Windows modal resize loop blocks the main thread in SDL_PollEvent.
+            // This event watch is called synchronously from the OS event tracker.
+            // We force a render here to keep the window updating while dragging.
+            uint32_t now = SDL_GetTicks();
+            uint32_t elapsed = now - app->m_lastTick;
+            // Rate-limit rendering to ~60Hz (15ms) during live resize. 
+            // Calling SDL_RenderPresent blocks the main thread for vsync. 
+            // If we don't rate-limit, we choke the OS window manager's high-frequency 
+            // event tracker (e.g. on 120Hz+ displays), making the drag feel choppy.
+            if (elapsed >= 15) {
+                app->onFrameUpdate(elapsed, (float)now / 1000.0f);
+                app->onFrameRender();
+                app->m_lastTick = now;
+            }
+        }
+    }
+    return 0;
+}
+#endif
+
 void Application::doMainLoop() {
 #if QD_USE_SDL
+    SDL_AddEventWatch(AppEventWatch, this);
+
     SDL_Event event;
+    m_lastTick = SDL_GetTicks();
+
     for (;;) {
         // Block until event OR 16ms elapsed (~60fps cap).
         // This is the idiomatic SDL approach: the OS scheduler puts the
@@ -98,9 +130,39 @@ void Application::doMainLoop() {
         if (hasQuitRequest())
             break;
 
-        onFrameUpdate(0, 0); // todo delta-time
+        // Measure real elapsed time since last frame.
+        // This replaces the hardcoded '0' delta-time and gives all
+        // animation/timing logic correct values at any refresh rate
+        // (60/120/144/240/360 Hz, or frame skip under load).
+        uint32_t now = SDL_GetTicks();
+        uint32_t elapsed = now - m_lastTick;
+
+        // Safety net: if the frame completed in under 1ms, it means
+        // SDL_RenderPresent returned instantly — vsync is either
+        // disabled, unsupported (headless/minimized), or the renderer
+        // has no window. Without this, the loop spins at 100% CPU
+        // re-rendering the same frame thousands of times per second.
+        //
+        // On any display with vsync active (the normal case), frames
+        // take at least 2.8ms (360Hz), so this never triggers.
+        // The 1ms sleep yields the CPU timeslice to other threads
+        // (including the emulator thread) without adding perceptible
+        // latency.
+        if (elapsed < 1) {
+            SDL_Delay(1);
+            now = SDL_GetTicks();
+            elapsed = now - m_lastTick;
+        }
+
+        // Pass real elapsed ms and absolute time (seconds) to update.
+        // ImGui animations, tooltips, cursor blink, and any future
+        // time-based logic get correct values regardless of refresh
+        // rate or frame drops.
+        onFrameUpdate(elapsed, (float)now / 1000.0f);
         onFrameRender();
+        m_lastTick = now;
     }
+    SDL_DelEventWatch(AppEventWatch, this);
 #endif
 }
 

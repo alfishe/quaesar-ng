@@ -6,6 +6,7 @@
 #include <qd/stl/span.h>
 #include <qd/stl/array.h>
 #include <qd/stl/string.h>
+#include <SDL_pixels.h>
 #include <qd/qui/uiOperation.h>
 
 
@@ -86,6 +87,9 @@ public:
     virtual IVm::EVmDebugMode getVmDebugMode() const { return m_debugMode; }
     virtual void setVmDebugMode(IVm::EVmDebugMode debug_mode) { m_debugMode = debug_mode; }; // base
 
+    // Returns 0=OCS, 1=ECS, 2=AGA
+    virtual int getChipsetLevel() const { return 0; }
+
     IVm::IModule* m_modSectBeg = nullptr;
     IVm::Memory* mem = nullptr;
     IVm::Cpu* cpu = nullptr;
@@ -160,6 +164,7 @@ public:
     virtual uint8_t* getRealAddr(AddrRef ptr) = 0;
     virtual bool getU16(AddrRef addr, uint16_t* out) = 0;
     virtual uint16_t getU16(AddrRef addr) = 0;
+    virtual uint8_t getU8(AddrRef addr) = 0;
     virtual void setU16(AddrRef addr, uint16_t v) = 0;
     virtual uint32_t getU32(AddrRef addr) = 0;
     virtual void setU32(AddrRef addr, uint32_t v) = 0;
@@ -172,11 +177,33 @@ public:
 class Cpu : public IVm::IModule
 {
 public:
+    struct MmuPage {
+        AddrRef logical;
+        AddrRef physical;
+        uint32_t size;          // in bytes (e.g. 4096 or 8192)
+        uint32_t flags;         // original page descriptor or derived flags
+        bool cacheable;
+        bool writeProtected;
+        bool superOnly;
+        bool modified;
+    };
+
+    struct MmuStats {
+        uint32_t numRootTables = 0;
+        uint32_t numPtrTables = 0;
+        uint32_t numPageTables = 0;
+        uint32_t totalMemoryBytes = 0;
+    };
+
     virtual uint32_t getRegA(int i) const = 0;
     virtual uint32_t getRegD(int i) const = 0;
     virtual AddrRef getPC() const = 0;
     virtual bool getFlg(IVm::ECpuFlg_ f) const = 0;
     virtual int getIntMask() const = 0;
+    
+    virtual bool isMmuEnabled() const = 0;
+    virtual int getCpuModel() const = 0;
+    virtual void getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats = nullptr) const = 0;
 }; // class Cpu
 //////////////////////////////////////////////////////////////////////////
 
@@ -208,6 +235,10 @@ class Blitter : public IModule
 public:
     virtual bool isBlitterActive() const = 0;
     virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) = 0;
+    // Returns SDL pixel format constant (default: SDL_PIXELFORMAT_ARGB8888).
+    // vAmiga overrides to SDL_PIXELFORMAT_ABGR8888 so the GPU handles
+    // channel order conversion for free — no per-pixel CPU swap.
+    virtual uint32_t getScreenPixelFormat() const { return SDL_PIXELFORMAT_ARGB8888; }
 }; // class Blitter
 //////////////////////////////////////////////////////////////////////////
 

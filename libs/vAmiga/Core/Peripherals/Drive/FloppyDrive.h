@@ -192,6 +192,7 @@ private:
     void operator << (SerReader &worker) override;
     void operator << (SerWriter &worker) override;
 
+    void _willReset(bool hard) override;
     void _didReset(bool hard) override;
     
 public:

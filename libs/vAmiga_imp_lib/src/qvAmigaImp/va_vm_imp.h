@@ -73,6 +73,9 @@ public:
             m_pCpuInfo = &m_pVAmiga->cpu.getInfo();
         }
 
+        virtual bool isMmuEnabled() const override;
+        virtual int getCpuModel() const override;
+        virtual void getMmuPages(qtd::vector<MmuPage>& outPages, ::IVm::Cpu::MmuStats* outStats = nullptr) const override;
     };  // struct Cpu
     Cpu instCpu;
 
@@ -87,6 +90,7 @@ public:
         virtual uint8_t* getRealAddr(AddrRef ptr) override;
         virtual bool getU16(AddrRef addr, uint16_t* out) override;
         virtual uint16_t getU16(AddrRef addr) override;
+        virtual uint8_t getU8(AddrRef addr) override;
         virtual void setU16(AddrRef addr, uint16_t v) override;
         virtual uint32_t getU32(AddrRef addr) override;
         virtual void setU32(AddrRef addr, uint32_t v) override;
@@ -100,6 +104,7 @@ public:
     public:
         virtual bool isBlitterActive() const override;
         virtual void* getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) override;
+        virtual uint32_t getScreenPixelFormat() const override { return SDL_PIXELFORMAT_ABGR8888; }
     } instBlitter;
 
 

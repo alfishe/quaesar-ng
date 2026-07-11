@@ -1,14 +1,27 @@
 output
 build
-cmake-build-debug
+**/cmake-build-*
+**/scratch
 .idea
 .vs
 *.pdb
+*.o
+*.obj
 
-# Temporary/generated files
-build_output.log
-default_layout.ini
-imgui.ini
-doc/
+# clangd cache
+**/.cache
+
+# Binary executables
 quaesar
 quaesar-dbg
+
+# ImGui layout files
+*.ini
+debugger_layout.ini
+imgui.ini
+default_layout.ini
+
+# OS-specific
+.DS_Store
+Thumbs.db
+

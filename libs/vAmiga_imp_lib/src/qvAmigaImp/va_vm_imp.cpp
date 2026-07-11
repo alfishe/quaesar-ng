@@ -117,6 +117,10 @@ VAmVmImp* vm = this;
       pVAmiga->warpOn(1);
     }
 
+  } else if (args->cast_<amD::operation::PauseEmulation>()) {
+    r = true;
+    vm->setVmDebugMode(EVmDebugMode::Break);
+
   } else if (args->cast_<amD::operation::VmEmuReset>()) {
     r = true;
     vm->m_vAmiga->hardReset();
@@ -149,12 +153,14 @@ VAmVmImp* vm = this;
 
 void* VAmVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w,
                                          int* out_size_h, int* pitch) {
-  // Access the display texture buffer from VAmServerThread
+  // Return the visible-area buffer (already channel-swapped to ARGB).
+  // copyVisibleArea() in VAmServerThread extracts the displayable portion
+  // from vAmiga's raw 912x313 texture and swaps R/B channels.
   VAmServerThread* pThread = m_pVm->m_pVAmThread;
   if (!pThread || !pThread->m_pAmigaBuffer) return nullptr;
 
-  *out_size_w = pThread->m_scrWidth;   // HPIXELS (912)
-  *out_size_h = pThread->m_scrHeight;  // VPIXELS (313)
+  *out_size_w = pThread->m_scrWidth;
+  *out_size_h = pThread->m_scrHeight;
   *pitch = pThread->m_scrWidth * sizeof(uint32_t);
   return pThread->m_pAmigaBuffer;
 }
@@ -280,10 +286,17 @@ void VAmVmImp::Floppy::setEnabled(bool v) {
 void VAmVmImp::Floppy::setAdfPath(const qtd::string &v)
 {
     m_adfPath = v;
+    vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
     if (v.empty()) {
-        m_pVm->m_vAmiga->df[m_nFloppy]->ejectDisk();
+        df->ejectDisk();
     } else {
-        vamiga::FloppyDriveAPI *df = m_pVm->m_vAmiga->df[m_nFloppy];
+        // Eject any existing disk first so swapDisk uses delay=0 (immediate
+        // insertion).  Without this, swapDisk schedules the insertion with a
+        // 1.8 s delay when a disk is already present, and a subsequent hard
+        // reset clears the pending Agnus event — leaving the drive empty.
+        if (df->getInfo().hasDisk) {
+            df->ejectDisk();
+        }
         df->insert(v.c_str(), m_writeProtect);
     }
 }
@@ -329,6 +342,18 @@ bool VAmVmImp::Cpu::getFlg(ECpuFlg_ f) const {
   }
 }
 
+bool VAmVmImp::Cpu::isMmuEnabled() const {
+  return false;
+}
+
+int VAmVmImp::Cpu::getCpuModel() const {
+  return 68000;
+}
+
+void VAmVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, ::IVm::Cpu::MmuStats* outStats) const {
+  // vAmiga (68000/68010) has no MMU
+}
+
 uint8_t* VAmVmImp::Memory::getRealAddr(AddrRef ptr) {
   vamiga::Memory& mem = m_pVm->main->mem;
   uint32_t addr = (ptr & 0xFFFFFF);
@@ -366,6 +391,10 @@ uint8_t* VAmVmImp::Memory::getRealAddr(AddrRef ptr) {
 
 uint16_t VAmVmImp::Memory::getU16(AddrRef addr) {
   return m_pVm->m_vAmiga->mem.debugger.spypeek16(vamiga::Accessor::CPU, (uint32_t)addr);
+}
+
+uint8_t VAmVmImp::Memory::getU8(AddrRef addr) {
+  return m_pVm->m_vAmiga->mem.debugger.spypeek8(vamiga::Accessor::CPU, (uint32_t)addr);
 }
 
 bool VAmVmImp::Memory::getU16(AddrRef addr, uint16_t* out) {

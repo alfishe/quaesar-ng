@@ -23,6 +23,7 @@ FORWARD_DECLARATION_2S(vamiga, MessageFwd);
 // (it works in the same thread as VAMIGA)
 //
 class VAmServerThread : public qsr::IVmClientPlayer {
+    friend void SDLCALL vamiga_audio_callback(void *userdata, Uint8 *stream, int len);
     struct SDL_Thread* m_uaeThread = nullptr;  // start VAMIGA in separate thread
     inline static VAmServerThread* g_pSingleton = nullptr;
     qd::Mutex m_eventMutex;
@@ -33,6 +34,7 @@ class VAmServerThread : public qsr::IVmClientPlayer {
     bool m_bRequestToQuit = false;
     bool power_is_on_ = true;
     qtd::string m_threadErrStr;
+    SDL_AudioDeviceID m_audioDev = 0;  // SDL audio device for vAmiga sound output
 
 public:
     int m_scrWidth = 754;
@@ -62,6 +64,7 @@ public:
     virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) override;
     virtual bool lockDisplayTexBuf(int* out_width, int* out_height, uint32_t** out_pixels) override;
     virtual void unlockDisplayTexBuf() override;
+    virtual Uint32 getDisplayPixelFormat() const override { return SDL_PIXELFORMAT_ABGR8888; }
 
     void vAmigaMsgQueueProc(const vamiga::MessageFwd& msg);
     bool onVAmHandleEvents();
@@ -82,5 +85,11 @@ protected:
 
 private:
     void fetchScreenBufferToTexture(const uint32_t* pCurDisplayTexBuf, bool lof);
+
+    // Copy visible portion from vAmiga's raw 912x313 texture into m_pAmigaBuffer.
+    // Extracts only the displayable area (skipping hblank/vblank), swaps R/B
+    // channels (vAmiga uses ABGR, SDL expects ARGB), and doubles scanlines if
+    // non-interlaced so the output matches UAE's format.
+    void copyVisibleArea(const uint32_t* pSrc, int rawWidth, int rawHeight, bool lof);
 };  // class VAmServerThread
 //////////////////////////////////////////////////////////////////////////

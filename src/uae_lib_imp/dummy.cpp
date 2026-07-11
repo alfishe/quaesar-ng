@@ -10,12 +10,14 @@ EA_DISABLE_VC_WARNING(4702 4244) /*unreachable code*/ /*conversion from 'uae_u32
 #include <cstdlib>
 
 #include <sys/timeb.h>
+#include <sys/time.h>  // utimes(), struct timeval
 #include "sysdeps.h"
 #include "options.h"
 #include "memory.h"
 #include "inputdevice.h"
 #include "autoconf.h"
 #include "fsdb.h"
+#include "zfile.h"  // struct mytimeval definition
 #include "uae/slirp.h"
 #include "driveclick.h"
 #include "pci_hw.h"
@@ -169,38 +171,36 @@ static void dummy_read(void) {
 
 // Dummy function to get the number of input devices
 static int dummy_get_num(void) {
-    TRACE();
-    return 0;
+    return 1;
 }
 
 // Dummy function to get the friendly name of an input device
 static TCHAR* dummy_get_friendlyname(int /*device_id*/) {
-    UNIMPLEMENTED();
-    return nullptr;
+    return const_cast<TCHAR*>("Quaesar SDL Virtual Device");
 }
 
 // Dummy function to get the unique name of an input device
 static TCHAR* dummy_get_uniquename(int /*device_id*/) {
-    UNIMPLEMENTED();
-    return nullptr;
+    return const_cast<TCHAR*>("Quaesar SDL Virtual Device");
 }
 
 // Dummy function to get the number of widgets (input elements) in an input device
 static int dummy_get_widget_num(int /*device_id*/) {
-    UNIMPLEMENTED();
-    return 4;  // Return the number of widgets
+    return 10;  // Return the number of widgets
 }
 
 // Dummy function to get the type and name of a widget
-static int dummy_get_widget_type(int /*device_id*/, int /*widget_id*/, TCHAR* /*widget_name*/,
-                                 uae_u32* /*widget_type*/) {
-    UNIMPLEMENTED();
-    return 0;  // Return 0 for success, -1 for failure
+static int dummy_get_widget_type(int /*device_id*/, int widget_id, TCHAR* /*widget_name*/,
+                                 uae_u32* widget_type) {
+    if (widget_type) *widget_type = widget_id;
+    if (widget_id < 2) return 2; // IDEV_WIDGET_AXIS
+    return 1; // IDEV_WIDGET_BUTTON
 }
 
 // Dummy function to get the first widget (input element) in an input device
-static int dummy_get_widget_first(int /*device_id*/, int /*widget_type*/) {
-    UNIMPLEMENTED();
+static int dummy_get_widget_first(int /*device_id*/, int widget_type) {
+    if (widget_type == 2) return 0; // IDEV_WIDGET_AXIS
+    if (widget_type == 1) return 2; // IDEV_WIDGET_BUTTON
     return 0;
 }
 
@@ -245,8 +245,16 @@ void cpuboard_ncr9x_scsi_put(uaecptr /*addr*/, uae_u32 /*v*/) {
     UNIMPLEMENTED();
 }
 
-void getfilepart(TCHAR* /*out*/, int /*size*/, const TCHAR* /*path*/) {
-    UNIMPLEMENTED();
+// POSIX: extract filename component from path.
+// Win32 (win32.cpp:3991) uses '\\' separator; POSIX uses '/'.
+void getfilepart(TCHAR* out, int size, const TCHAR* path) {
+    out[0] = 0;
+    const TCHAR* p = strrchr(path, '/');
+    if (p)
+        _tcsncpy(out, p + 1, size - 1);
+    else
+        _tcsncpy(out, path, size - 1);
+    out[size - 1] = 0;
 }
 
 void toggle_fullscreen(int /*monid*/, int) {
@@ -280,19 +288,50 @@ void target_addtorecent(const TCHAR* /*name*/, int /*t*/) {
     TRACE();
 }
 
-int my_truncate(const TCHAR* /*name*/, uae_u64 /*len*/) {
+// POSIX implementation: uses truncate() to set file length.
+// On Windows, fsdb_mywin32.cpp provides this via CreateFile + SetEndOfFile.
+int my_truncate(const TCHAR* name, uae_u64 len) {
+#ifndef _WIN32
+    return truncate(name, (off_t)len);
+#else
     UNIMPLEMENTED();
     return 0;
+#endif
 }
 
-bool my_issamepath(const TCHAR* /*path1*/, const TCHAR* /*path2*/) {
-    UNIMPLEMENTED();
-    return false;
+// POSIX: compare two paths after canonicalization.
+// Win32 (fsdb_mywin32.cpp:782) canonicalizes then does case-insensitive compare.
+// POSIX filesystems are case-sensitive, so we do case-sensitive comparison.
+bool my_issamepath(const TCHAR* path1, const TCHAR* path2) {
+#ifndef _WIN32
+    TCHAR p1[MAX_DPATH], p2[MAX_DPATH];
+    my_canonicalize_path(path1, p1, sizeof p1 / sizeof(TCHAR));
+    my_canonicalize_path(path2, p2, sizeof p2 / sizeof(TCHAR));
+    return strcmp(p1, p2) == 0;
+#else
+    // Win32 uses _tcsicmp for case-insensitive NTFS/FAT paths
+    TCHAR p1[MAX_DPATH], p2[MAX_DPATH];
+    my_canonicalize_path(path1, p1, sizeof p1 / sizeof(TCHAR));
+    my_canonicalize_path(path2, p2, sizeof p2 / sizeof(TCHAR));
+    return _tcsicmp(p1, p2) == 0;
+#endif
 }
 
-int input_get_default_joystick(struct uae_input_device* /*uid*/, int /*i*/, int /*port*/, int /*af*/, int /*mode*/,
-                               bool /*gp*/, bool /*joymouseswap*/) {
-    UNIMPLEMENTED();
+int input_get_default_joystick(struct uae_input_device* uid, int i, int port, int af, int mode,
+                               bool gp, bool joymouseswap) {
+    uid[i].eventid[ID_AXIS_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_HORIZ : INPUTEVENT_JOY1_HORIZ;
+    uid[i].port[ID_AXIS_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_AXIS_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_VERT : INPUTEVENT_JOY1_VERT;
+    uid[i].port[ID_AXIS_OFFSET + 1][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_FIRE_BUTTON : INPUTEVENT_JOY1_FIRE_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_2ND_BUTTON : INPUTEVENT_JOY1_2ND_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 1][0] = port + 1;
+
+    if (i == 0) return 1;
     return 0;
 }
 
@@ -305,8 +344,21 @@ void getgfxoffset(int /*monid*/, float* /*dxp*/, float* /*dyp*/, float* /*mxp*/,
     UNIMPLEMENTED();
 }
 
-void fixtrailing(TCHAR* /*p*/) {
-    UNIMPLEMENTED();
+// POSIX: append trailing path separator if missing.
+// Win32 (win32.cpp:3888) appends '\\'; POSIX appends '/'.
+void fixtrailing(TCHAR* p) {
+    size_t len = _tcslen(p);
+    if (len == 0)
+        return;
+#ifndef _WIN32
+    if (p[len - 1] == '/')
+        return;
+    _tcscat(p, _T("/"));
+#else
+    if (p[len - 1] == '/' || p[len - 1] == '\\')
+        return;
+    _tcscat(p, _T("\\"));
+#endif
 }
 
 int uae_slirp_redir(int /*is_udp*/, int /*host_port*/, struct in_addr /*guest_addr*/, int /*guest_port*/) {
@@ -333,9 +385,25 @@ void refreshtitle() {
     UNIMPLEMENTED();
 }
 
-bool my_utime(const TCHAR* /*name*/, struct mytimeval* /*tv*/) {
+// POSIX implementation: uses utimes() to set file modification/access times.
+// mytimeval (tv_sec: uae_s64, tv_usec: uae_s32) maps directly to struct timeval.
+// When tv is NULL, utimes() sets the current time.
+bool my_utime(const TCHAR* name, struct mytimeval* tv) {
+#ifndef _WIN32
+    if (tv == nullptr) {
+        // NULL tv = set to current time (matches Win32 behavior)
+        return utimes(name, nullptr) == 0;
+    }
+    struct timeval times[2];
+    times[0].tv_sec = tv->tv_sec;       // access time
+    times[0].tv_usec = tv->tv_usec;
+    times[1].tv_sec = tv->tv_sec;       // modification time
+    times[1].tv_usec = tv->tv_usec;
+    return utimes(name, times) == 0;
+#else
     UNIMPLEMENTED();
     return false;
+#endif
 }
 
 bool my_resolvesoftlink(char*, int, bool) {
@@ -343,9 +411,16 @@ bool my_resolvesoftlink(char*, int, bool) {
     return true;
 }
 
-int my_rename(char const*, char const*) {
+// POSIX: rename a file or directory.
+// Win32 (fsdb_mywin32.cpp:174) handles reserved name mangling first.
+// POSIX rename() handles both files and directories atomically.
+int my_rename(const TCHAR* oldname, const TCHAR* newname) {
+#ifndef _WIN32
+    return rename(oldname, newname);
+#else
     UNIMPLEMENTED();
     return 0;
+#endif
 }
 
 void masoboshi_ncr9x_scsi_put(unsigned int, unsigned int, int) {
@@ -626,7 +701,10 @@ void cpuboard_dkb_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 }
 
 bool cpuboard_forced_hardreset() {
-    UNIMPLEMENTED();
+    // DO NOT use UNIMPLEMENTED() here!
+    // The Amiga IDE controller (scsi.device) issues a CPU RESET instruction (0x4e70) 
+    // during initialization or reboot. Returning false allows the normal reset 
+    // sequence to proceed without crashing the emulator.
     return false;
 }
 
@@ -932,7 +1010,8 @@ void graphics_leave() {
     int monitor_id = 0;
     struct vidbuf_description* avidinfo = &adisplays[monitor_id].gfxvidinfo;
 
-    reset_sound();
+    // reset_sound() removed — close_sound() in do_leave_program()
+    // handles full audio shutdown.
     freevidbuffer(monitor_id, &avidinfo->drawbuffer);
     freevidbuffer(monitor_id, &avidinfo->tempbuffer);
 }
@@ -1158,7 +1237,17 @@ void rapidfire_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 }
 
 void release_keys() {
-    UNIMPLEMENTED();
+    const Uint8* keystate = SDL_GetKeyboardState(NULL);
+    if (!keystate) {
+        return;
+    }
+    
+    // Release all currently pressed keys
+    for (int scancode = 0; scancode < SDL_NUM_SCANCODES; scancode++) {
+        if (keystate[scancode]) {
+            inputdevice_translatekeycode(0, scancode, 0, true);
+        }
+    }
 }
 
 void restore_cdtv_final() {
@@ -1179,7 +1268,6 @@ void sampler_free() {
 }
 
 uae_u8 sampler_getsample(int) {
-    UNIMPLEMENTED();
     return 0;
 }
 
@@ -1227,13 +1315,17 @@ void setup_brkhandler() {
 }
 
 bool show_screen_maybe(int, bool) {
-    UNIMPLEMENTED();
-    return false;
+    // Screen presentation is handled by the UI thread via
+    // UaeServerThread::fetchScreenBufferToTexture(), so this is a no-op.
+    // Return true to indicate the frame was "shown" (prevents UAE from
+    // retrying frame presentation every vsync).
+    return true;
 }
 
-int sleep_millis_main(int) {
-    UNIMPLEMENTED();
-    return 0;
+int sleep_millis_main(int ms) {
+    // Delegate to sleep_millis (SDL_Delay). The emulator thread runs
+    // independently of the UI thread and needs real sleeps for frame pacing.
+    return sleep_millis(ms);
 }
 
 void sndboard_free_capture() {
@@ -1302,12 +1394,10 @@ float target_adjust_vblank_hz(int, float hz) {
 }
 
 bool target_can_autoswitchdevice() {
-    UNIMPLEMENTED();
     return false;
 }
 
 int target_checkcapslock(int, int*) {
-    UNIMPLEMENTED();
     return 0;
 }
 
@@ -1631,17 +1721,30 @@ int handle_msgpump(bool) {
 }
 
 int input_get_default_joystick_analog(uae_input_device*, int, int, int, bool, bool) {
-    UNIMPLEMENTED();
     return 0;
 }
 
 int input_get_default_lightpen(uae_input_device*, int, int, int, bool, bool, int) {
-    UNIMPLEMENTED();
     return 0;
 }
 
-int input_get_default_mouse(uae_input_device*, int, int, int, bool, bool, bool) {
-    UNIMPLEMENTED();
+int input_get_default_mouse(uae_input_device* uid, int i, int port, int af, bool gp, bool wheel, bool joymouseswap) {
+    uid[i].eventid[ID_AXIS_OFFSET + 0][0] = port ? INPUTEVENT_MOUSE2_HORIZ : INPUTEVENT_MOUSE1_HORIZ;
+    uid[i].port[ID_AXIS_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_AXIS_OFFSET + 1][0] = port ? INPUTEVENT_MOUSE2_VERT : INPUTEVENT_MOUSE1_VERT;
+    uid[i].port[ID_AXIS_OFFSET + 1][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_FIRE_BUTTON : INPUTEVENT_JOY1_FIRE_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 0][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_2ND_BUTTON : INPUTEVENT_JOY1_2ND_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 1][0] = port + 1;
+
+    uid[i].eventid[ID_BUTTON_OFFSET + 2][0] = port ? INPUTEVENT_JOY2_3RD_BUTTON : INPUTEVENT_JOY1_3RD_BUTTON;
+    uid[i].port[ID_BUTTON_OFFSET + 2][0] = port + 1;
+
+    if (i == 0) return 1;
     return 0;
 }
 

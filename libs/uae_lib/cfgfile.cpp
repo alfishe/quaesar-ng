@@ -11,6 +11,9 @@
 #include "sysdeps.h"
 
 #include <ctype.h>
+#include <cstdio>
+
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 #include "options.h"
 #include "uae.h"

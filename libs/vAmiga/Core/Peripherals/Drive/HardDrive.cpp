@@ -56,14 +56,25 @@ HardDrive::operator= (const HardDrive& other) {
 
     } else {
 
-        // Clone dirty blocks
-        data.resize(other.data.size);
-        for (isize i = 0; i < other.dirty.size; i++) {
+        if (other.fileBacked) {
+            // File-backed drives don't have in-memory data to clone.
+            // The run-ahead instance accesses the same backing file.
+            fileBacked = other.fileBacked;
+            fileNumBytes = other.fileNumBytes;
+            filePath = other.filePath;
+            if (!filePath.empty()) {
+                fileStream.open(filePath, std::ios::in | std::ios::binary);
+            }
+        } else {
+            // Clone dirty blocks
+            data.resize(other.data.size);
+            for (isize i = 0; i < other.dirty.size; i++) {
 
-            if (other.dirty[i]) {
+                if (other.dirty[i]) {
 
-                debug(RUA_DEBUG, "Cloning block %ld\n", i);
-                memcpy(data.ptr + 512 * i, other.data.ptr + 512 * i, 512);
+                    debug(RUA_DEBUG, "Cloning block %ld\n", i);
+                    memcpy(data.ptr + 512 * i, other.data.ptr + 512 * i, 512);
+                }
             }
         }
     }
@@ -76,6 +87,12 @@ HardDrive::init()
 {
     data.dealloc();
     dirty.dealloc();
+
+    // Close file-backed stream if open
+    if (fileStream.is_open()) fileStream.close();
+    fileBacked = false;
+    fileNumBytes = 0;
+    filePath.clear();
 
     diskVendor = "VAMIGA";
     diskProduct = "VDRIVE";
@@ -247,6 +264,76 @@ HardDrive::init(const fs::path &path) throws
 }
 
 void
+HardDrive::initFileBacked(const fs::path &path) throws
+{
+    if (!fs::exists(path)) {
+        throw AppError(Fault::FILE_NOT_FOUND, path);
+    }
+
+    // Wipe out the old drive
+    init();
+
+    // Get file size
+    auto fileSize = util::getSizeOfFile(path);
+    debug(HDR_DEBUG, "initFileBacked: %s (%lld bytes)\n", path.string().c_str(), (i64)fileSize);
+
+    // Open file stream for read/write access
+    fileStream.open(path, std::ios::in | std::ios::out | std::ios::binary);
+    if (!fileStream.is_open()) {
+        // Try read-only
+        fileStream.open(path, std::ios::in | std::ios::binary);
+        if (!fileStream.is_open()) {
+            throw AppError(Fault::FILE_NOT_FOUND, path);
+        }
+        setFlag(DiskFlags::PROTECTED, true);
+    }
+
+    // Read enough blocks to parse RDB / geometry / partitions / drivers.
+    // The RDB starts at block 0. We read a generous header region.
+    isize headerSize = std::min(isize(2 * 1024 * 1024), isize(fileSize));
+    Buffer<u8> header(headerSize);
+    fileStream.read((char *)header.ptr, headerSize);
+    if (!fileStream) {
+        fileStream.clear();
+        throw AppError(Fault::HDR_UNKNOWN_GEOMETRY);
+    }
+
+    // Create a temporary HDFFile from the header buffer to parse
+    // geometry/partitions/drivers from the RDB. HDR_ACCEPT_ALL is set
+    // so the 504MB check is bypassed, and the 2MB buffer is under the
+    // cap anyway. RDB-based geometry will be correct for real VHDs.
+    HDFFile hdf(header.ptr, headerSize);
+
+    // Copy parsed structures
+    geometry = hdf.geometry;
+    ptable = hdf.ptable;
+    drivers = hdf.drivers;
+    diskVendor = "VAMIGA";
+    diskProduct = "VDRIVE";
+    diskRevision = "1.0";
+    controllerVendor = "RASTEC";
+    controllerProduct = "HD controller";
+    controllerRevision = "0.3";
+
+    if (auto v = hdf.getDiskProduct(); v) diskProduct = *v;
+    if (auto v = hdf.getDiskVendor(); v) diskVendor = *v;
+    if (auto v = hdf.getDiskRevision(); v) diskRevision = *v;
+    if (auto v = hdf.getControllerProduct(); v) controllerProduct = *v;
+    if (auto v = hdf.getControllerVendor(); v) controllerVendor = *v;
+    if (auto v = hdf.getControllerRevision(); v) controllerRevision = *v;
+
+    // Set file-backed mode (data buffer stays empty)
+    fileBacked = true;
+    fileNumBytes = isize(fileSize);
+    filePath = path.string();
+    setFlag(DiskFlags::MODIFIED, false);
+
+    debug(HDR_DEBUG, "File-backed drive: %s, geometry %ld/%ld/%ld, %ld partitions, %ld drivers\n",
+          filePath.c_str(), geometry.cylinders, geometry.heads, geometry.sectors,
+          isize(ptable.size()), isize(drivers.size()));
+}
+
+void
 HardDrive::_initialize()
 {
 
@@ -365,6 +452,16 @@ HardDrive::isCompatible() const
 bool
 HardDrive::isBootable()
 {
+    if (fileBacked) {
+        // In file-backed mode we can't easily build a full FileSystem.
+        // Instead we assume any drive with partitions is bootable and let
+        // the Kickstart figure it out. Returning true here allows the
+        // HdController autoconf sequence to proceed.
+        debug(HDR_DEBUG, "File-backed drive: assuming bootable (%ld partitions)\n",
+              isize(ptable.size()));
+        return !ptable.empty();
+    }
+
     try {
         
         if (FileSystem(*this).exists("s/startup-sequence")) {
@@ -499,7 +596,7 @@ HardDrive::isConnected() const
 bool
 HardDrive::hasDisk() const
 {
-    return data.ptr != nullptr;
+    return data.ptr != nullptr || fileBacked;
 }
 
 bool 
@@ -613,8 +710,22 @@ HardDrive::read(isize offset, isize length, u32 addr)
         // Move the drive head to the specified location
         moveHead(offset / geometry.bsize);
 
-        // Perform the read operation
-        mem.patch(addr, data.ptr + offset, length);
+        if (fileBacked) {
+            // Read directly from backing file into Amiga RAM
+            Buffer<u8> buf(length);
+            fileStream.clear();
+            fileStream.seekg(offset, std::ios::beg);
+            fileStream.read((char *)buf.ptr, length);
+            if (!fileStream) {
+                fileStream.clear();
+                error = IOERR_BADADDRESS;
+            } else {
+                mem.patch(addr, buf.ptr, length);
+            }
+        } else {
+            // Perform the read operation from in-memory buffer
+            mem.patch(addr, data.ptr + offset, length);
+        }
 
         // Inform the GUI
         msgQueue.put(Msg::HDR_READ);
@@ -643,8 +754,18 @@ HardDrive::write(isize offset, isize length, u32 addr)
 
         if (!getFlag(DiskFlags::PROTECTED)) {
 
-            // Perform the write operation
-            mem.spypeek <Accessor::CPU> (addr, length, data.ptr + offset);
+            if (fileBacked) {
+                // Read from Amiga RAM and write to backing file
+                Buffer<u8> buf(length);
+                mem.spypeek <Accessor::CPU> (addr, length, buf.ptr);
+                fileStream.clear();
+                fileStream.seekp(offset, std::ios::beg);
+                fileStream.write((const char *)buf.ptr, length);
+                fileStream.flush();
+            } else {
+                // Perform the write operation to in-memory buffer
+                mem.spypeek <Accessor::CPU> (addr, length, data.ptr + offset);
+            }
             
             // Mark disk as modified
             setFlag(DiskFlags::MODIFIED, true);
@@ -676,9 +797,19 @@ HardDrive::readDriver(isize nr, Buffer<u8> &driver)
         auto offset = isize(seg * geometry.bsize + 20);
 
         assert(offset >= 0);
-        assert(offset + bytesPerBlock <= data.size);
         
-        memcpy(driver.ptr + bytesRead, data.ptr + offset, bytesPerBlock);
+        if (fileBacked) {
+            fileStream.clear();
+            fileStream.seekg(offset, std::ios::beg);
+            fileStream.read((char *)(driver.ptr + bytesRead), bytesPerBlock);
+            if (!fileStream) {
+                debug(HDR_DEBUG, "File read error in readDriver at offset %ld\n", offset);
+                fileStream.clear();
+            }
+        } else {
+            assert(offset + bytesPerBlock <= data.size);
+            memcpy(driver.ptr + bytesRead, data.ptr + offset, bytesPerBlock);
+        }
         bytesRead += bytesPerBlock;
     }
 }
@@ -686,7 +817,7 @@ HardDrive::readDriver(isize nr, Buffer<u8> &driver)
 i8
 HardDrive::verify(isize offset, isize length, u32 addr)
 {
-    assert(data.ptr);
+    assert(data.ptr || fileBacked);
 
     if (length % 512) {
         

@@ -1,5 +1,6 @@
 #include "debuggerDesktop.h"
 #include "qd/imGui/imGuiHelperClass.h"
+#include "qd/imGui/faIcons.h"
 #include "qd/log/log.h"
 #include "qd/qui/comps/uiOperationMgrComp.h"
 #include "qd/qui/comps/uiShortcutMgrComp.h"
@@ -37,9 +38,13 @@ qd::EFlow DebuggerDesktop::applyOperationMsgProcImp(qd::operation::BaseOpArgs* a
         if (auto pWnd = findChildByType_<amD::window::DisassemblyView>())
             return pWnd->applyOperationMsgProcImp(args);
     }
-    if (m_pDbg)
-        return m_pDbg->applyOperationMsgProcImp(args);
-    return EFlow::NO_RESULT;
+    // Forward all operations to the real emulator thread.
+    // Do NOT fall through to the dummy VM — it has no real UAE backend
+    // and will crash on emulator-control ops (step, pause, continue, etc.).
+    if (m_pDbgApp)
+        m_pDbgApp->forwardOpToEmulator(args);
+
+    return EFlow::STOP;
 }
 
 
@@ -61,25 +66,29 @@ void DebuggerDesktop::_drawMainMenuBar()
 
         if (auto pm = qIm::LockMenu("Emulator"))
         {
-            qIm::menuItemFromOperationArgs_<amD::operation::VmPlayerWndAlwaysOnTop>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::VmEmuReset>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmPlayerWndAlwaysOnTop>(this);
+            qIm::menuItemFromOperationArgs_<amD::operation::VmEmuReset>(this);
         }
 
         if (auto pm = qIm::LockMenu("Debug"))
         {
             IVm::VM* vm = pDbg->getVm();
-            IVm::EVmDebugMode debugMode = (vm && vm->isReady())
-                ? vm->getVmDebugMode().get()
-                : IVm::EVmDebugMode::Live;
-            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(pDbg, "", false,
+            IVm::EVmDebugMode debugMode = vm ? vm->getVmDebugMode().get() : IVm::EVmDebugMode::Live;
+            qIm::menuItemFromOperationArgs_<amD::operation::PauseEmulation>(this, "", false,
+                debugMode.isLive());
+            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceContinue>(this, "", false,
                 debugMode.isBreak());
-            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(pDbg, "", false, debugMode.isLive());
+            qIm::menuItemFromOperationArgs_<amD::operation::DebugTraceStart>(this, "", false, debugMode.isLive());
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepInto>(pDbg);
-            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepOut>(pDbg);
+            // Step/trace commands only make sense when paused (Break mode)
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepInto>(this, "", false,
+                debugMode.isBreak());
+            qIm::menuItemFromOperationArgs_<amD::operation::DisasmTraceStepOut>(this, "", false,
+                debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::DisasmToggleBreakpoint>(this);
             ImGui::Separator();
-            qIm::menuItemFromOperationArgs_<amD::operation::CopperTraceStep>(pDbg);
+            qIm::menuItemFromOperationArgs_<amD::operation::CopperTraceStep>(this, "", false,
+                debugMode.isBreak());
             qIm::menuItemFromOperationArgs_<amD::operation::CopperToggleBreakpoint>(this);
             ImGui::Separator();
 
@@ -169,36 +178,38 @@ DebuggerDesktop::~DebuggerDesktop()
 
 void DebuggerDesktop::_buildDefaultDockLayout(ImGuiID dockspaceId)
 {
-    // Programmatically build the default debugger dock layout using DockBuilder API.
-    // This is called once on the first frame when the dockspace has no children.
     ImGuiID idLeft, idRight;
     ImGui::DockBuilderSplitNode(dockspaceId, ImGuiDir_Left, 0.48f, &idLeft, &idRight);
 
-    // Left side: Disassembly (full height)
+    ImGuiID idRightTop, idRightBottom;
+    
+    // NOTE: We must dock these windows into the root `idLeft` node *before* it gets mathematically
+    // split by ImGui::DockBuilderSplitNode below. If we don't "seed" the root node first, ImGui 
+    // fails to resolve the internal layout tree for these tabs when we explicitly assign them to 
+    // the split `idLeftMain` node later, causing them to spawn floating/undocked.
     ImGui::DockBuilderDockWindow("Disassembly", idLeft);
     ImGui::DockBuilderDockWindow("Copper debug", idLeft);
+    ImGui::DockBuilderDockWindow("OS Modules", idLeft);
+    ImGui::DockBuilderDockWindow("MMU", idLeft);
 
-    // Right side: split vertically into top and bottom
-    ImGuiID idRightTop, idRightBottom;
     ImGui::DockBuilderSplitNode(idRight, ImGuiDir_Up, 0.66f, &idRightTop, &idRightBottom);
 
-    // Right top: Screen / Memory graph
     ImGui::DockBuilderDockWindow("Screen", idRightTop);
     ImGui::DockBuilderDockWindow("Memory graph", idRightTop);
-
-    // Right bottom: Console / Memory
     ImGui::DockBuilderDockWindow("Console", idRightBottom);
     ImGui::DockBuilderDockWindow("Memory", idRightBottom);
 
-    // Split left into left-main and left-middle columns
     ImGuiID idLeftMain, idLeftMid;
     ImGui::DockBuilderSplitNode(idLeft, ImGuiDir_Left, 0.59f, &idLeftMain, &idLeftMid);
 
-    // Re-dock left-main
+    // NOTE: Here we explicitly assign the windows to `idLeftMain` (the left half of the split).
+    // Because we previously "seeded" them in the root `idLeft` node above, ImGui's layout engine
+    // now successfully resolves their placement into this child node, resulting in a clean tab bar.
     ImGui::DockBuilderDockWindow("Disassembly", idLeftMain);
     ImGui::DockBuilderDockWindow("Copper debug", idLeftMain);
+    ImGui::DockBuilderDockWindow("OS Modules", idLeftMain);
+    ImGui::DockBuilderDockWindow("MMU", idLeftMain);
 
-    // Middle column: split vertically into Registers/Palette/Blitter and Custom regs
     ImGuiID idMidTop, idMidBottom;
     ImGui::DockBuilderSplitNode(idLeftMid, ImGuiDir_Up, 0.5f, &idMidTop, &idMidBottom);
 
@@ -220,30 +231,37 @@ void DebuggerDesktop::drawImGuiMainFrame()
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
                 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    wndFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoScrollbar;
 
     bool open = true;
     if (ImGui::Begin("Quaesar debugger", &open, wndFlags))
     {
-        ImGuiID dockspaceId = ImGui::GetID("DockSpace");
-        ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-
-        // Build default layout on first frame if needed
-        static bool s_layoutBuilt = false;
-        if (!s_layoutBuilt)
-        {
-            s_layoutBuilt = true;
-            ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
-            bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
-            if (!hasChildren)
-                _buildDefaultDockLayout(dockspaceId);
-        }
-
         // Only draw content when VM is fully bound - avoids layout jumps during init
         if (m_pDbgApp && m_pDbgApp->m_bFullyInitialized)
         {
             _drawMainMenuBar();
             _drawToolBar();
+        }
+
+        ImGuiID dockspaceId = ImGui::GetID("DockSpace");
+        ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
+        // Build default layout if ini was missing/empty/invalid
+        static int s_layoutCheckFrame = 0;
+        if (s_layoutCheckFrame < 2)
+        {
+            s_layoutCheckFrame++;
+            if (s_layoutCheckFrame == 2)
+            {
+                ImGuiDockNode* rootNode = ImGui::DockBuilderGetNode(dockspaceId);
+                bool hasChildren = rootNode && (rootNode->ChildNodes[0] || rootNode->ChildNodes[1]);
+                if (!hasChildren)
+                    _buildDefaultDockLayout(dockspaceId);
+            }
+        }
+
+        if (m_pDbgApp && m_pDbgApp->m_bFullyInitialized)
+        {
             this->drawContentImp();
 
             qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
@@ -254,6 +272,7 @@ void DebuggerDesktop::drawImGuiMainFrame()
                 , amD::operation::VmPlayerWndAlwaysOnTop
                 , amD::operation::DebugTraceContinue
                 , amD::operation::DebugTraceStart
+                , amD::operation::PauseEmulation
                 , amD::operation::DisasmToggleBreakpoint
                 , amD::operation::CopperTraceStep
                 , amD::operation::CopperToggleBreakpoint
@@ -270,65 +289,122 @@ void DebuggerDesktop::_drawToolBar()
     ImGuiWindowFlags wndFlags = 0;
     wndFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
     ImVec2 rgn = ImGui::GetContentRegionAvail();
-    if (auto bg = qIm::LockChild("ToolBar", ImVec2(rgn.x, 20.f), ImGuiChildFlags_None, wndFlags))
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.f, 2.f));
+    if (auto bg = qIm::LockChild("ToolBar", ImVec2(rgn.x, 26.f), ImGuiChildFlags_None, wndFlags))
     {
-        ImGuiIO& io = ImGui::GetIO();
-        ImGuiWindow* window = ImGui::GetCurrentWindow();
-
-        window->DC.LayoutType = ImGuiLayoutType_Horizontal;
-
+        // Vertically center: offset cursor by half remaining space
+        float barH = 26.f;
+        float btnH = ImGui::GetFrameHeight();
+        float padY = (barH - btnH) * 0.5f;
+        if (padY > 0.f)
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + padY);
         Debugger* dbg = getDbg();
-        qtd::string hint;
-
-        bool isDbgMode = dbg->isDebugActivated();
-        if (ImGui::Checkbox("Trace", &isDbgMode))
-        {
-            dbg->setDebugMode(isDbgMode ? EVmDebugMode::Break : EVmDebugMode::Live);
-        }
-        //
-        ImGui::Separator();
-        //
-        ImTextureID my_tex_id = io.Fonts->TexID;
-        float my_tex_w = (float)io.Fonts->TexWidth;
-        float my_tex_h = (float)io.Fonts->TexHeight;
-        ImVec2 size, uv0, uv1;
-        size = ImVec2(16.0f, 16.0f);
-        uv0 = ImVec2(0.0f, 0.0f); // TODO ICONS
-        uv1 = ImVec2(uv0.x + size.x / my_tex_w, uv1.x + size.y / my_tex_h);
+        IVm::VM* vm = dbg->getVm();
+        IVm::EVmDebugMode debugMode = vm ? vm->getVmDebugMode().get() : IVm::EVmDebugMode::Live;
+        bool isPaused = debugMode.isBreak();
 
         qd::OperationsRegistry* pOpMgr = &qd::OperationsRegistry::get();
         const qd::operation::OpDesc* pOpDesc;
-        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepInto::CID);
-        {
-            if (ImGui::ImageButton("##StepInto", my_tex_id, size, uv0, uv1, ImVec4(0, 0, 0, 1)))
-            {
-                doOperation_<amD::operation::DisasmTraceStepInto>();
-            }
-            ImGui::SetItemTooltipV(CC(pOpDesc->getShortcutGuiStr()), nullptr);
 
-            //
-            ImGui::Separator();
-            //
-
-            // wait scanlines
-            pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugWaitScanLines::CID);
-            int nScanLines = dbg->getWaitScanLines();
-            ImGui::SetNextItemWidth(30);
-            if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
-            {
-                qd::clamp_min_inplace(nScanLines, 1);
-                dbg->setWaitScanLines(nScanLines);
-            }
-            hint = qd::string_format("Scanlines number(%s)", pOpDesc->getShortcutGuiStr());
-            ImGui::SetItemTooltipV(hint.c_str(), nullptr);
+        // --- Pause / Continue ---
+        if (!isPaused) {
+            pOpDesc = pOpMgr->findOpDesc(amD::operation::PauseEmulation::CID);
+            if (ImGui::Button(ICON_FA_PAUSE "##Pause"))
+                doOperation_<amD::operation::PauseEmulation>();
+        } else {
+            pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugTraceContinue::CID);
+            if (ImGui::Button(ICON_FA_PLAY "##Continue"))
+                doOperation_<amD::operation::DebugTraceContinue>();
         }
-        // wait button
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
         ImGui::SameLine();
-        if (ImGui::Button("Wait Scanlines"))
-        {
-            doOperation_<amD::operation::DebugWaitScanLines>();
+
+        // --- Step Into (enabled only when paused) ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepInto::CID);
+        if (!isPaused) { ImGui::BeginDisabled(); }
+        if (ImGui::Button(ICON_FA_FORWARD_STEP "##StepInto"))
+            doOperation_<amD::operation::DisasmTraceStepInto>();
+        if (!isPaused) { ImGui::EndDisabled(); }
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+
+        // --- Step Out (enabled only when paused) ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DisasmTraceStepOut::CID);
+        if (!isPaused) { ImGui::BeginDisabled(); }
+        if (ImGui::Button(ICON_FA_ARROW_RIGHT_FROM_BRACKET "##StepOut"))
+            doOperation_<amD::operation::DisasmTraceStepOut>();
+        if (!isPaused) { ImGui::EndDisabled(); }
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Copper Trace Step (enabled only when paused) ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::CopperTraceStep::CID);
+        if (!isPaused) { ImGui::BeginDisabled(); }
+        if (ImGui::Button(ICON_FA_FLAG_CHECKERED "##CopperStep"))
+            doOperation_<amD::operation::CopperTraceStep>();
+        if (!isPaused) { ImGui::EndDisabled(); }
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Reset ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::VmEmuReset::CID);
+        if (ImGui::Button(ICON_FA_ROTATE_RIGHT "##Reset"))
+            doOperation_<amD::operation::VmEmuReset>();
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+
+        // --- Turbo ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::ToggleTurboEmulation::CID);
+        if (ImGui::Button(ICON_FA_BOLT "##Turbo"))
+            doOperation_<amD::operation::ToggleTurboEmulation>();
+        ImGui::SetItemTooltipV(CC(pOpDesc ? pOpDesc->getShortcutGuiStr() : ""), nullptr);
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Trace checkbox ---
+        bool isDbgMode = dbg->isDebugActivated();
+        if (ImGui::Checkbox("Trace", &isDbgMode)) {
+            // Route through the operation queue (like every other control here)
+            // instead of calling Debugger::setDebugMode() directly - that call
+            // only mirrors UI state and no longer touches the real emulator.
+            if (isDbgMode)
+                doOperation_<amD::operation::PauseEmulation>();
+            else
+                doOperation_<amD::operation::DebugTraceContinue>();
         }
+
+        ImGui::SameLine();
+        ImGui::Separator();
+        ImGui::SameLine();
+
+        // --- Scanlines ---
+        pOpDesc = pOpMgr->findOpDesc(amD::operation::DebugWaitScanLines::CID);
+        int nScanLines = dbg->getWaitScanLines();
+        ImGui::SetNextItemWidth(30);
+        if (ImGui::InputInt("##skipScanLines", &nScanLines, -1, -1))
+        {
+            qd::clamp_min_inplace(nScanLines, 1);
+            dbg->setWaitScanLines(nScanLines);
+        }
+        qtd::string hint = qd::string_format("Scanlines (%s)", pOpDesc ? pOpDesc->getShortcutGuiStr() : "");
+        ImGui::SetItemTooltipV(hint.c_str(), nullptr);
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_CLOCK " Wait"))
+            doOperation_<amD::operation::DebugWaitScanLines>();
     }
+    ImGui::PopStyleVar();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Horizontal);
 }
 

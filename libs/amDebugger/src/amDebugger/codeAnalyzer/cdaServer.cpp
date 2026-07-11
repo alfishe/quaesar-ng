@@ -1,9 +1,11 @@
 #include "cdaServer.h"
-#include <capstone/capstone.h>
+#include "capstone/capstone.h"  // quotes, not <>: ensures bundled header wins over homebrew
+#include <stddef.h>  // offsetof
 #include "qd/stl/optional.h"
 #include "qd/math/mathBase.h"
 #include "cdaTypes.h"
 #include "qd/stl/fixed_vector.h"
+#include "qd/log/log.h"
 
 
 namespace amD::cda {
@@ -12,15 +14,7 @@ namespace amD::cda {
 
 void M68CodeDisassembler::init()
 {
-    m_chunkUseHistory.clear();
-    m_chunksQuadTree.clear();
-    for (uint16_t i = 0; i < g_maxPages; ++i)
-    {
-        m_disasmChunkStorage[i].m_idx = i;
-        if (i == 0)
-            continue;
-        m_chunkUseHistory.push_front(m_disasmChunkStorage[i]);
-    }
+    m_curItems.clear();
 
     m_pCapstone = new csh();
 
@@ -28,296 +22,284 @@ void M68CodeDisassembler::init()
     cs_err err = cs_open(CS_ARCH_M68K, (cs_mode)(CS_MODE_BIG_ENDIAN | CS_MODE_M68K_000), m_pCapstone);
     if (err)
     {
-        printf("Failed on cs_open() with error returned: %u\n", err);
-        abort();
+        qd::logErr("cdaServer: cs_open FAILED err=%u", err);
+        return;
     }
-    cs_option(*m_pCapstone, CS_OPT_DETAIL, CS_OPT_ON);
+    qd::logInfo("cdaServer: cs_open OK sizeof(cs_insn)=%zu", sizeof(cs_insn));
+    // Do NOT enable CS_OPT_DETAIL or CS_OPT_SKIPDATA for M68K:
+    // - DETAIL+SKIPDATA conflict makes the detail pointer invalid.
+    // - SKIPDATA produces pseudo-instructions whose size exceeds the
+    //   24-byte bytes[] array, causing buffer overruns.
+    // Without SKIPDATA, cs_disasm_iter stops cleanly at undecodable data.
+}
+
+void M68CodeDisassembler::destroy()
+{
+    m_curItems.clear();
+    if (m_pCapstone)
+    {
+        if (*m_pCapstone)
+            cs_close(m_pCapstone);
+        SAFE_DELETE(m_pCapstone);
+    }
 }
 
 
-struct DisasmContext {
-    AddrRef minAddr = 0;
-    AddrRef maxAddr = 0;
-    int offset = 0;
-    CodeChunk* m_pPrevChunk = nullptr;
-    CodeChunk* m_pCurrChunk = nullptr;
-
-public:
-
-    void setMinMaxAddr(AddrRef begAddr, AddrRef endAddr)
-    {
-        minAddr = (begAddr) & (~g_chunkMask);
-        maxAddr = (endAddr + (g_chunkSize - 1)) & (~g_chunkMask);
-    }
-
-    void expandArea(AddrRef curAddr)
-    {
-        if (minAddr > curAddr)
-            minAddr = curAddr;
-        if (maxAddr < curAddr)
-            maxAddr = curAddr;
-        minAddr &= ~1u;
-    }
-
-    int getBytesCount() const
-    {
-        int n = (int)(maxAddr - minAddr) - offset;
-        return n < 0 ? 0 : n;
-    }
-
-    AddrRef getStartAddr() const { return minAddr + offset; }
-
-}; // struct DisasmContext
-//////////////////////////////////////////////////////////////////////////
-
-
-
-struct CapstoneDisassemblerContext {
-    csh* m_pCapstone = nullptr;
-    cs_insn* m_pInstructions = nullptr;
-    size_t m_nInstructions = 0;
-
-public:
-    CapstoneDisassemblerContext(csh* pCapstone)
-        : m_pCapstone(pCapstone)
-    {
-        cs_option(*m_pCapstone, CS_OPT_SKIPDATA, CS_OPT_ON);
-    }
-
-    void reset()
-    {
-        if (m_pInstructions)
-            cs_free(m_pInstructions, m_nInstructions);
-        m_pInstructions = nullptr;
-        m_nInstructions = 0;
-    }
-
-    void disasm(IVm::VM* vm, AddrRef begAddr, AddrRef endAddr)
-    {
-        reset();
-        const uint8_t* startDisasmDat = vm->mem->getRealAddr(begAddr);
-        if (!startDisasmDat)
-            return;
-        uint32_t countBytes = endAddr - begAddr;
-        m_nInstructions =
-            cs_disasm(*m_pCapstone, startDisasmDat, countBytes, begAddr, countBytes / 2, &m_pInstructions);
-    }
-
-    bool hasM68InstructionAddr(AddrRef addr) const
-    {
-        for (size_t i = 0; i < m_nInstructions; ++i)
-        {
-            if (m_pInstructions[i].address == addr)
-                return true;
-        }
-        return false;
-    }
-
-    ~CapstoneDisassemblerContext() { reset(); }
-
-}; // struct CapstoneDisassemblerContext
-//////////////////////////////////////////////////////////////////////////
-
-
-struct InstructionProcessor
+// ──────────────────────────────────────────────────────────────────────────
+// Memory reader: fetches bytes from UAE via the IVm interface.
+// ──────────────────────────────────────────────────────────────────────────
+struct MemReader
 {
-    void processInstruction(const cs_insn &insn, CodeChunk* pCurPage)
+    IVm::VM* vm = nullptr;
+    qtd::vector<uint8_t> buf;
+
+    void read(AddrRef addr, uint32_t nBytes)
     {
-        AddrRef insnAddr = (AddrRef)insn.address;
-        if (!pCurPage->isIn(insnAddr))
+        if (!vm || nBytes == 0)
             return;
-
-        if (!pCurPage)
+        buf.resize(nBytes);
+        for (uint32_t i = 0; i < nBytes; i += 2)
         {
-            assert(0);
-            return;
+            uint16_t w = vm->mem->getU16(addr + i);
+            buf[i]     = (uint8_t)(w >> 8);
+            if (i + 1 < nBytes)
+                buf[i + 1] = (uint8_t)(w & 0xFF);
         }
-
-        amD::cda::CodeItem *pCodeInfo = new amD::cda::CodeItem();
-        pCodeInfo->m_addr = (AddrRef)insn.address;
-        pCodeInfo->m_bytesCount = insn.size;
-        pCodeInfo->m_text = insn.mnemonic;
-        do
-        {
-            pCodeInfo->m_text += ' ';
-        } while (pCodeInfo->m_text.size() < 8);
-        pCodeInfo->m_text += insn.op_str;
-
-        pCodeInfo->m_bytesString.clear();
-        for (uint16_t b = 0; b < insn.size; ++b) {
-            char buf[4];
-            snprintf(buf, sizeof(buf), "%02X", insn.bytes[b]);
-            pCodeInfo->m_bytesString += buf;
-        }
-
-        int ind = (pCodeInfo->m_addr - pCurPage->m_addr) / 2;
-        assert(!pCurPage->m_codeItems[ind]);
-        pCurPage->m_codeItems[ind] = pCodeInfo;
+        // If nBytes is odd, the last byte was already written above as
+        // the low byte of the final word read — but we may have read one
+        // extra word.  That's fine; buf is sized to nBytes.
     }
 };
 
 
-void M68CodeDisassembler::requestM68DisasmLines(IVm::VM* vm, AddrRef startAddr, int nLines,
-    qtd::vector<amD::cda::Item*>* outItems, const AddrRef* pProvedInstructionStart)
+// ──────────────────────────────────────────────────────────────────────────
+// Iterator-based decoder:  uses cs_disasm_iter() which decodes ONE
+// instruction at a time into a single caller-owned cs_insn.  This avoids
+// cs_disasm()'s internal allocation of an cs_insn array, where a struct-
+// layout mismatch (the bundled header is newer than what the library
+// binary was built against) can corrupt every field after `id`.
+// ──────────────────────────────────────────────────────────────────────────
+static void decode_range(
+    csh handle, IVm::VM* vm,
+    AddrRef begAddr, uint32_t nBytes,
+    int maxItems,
+    qtd::vector<qtd::unique_ptr<CodeItem>>* outStorage,
+    qtd::vector<cda::Item*>* outItems)
+{
+    if (!vm || nBytes == 0 || maxItems <= 0 || !handle)
+        return;
+
+    MemReader mr;
+    mr.vm = vm;
+    mr.read(begAddr, nBytes);
+
+    cs_insn* insn = cs_malloc(handle);
+    if (!insn)
+        return;
+
+    const uint8_t* code     = mr.buf.data();
+    size_t         codeSize = mr.buf.size();
+    uint64_t       address  = begAddr;
+
+    while (codeSize > 0 && (int)outItems->size() < maxItems)
+    {
+        bool ok = cs_disasm_iter(handle, &code, &codeSize, &address, insn);
+        if (ok)
+        {
+            auto pItem = qtd::make_unique<CodeItem>();
+            pItem->m_addr       = (AddrRef)insn->address;
+            pItem->m_bytesCount = insn->size;
+            pItem->m_text       = insn->mnemonic;
+            // Pad mnemonic to fixed width for column alignment
+            while (pItem->m_text.size() < 8)
+                pItem->m_text += ' ';
+            pItem->m_text += insn->op_str;
+
+            // Bytes string — clamped to array bounds
+            pItem->m_bytesString.clear();
+            uint16_t nB = (insn->size <= sizeof(insn->bytes)) ? insn->size : (uint16_t)sizeof(insn->bytes);
+            for (uint16_t b = 0; b < nB; ++b)
+            {
+                char hex[4];
+                snprintf(hex, sizeof(hex), "%02X", insn->bytes[b]);
+                pItem->m_bytesString += hex;
+            }
+
+            outItems->push_back(pItem.get());
+            outStorage->push_back(qtd::move(pItem));
+        }
+        else
+        {
+            // Undecodable: advance by 2 bytes (one m68k word) and retry.
+            // Without SKIPDATA, cs_disasm_iter leaves code/size unchanged
+            // on failure, so we must advance manually.
+            if (codeSize < 2)
+                break;
+            code     += 2;
+            codeSize -= 2;
+            address  += 2;
+        }
+    }
+
+    cs_free(insn, 1);
+}
+
+
+// Check whether a forward decode from `start` produces an instruction at
+// `target`.  Used by the backward-walk anchor finder.
+static bool decode_hits_target(csh handle, IVm::VM* vm, AddrRef start, AddrRef target, AddrRef end)
+{
+    if (!handle || !vm || start >= end)
+        return false;
+
+    MemReader mr;
+    mr.vm = vm;
+    uint32_t nBytes = (uint32_t)(end - start) & ~1u;
+    mr.read(start, nBytes);
+
+    cs_insn* insn = cs_malloc(handle);
+    if (!insn)
+        return false;
+
+    const uint8_t* code     = mr.buf.data();
+    size_t         codeSize = mr.buf.size();
+    uint64_t       address  = start;
+    bool           found    = false;
+
+    while (codeSize > 0)
+    {
+        bool ok = cs_disasm_iter(handle, &code, &codeSize, &address, insn);
+        if (ok)
+        {
+            if ((AddrRef)insn->address == target)
+            {
+                found = true;
+                break;
+            }
+        }
+        else
+        {
+            if (codeSize < 2)
+                break;
+            code     += 2;
+            codeSize -= 2;
+            address  += 2;
+        }
+    }
+
+    cs_free(insn, 1);
+    return found;
+}
+
+
+void M68CodeDisassembler::requestM68DisasmLines(
+    IVm::VM* vm, AddrRef startAddr, int nLines,
+    qtd::vector<amD::cda::Item*>* outItems,
+    const AddrRef* pProvedInstructionStart)
 {
     outItems->clear();
+    m_curItems.clear();
 
-    AddrRef begAddrPre = qd::clamp_max(startAddr - g_chunkSize, startAddr);
-    AddrRef begAddr = (begAddrPre & ~g_chunkMask);
-    AddrRef endAddr = (startAddr + nLines * 2 + (g_chunkSize - 1)) & (~g_chunkMask);
+    if (!vm || nLines <= 0 || !m_pCapstone || !*m_pCapstone)
+        return;
 
-    constexpr uint32_t algn = g_chunkSize - 1;
-    DisasmContext dc;
-    dc.setMinMaxAddr(qd::clamp_max(startAddr - algn, startAddr), startAddr + nLines * 2 + algn);
+    csh handle = *m_pCapstone;
 
-    qd::optional<AddrRef> optAnchorAddr;
-    if (*pProvedInstructionStart && qd::is_in_10(*pProvedInstructionStart, begAddr, endAddr))
-        optAnchorAddr = *pProvedInstructionStart;
+    // Find a real instruction boundary to disassemble forward from.
+    AddrRef disasmStart = startAddr;
+    bool anchored = false;
 
-    dc.m_pPrevChunk = &requestCodeChunk(vm, begAddrPre);
-    dc.m_pCurrChunk = &requestCodeChunk(vm, begAddr);
-    assert(dc.m_pCurrChunk);
-
-    for (;;)
+    if (pProvedInstructionStart && *pProvedInstructionStart)
     {
-        if (!dc.m_pCurrChunk->m_bCodeValid)
+        AddrRef anchor = *pProvedInstructionStart;
+        if (anchor <= startAddr && (startAddr - anchor) <= g_maxAnchorBackGap)
         {
-            // disasm again changed code block
-            AddrRef startFrom = dc.m_pPrevChunk->getDisasmCodeValidAddr(-1);
-
-            CapstoneDisassemblerContext cpd(m_pCapstone);
-
-            // try to find valid instruction start address
-            for (int offset = 0; offset < 8; ++offset)
+            disasmStart = anchor;
+            anchored = true;
+        }
+        else if (anchor > startAddr && (anchor - startAddr) <= g_maxAnchorBackGap)
+        {
+            // Walk backward from the anchor to find a boundary at/below startAddr.
+            AddrRef goodAddr = anchor;
+            int iterations = 0;
+            while (goodAddr > startAddr && iterations < 64)
             {
-                cpd.disasm(vm, startFrom + offset, dc.m_pCurrChunk->m_addr + g_chunkSize + offset);
-                if (cpd.hasM68InstructionAddr(startFrom + offset))
+                bool found = false;
+                for (uint32_t back = 2; back <= g_maxOpSize && back <= goodAddr; back += 2)
+                {
+                    AddrRef tryStart = goodAddr - back;
+                    if (decode_hits_target(handle, vm, tryStart, goodAddr, goodAddr + 2))
+                    {
+                        goodAddr = tryStart;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
                     break;
+                ++iterations;
             }
-            dc.m_pCurrChunk->m_bCodeValid = true;
-
-            // fill chunk pages with instructions
-            InstructionProcessor proc;
-            for (size_t i = 0; i < cpd.m_nInstructions; ++i)
+            if (goodAddr <= startAddr)
             {
-                const cs_insn& curInsn = cpd.m_pInstructions[i];
-                if (curInsn.address < dc.m_pCurrChunk->m_addr)
-                    continue;
-                proc.processInstruction(curInsn, dc.m_pCurrChunk);
+                disasmStart = goodAddr;
+                anchored = true;
             }
         }
+    }
 
-        // copy CodeItems to output
-        for (CodeItem* curItem : dc.m_pCurrChunk->m_codeItems)
+    // Local probe if no anchor worked.
+    if (!anchored)
+    {
+        for (uint32_t back = 2; back <= g_maxOpSize && back <= startAddr; back += 2)
         {
-            if (!curItem || curItem->m_addr < startAddr)
-                continue;
-            outItems->push_back(curItem);
+            AddrRef tryStart = startAddr - back;
+            if (decode_hits_target(handle, vm, tryStart, startAddr, startAddr + g_maxOpSize * 2))
+            {
+                disasmStart = tryStart;
+                break;
+            }
         }
-        if ((int)outItems->size() >= nLines)
+    }
+
+    // Fallback: anchor itself.
+    if (disasmStart > startAddr && pProvedInstructionStart && *pProvedInstructionStart)
+    {
+        AddrRef anchor = *pProvedInstructionStart;
+        if (anchor >= startAddr)
+            disasmStart = anchor;
+    }
+
+    // Decode the range [disasmStart, disasmStart + neededBytes).
+    uint32_t prefixBytes = (startAddr > disasmStart) ? (uint32_t)(startAddr - disasmStart) : 0;
+    uint32_t neededBytes = prefixBytes + (uint32_t)nLines * 6u;
+    constexpr uint32_t maxNeededBytes = 64u * 1024u;
+
+    for (int attempt = 0; attempt < 6; ++attempt)
+    {
+        m_curItems.clear();
+        outItems->clear();
+
+        // Over-decode so we have enough items after filtering prefix.
+        int maxDecode = nLines + (int)(prefixBytes / 2) + 4;
+        decode_range(handle, vm, disasmStart, neededBytes, maxDecode, &m_curItems, outItems);
+
+        // Filter out prefix instructions (address < startAddr).
+        qtd::vector<cda::Item*> filtered;
+        for (cda::Item* pItem : *outItems)
+        {
+            if (pItem->m_addr >= startAddr)
+                filtered.push_back(pItem);
+            if ((int)filtered.size() >= nLines)
+                break;
+        }
+        *outItems = qtd::move(filtered);
+
+        if ((int)outItems->size() >= nLines || neededBytes >= maxNeededBytes)
             break;
 
-        dc.m_pPrevChunk = dc.m_pCurrChunk;
-        dc.m_pCurrChunk = &requestCodeChunk(vm, dc.m_pCurrChunk->m_addr + g_chunkSize);
+        neededBytes *= 2;
     }
 }
-
-
-void M68CodeDisassembler::destroy()
-{
-    SAFE_DELETE(m_pCapstone);
-}
-
-
-CodeChunk& M68CodeDisassembler::getOrCreateCodePage(AddrRef addr, bool* bOutPageWasFound)
-{
-    bool bWasfound = true;
-    uint16_t foundPageId = 0;
-    addr = addr & (~g_chunkMask);
-    if (!m_chunksQuadTree.querySingle(addr, &foundPageId))
-    {
-        // get last unused chunk
-        CodeChunk& curChunk = m_chunkUseHistory.back();
-        if (curChunk.m_bAddrValid)
-        {
-            m_chunksQuadTree.remove(curChunk.m_addr, curChunk.m_idx);
-            curChunk.reset(); // reuse old chunk
-        }
-        assert(!curChunk.m_addr && curChunk.m_idx);
-        assert(&m_disasmChunkStorage[curChunk.m_idx] == &curChunk && "not belongs to storage");
-        curChunk.m_addr = addr;
-        curChunk.m_bAddrValid = true;
-        m_chunksQuadTree.insert(curChunk.m_addr, curChunk.m_idx);
-        assert(m_chunksQuadTree.querySingle(addr, &foundPageId) && foundPageId == curChunk.m_idx);
-        foundPageId = curChunk.m_idx;
-        bWasfound = false;
-    }
-    assert(foundPageId != 0);
-    if (bOutPageWasFound)
-        *bOutPageWasFound = bWasfound;
-    CodeChunk& curChunk = m_disasmChunkStorage[foundPageId];
-    assert(curChunk.isIn(addr));
-    return curChunk;
-}
-
-
-amD::cda::CodeChunk& M68CodeDisassembler::requestCodeChunk(IVm::VM* vm, AddrRef addr)
-{
-    bool bExistChunk = false;
-    CodeChunk& curCodeChunk = getOrCreateCodePage(addr, &bExistChunk);
-    m_chunkUseHistory.splice(m_chunkUseHistory.begin(), curCodeChunk); // move page in used history to the front
-
-    const uint8_t* pRealMem = vm->mem->getRealAddr(curCodeChunk.m_addr);
-    if (!pRealMem)
-    {
-        curCodeChunk.m_bCodeValid = false;
-        curCodeChunk.m_bBytesValid = false;
-        return curCodeChunk;
-    }
-    if (!bExistChunk || memcmp(curCodeChunk.m_bytes.data(), pRealMem, g_chunkSize) != 0)
-    {
-        // has differences
-        curCodeChunk.removeCodeItems();
-        memcpy(curCodeChunk.m_bytes.data(), pRealMem, g_chunkSize);
-        curCodeChunk.m_bBytesValid = true;
-    }
-    return curCodeChunk;
-}
-
-
-void CodeChunk::removeCodeItems()
-{
-    for (cda::CodeItem*& info : m_codeItems)
-        SAFE_DELETE(info);
-    m_bCodeValid = false;
-}
-
-
-amD::AddrRef CodeChunk::getDisasmCodeValidAddr(int off /*= 0*/) const
-{
-    if (!m_bCodeValid)
-        return m_addr;
-    if (off < 0)
-    {
-        for (auto rIt = m_codeItems.rbegin(); rIt != m_codeItems.rend(); ++rIt)
-        {
-            const CodeItem* curItem = *rIt;
-            if (curItem)
-                return curItem->m_addr;
-        }
-    }
-    else
-    {
-        for (auto it = m_codeItems.begin(); it != m_codeItems.end(); ++it)
-        {
-            const CodeItem* curItem = *it;
-            if (curItem)
-                return curItem->m_addr;
-        }
-    }
-    return m_addr;
-}
-
 
 
 }; // namespace amD::cda

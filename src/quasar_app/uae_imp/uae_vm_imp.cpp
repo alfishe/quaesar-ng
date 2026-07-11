@@ -8,6 +8,9 @@
 #include <uae_lib/include/options.h>
 #include <uae_lib/include/memory.h>
 #include <uae_lib/include/newcpu.h>
+#include <uae_lib/include/mmu_common.h>
+#include <uae_lib/include/cpummu.h>
+#include <uae_lib/include/cpummu030.h>
 #include <keyboard.h>
 #include <inputdevice.h>
 #include <inputrecord.h>
@@ -36,7 +39,7 @@
 #include "qsr_operations.h"
 #include "quasar_app/quaesar.h"
 #include "uae_server_thread.h"
-
+#include <set>
 
 extern int vpos;
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
@@ -93,7 +96,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     } else if (args->cast_<amD::operation::DisasmTraceStepInto>()) {
         r = true;
         vm->setVmDebugMode(EVmDebugMode::Break);
-        pUae->execConsoleCmd("t");
+        if (pUae) pUae->execConsoleCmd("t");
 
     } else if (args->cast_<amD::operation::DebugTraceStart>()) {
         r = true;
@@ -104,13 +107,14 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 
     } else if (args->cast_<amD::operation::DisasmTraceStepOut>()) {
         r = true;
-        pUae->execConsoleCmd("z");
+        if (pUae) pUae->execConsoleCmd("z");
 
     } else if (args->cast_<amD::operation::CopperTraceStep>()) {
         r = true;
-        pUae->execConsoleCmd("ot");
+        if (pUae) pUae->execConsoleCmd("ot");
 
     } else if (auto p = args->cast_<amD::operation::DisasmToggleBreakpoint>()) {
+        if (!pUae) return EFlow::NO_RESULT;
         qtd::string cmd = qd::string_format("f %08x", (uint32_t)p->address);
         if (p->nBreakpoint >= 0)
             cmd += qd::string_format(" %i", p->nBreakpoint);
@@ -125,17 +129,23 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
             ::warpmode(2);  // on
         }
 
+    } else if (args->cast_<amD::operation::PauseEmulation>()) {
+        r = true;
+        vm->setVmDebugMode(EVmDebugMode::Break);
+
     } else if (args->cast_<amD::operation::VmEmuReset>()) {
         r = true;
         ::uae_reset(1, 1);
 
     } else if (auto p = args->cast_<amD::operation::CopperToggleBreakpoint>()) {
+        if (!pUae) return EFlow::NO_RESULT;
         r = true;
         qtd::string cmd = qd::string_format("ob %08x", (uint32_t)p->address);
         pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
 
     } else if (auto p = args->cast_<amD::operation::DebugWaitScanLines>()) {
+        if (!pUae) return EFlow::NO_RESULT;
         qtd::string cmd = qd::string_format("fs %i", p->waitScanLines);
         pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
@@ -144,25 +154,33 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
         r = true;
     } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
         r = true;
-        //         if (pUae->isWndAlwaysOnTop()) {
-        //             pUae->setWndAlwaysOnTop(false);
-        //         } else {
-        //             pUae->setWndAlwaysOnTop(true);
-        //         }
     }
     return r ? EFlow::STOP : EFlow::NO_RESULT;
 }
 
 
+// getScreenPixBuf — lock-free emulator framebuffer snapshot for the debugger.
+//
+// Returns m_pAmigaBuffer: a stable snapshot that the emulator writes at each
+// vsync boundary (see UaeServerThread::_lockUaeScreenTexBuf / _unlockUaeScreenTexBuf).
+//
+// The caller (debugger ScreenWnd) reads this WITHOUT acquiring m_UaeScrTextureMutex.
+// This is intentional and correct for a read-only consumer: reading the snapshot
+// mid-update may cause a harmless single-scanline tear, which is acceptable for
+// a debugger preview. Avoiding the mutex eliminates all contention with the main
+// window render path and the emulator thread.
+//
+// History: previously this returned raw vb->bufmem (UAE core's live render
+// buffer), which had worse tearing because the emulator writes to it
+// continuously throughout frame rendering, not just at vsync boundaries.
 void* UaeVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) {
-    vidbuf_description* vidinfo = &adisplays[mon_id].gfxvidinfo;
-    vidbuffer* vb = &vidinfo->drawbuffer;
-    if (!vb || !vb->bufmem)
+    UaeServerThread* pThread = UaeServerThread::get();
+    if (!pThread || !pThread->m_pAmigaBuffer)
         return nullptr;
-    *out_size_w = vb->outwidth;
-    *out_size_h = vb->outheight;
-    *pitch = vb->rowbytes;
-    return vb->bufmem;
+    *out_size_w = pThread->m_scrWidth;
+    *out_size_h = pThread->m_scrHeight;
+    *pitch = pThread->m_scrWidth * (int)sizeof(uint32_t);
+    return pThread->m_pAmigaBuffer;
 }
 
 
@@ -172,22 +190,27 @@ bool UaeVmImp::Blitter::isBlitterActive() const {
 
 
 void UaeVmImp::CustomRegs::fetch() {
-    size_t dump_len;
-    ::save_custom(&dump_len, (uae_u8*)regsData.data(), 1);
-    for (size_t i = 0; i < regsData.size(); ++i)
-        qd::swapBytes_<2>(&regsData[i]);
+    // Read custom register values directly from UAE's internal
+    // custom_storage[] array. This avoids memory_get_word() which
+    // dispatches through the custom bank and triggers hardware side
+    // effects (event scheduling, interrupt clears, etc.) causing
+    // "out of event2's!" crashes when called from the UI thread.
+    regsData[0] = 0;
+    regsData[1] = 0;
+    for (int i = 0; i < IVm::CustReg::_COUNT_; ++i) {
+        uint32_t addr = IVm::CustReg::cust_reg_data[i].addr;
+        regsData[i + data_offset] = ::custom_storage[(addr & 0x1FE) >> 1].value;
+    }
 }
 
 
 void UaeVmImp::CustomRegs::commit() {
-    eastl::fixed_vector<uint16_t, CustReg::_COUNT_ + data_offset, false> dst = {regsData.begin(), regsData.end()};
-    uint8_t* beg = (uint8_t*)dst.begin();
-    dst.erase((uint16_t*)(beg + 0x120), (uint16_t*)(beg + 0x180));
-    dst.erase((uint16_t*)(beg + 0x0A0), (uint16_t*)(beg + 0x0E0));
-
-    for (size_t i = 0; i < dst.size(); ++i)
-        qd::swapBytes_<2>(&dst[i]);
-    ::restore_custom((uae_u8*)dst.data());
+    // Write back via memory_put_word which properly dispatches through
+    // UAE's custom register write path (only safe when emulator is paused).
+    for (int i = 0; i < IVm::CustReg::_COUNT_; ++i) {
+        uint32_t addr = IVm::CustReg::cust_reg_data[i].addr;
+        ::memory_put_word(addr, regsData[i + data_offset]);
+    }
 }
 
 
@@ -212,15 +235,12 @@ void UaeVmImp::Emu::setDebugDmaMode(int p_mode) {
 void UaeVmImp::setVmDebugMode(EVmDebugMode debug_mode) {
     TSuper::setVmDebugMode(debug_mode);
     if (debug_mode == EVmDebugMode::Break) {
-        while (!instEmu.isDebugActivatedFull()) {
-            ::debugger_active = 0;
-            ::debugging = 0;
-            ::activate_debugger_new();
+        if (m_pUaeThread) {
+            ::activate_debugger_new_pc(0, 0xFFFFFFFF);
         }
     } else if (debug_mode == EVmDebugMode::Live) {
         if (m_pUaeThread)
             m_pUaeThread->execConsoleCmd("g");
-        ::debugger_active = 0;
     }
 }
 
@@ -238,6 +258,15 @@ int UaeVmImp::getHPos() {
 int UaeVmImp::getCurCycle() {
     int c = (int)((::get_cycles() - ::vsync_cycles) / CYCLE_UNIT);
     return c;
+}
+
+
+int UaeVmImp::getChipsetLevel() const {
+    if (::currprefs.chipset_mask & CSMASK_AGA)
+        return 2;  // AGA (A1200/A4000): Alice + Lisa
+    if (::currprefs.chipset_mask & (CSMASK_ECS_AGNUS | CSMASK_ECS_DENISE))
+        return 1;  // ECS (A500+/A600/A3000): Super Agnus + Super Denise
+    return 0;       // OCS (A1000/A500/A2000): Agnus + Denise
 }
 
 
@@ -286,18 +315,37 @@ void UaeVmImp::Floppy::setAdfPath(const qtd::string& v) {
 }
 
 
+// Snapshot all CPU registers from the live UAE ::regs global.
+// Called by fetchVmState() at the throttled rate (~15fps).
+// Getters below read from this snapshot, so widgets see stable values
+// between fetches instead of flickering at the emulator's execution rate.
+void UaeVmImp::Cpu::fetch() {
+    for (int i = 0; i < 8; i++) {
+        snap_regs_d[i] = m68k_dreg(::regs, i);
+        snap_regs_a[i] = m68k_areg(::regs, i);
+    }
+    snap_pc = ::regs.instruction_pc;
+    snap_intmask = ::regs.intmask;
+    snap_flg_z = GET_ZFLG();
+    snap_flg_c = GET_CFLG();
+    snap_flg_v = GET_VFLG();
+    snap_flg_n = GET_NFLG();
+    snap_flg_x = GET_XFLG();
+}
+
+
 bool UaeVmImp::Cpu::getFlg(ECpuFlg_ f) const {
     switch (f) {
         case IVm::CpuFlg_Z:
-            return GET_ZFLG();
+            return snap_flg_z;
         case IVm::CpuFlg_C:
-            return GET_CFLG();
+            return snap_flg_c;
         case IVm::CpuFlg_V:
-            return GET_VFLG();
+            return snap_flg_v;
         case IVm::CpuFlg_N:
-            return GET_NFLG();
+            return snap_flg_n;
         case IVm::CpuFlg_X:
-            return GET_XFLG();
+            return snap_flg_x;
         default:
             return false;
     }
@@ -305,22 +353,111 @@ bool UaeVmImp::Cpu::getFlg(ECpuFlg_ f) const {
 
 
 uint32_t UaeVmImp::Cpu::getRegA(int i) const {
-    return m68k_areg(::regs, i);
+    return snap_regs_a[i];
 }
 
 
 uint32_t UaeVmImp::Cpu::getRegD(int i) const {
-    return m68k_dreg(regs, i);
+    return snap_regs_d[i];
 }
 
 
 AddrRef UaeVmImp::Cpu::getPC() const {
-    return m68k_getpc();
+    return snap_pc;
 }
 
 
 int UaeVmImp::Cpu::getIntMask() const {
-    return regs.intmask;
+    return snap_intmask;
+}
+
+
+bool UaeVmImp::Cpu::isMmuEnabled() const {
+    if (::currprefs.mmu_model == 0) return false;
+    if (::currprefs.mmu_model == 68030) {
+        return (tc_030 & 0x80000000) != 0;
+    }
+    return ::regs.mmu_enabled != 0;
+}
+
+int UaeVmImp::Cpu::getCpuModel() const {
+    return ::currprefs.cpu_model;
+}
+
+void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats) const {
+    if (!isMmuEnabled()) return;
+    
+    // Safety check - avoid running if CPU isn't 68030/040/060
+    if (::currprefs.cpu_model < 68030) return;
+
+    std::set<uaecptr> seenPtrTables;
+    std::set<uaecptr> seenPageTables;
+
+    auto walk_table = [&](uaecptr root_ptr, bool super) {
+        if (outStats) outStats->numRootTables++;
+
+        const int ROOT_TABLE_SIZE = 128, PTR_TABLE_SIZE = 128, PAGE_TABLE_SIZE = 64;
+        const int ROOT_INDEX_SHIFT = 25, PTR_INDEX_SHIFT = 18;
+
+        for (int root_idx = 0; root_idx < ROOT_TABLE_SIZE; root_idx++) {
+            uae_u32 root_des = ::x_phys_get_long(root_ptr + root_idx * 4);
+            if ((root_des & 2) == 0) continue;
+
+            uaecptr root_log = root_idx << ROOT_INDEX_SHIFT;
+            uaecptr ptr_des_addr = root_des & MMU_ROOT_PTR_ADDR_MASK;
+
+            if (outStats && seenPtrTables.insert(ptr_des_addr).second) {
+                outStats->numPtrTables++;
+            }
+
+            for (int ptr_idx = 0; ptr_idx < PTR_TABLE_SIZE; ptr_idx++) {
+                uae_u32 ptr_des = ::x_phys_get_long(ptr_des_addr + ptr_idx * 4);
+                if ((ptr_des & 2) == 0) continue;
+
+                uaecptr ptr_log = root_log | (ptr_idx << PTR_INDEX_SHIFT);
+                uaecptr page_addr = ptr_des & (::mmu_pagesize_8k ? MMU_PTR_PAGE_ADDR_MASK_8 : MMU_PTR_PAGE_ADDR_MASK_4);
+
+                if (outStats && seenPageTables.insert(page_addr).second) {
+                    outStats->numPageTables++;
+                }
+
+                for (int page_idx = 0; page_idx < PAGE_TABLE_SIZE; page_idx++) {
+                    uae_u32 page_des = ::x_phys_get_long(page_addr + page_idx * 4);
+                    if ((page_des & 3) == 0) continue;
+                    if ((page_des & 3) == 2) {
+                        uae_u32 indirect_addr = page_des & MMU_PAGE_INDIRECT_MASK;
+                        page_des = ::x_phys_get_long(indirect_addr);
+                        if ((page_des & 3) == 0) continue;
+                    }
+
+                    uaecptr page_log = ptr_log | (page_idx << (::mmu_pagesize_8k ? 13 : 12));
+                    
+                    MmuPage mp;
+                    mp.logical = page_log;
+                    mp.physical = page_des & (::mmu_pagesize_8k ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
+                    mp.size = ::mmu_pagesize_8k ? 8192 : 4096;
+                    mp.flags = page_des;
+                    mp.cacheable = ((page_des & MMU_TTR_CACHE_MASK) >> MMU_TTR_CACHE_SHIFT) != 1;
+                    mp.writeProtected = (page_des & MMU_DES_WP) != 0;
+                    mp.superOnly = (page_des & MMU_DES_SUPER) != 0 || super;
+                    mp.modified = (page_des & MMU_DES_MODIFIED) != 0;
+                    
+                    outPages.push_back(mp);
+                }
+            }
+        }
+    };
+
+    walk_table(::regs.urp, false);
+    if (::regs.srp != ::regs.urp) {
+        walk_table(::regs.srp, true);
+    }
+
+    if (outStats) {
+        outStats->totalMemoryBytes = (outStats->numRootTables * 128 * 4) +
+                                     (outStats->numPtrTables * 128 * 4) +
+                                     (outStats->numPageTables * 64 * 4);
+    }
 }
 
 
@@ -351,6 +488,11 @@ bool UaeVmImp::Memory::getU16(AddrRef addr, uint16_t* out) {
 
 uint16_t UaeVmImp::Memory::getU16(AddrRef addr) {
     return (uint16_t)::memory_get_word(addr);
+}
+
+
+uint8_t UaeVmImp::Memory::getU8(AddrRef addr) {
+    return (uint8_t)::memory_get_byte(addr);
 }
 
 

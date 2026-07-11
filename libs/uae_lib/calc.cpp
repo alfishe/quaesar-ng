@@ -47,7 +47,7 @@ static TCHAR *parsedvaluess[MAX_VALUES];
 // 2            * / %           left to right
 // 3            + -             left to right
 // 4            =               right to left
-static int op_preced(const TCHAR c)
+static int op_preced(const unsigned char c)
 {
     switch(c)    {
         case 0xf0: case 0xf1: case 0xf2:
@@ -68,7 +68,7 @@ static int op_preced(const TCHAR c)
     return 0;
 }
  
-static bool op_left_assoc(const TCHAR c)
+static bool op_left_assoc(const unsigned char c)
 {
     switch(c)    {
         // left to right
@@ -83,7 +83,7 @@ static bool op_left_assoc(const TCHAR c)
     return false;
 }
  
-static unsigned int op_arg_count(const TCHAR c)
+static unsigned int op_arg_count(const unsigned char c)
 {
     switch(c)  {
         case '?':
@@ -101,9 +101,9 @@ static unsigned int op_arg_count(const TCHAR c)
     return 0;
 }
  
-#define is_operator(c)  ((c) == '+' || (c) == '-' || (c) == '/' || (c) == '*' || (c) == '!' || (c) == '%' || (c) == '=' || \
-                         (c) == '|' || (c) == '&' || (c) == '^' || (c) == '@' || (unsigned char)(c) == ('@' | 0x80) || (c) == '>' || (c) == '<' || (unsigned char)(c) == ('>' | 0x80) || (unsigned char)(c) == ('<' | 0x80) || \
-                         (c) == '?' || (c) == ':' || (unsigned char)(c) == 0xf0 || (unsigned char)(c) == 0xf1 || (unsigned char)(c) == 0xf2)
+#define is_operator(c)  ((unsigned char)(c) == '+' || (unsigned char)(c) == '-' || (unsigned char)(c) == '/' || (unsigned char)(c) == '*' || (unsigned char)(c) == '!' || (unsigned char)(c) == '%' || (unsigned char)(c) == '=' || \
+                         (unsigned char)(c) == '|' || (unsigned char)(c) == '&' || (unsigned char)(c) == '^' || (unsigned char)(c) == '@' || (unsigned char)(c) == ('@' | 0x80) || (unsigned char)(c) == '>' || (unsigned char)(c) == '<' || (unsigned char)(c) == ('>' | 0x80) || (unsigned char)(c) == ('<' | 0x80) || \
+                         (unsigned char)(c) == '?' || (unsigned char)(c) == ':' || (unsigned char)(c) == 0xf0 || (unsigned char)(c) == 0xf1 || (unsigned char)(c) == 0xf2)
 #define is_function(c)  (c >= 'A' && c <= 'Z')
 #define is_ident(c)     ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z'))
  

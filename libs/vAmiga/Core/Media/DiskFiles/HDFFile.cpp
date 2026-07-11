@@ -22,7 +22,7 @@ bool
 HDFFile::isCompatible(const fs::path &path)
 {
     auto suffix = util::uppercased(path.extension().string());
-    return suffix == ".HDF";
+    return suffix == ".HDF" || suffix == ".VHD" || suffix == ".IMG" || suffix == ".RAW" || HDR_ACCEPT_ALL;
 }
 
 bool
@@ -59,7 +59,7 @@ void
 HDFFile::init(const fs::path &path)
 {
     // Check size
-    if (isOversized(util::getSizeOfFile(path))) throw AppError(Fault::HDR_TOO_LARGE);
+    if (!HDR_ACCEPT_ALL && isOversized(util::getSizeOfFile(path))) throw AppError(Fault::HDR_TOO_LARGE);
     
     AnyFile::init(path);
 }
@@ -68,7 +68,7 @@ void
 HDFFile::init(const u8 *buf, isize len)
 {
     // Check size
-    if (isOversized(len)) throw AppError(Fault::HDR_TOO_LARGE);
+    if (!HDR_ACCEPT_ALL && isOversized(len)) throw AppError(Fault::HDR_TOO_LARGE);
 
     AnyFile::init(buf, len);
 }
@@ -136,9 +136,11 @@ HDFFile::getPartitionDescriptor(isize part) const
     if (auto pb = seekPB(part); pb) {
         
         // Extract information from the partition block
-        result.name           = util::createStr(pb + 37, 31);
+        isize nameLen = std::min(isize(pb[36]), isize(31));
+        result.name           = util::createStr(pb + 37, nameLen);
         result.flags          = R32BE(pb + 20);
         result.sizeBlock      = R32BE(pb + 132);
+        result.sectorPerBlock = R32BE(pb + 144);
         result.heads          = R32BE(pb + 140);
         result.sectors        = R32BE(pb + 148);
         result.reserved       = R32BE(pb + 152);

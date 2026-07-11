@@ -29,11 +29,12 @@ target_include_directories(VAmigaImpLib PUBLIC
 
 # Link required libraries
 target_link_libraries(VAmigaImpLib PRIVATE
+    VACore
     EASTL
     qd
     amDebugger
     imgui
-    VACore
+    uae_lib
 )
 
 #Whole archive option is needed to ensure that all windows are linked in the final binary

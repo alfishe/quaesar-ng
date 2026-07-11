@@ -93,6 +93,14 @@ static uae_u8* extrasndbuf;
 static int extrasndbufsize;
 static int extrasndbuffered;
 
+// Semaphore for audio-callback-driven frame synchronization.
+// The SDL audio callback posts this once per frame's worth of audio consumed,
+// signaling the emulation thread to compute the next frame.
+// This implements the same crystal-locked timing pattern as unreal-ng's
+// MainLoop (see NC_AUDIO_BUFFER_HALF_FULL).
+static SDL_sem* s_frame_sync_sem = NULL;
+static unsigned int s_consumed_since_post = 0;  // bytes consumed since last semaphore post
+
 int setup_sound(void) {
     sound_available = 1;
     return 1;
@@ -204,6 +212,9 @@ static void clearbuffer_sdl2(struct sound_data* sd) {
 
     SDL_LockAudioDevice(s->dev);
     memset(paula_sndbuffer, 0, sizeof paula_sndbuffer);
+    // Flush any queued audio data in push mode to prevent stale
+    // samples playing after a reset.
+    SDL_ClearQueuedAudio(s->dev);
     SDL_UnlockAudioDevice(s->dev);
 }
 
@@ -228,6 +239,24 @@ static void resume_audio_sdl2(struct sound_data* sd) {
     sound_dp* s = sd->data;
 
     clearbuffer(sd);
+
+    // Pre-fill pull buffer with ~3 frames of silence to build an initial
+    // reserve. Since emulation production rate matches audio consumption rate
+    // (crystal-locked), this margin persists indefinitely and absorbs
+    // occasional over-budget frames without starving the audio callback.
+    // 3 PAL frames * 3528 bytes/frame ≈ 10.5ms latency — imperceptible.
+    if (s->pullmode && s->pullbuffer) {
+        extern float fake_vblank_hz;
+        float hz = fake_vblank_hz > 0.1f ? fake_vblank_hz : 50.0f;
+        unsigned int bytes_per_frame = (unsigned int)(sd->freq * sd->samplesize / hz);
+        unsigned int prefill = bytes_per_frame * 3;
+        if (prefill > s->pullbuffermaxlen)
+            prefill = s->pullbuffermaxlen / 2;
+        s->pullbufferlen = prefill;
+        // Buffer is already zeroed by clearbuffer, so silence is pre-filled
+        s_consumed_since_post = 0;
+    }
+
     sd->waiting_for_buffer = 1;
     s->avg_correct = 0;
     s->cnt_correct = 0;
@@ -274,12 +303,25 @@ void set_volume(int volume, int mute) {
 static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) {
     sound_dp* s = sd->data;
 
+    static int s_push_log_throttle = 0;
+    static int s_overflow_cnt = 0;
+    extern uae_u32 timeframes;
+
     if (s->pullbufferlen + sd->sndbufsize > s->pullbuffermaxlen) {
-        write_log(_T("pull overflow! %d %d %d\n"), s->pullbufferlen, sd->sndbufsize, s->pullbuffermaxlen);
+        s_overflow_cnt++;
+        if (s_push_log_throttle <= 0) {
+            SDL_Log("AUDIO PULL OVERFLOW: cur=%u max=%u push=%d (count: %d, frame: %lu) - emulation producing faster than playback",
+                    s->pullbufferlen, s->pullbuffermaxlen, sd->sndbufsize,
+                    s_overflow_cnt, (unsigned long)timeframes);
+            s_push_log_throttle = 50;
+        }
         s->pullbufferlen = 0;
         gui_data.sndbuf_status = 1;
-    } else
+    } else {
         gui_data.sndbuf_status = 0;
+    }
+    if (s_push_log_throttle > 0) s_push_log_throttle--;
+
     memcpy(s->pullbuffer + s->pullbufferlen, sndbuffer, sd->sndbufsize);
     s->pullbufferlen += sd->sndbufsize;
 
@@ -301,38 +343,60 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
     if (sd->sndbufsize > SND_MAX_BUFFER)
         sd->sndbufsize = SND_MAX_BUFFER;
     sd->samplesize = ch * 16 / 8;
-    // TODO: Verify
-    s->pullmode = 1;  // currprefs.sound_pullmode;
+    // Use pull/callback mode for crystal-locked frame synchronization.
+    // The SDL audio callback runs on the audio thread at the sound card's
+    // crystal rate and signals the emulation thread when the buffer needs
+    // more data, providing sub-frame-precision timing.
+    s->pullmode = 1;
 
     SDL_AudioSpec want = {}, have;
     want.freq = freq;
     want.format = AUDIO_S16SYS;
     want.channels = (uint8_t)ch;
-    want.samples = (uint16_t)s->framesperbuffer;
 
     if (s->pullmode) {
+        // Small device buffer for frequent callbacks (~86 Hz at 44100 Hz).
+        // This gives fine-grained frame-sync signaling: the callback fires
+        // roughly every 0.58 PAL frames, enabling precise audio-locked pacing.
+        want.samples = 512;
         want.callback = sdl2_audio_callback;
         want.userdata = sd;
+    } else {
+        // Push mode (fallback): 3x device buffer for jitter resilience.
+        want.samples = (uint16_t)(s->framesperbuffer * 3);
     }
 
+    // Allow SDL to adjust samples if the hardware requires a different size
+    const int allow_change = s->pullmode ? SDL_AUDIO_ALLOW_SAMPLES_CHANGE : 0;
     if (s->dev == 0)
-        s->dev = SDL_OpenAudioDevice(devname, 0, &want, &have, 0);
+        s->dev = SDL_OpenAudioDevice(devname, 0, &want, &have, allow_change);
     if (s->dev == 0) {
         write_log("Failed to open selected SDL2 device for audio: %s, retrying with default device\n", SDL_GetError());
-        s->dev = SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0);
+        s->dev = SDL_OpenAudioDevice(nullptr, 0, &want, &have, allow_change);
         if (s->dev == 0) {
             write_log("Failed to open default SDL2 device for audio: %s\n", SDL_GetError());
             return 0;
         }
     }
 
+    // Create (or reset) the frame-sync semaphore for callback-driven timing
     if (s->pullmode) {
-        s->pullbuffermaxlen = sd->sndbufsize * 2;
+        if (s_frame_sync_sem == NULL)
+            s_frame_sync_sem = SDL_CreateSemaphore(0);
+        else
+            while (SDL_SemTryWait(s_frame_sync_sem) == 0) {}  // drain stale posts
+        s_consumed_since_post = 0;  // reset rate limiter
+    }
+
+    if (s->pullmode) {
+        // Generous pull buffer: 8x Paula buffer to absorb timing jitter
+        // between per-frame Paula pushes and smooth callback draining.
+        s->pullbuffermaxlen = sd->sndbufsize * 8;
         s->pullbuffer = xcalloc(uae_u8, s->pullbuffermaxlen);
         s->pullbufferlen = 0;
     }
-    write_log("SDL2: CH=%d, FREQ=%d '%s' buffer %d/%d (%s)\n", ch, freq, sound_devices[index]->name, s->sndbufsize,
-              s->framesperbuffer, !s->pullmode ? _T("push") : _T("pull"));
+    write_log("SDL2: CH=%d, FREQ=%d '%s' buffer %d/%d device_samples=%d (%s)\n", ch, freq, sound_devices[index]->name, s->sndbufsize,
+              s->framesperbuffer, have.samples, !s->pullmode ? _T("push") : _T("pull"));
     clearbuffer(sd);
 
     return 1;
@@ -373,6 +437,7 @@ void resume_sound_device(struct sound_data* sd) {
 }
 
 int get_default_audio_device() {
+#if 0
     int device_idx = -1;
 #if SDL_VERSION_ATLEAST(2, 24, 0)
     SDL_AudioSpec spec;
@@ -388,6 +453,9 @@ int get_default_audio_device() {
     }
 #endif
     return device_idx;
+#else
+    return 0; // The first device (index 0) is now 'System Default'
+#endif
 }
 
 static int open_sound() {
@@ -403,6 +471,14 @@ static int open_sound() {
     two anyway).  */
     size >>= 2;
     size &= ~63;
+
+    // Pull/callback mode: use a small Paula buffer (~1 PAL frame = 882 samples)
+    // so audio is pushed to the pull buffer every frame, not in bursts every
+    // ~4.6 frames. This is critical for smooth callback-driven frame sync —
+    // bursty production causes the pull buffer to oscillate between full and
+    // empty, producing regular choppiness.
+    if (size > 1024)
+        size = 1024;
 
     sdp->softvolume = -1;
     int num = enumerate_sound_devices();
@@ -545,12 +621,44 @@ void restart_sound_buffer() {
     // restart_sound_buffer2(sdp);
 }
 
+
+// Audio-callback-driven frame sync (pull/callback mode).
+// Waits on the semaphore posted by sdl2_audio_callback when the pull buffer
+// drops below 50%. This locks emulation frame timing to the sound card
+// crystal oscillator, providing sub-frame precision.
+// max_wait_ms: maximum time to block in milliseconds.
+//   20 = one PAL frame (standard pacing timeout).
+// Returns: 0 = proceed with frame, -1 = fallback to wall clock.
+int audio_callback_sync_wait_ms(int max_wait_ms)
+{
+    if (!have_sound || sdp->deactive || sdp->paused || sdp->reset)
+        return -1;
+    sound_dp* s = sdp->data;
+    if (!s || !s->pullmode || s->dev == 0)
+        return -1;
+    if (!s_frame_sync_sem)
+        return -1;
+
+    // Wait for the audio callback to signal that one frame's worth of audio
+    // has been consumed by the sound card crystal.
+    int timeout_ms = max_wait_ms;
+    if (timeout_ms < 0 || timeout_ms > 20)
+        timeout_ms = 20;
+    SDL_SemWaitTimeout(s_frame_sync_sem, timeout_ms);
+
+    // Drain any additional posts to prevent semaphore value buildup.
+    while (SDL_SemTryWait(s_frame_sync_sem) == 0) {}
+
+    return 0;  // proceed with next frame
+}
+
 static void finish_sound_buffer_sdl2_push(struct sound_data* sd, uae_u16* sndbuffer) {
     sound_dp* s = sd->data;
     if (sd->mute) {
         memset(sndbuffer, 0, sd->sndbufsize);
-        s->silence_written++;  // In push mode no sound gen means no audio push so this might not incremented frequently
+        s->silence_written++;
     }
+
     SDL_QueueAudio(s->dev, sndbuffer, sd->sndbufsize);
 }
 
@@ -777,31 +885,51 @@ void finish_sound_buffer() {
 int enumerate_sound_devices() {
     if (!num_sound_devices) {
         write_log("Enumerating SDL2 playback devices...\n");
-        num_sound_devices = SDL_GetNumAudioDevices(SDL_FALSE);
-        write_log("Detected %d sound playback devices\n", num_sound_devices);
-        for (int i = 0; i < num_sound_devices && i < MAX_SOUND_DEVICES; i++) {
+        int sdl_num = SDL_GetNumAudioDevices(SDL_FALSE);
+        write_log("Detected %d sound playback devices\n", sdl_num);
+        
+        sound_devices[0] = xcalloc(struct sound_device, 1);
+        sound_devices[0]->id = 0;
+        sound_devices[0]->cfgname = my_strdup("System Default");
+        sound_devices[0]->type = SOUND_DEVICE_SDL2;
+        sound_devices[0]->name = nullptr;
+        sound_devices[0]->alname = my_strdup("0");
+        num_sound_devices = 1;
+
+        for (int i = 0; i < sdl_num && num_sound_devices < MAX_SOUND_DEVICES; i++) {
             const char* devname = SDL_GetAudioDeviceName(i, SDL_FALSE);
-            write_log("Sound playback device %d: %s\n", i, devname);
-            sound_devices[i] = xcalloc(struct sound_device, 1);
-            sound_devices[i]->id = i;
-            sound_devices[i]->cfgname = my_strdup(devname);
-            sound_devices[i]->type = SOUND_DEVICE_SDL2;
-            sound_devices[i]->name = my_strdup(devname);
-            sound_devices[i]->alname = my_strdup(std::to_string(i).c_str());
+            write_log("Sound playback device %d: %s\n", num_sound_devices, devname);
+            sound_devices[num_sound_devices] = xcalloc(struct sound_device, 1);
+            sound_devices[num_sound_devices]->id = num_sound_devices;
+            sound_devices[num_sound_devices]->cfgname = my_strdup(devname);
+            sound_devices[num_sound_devices]->type = SOUND_DEVICE_SDL2;
+            sound_devices[num_sound_devices]->name = my_strdup(devname);
+            sound_devices[num_sound_devices]->alname = my_strdup(std::to_string(num_sound_devices).c_str());
+            num_sound_devices++;
         }
 
         write_log("Enumerating SDL2 recording devices...\n");
-        num_record_devices = SDL_GetNumAudioDevices(SDL_TRUE);
-        write_log("Detected %d sound recording devices\n", num_record_devices);
-        for (int i = 0; i < num_record_devices && i < MAX_SOUND_DEVICES; i++) {
+        int sdl_rec_num = SDL_GetNumAudioDevices(SDL_TRUE);
+        write_log("Detected %d sound recording devices\n", sdl_rec_num);
+
+        record_devices[0] = xcalloc(struct sound_device, 1);
+        record_devices[0]->id = 0;
+        record_devices[0]->cfgname = my_strdup("System Default");
+        record_devices[0]->type = SOUND_DEVICE_SDL2;
+        record_devices[0]->name = nullptr;
+        record_devices[0]->alname = my_strdup("0");
+        num_record_devices = 1;
+
+        for (int i = 0; i < sdl_rec_num && num_record_devices < MAX_SOUND_DEVICES; i++) {
             const char* devname = SDL_GetAudioDeviceName(i, SDL_TRUE);
-            write_log("Sound recording device %d: %s\n", i, devname);
-            record_devices[i] = xcalloc(struct sound_device, 1);
-            record_devices[i]->id = i;
-            record_devices[i]->cfgname = my_strdup(devname);
-            record_devices[i]->type = SOUND_DEVICE_SDL2;
-            record_devices[i]->name = my_strdup(devname);
-            record_devices[i]->alname = my_strdup(std::to_string(i).c_str());
+            write_log("Sound recording device %d: %s\n", num_record_devices, devname);
+            record_devices[num_record_devices] = xcalloc(struct sound_device, 1);
+            record_devices[num_record_devices]->id = num_record_devices;
+            record_devices[num_record_devices]->cfgname = my_strdup(devname);
+            record_devices[num_record_devices]->type = SOUND_DEVICE_SDL2;
+            record_devices[num_record_devices]->name = my_strdup(devname);
+            record_devices[num_record_devices]->alname = my_strdup(std::to_string(num_record_devices).c_str());
+            num_record_devices++;
         }
 
         write_log(_T("Enumeration end\n"));
@@ -869,9 +997,29 @@ void master_sound_volume(int dir) {
     config_changed = 1;
 }
 
-// Audio callback function
+// Rate-limited frame sync: posts the semaphore once per frame's worth of
+// audio consumed by the sound card. This converts the ~86 Hz callback rate
+// into exactly 50 Hz (PAL) or 60 Hz (NTSC) frame-sync signals.
+
+static void post_frame_sync_if_needed(const sound_data* sd) {
+    // Bytes of audio consumed per emulated video frame
+    extern float fake_vblank_hz;
+    float hz = fake_vblank_hz > 0.1f ? fake_vblank_hz : 50.0f;
+    unsigned int bytes_per_frame = (unsigned int)(sd->freq * sd->samplesize / hz);
+    if (bytes_per_frame < 1)
+        return;
+
+    // Use while loop: if a single callback consumed multiple frames' worth
+    // of audio (e.g., large device buffer), post multiple times to catch up.
+    while (s_consumed_since_post >= bytes_per_frame) {
+        s_consumed_since_post -= bytes_per_frame;
+        if (s_frame_sync_sem)
+            SDL_SemPost(s_frame_sync_sem);
+    }
+}
+
 void sdl2_audio_callback(void* userdata, Uint8* stream, int len) {
-    const sound_data* sd = static_cast<sound_data*>(userdata);
+    sound_data* sd = static_cast<sound_data*>(userdata);
     sound_dp* s = sd->data;
 
     if (!s->stream_initialised || sd->mute) {
@@ -881,23 +1029,46 @@ void sdl2_audio_callback(void* userdata, Uint8* stream, int len) {
         s->stream_initialised = 1;
     }
 
-    if (!s->framesperbuffer || sdp->deactive)
+    if (!s->framesperbuffer || sdp->deactive) {
+        memset(stream, 0, len);
         return;
+    }
 
     if (s->pullbufferlen <= 0) {
+        // Underrun: no audio data available — output silence
+        memset(stream, 0, len);
         gui_data.sndbuf_status = -1;
+        // Still accumulate consumed bytes so the frame-sync rate stays correct
+        s_consumed_since_post += (unsigned int)len;
+        // Signal emulation if a full frame's worth of audio has been consumed
+        post_frame_sync_if_needed(sd);
         return;
     }
 
-    const unsigned int bytes_to_copy = s->framesperbuffer * sd->samplesize;
-    if (sd->mute == 0 && bytes_to_copy > 0) {
-        memcpy(stream, s->pullbuffer, bytes_to_copy);
-    }
+    // Copy min(len, pullbufferlen) bytes from pull buffer to SDL stream
+    unsigned int to_copy = (unsigned int)len;
+    if (to_copy > s->pullbufferlen)
+        to_copy = s->pullbufferlen;
 
-    if (bytes_to_copy < s->pullbufferlen) {
-        memmove(s->pullbuffer, s->pullbuffer + bytes_to_copy, s->pullbufferlen - static_cast<size_t>(bytes_to_copy));
-    }
-    s->pullbufferlen -= bytes_to_copy;
+    if (sd->mute == 0 && to_copy > 0)
+        memcpy(stream, s->pullbuffer, to_copy);
+    // Fill remainder with silence if pull buffer was shorter than requested
+    if (to_copy < (unsigned int)len)
+        memset(stream + to_copy, 0, len - to_copy);
+
+    // Shift remaining data in pull buffer
+    if (to_copy < s->pullbufferlen)
+        memmove(s->pullbuffer, s->pullbuffer + to_copy, s->pullbufferlen - to_copy);
+    s->pullbufferlen -= to_copy;
+
+    // Update buffer status for UI
+    gui_data.sndbuf = (int)(1000.0f * s->pullbufferlen) / s->pullbuffermaxlen;
+
+    // Rate-limit semaphore posts to one per frame.
+    // The callback fires at ~86 Hz but we need exactly 50 (PAL) or 60 (NTSC)
+    // posts per second. Each post triggers one frame computation.
+    s_consumed_since_post += to_copy;
+    post_frame_sync_if_needed(sd);
 }
 
 int sound_get_silence() {

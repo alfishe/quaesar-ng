@@ -3,7 +3,7 @@
 #include <amDebugger/debuggerOps.h>
 #include <amDebugger/ui/uiStyle.h>
 #include <amDebugger/vm/vmInterface.h>
-#include <capstone/capstone.h>
+#include "capstone/capstone.h"
 #include "qd/stl/string.h"
 #include "qd/stl/vector.h"
 #include <qd/imGui/imGui.h>
@@ -68,6 +68,8 @@ void DisassemblyView::drawContentImp()
             m_addrViewExtraStart = m_mustViewAddr;
             m_nMustViewAddrDesiredLine = g_extraScrollLines;
             m_bSnapViewPc = false;
+            m_bViewNeedsAdjust = true;
+            m_nAdjustAttempts = 0;
         }
         else
             m_viewBaseAddr.reset();
@@ -82,7 +84,12 @@ void DisassemblyView::drawContentImp()
     ImGui::SameLine();
     ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
     ImGui::SameLine();
-    if (ImGui::Button("PC") || (m_prevRegPc != regPc))
+
+    AddrRef regPc = vm->cpu->getPC();
+    bool bPcChanged = (m_prevRegPc != regPc);
+    m_prevRegPc = regPc;
+
+    if (ImGui::Button("PC") || (m_bSnapViewPc && bPcChanged))
     {
         m_viewBaseAddr.reset();
         m_bSnapViewPc = true;
@@ -93,8 +100,9 @@ void DisassemblyView::drawContentImp()
             m_nMustViewAddrDesiredLine = (int)m_nPrevLineCount / 2; // center of disasm
             m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - m_nMustViewAddrDesiredLine * 8u, m_mustViewAddr);
         }
+        m_bViewNeedsAdjust = true;
+        m_nAdjustAttempts = 0;
     }
-    m_prevRegPc = regPc;
 
     float disWndSizeY = ImGui::GetWindowHeight() - 64.f;
     float lineSizeY = ImGui::GetFrameHeightWithSpacing();
@@ -103,138 +111,209 @@ void DisassemblyView::drawContentImp()
 
     int nLinesReq = (int)ceilf(disWndSizeY / lineSizeY) + g_extraScrollLines * 2;
 
-    // request cached disasm lines
+    // Window resize changes the number of visible lines
+    if (nLinesReq != m_nPrevLinesReq)
+    {
+        m_nPrevLinesReq = nLinesReq;
+        m_bViewNeedsAdjust = true;
+        m_nAdjustAttempts = 0;
+    }
+
+    // request cached disasm lines — ONLY re-fetch when inputs changed.
+    // This is the key fix for the pause-stability issue: when UAE is paused,
+    // regPc, m_addrViewExtraStart, and nLinesReq don't change between frames,
+    // so the cache stays valid and the widget renders identical content
+    // without rebuilding capstone output or the ImGui table rows.
     cda::M68CodeDisassembler* pCodeServer = &cda::M68CodeDisassembler::get();
     AddrRef topViewAddr = m_viewBaseAddr ? *m_viewBaseAddr : regPc;
-    pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, &topViewAddr);
+    // Anchor on the real CPU PC (always a genuine instruction boundary) if we are snapped to PC.
+    // If not snapped, don't anchor, so we decode exactly from the requested address.
+    const AddrRef* pAnchor = m_bSnapViewPc ? &regPc : nullptr;
+    AddrRef anchorVal = pAnchor ? *pAnchor : (AddrRef)-1;
+    {
+        bool bCacheHit = m_bDisasmValid
+            && m_lastDisasmStart == m_addrViewExtraStart
+            && m_lastDisasmLines == nLinesReq
+            && m_lastDisasmAnchor == anchorVal;
+        if (!bCacheHit) {
+            pCodeServer->requestM68DisasmLines(vm, m_addrViewExtraStart, nLinesReq, &m_vDisasmLines, pAnchor);
 
-    static float row_min_height = 0.0f; // for auto height
-    int flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable |
-        ImGuiTableFlags_SizingFixedFit; // | ImGuiTableFlags_ScrollY;
+#ifndef NDEBUG
+            // Sanity: verify addresses are monotonically increasing.
+            // If they're not, the disassembler or memory layer has a bug.
+            for (size_t k = 1; k < m_vDisasmLines.size(); ++k)
+            {
+                if (m_vDisasmLines[k]->m_addr < m_vDisasmLines[k - 1]->m_addr)
+                {
+                    qd::logErr("disasm: non-monotonic address at idx %zu: %08X < %08X",
+                        k, (uint32_t)m_vDisasmLines[k]->m_addr, (uint32_t)m_vDisasmLines[k-1]->m_addr);
+                    break;
+                }
+            }
+#endif
+
+            m_lastDisasmStart  = m_addrViewExtraStart;
+            m_lastDisasmLines  = nLinesReq;
+            m_lastDisasmAnchor = anchorVal;
+            m_bDisasmValid = true;
+        }
+    }
 
     int nReqLine = find_disasm_addr_line_idx(m_vDisasmLines, m_mustViewAddr);
     int nDrawStartLine = (nReqLine >= 0) ? nReqLine : 0;
 
-    // Disasm Ctrl
+    // Disassembly table with proper scrolling and clipper-based rendering.
+    // The old code lacked ScrollY and used a crude nDrawStartLine hack to
+    // skip rows, which left empty TableNextRow entries that confused ImGui's
+    // row layout and caused text overlap / visual garbage.
+    int flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg |
+        ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollY;
+
     if (ImGui::BeginTable("##disassembly", 4, flags, ImVec2(0, disWndSizeY)))
     {
-        ImGui::TableSetupColumn(nullptr/*"##breakpoint"*/,
-            ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder, 8.f);
-        ImGui::TableSetupColumn(nullptr/*"##address"*/);
-        ImGui::TableSetupColumn(nullptr/*"##bytes"*/);
-        ImGui::TableSetupColumn(nullptr/*"##OpCodes"*/);
+        ImGui::TableSetupColumn("##bp",
+            ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoResize, 16.f);
+        ImGui::TableSetupColumn("##addr", ImGuiTableColumnFlags_WidthFixed, 76.f);
+        ImGui::TableSetupColumn("##bytes", ImGuiTableColumnFlags_WidthFixed, 96.f);
+        ImGui::TableSetupColumn("##asm", ImGuiTableColumnFlags_WidthStretch);
         ImGui::TableHeadersRow();
 
         qd::InlineString strAddr, strTmp;
 
         const BreakpointsSortedList& bpList = dbg->getBreakpointsSorted();
+        const int nTotalLines = (int)m_vDisasmLines.size();
 
-        for (size_t i = (size_t)nDrawStartLine; i < m_vDisasmLines.size(); ++i)
+        ImGuiListClipper clipper;
+        clipper.Begin(nTotalLines);
+        while (clipper.Step())
         {
-            const cda::Item& entry = *m_vDisasmLines[i];
-            ImGui::TableNextRow(ImGuiTableRowFlags_None, row_min_height);
-
-            AddrRef curAddr = (uint32_t)entry.m_addr;
-            if (!ImGui::IsItemVisible())
-                continue;
-            m_addrViewEnd = curAddr;
-
-            ImGui::PushID(curAddr);
-            ImGui::TableSetColumnIndex(0);
-
-            if (curAddr == topViewAddr)
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, uiGetColorU(UiStyle::DisasmWnd_PcCursor));
-
-            // col:breakpoint
-            strTmp = " ";
-            const amD::Breakpoint* curBp;
-            curBp = bpList.getBpByAddr(curAddr, EReg::PC);
-            if (curBp)
+            for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i)
             {
-                strTmp = curBp->enabled ? "0" : "O";
-            }
-            if (ImGui::Selectable(strTmp.c_str(), false, 0, ImVec2(0, row_min_height)))
-            {
-                operation::DisasmToggleBreakpoint p;
-                p.address = curAddr;
-                p.reg = EReg::PC;
-                dbg->applyOperationMsgProcImp(&p);
-            }
-            ImGui::TableNextColumn();
+                const cda::Item& entry = *m_vDisasmLines[i];
+                ImGui::TableNextRow();
 
-            // col:addr
-            bool isRowSelected = false;
-            qd::string_format_inplace(strAddr, "%08X", (uint32_t)curAddr);
-            ImGuiSelectableFlags selectableFlags =
-                ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
-            ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::DisasmWnd_Addr));
-            if (ImGui::Selectable(strAddr.c_str(), isRowSelected, selectableFlags, ImVec2(0, row_min_height)))
-            {
-            }
-            ImGui::PopStyleColor();
-            ImGui::TableNextColumn();
+                AddrRef curAddr = (uint32_t)entry.m_addr;
 
-            // col:code bytes
-            ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_OpCodeBytes), "%s", entry.m_bytesString.c_str());
-            ImGui::TableNextColumn();
-            // col:instr
-            if (cda::CodeItem *pCodeItem = entry.cast_<cda::CodeItem>())
-            {
-                ImGui::TextUnformatted(pCodeItem->m_text.c_str());
+                // Track view end from the last visible row.
+                if (i == clipper.DisplayEnd - 1)
+                    m_addrViewEnd = curAddr;
+
+                // Use row index for unique PushID — avoids ImGui ID conflicts
+                // that occurred when using addresses (e.g. duplicate data bytes
+                // decoded via SKIPDATA could produce same-address pseudo-insns).
+                ImGui::PushID(i);
+
+                // col 0: breakpoint
+                ImGui::TableSetColumnIndex(0);
+                if (curAddr == topViewAddr)
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0,
+                        uiGetColorU(UiStyle::DisasmWnd_PcCursor));
+
+                strTmp = " ";
+                if (const amD::Breakpoint* curBp = bpList.getBpByAddr(curAddr, EReg::PC))
+                    strTmp = curBp->enabled ? "0" : "O";
+                if (ImGui::Selectable(strTmp.c_str(), false))
+                {
+                    operation::DisasmToggleBreakpoint p;
+                    p.address = curAddr;
+                    p.reg = EReg::PC;
+                    dbg->applyOperationMsgProcImp(&p);
+                }
+
+                // col 1: address
+                ImGui::TableNextColumn();
+                qd::string_format_inplace(strAddr, "%08X", (uint32_t)curAddr);
+                ImGui::PushStyleColor(ImGuiCol_Text, uiGetColorU(UiStyle::DisasmWnd_Addr));
+                ImGui::TextUnformatted(strAddr.c_str());
+                ImGui::PopStyleColor();
+
+                // col 2: code bytes
+                ImGui::TableNextColumn();
+                ImGui::TextColored(uiGetColorF(UiStyle::DisasmWnd_OpCodeBytes),
+                    "%s", entry.m_bytesString.c_str());
+
+                // col 3: instruction text
+                ImGui::TableNextColumn();
+                if (cda::CodeItem* pCodeItem = entry.cast_<cda::CodeItem>())
+                    ImGui::TextUnformatted(pCodeItem->m_text.c_str());
+
+                ImGui::PopID();
             }
-            //ImGui::TableNextColumn();
-            ImGui::PopID();
         }
+        clipper.End();
+
+        // Scroll so the target line is visible (g_extraScrollLines from top).
+        if (nReqLine >= 0 && m_bViewNeedsAdjust)
+        {
+            float lineH = ImGui::GetTextLineHeightWithSpacing();
+            float targetY = qd::max(0.f, (nReqLine - g_extraScrollLines) * lineH);
+            float curScrollY = ImGui::GetScrollY();
+            if (targetY < curScrollY || targetY > curScrollY + ImGui::GetWindowHeight() * 0.5f)
+                ImGui::SetScrollY(targetY);
+        }
+
         ImGui::EndTable();
     }
 
-    // scroll disasm wnd
+    // scroll disasm wnd via mouse wheel — adjusts m_addrViewExtraStart
+    // to fetch a new address range, rather than scrolling within the table.
     if (ImGui::IsItemHovered(0))
     {
         const float wheel = g.IO.MouseWheel;
-        if (wheel != 0.0f /*&& ImGui::TestKeyOwner(wheel_key, ImGui::GetItemID()) &&*/ )
+        if (wheel != 0.0f)
         {
-            if (m_bSnapViewPc)
-            {
-                if (qd::is_in_10(regPc, m_addrViewExtraStart, m_addrViewEnd))
-                    m_bSnapViewPc = false;
-            }
+            if (m_bSnapViewPc && qd::is_in_10(regPc, m_addrViewExtraStart, m_addrViewEnd))
+                m_bSnapViewPc = false;
 
             if (wheel > 0)
-            { // SCROLL DOWN (MWHEEL:FORWARD )
-                if (nReqLine > 1)
-                {
-                    m_addrViewExtraStart = qd::clamp_max(m_addrViewExtraStart - cda::g_maxOpSize, m_addrViewExtraStart);
-                    m_nMustViewAddrDesiredLine = nReqLine - 1;
-                    m_mustViewAddr = m_vDisasmLines[nReqLine - 1]->m_addr;
-                }
-                //else //assert(0);
+            { // SCROLL DOWN (MWHEEL: FORWARD)
+                m_addrViewExtraStart = qd::clamp_max(m_addrViewExtraStart - cda::g_maxOpSize, m_addrViewExtraStart);
             }
             else
             { // SCROLL UP (MWHEEL: BACKWARD)
-                m_mustViewAddr = m_vDisasmLines[nReqLine + 1]->m_addr;
+                m_addrViewExtraStart = m_addrViewExtraStart + cda::g_maxOpSize;
             }
-            //qd::logDebug("Wheel:%f", wheel);
+            m_bViewNeedsAdjust = true;
+            m_nAdjustAttempts = 0;
+            m_bDisasmValid = false; // force re-fetch with new start address
         }
-        //ImGui::SetKeyOwner(wheel_key, ImGui::GetItemID());
     }
 
-    if (!m_vDisasmLines.empty())
+    // View position adjustment — ONLY when something changed.
+    // This gate prevents the per-frame feedback loop that caused address drift:
+    // the adjustment would fire every frame even when paused, modifying
+    // m_addrViewExtraStart, which changed the disasm output next frame,
+    // which triggered another adjustment, etc.
+    if (m_bViewNeedsAdjust && !m_vDisasmLines.empty())
     {
-        if (nReqLine < 0)
-            m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - cda::g_maxOpSize, m_mustViewAddr);
+        bool bAdjusted = false;
 
-        else if (m_nMustViewAddrDesiredLine < g_extraScrollLines)
+        if (nReqLine < 0)
         {
-            // request little more next time
-            m_addrViewExtraStart = qd::clamp_max(m_addrViewExtraStart - cda::g_maxOpSize, m_addrViewExtraStart);
-            m_nMustViewAddrDesiredLine = g_extraScrollLines + 1;
+            // Target address not in current view — recenter on it.
+            m_addrViewExtraStart = qd::clamp_max(m_mustViewAddr - cda::g_maxOpSize, m_mustViewAddr);
+            bAdjusted = true;
         }
-        else if (nReqLine > g_extraScrollLines)
+        else if (nReqLine > g_extraScrollLines + 1)
+        {
+            // Target is too far down in the list — shift the fetch start
+            // address up so the target lands near the top of the next fetch.
             m_addrViewExtraStart = m_vDisasmLines[nReqLine - g_extraScrollLines]->m_addr;
+            bAdjusted = true;
+        }
+
+        if (!bAdjusted || ++m_nAdjustAttempts >= m_nMaxAdjustAttempts)
+            m_bViewNeedsAdjust = false;
+
+        if (bAdjusted && m_addrViewExtraStart != m_lastDisasmStart)
+            m_bDisasmValid = false;
     }
+
     m_nPrevLineCount = (int)m_vDisasmLines.size();
-    m_vDisasmLines.clear();
+    // NOTE: do NOT clear m_vDisasmLines here. The pointers are owned by
+    // M68CodeDisassembler::m_curItems, which stays alive until the next
+    // requestM68DisasmLines() call. Keeping the vector allows the cache
+    // check to skip re-fetching when nothing changed (paused state).
 }
 
 
