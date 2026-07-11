@@ -94,7 +94,7 @@ debugflag MFM_DEBUG       = 0;
 debugflag FS_DEBUG        = 0;
 
 // Hard Drives
-debugflag HDR_ACCEPT_ALL  = 0;
+int HDR_ACCEPT_ALL  = 0;
 debugflag HDR_FS_LOAD_ALL = 0;
 debugflag WT_DEBUG        = 0;
 

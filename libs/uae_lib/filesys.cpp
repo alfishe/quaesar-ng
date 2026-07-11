@@ -7100,14 +7100,6 @@ static uae_u32 REGPARAM2 exter_int_helper(TrapContext *ctx)
 					return 7;
 				}
 
-				case 7: /* CallInTrapContext */
-				{
-					UAE_TRAP_FUNC func = (UAE_TRAP_FUNC)read_comm_pipe_pvoid_blocking(&native2amiga_pending);
-					if (func)
-						func(ctx);
-					return 0; // Return 0 because we don't expect the Amiga loop to do a specific register set after this
-				}
-
 				default:
 				write_log(_T("exter_int_helper: unknown native action %X\n"), cmd);
 				break;

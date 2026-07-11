@@ -1457,6 +1457,7 @@ static void audio_event_reset (void)
 
 void audio_deactivate (void)
 {
+	write_log(_T("AUDIO DEACTIVATE: frame=%lu PC=%08x\n"), (unsigned long)timeframes, M68K_GETPC);
 	gui_data.sndbuf_status = 3;
 	gui_data.sndbuf = 0;
 	audio_work_to_do = 0;
@@ -2002,10 +2003,18 @@ void audio_state_machine (void)
 	events_schedule ();
 }
 
+static int s_audio_reset_log_throttle = 0;
+
 void audio_reset (void)
 {
 	int i;
 	struct audio_channel_data *cdp;
+
+	if (s_audio_reset_log_throttle <= 0) {
+		write_log(_T("AUDIO RESET: frame=%lu restore=%d\n"), (unsigned long)timeframes, isrestore() ? 1 : 0);
+		s_audio_reset_log_throttle = 50;
+	}
+	if (s_audio_reset_log_throttle > 0) s_audio_reset_log_throttle--;
 
 #ifdef AHI
 	ahi_close_sound ();
@@ -2096,6 +2105,7 @@ void check_prefs_changed_audio (void)
 	if (sound_available) {
 		ch = sound_prefs_changed ();
 		if (ch > 0) {
+			write_log(_T("AUDIO prefs changed (major): frame=%lu\n"), (unsigned long)timeframes);
 #ifdef AVIOUTPUT
 			AVIOutput_Restart(true);
 #endif

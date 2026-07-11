@@ -455,7 +455,9 @@ void VAmServerThread::onVAmigaThreadMain() {
 
         // Bypass hardcoded geometry limitations (e.g. max 16 heads or 504MB size limits)
         // By default vAmiga will refuse to mount disks like the 30GB OS 3.2.3 VHD with 32 heads
+#ifndef NDEBUG
         vamiga::HDR_ACCEPT_ALL = 1;
+#endif
 
         for (int i = 0; i < ext_cfg.num_hds; i++) {
             if (ext_cfg.hd_paths[i]) {

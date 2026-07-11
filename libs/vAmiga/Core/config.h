@@ -160,7 +160,7 @@ extern debugflag MFM_DEBUG;
 extern debugflag FS_DEBUG;
 
 // Hard Drives
-extern debugflag HDR_ACCEPT_ALL;
+extern int HDR_ACCEPT_ALL;
 extern debugflag HDR_FS_LOAD_ALL;
 extern debugflag WT_DEBUG;
 
