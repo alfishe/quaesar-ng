@@ -1,3 +1,13 @@
+# IDE / AI
+.vs
+.gemini
+.claude
+.cursor
+.antigravity
+.qoder
+.codex
+
+# Build
 output
 build
 **/cmake-build-*
