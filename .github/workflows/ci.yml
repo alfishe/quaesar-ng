@@ -17,7 +17,7 @@ jobs:
         autoappend: [ {flag: OFF, name: NoAppendExtn} ] # By default the NFD_PORTAL mode does not append extensions, because it breaks some features of the portal
         gcc-version: [11, 12, 13]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install GCC ${{ matrix.gcc-version }}
       run: |
@@ -60,7 +60,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Install Clang ${{ matrix.clang-version }}
       run: |
@@ -88,7 +88,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Uninstall existing cmake (if any)
       run: brew uninstall cmake || true
@@ -107,7 +107,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup MSBuild path
       uses: microsoft/setup-msbuild@v2
