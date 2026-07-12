@@ -49,15 +49,13 @@ jobs:
           mkdir package
           cp quaesar package/
           cp default_layout.ini package/ || true
-          cd package && tar czf ../quaesar-linux.tar.gz *
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
           name: quaesar-linux
-          path: quaesar-linux.tar.gz
+          path: package/
           retention-days: 7
-          compression-level: 0
 
   build-windows-msvc:
     runs-on: windows-2022
@@ -84,15 +82,13 @@ jobs:
           mkdir package
           copy quaesar.exe package\
           copy default_layout.ini package\
-          Compress-Archive -Path package\* -DestinationPath quaesar-windows-msvc.zip
 
       - name: Upload Windows MSVC artifact
         uses: actions/upload-artifact@v4
         with:
           name: quaesar-windows-msvc
-          path: quaesar-windows-msvc.zip
+          path: package\
           retention-days: 7
-          compression-level: 0
 
   build-windows-mingw:
     runs-on: windows-latest
@@ -123,7 +119,7 @@ jobs:
         shell: msys2 {0}
         run: cmake --build build --parallel
 
-      - name: Copy dependencies
+      - name: Package
         shell: msys2 {0}
         run: |
           mkdir package
@@ -131,17 +127,12 @@ jobs:
           cp default_layout.ini package/ || true
           cp /mingw64/bin/SDL2.dll package/ 2>/dev/null || true
 
-      - name: Package
-        shell: pwsh
-        run: Compress-Archive -Path package\* -DestinationPath quaesar-windows-mingw.zip
-
       - name: Upload Windows MinGW artifact
         uses: actions/upload-artifact@v4
         with:
           name: quaesar-windows-mingw
-          path: quaesar-windows-mingw.zip
+          path: package/
           retention-days: 7
-          compression-level: 0
 
   build-macos-arm64:
     runs-on: macos-14
@@ -168,15 +159,13 @@ jobs:
           mkdir package
           cp quaesar package/
           cp default_layout.ini package/ || true
-          cd package && tar czf ../quaesar-macos-arm64.tar.gz *
 
       - name: Upload macOS ARM64 artifact
         uses: actions/upload-artifact@v4
         with:
           name: quaesar-macos-arm64
-          path: quaesar-macos-arm64.tar.gz
+          path: package/
           retention-days: 7
-          compression-level: 0
 
   release:
     needs: [build-linux, build-windows-msvc, build-windows-mingw, build-macos-arm64]
@@ -198,10 +187,19 @@ jobs:
       - name: Prepare release files
         run: |
           mkdir -p release
-          cp artifacts/quaesar-linux/quaesar-linux.tar.gz release/
-          cp artifacts/quaesar-windows-msvc/quaesar-windows-msvc.zip release/
-          cp artifacts/quaesar-windows-mingw/quaesar-windows-mingw.zip release/
-          cp artifacts/quaesar-macos-arm64/quaesar-macos-arm64.tar.gz release/
+          
+          # Package Linux
+          tar czf release/quaesar-linux.tar.gz -C artifacts/quaesar-linux .
+          
+          # Package Windows MSVC
+          (cd artifacts/quaesar-windows-msvc && zip -r ../../release/quaesar-windows-msvc.zip .)
+          
+          # Package Windows MinGW
+          (cd artifacts/quaesar-windows-mingw && zip -r ../../release/quaesar-windows-mingw.zip .)
+          
+          # Package macOS
+          tar czf release/quaesar-macos-arm64.tar.gz -C artifacts/quaesar-macos-arm64 .
+          
           ls -la release/
 
       - name: Generate checksums
