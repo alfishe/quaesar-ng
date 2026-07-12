@@ -1,0 +1,282 @@
+name: Release Build
+
+on:
+  push:
+    branches:
+      - dbg-dev
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    container:
+      image: debian:bookworm-slim
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates build-essential cmake ninja-build libsdl2-dev libgtk-3-dev pkg-config tar
+          git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DNFD_PORTAL=OFF
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Package
+        run: |
+          mkdir package
+          cp quaesar package/
+          cp default_layout.ini package/ || true
+          cd package && tar czf ../quaesar-linux.tar.gz *
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quaesar-linux
+          path: quaesar-linux.tar.gz
+          retention-days: 7
+          compression-level: 0
+
+  build-windows-msvc:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Package
+        run: |
+          mkdir package
+          copy quaesar.exe package\
+          copy default_layout.ini package\
+          Compress-Archive -Path package\* -DestinationPath quaesar-windows-msvc.zip
+
+      - name: Upload Windows MSVC artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quaesar-windows-msvc
+          path: quaesar-windows-msvc.zip
+          retention-days: 7
+          compression-level: 0
+
+  build-windows-mingw:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          cache: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-SDL2
+
+      - name: Configure CMake
+        shell: msys2 {0}
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build
+        shell: msys2 {0}
+        run: cmake --build build --parallel
+
+      - name: Copy dependencies
+        shell: msys2 {0}
+        run: |
+          mkdir package
+          cp quaesar.exe package/
+          cp default_layout.ini package/ || true
+          cp /mingw64/bin/SDL2.dll package/ 2>/dev/null || true
+
+      - name: Package
+        shell: pwsh
+        run: Compress-Archive -Path package\* -DestinationPath quaesar-windows-mingw.zip
+
+      - name: Upload Windows MinGW artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quaesar-windows-mingw
+          path: quaesar-windows-mingw.zip
+          retention-days: 7
+          compression-level: 0
+
+  build-macos-arm64:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: brew install sdl2 cmake ninja
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_OSX_ARCHITECTURES=arm64
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Package
+        run: |
+          mkdir package
+          cp quaesar package/
+          cp default_layout.ini package/ || true
+          cd package && tar czf ../quaesar-macos-arm64.tar.gz *
+
+      - name: Upload macOS ARM64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quaesar-macos-arm64
+          path: quaesar-macos-arm64.tar.gz
+          retention-days: 7
+          compression-level: 0
+
+  release:
+    needs: [build-linux, build-windows-msvc, build-windows-mingw, build-macos-arm64]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/dbg-dev' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          cp artifacts/quaesar-linux/quaesar-linux.tar.gz release/
+          cp artifacts/quaesar-windows-msvc/quaesar-windows-msvc.zip release/
+          cp artifacts/quaesar-windows-mingw/quaesar-windows-mingw.zip release/
+          cp artifacts/quaesar-macos-arm64/quaesar-macos-arm64.tar.gz release/
+          ls -la release/
+
+      - name: Generate checksums
+        run: |
+          cd release
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Create Rolling Snapshot
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/dbg-dev'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(git describe --tags --long --always 2>/dev/null || echo "0.1.0-$(git rev-list --count HEAD)-g$(git rev-parse --short HEAD)")
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+
+          gh release delete continuous --yes --cleanup-tag 2>/dev/null || true
+
+          gh release create continuous \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Snapshot $VERSION" \
+            --notes "## Rolling Snapshot Build
+
+          **Version:** \`$VERSION\`
+          **Commit:** [\`$SHORT_SHA\`](https://github.com/${{ github.repository }}/commit/$GITHUB_SHA)
+          **Built:** $DATE
+
+          > ⚠️ **This is a development snapshot.** It may contain bugs and incomplete features.
+          > This release is automatically replaced on each new snapshot build.
+
+          ### Downloads
+
+          | Platform | File |
+          |----------|------|
+          | Linux (x64) | \`quaesar-linux.tar.gz\` |
+          | Windows MSVC (x64) | \`quaesar-windows-msvc.zip\` |
+          | Windows MinGW (x64) | \`quaesar-windows-mingw.zip\` |
+          | macOS Apple Silicon (ARM64) | \`quaesar-macos-arm64.tar.gz\` |
+
+          ### Verify Downloads
+          \`\`\`bash
+          sha256sum -c SHA256SUMS.txt
+          \`\`\`" \
+            release/*
+
+      - name: Create Milestone Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: quaesar ${{ github.ref_name }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+          generate_release_notes: true
+          files: |
+            release/quaesar-linux.tar.gz
+            release/quaesar-windows-msvc.zip
+            release/quaesar-windows-mingw.zip
+            release/quaesar-macos-arm64.tar.gz
+            release/SHA256SUMS.txt
+          body: |
+            ## quaesar ${{ github.ref_name }}
+
+            ### Downloads
+
+            | Platform | File |
+            |----------|------|
+            | Linux (x64) | \`quaesar-linux.tar.gz\` |
+            | Windows MSVC (x64) | \`quaesar-windows-msvc.zip\` |
+            | Windows MinGW (x64) | \`quaesar-windows-mingw.zip\` |
+            | macOS Apple Silicon (ARM64) | \`quaesar-macos-arm64.tar.gz\` |
+
+            ### Verify Downloads
+            \`\`\`bash
+            sha256sum -c SHA256SUMS.txt
+            \`\`\`
