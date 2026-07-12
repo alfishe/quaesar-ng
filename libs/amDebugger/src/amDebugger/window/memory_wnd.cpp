@@ -687,11 +687,12 @@ static const char* format_binary(const uint8_t* buf, int width) {
 
 void MemoryHexViewWnd::draw_preview_data(size_t addr, const uint8_t* mem_data, size_t mem_size, ImGuiDataType data_type,
                                    DataFormat data_format, char* out_buf, size_t out_buf_size) const {
-    uint8_t buf[8];
+    uint8_t buf[8] = {0};
     size_t elem_size = data_type_get_size(data_type);
     size_t size = addr + elem_size > mem_size ? mem_size - addr : elem_size;
+    if (size > sizeof(buf)) size = sizeof(buf);
     if (read_fn)
-        for (int i = 0, n = (int)size; i < n; ++i)
+        for (size_t i = 0; i < size; ++i)
             buf[i] = read_fn(mem_data, addr + i);
     else
         memcpy(buf, mem_data + addr, size);

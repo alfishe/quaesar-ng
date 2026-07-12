@@ -70,7 +70,9 @@
 #define strcasecmp _tcsicmp
 #endif
 
+#ifndef _stscanf
 #define _stscanf sscanf
+#endif
 
 // 01 = host events
 // 02 = joystick
