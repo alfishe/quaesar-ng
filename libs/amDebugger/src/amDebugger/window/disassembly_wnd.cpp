@@ -159,7 +159,6 @@ void DisassemblyView::drawContentImp()
     }
 
     int nReqLine = find_disasm_addr_line_idx(m_vDisasmLines, m_mustViewAddr);
-    int nDrawStartLine = (nReqLine >= 0) ? nReqLine : 0;
 
     // Disassembly table with proper scrolling and clipper-based rendering.
     // The old code lacked ScrollY and used a crude nDrawStartLine hack to

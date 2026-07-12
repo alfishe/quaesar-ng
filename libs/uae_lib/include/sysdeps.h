@@ -196,6 +196,11 @@ typedef char uae_char;
 
 typedef struct { uae_u8 RGB[3]; } RGB;
 
+#if defined(_MSC_VER) && !defined(ssize_t)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 #if SIZEOF_SHORT == 2
 typedef unsigned short uae_u16;
 typedef short uae_s16;

@@ -119,8 +119,6 @@ void QsrMainClientWndApp::renderAppPart() {
     // Always clear the backbuffer first (SDL docs: backbuffer is undefined after Present)
     SDL_RenderClear(m_hWndRenderer);
 
-    bool hasNewEmuFrame = false;
-
     // render VM display texture screen
     IVmClientPlayer* pVmPlayer = getVmProvider();
     if (!pVmPlayer)

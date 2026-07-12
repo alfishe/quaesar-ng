@@ -102,7 +102,9 @@ public:
         return const_cast<qsr::VmPlayersSelector&>(m_vmSelector);
     }
 
-    int getCurVmPlayerId() const { return m_nCurVmPlayterId; }
+    int getCurVmPlayerId() const {
+        return m_nCurVmPlayterId;
+    }
 
 private:
     void _drawGuiMenus();

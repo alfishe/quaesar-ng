@@ -699,7 +699,8 @@ static int hdf_write_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, i
             if (tmp) {
                 memset(tmp, 0xa1, tmplen);
                 hdf_seek(hfd, offset);
-                size_t n = fread(tmp, 1, tmplen, hfd->handle->h); (void)n;
+                size_t n = fread(tmp, 1, tmplen, hfd->handle->h);
+                (void)n;
                 if (memcmp(hfd->cache, tmp, tmplen) != 0 || outlen != (size_t)len)
                     gui_message(_T("\"%s\"\n\nblock zero write failed!"), name);
                 xfree(tmp);
