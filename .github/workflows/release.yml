@@ -47,6 +47,7 @@ jobs:
       - name: Package
         run: |
           mkdir package
+          cp -r data package/
           cp quaesar package/
           cp default_layout.ini package/ || true
 
@@ -80,6 +81,7 @@ jobs:
       - name: Package
         run: |
           mkdir package
+          xcopy /E /I data package\data
           copy quaesar.exe package\
           copy default_layout.ini package\
 
@@ -123,6 +125,7 @@ jobs:
         shell: msys2 {0}
         run: |
           mkdir package
+          cp -r data package/
           cp quaesar.exe package/
           cp default_layout.ini package/ || true
           cp /mingw64/bin/SDL2.dll package/ 2>/dev/null || true
@@ -160,6 +163,7 @@ jobs:
       - name: Package
         run: |
           mkdir package
+          cp -r data package/
           cp quaesar package/
           cp default_layout.ini package/ || true
 
