@@ -180,6 +180,9 @@ if (ENABLE_CODE_GENERATION)
 endif()
 
 target_link_libraries(uae_lib zlibstatic)
+if (WIN32)
+    target_link_libraries(uae_lib ws2_32)
+endif()
 
 
 #-------------------------------------------------------------------------------------------

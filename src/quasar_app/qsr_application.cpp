@@ -60,8 +60,7 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
             if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
                 IVm::VM* vm = pVmPlayer->getVm();
                 if (vm) {
-                    m_pDebuggerApp->getDbg()->setDbgServiceBridge(
-                        amD::create_shared_connection(vm));
+                    m_pDebuggerApp->getDbg()->setDbgServiceBridge(amD::create_shared_connection(vm));
                     m_bDebuggerVmConnected = true;
                 }
             }
@@ -73,8 +72,7 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
         // applied exactly once below, queued onto the emulator thread.
         amD::Debugger* pDbg = m_pDebuggerApp->getDbg();
         if (pDbg) {
-            if (args->cast_<amD::operation::PauseEmulation>() ||
-                args->cast_<amD::operation::DebugTraceStart>())
+            if (args->cast_<amD::operation::PauseEmulation>() || args->cast_<amD::operation::DebugTraceStart>())
                 pDbg->setDebugMode(IVm::EVmDebugMode::Break);
             else if (args->cast_<amD::operation::DebugTraceContinue>())
                 pDbg->setDebugMode(IVm::EVmDebugMode::Live);
@@ -135,8 +133,7 @@ void QuaesarApplication::onFrameUpdate(float dt, float time) {
         if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
             IVm::VM* vm = pVmPlayer->getVm();
             if (vm) {
-                m_pDebuggerApp->getDbg()->setDbgServiceBridge(
-                    amD::create_shared_connection(vm));
+                m_pDebuggerApp->getDbg()->setDbgServiceBridge(amD::create_shared_connection(vm));
                 m_bDebuggerVmConnected = true;
             }
         }

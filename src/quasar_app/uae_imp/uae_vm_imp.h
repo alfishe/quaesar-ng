@@ -7,8 +7,8 @@
 #include <amDebugger/vm/emuDefs.h>
 #include <amDebugger/vm/memory.h>
 #include <amDebugger/vm/vmInterface.h>
-#include <qd/base/baseTypes.h>
 #include <qd/base/Color.h>
+#include <qd/base/baseTypes.h>
 
 
 FORWARD_DECLARATION_1(UaeServerThread);

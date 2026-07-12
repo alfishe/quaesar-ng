@@ -28,6 +28,7 @@
 #undef bug
 // clang-format on
 #include <SDL_log.h>
+#include <set>
 #include "SDL_stdinc.h"  // strlcpy
 #include "amDebugger/debuggerOps.h"
 #include "amDebugger/debuggerWndApp.h"
@@ -39,7 +40,6 @@
 #include "qsr_operations.h"
 #include "quasar_app/quaesar.h"
 #include "uae_server_thread.h"
-#include <set>
 
 extern int vpos;
 extern bool get_custom_color_reg(int colreg, uae_u8* r, uae_u8* g, uae_u8* b);
@@ -96,7 +96,8 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
     } else if (args->cast_<amD::operation::DisasmTraceStepInto>()) {
         r = true;
         vm->setVmDebugMode(EVmDebugMode::Break);
-        if (pUae) pUae->execConsoleCmd("t");
+        if (pUae)
+            pUae->execConsoleCmd("t");
 
     } else if (args->cast_<amD::operation::DebugTraceStart>()) {
         r = true;
@@ -107,14 +108,17 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 
     } else if (args->cast_<amD::operation::DisasmTraceStepOut>()) {
         r = true;
-        if (pUae) pUae->execConsoleCmd("z");
+        if (pUae)
+            pUae->execConsoleCmd("z");
 
     } else if (args->cast_<amD::operation::CopperTraceStep>()) {
         r = true;
-        if (pUae) pUae->execConsoleCmd("ot");
+        if (pUae)
+            pUae->execConsoleCmd("ot");
 
     } else if (auto p = args->cast_<amD::operation::DisasmToggleBreakpoint>()) {
-        if (!pUae) return EFlow::NO_RESULT;
+        if (!pUae)
+            return EFlow::NO_RESULT;
         qtd::string cmd = qd::string_format("f %08x", (uint32_t)p->address);
         if (p->nBreakpoint >= 0)
             cmd += qd::string_format(" %i", p->nBreakpoint);
@@ -138,14 +142,16 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
         ::uae_reset(1, 1);
 
     } else if (auto p = args->cast_<amD::operation::CopperToggleBreakpoint>()) {
-        if (!pUae) return EFlow::NO_RESULT;
+        if (!pUae)
+            return EFlow::NO_RESULT;
         r = true;
         qtd::string cmd = qd::string_format("ob %08x", (uint32_t)p->address);
         pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
 
     } else if (auto p = args->cast_<amD::operation::DebugWaitScanLines>()) {
-        if (!pUae) return EFlow::NO_RESULT;
+        if (!pUae)
+            return EFlow::NO_RESULT;
         qtd::string cmd = qd::string_format("fs %i", p->waitScanLines);
         pUae->execConsoleCmd(std::move(cmd));
         return qd::EFlow::SUCCESS;
@@ -173,7 +179,7 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
 // History: previously this returned raw vb->bufmem (UAE core's live render
 // buffer), which had worse tearing because the emulator writes to it
 // continuously throughout frame rendering, not just at vsync boundaries.
-void* UaeVmImp::Blitter::getScreenPixBuf(int mon_id, int* out_size_w, int* out_size_h, int* pitch) {
+void* UaeVmImp::Blitter::getScreenPixBuf(int /*mon_id*/, int* out_size_w, int* out_size_h, int* pitch) {
     UaeServerThread* pThread = UaeServerThread::get();
     if (!pThread || !pThread->m_pAmigaBuffer)
         return nullptr;
@@ -266,7 +272,7 @@ int UaeVmImp::getChipsetLevel() const {
         return 2;  // AGA (A1200/A4000): Alice + Lisa
     if (::currprefs.chipset_mask & (CSMASK_ECS_AGNUS | CSMASK_ECS_DENISE))
         return 1;  // ECS (A500+/A600/A3000): Super Agnus + Super Denise
-    return 0;       // OCS (A1000/A500/A2000): Agnus + Denise
+    return 0;      // OCS (A1000/A500/A2000): Agnus + Denise
 }
 
 
@@ -373,7 +379,8 @@ int UaeVmImp::Cpu::getIntMask() const {
 
 
 bool UaeVmImp::Cpu::isMmuEnabled() const {
-    if (::currprefs.mmu_model == 0) return false;
+    if (::currprefs.mmu_model == 0)
+        return false;
     if (::currprefs.mmu_model == 68030) {
         return (tc_030 & 0x80000000) != 0;
     }
@@ -385,23 +392,27 @@ int UaeVmImp::Cpu::getCpuModel() const {
 }
 
 void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outStats) const {
-    if (!isMmuEnabled()) return;
-    
+    if (!isMmuEnabled())
+        return;
+
     // Safety check - avoid running if CPU isn't 68030/040/060
-    if (::currprefs.cpu_model < 68030) return;
+    if (::currprefs.cpu_model < 68030)
+        return;
 
     std::set<uaecptr> seenPtrTables;
     std::set<uaecptr> seenPageTables;
 
     auto walk_table = [&](uaecptr root_ptr, bool super) {
-        if (outStats) outStats->numRootTables++;
+        if (outStats)
+            outStats->numRootTables++;
 
         const int ROOT_TABLE_SIZE = 128, PTR_TABLE_SIZE = 128, PAGE_TABLE_SIZE = 64;
         const int ROOT_INDEX_SHIFT = 25, PTR_INDEX_SHIFT = 18;
 
         for (int root_idx = 0; root_idx < ROOT_TABLE_SIZE; root_idx++) {
             uae_u32 root_des = ::x_phys_get_long(root_ptr + root_idx * 4);
-            if ((root_des & 2) == 0) continue;
+            if ((root_des & 2) == 0)
+                continue;
 
             uaecptr root_log = root_idx << ROOT_INDEX_SHIFT;
             uaecptr ptr_des_addr = root_des & MMU_ROOT_PTR_ADDR_MASK;
@@ -412,7 +423,8 @@ void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outSta
 
             for (int ptr_idx = 0; ptr_idx < PTR_TABLE_SIZE; ptr_idx++) {
                 uae_u32 ptr_des = ::x_phys_get_long(ptr_des_addr + ptr_idx * 4);
-                if ((ptr_des & 2) == 0) continue;
+                if ((ptr_des & 2) == 0)
+                    continue;
 
                 uaecptr ptr_log = root_log | (ptr_idx << PTR_INDEX_SHIFT);
                 uaecptr page_addr = ptr_des & (::mmu_pagesize_8k ? MMU_PTR_PAGE_ADDR_MASK_8 : MMU_PTR_PAGE_ADDR_MASK_4);
@@ -423,15 +435,17 @@ void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outSta
 
                 for (int page_idx = 0; page_idx < PAGE_TABLE_SIZE; page_idx++) {
                     uae_u32 page_des = ::x_phys_get_long(page_addr + page_idx * 4);
-                    if ((page_des & 3) == 0) continue;
+                    if ((page_des & 3) == 0)
+                        continue;
                     if ((page_des & 3) == 2) {
                         uae_u32 indirect_addr = page_des & MMU_PAGE_INDIRECT_MASK;
                         page_des = ::x_phys_get_long(indirect_addr);
-                        if ((page_des & 3) == 0) continue;
+                        if ((page_des & 3) == 0)
+                            continue;
                     }
 
                     uaecptr page_log = ptr_log | (page_idx << (::mmu_pagesize_8k ? 13 : 12));
-                    
+
                     MmuPage mp;
                     mp.logical = page_log;
                     mp.physical = page_des & (::mmu_pagesize_8k ? MMU_PAGE_ADDR_MASK_8 : MMU_PAGE_ADDR_MASK_4);
@@ -441,7 +455,7 @@ void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outSta
                     mp.writeProtected = (page_des & MMU_DES_WP) != 0;
                     mp.superOnly = (page_des & MMU_DES_SUPER) != 0 || super;
                     mp.modified = (page_des & MMU_DES_MODIFIED) != 0;
-                    
+
                     outPages.push_back(mp);
                 }
             }
@@ -454,8 +468,7 @@ void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outSta
     }
 
     if (outStats) {
-        outStats->totalMemoryBytes = (outStats->numRootTables * 128 * 4) +
-                                     (outStats->numPtrTables * 128 * 4) +
+        outStats->totalMemoryBytes = (outStats->numRootTables * 128 * 4) + (outStats->numPtrTables * 128 * 4) +
                                      (outStats->numPageTables * 64 * 4);
     }
 }

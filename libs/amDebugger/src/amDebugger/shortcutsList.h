@@ -49,7 +49,7 @@ struct EId {
 
 
 // simple array with index
-inline static qd::ShortcutInitItem g_shortcuts_list[] = {
+[[maybe_unused]] inline static qd::ShortcutInitItem g_shortcuts_list[] = {
 #define SHORTCUT(name, setup_func) {EId::name, setup_func},
     SHORTCUT_LIST(SHORTCUT)
 #undef SHORTCUT

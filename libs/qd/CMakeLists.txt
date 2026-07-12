@@ -109,7 +109,7 @@ endif()
 if (MSVC)
     #target_compile_options(${QD_TARGET_NAME} PRIVATE /W4 /permissive- /Zc:__cplusplus)
 
-    target_compile_options(${QD_TARGET_NAME} PRIVATE /W4 /WX /bigobj /ZI)
+    target_compile_options(${QD_TARGET_NAME} PRIVATE /W4 /WX /bigobj)
     target_link_options(${QD_TARGET_NAME} PRIVATE /INCREMENTAL /SAFESEH:NO)
     target_compile_options(${QD_TARGET_NAME} PRIVATE /MP) # multiprocessor build
 

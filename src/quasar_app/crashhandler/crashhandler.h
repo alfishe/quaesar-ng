@@ -1,7 +1,6 @@
 #pragma once
 
-class CrashHandler
-{
+class CrashHandler {
 public:
     virtual ~CrashHandler() = default;
     virtual void install() = 0;

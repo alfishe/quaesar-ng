@@ -42,7 +42,8 @@ private:
     qsr::QsrVmClientPlayerGuiDesktop* m_pDesktop = nullptr;
     bool m_bShowGui = false;
     uint32_t m_renderedFrameNo = ~0u;
-    SDL_Rect m_lastDstRect = {0, 0, 0, 0};  // Cached dst rect for re-drawing last frame when no new emulator frame exists
+    SDL_Rect m_lastDstRect = {0, 0, 0,
+                              0};  // Cached dst rect for re-drawing last frame when no new emulator frame exists
     int m_lastTexW = 0;
     int m_lastTexH = 0;
     SDL_Window* m_pWindow = nullptr;

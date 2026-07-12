@@ -82,6 +82,7 @@ endif()
 file(GLOB_RECURSE QUAESAR_SOURCES "src/*.cpp")
 file(GLOB_RECURSE QUAESAR_HEADERS "src/*.h")
 
+
 #-------------------------------------------------------------------------------
 # Run CMake converter to put images  into the data segment
 file(GLOB resources "${CMAKE_CURRENT_SOURCE_DIR}/resources/*.*")
@@ -192,15 +193,24 @@ if (APPLE OR LINUX OR UNIX)
 endif()
 
 if (WIN32)
-    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-       target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/sdl2.lib")
-       target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/SDL2main.lib")
+    if (MINGW)
+        # MinGW: use system SDL2 via find_package
+        find_package(SDL2 REQUIRED)
+        add_definitions(-DSDL_MAIN_HANDLED)
+        target_link_libraries(quaesar PRIVATE SDL2::SDL2)
+        target_link_libraries(quaesar PRIVATE ws2_32 winmm version imm32 setupapi dbghelp)
     else()
-       target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/win32/sdl2.lib")
-	   target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/win32/SDL2main.lib")
+        # MSVC: use bundled SDL2 libraries
+        if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+           target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/sdl2.lib")
+           target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/x64/SDL2main.lib")
+        else()
+           target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/win32/sdl2.lib")
+           target_link_libraries(quaesar PRIVATE "${CMAKE_SOURCE_DIR}/external/sdl2/win32/SDL2main.lib")
+        endif()
+        target_link_libraries(quaesar PRIVATE Ws2_32.lib Winmm.lib Version.lib Imm32.lib Setupapi.lib dbghelp.lib)
+        set_target_properties(quaesar PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
     endif()
-    target_link_libraries(quaesar PRIVATE Ws2_32.lib Winmm.lib Version.lib Imm32.lib Setupapi.lib)
-	set_target_properties(quaesar PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
 endif()
 
 if (APPLE)

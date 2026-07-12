@@ -11,9 +11,9 @@
 #include "crashhandler/crashhandler.h"
 #include "qsr_application.h"
 #include "qsr_config.h"
-#include "quaesar.h"
 #include "qsr_main_wnd_client_app.h"  // g_cfg_vm_wnd (CfgQsrMain)
-#include "vm_player_selector.h"       // VmPlayersSelector::isKnownCoreId
+#include "quaesar.h"
+#include "vm_player_selector.h"  // VmPlayersSelector::isKnownCoreId
 
 
 #ifdef WIN32
@@ -67,7 +67,7 @@ int SDL_main(int argc, char* argv[]) {
     }
 
     // initialize SDL
-    
+
     // Suppress SDL's built-in NSLog output — write_log() routes through
     // SDL_LogMessageV which triggers NSLog on macOS. NSLog is extremely
     // expensive (CoreFoundation + mutex + kdebug_trace syscall) and the

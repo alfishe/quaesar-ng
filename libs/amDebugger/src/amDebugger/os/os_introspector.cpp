@@ -28,7 +28,7 @@ std::string OsIntrospector::readCString(uint32_t addr, size_t maxLen) {
     result.reserve(32);
     for (size_t i = 0; i < maxLen; ++i) {
         // Checking bounds could be done by getRealAddr but here we rely on getU8 returning 0 or safe data.
-        uint8_t c = m_vm->mem->getU8(addr + i);
+        uint8_t c = m_vm->mem->getU8(static_cast<uint32_t>(addr + i));
         if (c == 0) break;
         result.push_back((char)c);
     }
@@ -172,7 +172,7 @@ std::vector<LibraryInfo> OsIntrospector::scanLibraries() {
                 uint16_t opcode = readU16(lvoAddr);
                 if (opcode == 0x4EF9) { // JMP abs.L
                     LvoEntry lvo;
-                    lvo.offset = -offset;
+                    lvo.offset = static_cast<int16_t>(-offset);
                     lvo.isJump = true;
                     lvo.targetAddress = readU32(lvoAddr + 2);
                     lvo.funcName = getLvoName(lib.name, offset);

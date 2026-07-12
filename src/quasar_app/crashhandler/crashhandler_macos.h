@@ -3,11 +3,10 @@
 
 #include "crashhandler.h"
 
-class CrashHandlerMacOS : public CrashHandler
-{
+class CrashHandlerMacOS : public CrashHandler {
 public:
     void install() override;
     void uninstall() override;
 };
 
-#endif // __APPLE__
+#endif  // __APPLE__

@@ -99,7 +99,7 @@ static int AppEventWatch(void* userdata, SDL_Event* event) {
             // If we don't rate-limit, we choke the OS window manager's high-frequency 
             // event tracker (e.g. on 120Hz+ displays), making the drag feel choppy.
             if (elapsed >= 15) {
-                app->onFrameUpdate(elapsed, (float)now / 1000.0f);
+                app->onFrameUpdate(static_cast<float>(elapsed), static_cast<float>(now) / 1000.0f);
                 app->onFrameRender();
                 app->m_lastTick = now;
             }
@@ -158,7 +158,7 @@ void Application::doMainLoop() {
         // ImGui animations, tooltips, cursor blink, and any future
         // time-based logic get correct values regardless of refresh
         // rate or frame drops.
-        onFrameUpdate(elapsed, (float)now / 1000.0f);
+        onFrameUpdate(static_cast<float>(elapsed), static_cast<float>(now) / 1000.0f);
         onFrameRender();
         m_lastTick = now;
     }

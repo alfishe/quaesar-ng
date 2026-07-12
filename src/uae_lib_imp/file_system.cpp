@@ -62,8 +62,6 @@ static char evilchars[NUM_EVILCHARS] = {'\\', '*', '?', '\"', '<', '>', '|'};
 #define PATHPREFIX _T("\\\\?\\")
 
 
-// Guarded: on Windows, makesafefilename is provided by fsdb_win32.cpp.
-#ifndef _WIN32
 void makesafefilename(TCHAR* s, bool evilonly) {
     TCHAR* c;
     for (int i = 0; i < NUM_EVILCHARS; i++)
@@ -76,7 +74,6 @@ void makesafefilename(TCHAR* s, bool evilonly) {
             *c = '_';
     }
 }
-#endif
 
 
 #define UAEFSDB2_LEN 1632
@@ -530,9 +527,6 @@ void my_closedir(struct my_opendir_s* mod) {
 }
 
 
-
-
-
 static void create_uaefsdb(a_inode* aino, uae_u8* buf, int winmode) {
     std::string nn = std::filesystem::path(aino->nname).filename().string();
     std::string aname = aino->aname ? aino->aname : "";
@@ -863,7 +857,7 @@ TCHAR* fsdb_create_unique_nname(a_inode* base, const TCHAR* suggestion) {
     }
 }
 
-int fsdb_mode_representable_p(const a_inode* aino, int amigaos_mode) {
+int fsdb_mode_representable_p(const a_inode* /*aino*/, int amigaos_mode) {
     int mask = amigaos_mode ^ 15;
     if (mask & A_FIBF_SCRIPT)
         return 0;

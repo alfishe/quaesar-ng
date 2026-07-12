@@ -16,13 +16,13 @@ struct KsOffsets {
     uint16_t semSegListOffset;
 };
 
-inline const KsOffsets* getKsOffsets(uint16_t version) {
-    // In AmigaOS, these list offsets in ExecBase are statically located 
+inline const KsOffsets* getKsOffsets(uint16_t /*ksVersion*/) {
+    // In AmigaOS, these list offsets in ExecBase are statically located
     // and identical across all Kickstart versions (1.2 to 3.2+).
-    // These values have been verified against the official Commodore 
+    // These values have been verified against the official Commodore
     // Amiga NDK headers (specifically exec/execbase.i and exec/execbase.h).
     static const KsOffsets defaultOffsets = {
-        version,
+        0,  // version - filled in at runtime if needed
         0x0196,  // taskReadyOffset (406)
         0x01A4,  // taskWaitOffset (420)
         0x0114,  // thisTaskOffset (276)

@@ -293,10 +293,10 @@ HDFFile::getFileSystemDescriptor(isize nr) const
     return result;
 }
 
-HDFInfo 
+HDFInfo
 HDFFile::getInfo() const
 {
-    HDFInfo info;
+    HDFInfo info = {};
 
     return info;
 }

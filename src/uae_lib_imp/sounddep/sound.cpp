@@ -310,9 +310,10 @@ static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) 
     if (s->pullbufferlen + sd->sndbufsize > s->pullbuffermaxlen) {
         s_overflow_cnt++;
         if (s_push_log_throttle <= 0) {
-            SDL_Log("AUDIO PULL OVERFLOW: cur=%u max=%u push=%d (count: %d, frame: %lu) - emulation producing faster than playback",
-                    s->pullbufferlen, s->pullbuffermaxlen, sd->sndbufsize,
-                    s_overflow_cnt, (unsigned long)timeframes);
+            SDL_Log(
+                "AUDIO PULL OVERFLOW: cur=%u max=%u push=%d (count: %d, frame: %lu) - emulation producing faster than "
+                "playback",
+                s->pullbufferlen, s->pullbuffermaxlen, sd->sndbufsize, s_overflow_cnt, (unsigned long)timeframes);
             s_push_log_throttle = 50;
         }
         s->pullbufferlen = 0;
@@ -320,7 +321,8 @@ static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) 
     } else {
         gui_data.sndbuf_status = 0;
     }
-    if (s_push_log_throttle > 0) s_push_log_throttle--;
+    if (s_push_log_throttle > 0)
+        s_push_log_throttle--;
 
     memcpy(s->pullbuffer + s->pullbufferlen, sndbuffer, sd->sndbufsize);
     s->pullbufferlen += sd->sndbufsize;
@@ -349,7 +351,7 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
     // more data, providing sub-frame-precision timing.
     s->pullmode = 1;
 
-    SDL_AudioSpec want = {}, have;
+    SDL_AudioSpec want = {}, have = {};
     want.freq = freq;
     want.format = AUDIO_S16SYS;
     want.channels = (uint8_t)ch;
@@ -384,7 +386,8 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
         if (s_frame_sync_sem == NULL)
             s_frame_sync_sem = SDL_CreateSemaphore(0);
         else
-            while (SDL_SemTryWait(s_frame_sync_sem) == 0) {}  // drain stale posts
+            while (SDL_SemTryWait(s_frame_sync_sem) == 0) {
+            }  // drain stale posts
         s_consumed_since_post = 0;  // reset rate limiter
     }
 
@@ -395,8 +398,8 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
         s->pullbuffer = xcalloc(uae_u8, s->pullbuffermaxlen);
         s->pullbufferlen = 0;
     }
-    write_log("SDL2: CH=%d, FREQ=%d '%s' buffer %d/%d device_samples=%d (%s)\n", ch, freq, sound_devices[index]->name, s->sndbufsize,
-              s->framesperbuffer, have.samples, !s->pullmode ? _T("push") : _T("pull"));
+    write_log("SDL2: CH=%d, FREQ=%d '%s' buffer %d/%d device_samples=%d (%s)\n", ch, freq, sound_devices[index]->name,
+              s->sndbufsize, s->framesperbuffer, have.samples, !s->pullmode ? _T("push") : _T("pull"));
     clearbuffer(sd);
 
     return 1;
@@ -454,7 +457,7 @@ int get_default_audio_device() {
 #endif
     return device_idx;
 #else
-    return 0; // The first device (index 0) is now 'System Default'
+    return 0;  // The first device (index 0) is now 'System Default'
 #endif
 }
 
@@ -629,8 +632,7 @@ void restart_sound_buffer() {
 // max_wait_ms: maximum time to block in milliseconds.
 //   20 = one PAL frame (standard pacing timeout).
 // Returns: 0 = proceed with frame, -1 = fallback to wall clock.
-int audio_callback_sync_wait_ms(int max_wait_ms)
-{
+int audio_callback_sync_wait_ms(int max_wait_ms) {
     if (!have_sound || sdp->deactive || sdp->paused || sdp->reset)
         return -1;
     sound_dp* s = sdp->data;
@@ -647,7 +649,8 @@ int audio_callback_sync_wait_ms(int max_wait_ms)
     SDL_SemWaitTimeout(s_frame_sync_sem, timeout_ms);
 
     // Drain any additional posts to prevent semaphore value buildup.
-    while (SDL_SemTryWait(s_frame_sync_sem) == 0) {}
+    while (SDL_SemTryWait(s_frame_sync_sem) == 0) {
+    }
 
     return 0;  // proceed with next frame
 }
@@ -887,7 +890,7 @@ int enumerate_sound_devices() {
         write_log("Enumerating SDL2 playback devices...\n");
         int sdl_num = SDL_GetNumAudioDevices(SDL_FALSE);
         write_log("Detected %d sound playback devices\n", sdl_num);
-        
+
         sound_devices[0] = xcalloc(struct sound_device, 1);
         sound_devices[0]->id = 0;
         sound_devices[0]->cfgname = my_strdup("System Default");

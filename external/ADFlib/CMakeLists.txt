@@ -22,12 +22,24 @@ set ( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 
 message ( STATUS "Compiler ID: ${CMAKE_C_COMPILER_ID}" )
 
-add_compile_options (
-    -Wall
-    $<$<CONFIG:RELEASE>:-O3>
-#    -DADFLIB_VERSION="${ADFLIB_VERSION}"
-#    -DADFLIB_DATE="${ADFLIB_DATE}"
-)
+if ( NOT MSVC )
+    add_compile_options (
+        -Wall
+        $<$<CONFIG:RELEASE>:-O3>
+    )
+else()
+    # Suppress informational warnings for third-party C code on MSVC
+    add_compile_options (
+        /wd4820  # struct padding
+        /wd4255  # no function prototype (old C style)
+        /wd4996  # deprecated POSIX names
+        /wd4711  # function selected for inline expansion
+        /wd4710  # function not inlined
+        /wd5045  # Spectre mitigation
+        /wd4701  # potentially uninitialized variable
+    )
+    add_compile_definitions ( _CRT_SECURE_NO_WARNINGS )
+endif()
 
 if ( NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC" )
     message ( STATUS "Setting additional compiler options/checks (mainly for gcc and clang)" )

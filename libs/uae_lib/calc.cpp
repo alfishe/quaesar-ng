@@ -313,7 +313,7 @@ static TCHAR *docalcxs(TCHAR op, TCHAR *v1, TCHAR *v2, double *voutp)
     TCHAR tmp[MAX_DPATH];
     tmp[0] = 0;
 
-    switch(op)
+    switch(static_cast<unsigned char>(op))
     {
     case '+':
         _tcscpy(tmp, v1);
@@ -349,7 +349,7 @@ static TCHAR *docalcxs(TCHAR op, TCHAR *v1, TCHAR *v2, double *voutp)
 static bool docalcx(TCHAR op, double v1, double v2, double *valp)
 {
     double v = 0;
-	switch (op)
+	switch (static_cast<unsigned char>(op))
 	{
 		case '-':
 		v = v1 - v2;
@@ -419,7 +419,7 @@ static bool docalcx(TCHAR op, double v1, double v2, double *valp)
 
 static bool docalc2(TCHAR op, struct calcstack *sv1, struct calcstack *sv2, double *valp, TCHAR *sp)
 {
-    *sp = 0;
+    *sp = '\0';
     *valp = 0;
     if (isstackstring(sv1) || isstackstring(sv2)) {
         TCHAR *v1 = stacktostring(sv1);
@@ -583,10 +583,10 @@ static bool execution_order(const TCHAR *input, double *outval, TCHAR *outstring
 				if (outval)
 					*outval = val;
                 if (outstring) {
-                    if (_tcslen(vals) >= maxlen) {
+                    if (vals[0] && _tcslen(vals) >= maxlen) {
                         vals[maxlen] = 0;
                     }
-                    _tcscpy(outstring, vals);
+                    _tcscpy(outstring, vals[0] ? vals : _T(""));
                 }
 				ok = true;
 		}
