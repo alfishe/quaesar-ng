@@ -126,6 +126,9 @@ jobs:
           cp quaesar.exe package/
           cp default_layout.ini package/ || true
           cp /mingw64/bin/SDL2.dll package/ 2>/dev/null || true
+          cp /mingw64/bin/libstdc++-6.dll package/ 2>/dev/null || true
+          cp /mingw64/bin/libgcc_s_seh-1.dll package/ 2>/dev/null || true
+          cp /mingw64/bin/libwinpthread-1.dll package/ 2>/dev/null || true
 
       - name: Upload Windows MinGW artifact
         uses: actions/upload-artifact@v4
