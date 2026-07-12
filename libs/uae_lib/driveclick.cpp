@@ -162,7 +162,7 @@ void driveclick_free(void)
 void driveclick_init (void)
 {
 	int v, vv;
-	TCHAR tmp[MAX_DPATH];
+	TCHAR tmp[MAX_DPATH * 2];
 
 	driveclick_fdrawcmd_detect ();
 	driveclick_close();
@@ -196,21 +196,21 @@ void driveclick_init (void)
 				for (int j = 0; j < CLICK_TRACKS; j++)
 					drvs[i][DS_CLICK].lengths[j] = drvs[i][DS_CLICK].len;
 				get_plugin_path (path2, sizeof path2 / sizeof (TCHAR), _T("floppysounds"));
-				_stprintf (tmp, _T("%sdrive_click_%s"),
+				snprintf (tmp, sizeof(tmp), _T("%sdrive_click_%s"),
 					path2, fs->dfxclickexternal);
 				v = loadsample (tmp, &drvs[i][DS_CLICK]);
 				if (v)
 					processclicks (&drvs[i][DS_CLICK]);
-				_stprintf (tmp, _T("%sdrive_spin_%s"),
+				snprintf (tmp, sizeof(tmp), _T("%sdrive_spin_%s"),
 					path2, fs->dfxclickexternal);
 				v += loadsample (tmp, &drvs[i][DS_SPIN]);
-				_stprintf (tmp, _T("%sdrive_spinnd_%s"),
+				snprintf (tmp, sizeof(tmp), _T("%sdrive_spinnd_%s"),
 					path2, fs->dfxclickexternal);
 				v += loadsample (tmp, &drvs[i][DS_SPINND]);
-				_stprintf (tmp, _T("%sdrive_startup_%s"),
+				snprintf (tmp, sizeof(tmp), _T("%sdrive_startup_%s"),
 					path2, fs->dfxclickexternal);
 				v += loadsample (tmp, &drvs[i][DS_START]);
-				_stprintf (tmp, _T("%sdrive_snatch_%s"),
+				snprintf (tmp, sizeof(tmp), _T("%sdrive_snatch_%s"),
 					path2, fs->dfxclickexternal);
 				v += loadsample (tmp, &drvs[i][DS_SNATCH]);
 			}

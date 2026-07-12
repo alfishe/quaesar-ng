@@ -903,7 +903,7 @@ static void write_config2 (struct zfile *f, int idnum, int i, int offset, const 
 
 static void write_kbr_config (struct zfile *f, int idnum, int devnum, struct uae_input_device *kbr, struct inputdevice_functions *idf)
 {
-	TCHAR tmp1[CONFIG_BLEN], tmp2[CONFIG_BLEN], tmp3[CONFIG_BLEN], tmp4[CONFIG_BLEN], tmp5[CONFIG_BLEN], *p;
+	TCHAR tmp1[CONFIG_BLEN * 2], tmp2[CONFIG_BLEN], tmp3[256], tmp4[CONFIG_BLEN * 2 + 256], tmp5[128], *p;
 	int i, j, k, evt, skip;
 	const int *slotorder;
 
@@ -1004,10 +1004,10 @@ static void write_kbr_config (struct zfile *f, int idnum, int devnum, struct uae
 			}
 		}
 		idf->get_widget_type (devnum, i, tmp5, NULL);
-		_stprintf (tmp3, _T("%d%s%s"), kbr->extra[i], tmp5[0] ? _T(".") : _T(""), tmp5[0] ? tmp5 : _T(""));
+		snprintf (tmp3, sizeof(tmp3), _T("%d%s%s"), kbr->extra[i], tmp5[0] ? _T(".") : _T(""), tmp5[0] ? tmp5 : _T(""));
 		kbrlabel (tmp3);
-		_stprintf (tmp1, _T("keyboard.%d.button.%s"), devnum, tmp3);
-		_stprintf (tmp4, _T("input.%d.%s"), idnum + 1, tmp1);
+		snprintf (tmp1, sizeof(tmp1), _T("keyboard.%d.button.%s"), devnum, tmp3);
+		snprintf (tmp4, sizeof(tmp4), _T("input.%d.%s"), idnum + 1, tmp1);
 		cfgfile_write_str (f, tmp4, tmp2[0] ? tmp2 : _T("NULL"));
 		i++;
 	}
@@ -4576,7 +4576,7 @@ void inputdevice_add_inputcode (int code, int state, const TCHAR *s)
 			if (!inputdevice_handle_inputcode_immediate(code, state)) {
 				inputcode_pending[i].code = code;
 				inputcode_pending[i].state = state;
-				inputcode_pending[i].s = my_strdup(s);
+				inputcode_pending[i].s = s ? my_strdup(s) : NULL;
 			}
 			return;
 		}
@@ -8239,7 +8239,7 @@ bool inputdevice_devicechange (struct uae_prefs *prefs)
 		bool found = true;
 		for (int j = 0; j < MAX_JPORT_DEVS; j++) {
 			if (jportscustom[i][j] >= 0) {
-				TCHAR tmp[10];
+				TCHAR tmp[32];
 				_stprintf(tmp, _T("custom%d"), jportscustom[i][j]);
 				found = inputdevice_joyport_config(prefs, tmp, NULL, i, jportsmode[i][j], jportssubmode[i][j], 0, j, true) != 0;
 			} else if ((jports_name[i] && jports_name[i][0]) || (jports_configname[i] && jports_configname[i][0])) {
@@ -8250,7 +8250,7 @@ bool inputdevice_devicechange (struct uae_prefs *prefs)
 					inputdevice_joyport_config(prefs, _T("joydefault"), NULL, i, jportsmode[i][j], jportssubmode[i][j], 0, j, true);
 				}
 			} else if (jportskb[i][j] >= 0) {
-				TCHAR tmp[10];
+				TCHAR tmp[32];
 				_stprintf (tmp, _T("kbd%d"), jportskb[i][j] + 1);
 				found = inputdevice_joyport_config (prefs, tmp, NULL, i, jportsmode[i][j], jportssubmode[i][j], 0, j, true) != 0;
 			

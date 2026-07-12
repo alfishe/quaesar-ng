@@ -150,11 +150,11 @@ bool tape_get_info (int unitnum, struct device_info *di)
 
 static void tape_write_filemark(struct scsi_data_tape *tape)
 {
-	TCHAR path[MAX_DPATH];
+	TCHAR path[MAX_DPATH * 2];
 
 	if (!tape->realdir)
 		return;
-	_stprintf(path, _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, TAPE_INDEX);
+	_sntprintf(path, sizeof(path) / sizeof(TCHAR), _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, TAPE_INDEX);
 	struct zfile *zf = zfile_fopen(path, _T("a+b"));
 	if (zf) {
 		zfile_fputs(zf, _T("\n"));
@@ -192,12 +192,12 @@ static void erase (struct scsi_data_tape *tape)
 	od = my_opendir (tape->tape_dir);
 	if (od) {
 		for (;;) {
-			TCHAR path[MAX_DPATH], filename[MAX_DPATH];
+			TCHAR path[MAX_DPATH * 2], filename[MAX_DPATH];
 			if (!my_readdir (od, filename))
 				break;
 			TCHAR *ext = _tcsrchr (filename, '.');
 			if (ext && !_tcsicmp (ext, _T(".tape"))) {
-				_stprintf (path, _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, filename);
+				_sntprintf (path, sizeof(path) / sizeof(TCHAR), _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, filename);
 				if (my_existsfile (path))
 					my_unlink (path, false);
 			}
@@ -219,8 +219,8 @@ static void next_file (struct scsi_data_tape *tape)
 	if (tape->beom > 0)
 		goto end;
 	if (!tape->index && tape->realdir) {
-		TCHAR tmp[MAX_DPATH];
-		_stprintf(tmp, _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, TAPE_INDEX);
+		TCHAR tmp[MAX_DPATH * 2];
+		_sntprintf(tmp, sizeof(tmp) / sizeof(TCHAR), _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, TAPE_INDEX);
 		tape->index = zfile_fopen(tmp, _T("rb"), ZFD_NORMAL);
 	}
 	if (tape->index) {
@@ -256,12 +256,12 @@ static void next_file (struct scsi_data_tape *tape)
 		tape->zf = zfile_fopen (path, _T("rb"), ZFD_NORMAL);
 		if (log_tapeemu) {
 			if (tape->zf)
-				write_log(_T("TAPEEMU: File '%s' Size %lld\n"), path, zfile_size(tape->zf));
+				write_log(_T("TAPEEMU: File '%s' Size %" PRId64 "\n"), path, zfile_size(tape->zf));
 			else
 				write_log(_T("TAPEEMU: File '%s' could not be opened\n"), path);
 		}
 	} else if (tape->realdir) {
-		TCHAR path[MAX_DPATH], filename[MAX_DPATH];
+		TCHAR path[MAX_DPATH * 2], filename[MAX_DPATH];
 		if (tape->od == NULL)
 			tape->od =  my_opendir (tape->tape_dir);
 		if (!tape->od) {
@@ -273,7 +273,7 @@ static void next_file (struct scsi_data_tape *tape)
 				goto end;
 			if (_tcsicmp (filename, TAPE_INDEX))
 				continue;
-			_stprintf (path, _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, filename);
+			_sntprintf (path, sizeof(path) / sizeof(TCHAR), _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, filename);
 			if (!my_existsfile (path))
 				continue;
 			tape->zf = zfile_fopen (path, _T("rb"), 0);
@@ -285,12 +285,12 @@ static void next_file (struct scsi_data_tape *tape)
 			break;
 		}
 		if (tape->zf && log_tapeemu) {
-			write_log(_T("TAPEEMU DIR: File '%s' Size %lld\n"), zfile_getname(tape->zf), zfile_size(tape->zf));
+			write_log(_T("TAPEEMU DIR: File '%s' Size %" PRId64 "\n"), zfile_getname(tape->zf), zfile_size(tape->zf));
 		}
 	} else {
 		tape->zf = zfile_readdir_archive_open (tape->zd, _T("rb"));
 		if (log_tapeemu && tape->zf)
-			write_log(_T("TAPEEMU ARC: File '%s' Size %lld\n"), zfile_getname(tape->zf), zfile_size(tape->zf));
+			write_log(_T("TAPEEMU ARC: File '%s' Size %" PRId64 "\n"), zfile_getname(tape->zf), zfile_size(tape->zf));
 	}
 	if (tape->zf) {
 		tape->file_number++;
@@ -330,7 +330,7 @@ static int tape_read (struct scsi_data_tape *tape, uae_u8 *scsi_data, int len, b
 			got = (int)zfile_fread(scsi_data, 1, len, tape->zf);
 			uae_s64 pos = zfile_ftell(tape->zf);
 			if (log_tapeemu)
-				write_log(_T("TAPEEMU READ: Requested %d, read %d, pos %lld, %lld remaining.\n"), len, got, pos, zfile_size(tape->zf) - pos);
+				write_log(_T("TAPEEMU READ: Requested %d, read %d, pos %" PRId64 ", %" PRId64 " remaining.\n"), len, got, pos, zfile_size(tape->zf) - pos);
 		} else {
 			got = 0;
 			if (len > 0) {
@@ -352,13 +352,13 @@ static int tape_read (struct scsi_data_tape *tape, uae_u8 *scsi_data, int len, b
 
 static int tape_write (struct scsi_data_tape *tape, uae_u8 *scsi_data, int len)
 {
-	TCHAR path[MAX_DPATH], numname[30];
+	TCHAR path[MAX_DPATH * 2], numname[30];
 	int exists;
 
 	if (!tape->realdir)
 		return -1;
-	_stprintf (numname, _T("%05d.tape"), tape->file_number);
-	_stprintf (path, _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, numname);
+	_sntprintf (numname, sizeof(numname) / sizeof(TCHAR), _T("%05d.tape"), tape->file_number);
+	_sntprintf (path, sizeof(path) / sizeof(TCHAR), _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, numname);
 	exists = my_existsfile (path);
 	struct zfile *zf = zfile_fopen (path, _T("a+b"));
 	if (!zf)
@@ -371,7 +371,7 @@ static int tape_write (struct scsi_data_tape *tape, uae_u8 *scsi_data, int len)
 			zfile_fclose(tape->index);
 			tape->index = NULL;
 		}
-		_stprintf (path, _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, TAPE_INDEX);
+		_sntprintf (path, sizeof(path) / sizeof(TCHAR), _T("%s%s%s"), tape->tape_dir, FSDB_DIR_SEPARATOR_S, TAPE_INDEX);
 		zf = zfile_fopen (path, _T("a+b"));
 		if (zf) {
 			zfile_fputs (zf, numname);

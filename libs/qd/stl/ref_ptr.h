@@ -222,8 +222,8 @@ public:
 
     inline bool is_ref_ptr_valid() const { return c_def(this) && this->_is_ref_ptr_valid(); }
 
-    inline static void* operator new (size_t size) { return ::operator new(size); }
-    inline static void operator delete (void* ptr) { ::operator delete(ptr); }
+    inline static void* operator new (size_t size) { return ::operator new (size); }
+    inline static void operator delete (void* ptr) { ::operator delete (ptr); }
 
 private:
     inline bool _is_ref_ptr_valid() const {

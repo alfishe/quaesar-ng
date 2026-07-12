@@ -132,7 +132,7 @@ void ini_addnewval(struct ini_data *ini, const TCHAR *section, const TCHAR *key,
 void ini_addnewval64(struct ini_data *ini, const TCHAR *section, const TCHAR *key, uae_u64 v)
 {
 	TCHAR tmp[MAX_DPATH];
-	_stprintf(tmp, _T("%016llX ; %llu"), v, v);
+	_stprintf(tmp, _T("%016" PRIX64 " ; %" PRIu64), (uint64_t)v, (uint64_t)v);
 	ini_addnewstring(ini, section, key, tmp);
 }
 

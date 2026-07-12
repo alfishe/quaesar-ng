@@ -284,7 +284,7 @@ void serial_flush_buffer(void)
 	if (serdev == 1) {
 		if (outlast) {
 			if (sd != 0) {
-				write (sd, outbuf, outlast);
+				ssize_t n = write (sd, outbuf, outlast); (void)n;
 			}
 		}
 		outlast = 0;

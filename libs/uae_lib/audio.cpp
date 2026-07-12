@@ -239,9 +239,9 @@ void audio_sampleripper (int mode)
 {
 	struct ripped_sample *rs = ripped_samples;
 	int cnt = 1;
-	TCHAR path[MAX_DPATH], name[MAX_DPATH], filename[MAX_DPATH];
+	TCHAR path[MAX_DPATH], name[MAX_DPATH], filename[MAX_DPATH * 3];
 	TCHAR underline[] = _T("_");
-	TCHAR extension[4];
+	TCHAR extension[8];
 	struct zfile *wavfile;
 
 	if (mode < 0) {
@@ -273,7 +273,7 @@ void audio_sampleripper (int mode)
 				cfgfile_resolve_path_load(name, sizeof(name) / sizeof(TCHAR), type);
 			namesplit (name);
 			_tcscpy (extension, _T("wav"));
-			_stprintf (filename, _T("%s%s%s%03d.%s"), path, name, underline, cnt, extension);
+			_sntprintf (filename, sizeof(filename) / sizeof(TCHAR), _T("%s%s%s%03d.%s"), path, name, underline, cnt, extension);
 			wavfile = zfile_fopen (filename, _T("wb"), 0);
 			if (wavfile) {
 				int freq = rs->per > 0 ? (currprefs.ntscmode ? 3579545 : 3546895 / rs->per) : 8000;

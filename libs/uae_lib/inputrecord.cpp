@@ -123,7 +123,7 @@ static bool inprec_rstart (uae_u8 type)
 	lastcycle = get_cycles ();
 	int mvp = current_maxvpos ();
 	if ((type < INPREC_DEBUG_START || type > INPREC_DEBUG_END) || (0 && vsync_counter >= 49 && vsync_counter <= 51))
-		write_log (_T("INPREC: %010d/%03d: %d (%d/%d) %08llx\n"), hsync_counter, hpos, type, hsync_counter % mvp, mvp, lastcycle);
+		write_log (_T("INPREC: %010d/%03d: %d (%d/%d) %08" PRIx64 "\n"), hsync_counter, hpos, type, hsync_counter % mvp, mvp, (uint64_t)lastcycle);
 	inprec_plast = inprec_p;
 	inprec_ru8 (type);
 	inprec_ru16 (0xffff);
@@ -247,12 +247,12 @@ static int inprec_pstart (uae_u8 type)
 		}
 		if (type2 == type) {
 			if ((type < INPREC_DEBUG_START || type > INPREC_DEBUG_END) && cycles != cycles2)
-				write_log (_T("INPREC: %010d/%03d: %d (%d/%d) (%d/%d) %08llX/%08llX\n"), hc, hpos, type, hc % mvp, mvp, hc_orig - hc2_orig, hpos - hpos2, cycles, cycles2);
+				write_log (_T("INPREC: %010d/%03d: %d (%d/%d) (%d/%d) %08" PRIX64 "/%08" PRIX64 "\n"), hc, hpos, type, hc % mvp, mvp, hc_orig - hc2_orig, hpos - hpos2, (uint64_t)cycles, (uint64_t)cycles2);
 			if (cycles != cycles2 + cycleoffset) {
 				if (warned > 0) {
 					warned--;
 					for (int i = 0; i < 7; i++)
-						write_log (_T("%08x (%016llx) "), pcs[i], pcs2[i]);
+						write_log (_T("%08x (%016" PRIx64 ") "), pcs[i], (uint64_t)pcs2[i]);
 					write_log (_T("\n"));
 				}
 				uae_u32 fixedcycleoffset = (uae_u32)(cycles - cycles2);
@@ -267,7 +267,7 @@ static int inprec_pstart (uae_u8 type)
 			inprec_plast = p;
 			inprec_plastptr = p + HEADERSIZE;
 			setlasthsync();
-			//write_log(_T("INPREC: %010d/%03d %llx %d\n"), hc, hpos, cycles, p[0]);
+			//write_log(_T("INPREC: %010d/%03d %" PRIx64 " %d\n"), hc, hpos, cycles, p[0]);
 			return 1;
 		}
 		if (type2 == INPREC_END || type2 == INPREC_QUIT)
@@ -400,7 +400,7 @@ int inprec_open (const TCHAR *fname, const TCHAR *statefilename)
 		zfile_fread(inprec_buffer, inprec_size, 1, inprec_zf);
 		inprec_plastptr = inprec_buffer;
 		id = inprec_pu32();
-		if (id != 'UAE\0') {
+		if (id != (('U' << 24) | ('A' << 16) | ('E' << 8) | 0)) {
 			inprec_close(true);
 			return 0;
 		}
@@ -468,7 +468,7 @@ int inprec_open (const TCHAR *fname, const TCHAR *statefilename)
 	} else if (input_record) {
 		seed = uaesetrandseed(seed);
 		inprec_buffer = inprec_p = xmalloc(uae_u8, inprec_size);
-		inprec_ru32('UAE\0');
+		inprec_ru32((('U' << 24) | ('A' << 16) | ('E' << 8) | 0));
 		inprec_ru8(3);
 		inprec_ru8(UAEMAJOR);
 		inprec_ru8(UAEMINOR);
@@ -760,7 +760,7 @@ int inprec_getposition (void)
 	} else if (input_record) {
 		pos = zfile_ftell32(inprec_zf);
 	}
-	write_log (_T("INPREC: getpos=%d cycles=%08llX\n"), pos, lastcycle);
+	write_log (_T("INPREC: getpos=%d cycles=%08" PRIX64 "\n"), pos, (uint64_t)lastcycle);
 	if (pos < 0) {
 		write_log (_T("INPREC: getpos failure\n"));
 		gui_message (_T("INPREC error"));
@@ -798,7 +798,7 @@ void inprec_setposition (int offset, int replaycounter)
 	replaypos = replaycounter;
 	write_log (_T("INPREC: setpos=%d\n"), offset);
 	if (offset < header_end || offset > zfile_size (inprec_zf)) {
-		write_log (_T("INPREC: buffer corruption. offset=%d, size=%lld\n"), offset, zfile_size (inprec_zf));
+		write_log (_T("INPREC: buffer corruption. offset=%d, size=%" PRId64 "\n"), offset, zfile_size (inprec_zf));
 		gui_message (_T("INPREC error"));
 	}
 	zfile_fseek (inprec_zf, 0, SEEK_SET);

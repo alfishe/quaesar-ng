@@ -1832,8 +1832,8 @@ static void drive_step(drive *drv, int step_direction)
 #endif
 
 	if (drv->steplimit && get_cycles() - drv->steplimitcycle < MIN_STEPLIMIT_CYCLE) {
-		write_log (_T(" step ignored drive %ld, %lld\n"),
-			drv - floppy, (get_cycles() - drv->steplimitcycle) / CYCLE_UNIT);
+		write_log (_T(" step ignored drive %ld, %" PRId64 "\n"),
+			drv - floppy, (int64_t)((get_cycles() - drv->steplimitcycle) / CYCLE_UNIT));
 		return;
 	}
 	/* A1200's floppy drive needs at least 30 raster lines between steps
@@ -6321,7 +6321,7 @@ bool disk_reserved_getinfo(int num, struct floppy_reserved *fr)
 				drv->cyl = cyl;
 				side = side2;
 				if (ok) {
-					write_log(_T("Created  internal PC disk image cyl=%d secs=%d size=%lld\n"), drv->num_tracks / 2, drv->num_secs, zfile_size(z));
+					write_log(_T("Created  internal PC disk image cyl=%d secs=%d size=%" PRId64 "\n"), drv->num_tracks / 2, drv->num_secs, (int64_t)zfile_size(z));
 					drv->pcdecodedfile = z;
 				} else {
 					write_log(_T("Failed to create internal PC disk image\n"));

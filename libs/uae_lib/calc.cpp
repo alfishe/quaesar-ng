@@ -313,7 +313,7 @@ static TCHAR *docalcxs(TCHAR op, TCHAR *v1, TCHAR *v2, double *voutp)
     TCHAR tmp[MAX_DPATH];
     tmp[0] = 0;
 
-    switch(static_cast<unsigned char>(op))
+    switch((unsigned char)op)
     {
     case '+':
         _tcscpy(tmp, v1);
@@ -349,7 +349,7 @@ static TCHAR *docalcxs(TCHAR op, TCHAR *v1, TCHAR *v2, double *voutp)
 static bool docalcx(TCHAR op, double v1, double v2, double *valp)
 {
     double v = 0;
-	switch (static_cast<unsigned char>(op))
+	switch ((unsigned char)op)
 	{
 		case '-':
 		v = v1 - v2;

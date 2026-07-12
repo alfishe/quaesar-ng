@@ -5044,8 +5044,10 @@ static void memory_map_dump_3(UaeMemoryMap *map, int log)
 							r->alias = j << 16;
 							r->flags |= UAE_MEMORY_REGION_ALIAS | UAE_MEMORY_REGION_MIRROR;
 						}
-						_stprintf(r->name, _T("%s"), name);
-						_stprintf(r->rom_name, _T("%s"), tmp);
+						_tcsncpy(r->name, name, UAE_MEMORY_REGION_NAME_LENGTH - 1);
+						r->name[UAE_MEMORY_REGION_NAME_LENGTH - 1] = 0;
+						_tcsncpy(r->rom_name, tmp, UAE_MEMORY_REGION_NAME_LENGTH - 1);
+						r->rom_name[UAE_MEMORY_REGION_NAME_LENGTH - 1] = 0;
 						map->num_regions += 1;
 					}
 				}

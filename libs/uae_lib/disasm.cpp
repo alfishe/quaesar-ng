@@ -499,7 +499,7 @@ uaecptr ShowEA(void *f, uaecptr pc, uae_u16 opcode, int reg, amodes mode, wordsi
 	uaecptr addr = pc;
 	uae_s16 disp16;
 	uae_s32 offset = 0;
-	TCHAR buffer[80];
+	TCHAR buffer[512];
 
 	if (actualea)
 		*actualea = 1;
@@ -1930,7 +1930,7 @@ uae_u32 m68k_disasm_2(TCHAR *buf, int bufsize, uaecptr pc, uae_u16 *bufpc, int b
 	if (!table68k)
 		return 0;
 	while (cnt-- > 0) {
-		TCHAR instrname[256], *ccpt;
+		TCHAR instrname[512], *ccpt;
 		TCHAR segout[256], segname[256];
 		int i;
 		uae_u32 opcode;

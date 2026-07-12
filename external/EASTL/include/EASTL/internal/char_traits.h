@@ -103,7 +103,13 @@ namespace eastl
 	#if EA_WCHAR_UNIQUE
 		inline bool DecodePart(const wchar_t*& pSrc, const wchar_t* pSrcEnd, wchar_t*& pDest, wchar_t* pDestEnd)
 		{
-			return DecodePart(reinterpret_cast<const char*&>(pSrc), reinterpret_cast<const char*>(pSrcEnd), reinterpret_cast<char*&>(pDest), reinterpret_cast<char*&>(pDestEnd));
+			const char* src = reinterpret_cast<const char*>(pSrc);
+			char* dest = reinterpret_cast<char*>(pDest);
+			char* destEnd = reinterpret_cast<char*>(pDestEnd);
+			bool result = DecodePart(src, reinterpret_cast<const char*>(pSrcEnd), dest, destEnd);
+			pSrc = reinterpret_cast<const wchar_t*>(src);
+			pDest = reinterpret_cast<wchar_t*>(dest);
+			return result;
 		}
 
 		inline bool DecodePart(const wchar_t*& pSrc, const wchar_t* pSrcEnd, char*& pDest, char* pDestEnd)
@@ -164,7 +170,13 @@ namespace eastl
 	#if EA_CHAR8_UNIQUE
 	    inline bool DecodePart(const char8_t*& pSrc, const char8_t* pSrcEnd, char8_t*& pDest, char8_t* pDestEnd)
 	    {
-		    return DecodePart(reinterpret_cast<const char*&>(pSrc), reinterpret_cast<const char*>(pSrcEnd), reinterpret_cast<char*&>(pDest), reinterpret_cast<char*&>(pDestEnd));
+		    const char* src = reinterpret_cast<const char*>(pSrc);
+		    char* dest = reinterpret_cast<char*>(pDest);
+		    char* destEnd = reinterpret_cast<char*>(pDestEnd);
+		    bool result = DecodePart(src, reinterpret_cast<const char*>(pSrcEnd), dest, destEnd);
+		    pSrc = reinterpret_cast<const char8_t*>(src);
+		    pDest = reinterpret_cast<char8_t*>(dest);
+		    return result;
 	    }
 
 	    inline bool DecodePart(const char8_t*& pSrc, const char8_t* pSrcEnd, char*& pDest, char* pDestEnd)
@@ -184,17 +196,29 @@ namespace eastl
 
 		inline bool DecodePart(const char*& pSrc, const char* pSrcEnd, char8_t*& pDest, char8_t* pDestEnd)
 		{
-			return DecodePart(pSrc, pSrcEnd, reinterpret_cast<char*&>(pDest), reinterpret_cast<char*&>(pDestEnd));
+			char* dest = reinterpret_cast<char*>(pDest);
+			char* destEnd = reinterpret_cast<char*>(pDestEnd);
+			bool result = DecodePart(pSrc, pSrcEnd, dest, destEnd);
+			pDest = reinterpret_cast<char8_t*>(dest);
+			return result;
 		}
 
 		inline bool DecodePart(const char16_t*& pSrc, const char16_t* pSrcEnd, char8_t*& pDest, char8_t* pDestEnd)
 		{
-			return DecodePart(pSrc, pSrcEnd, reinterpret_cast<char*&>(pDest), reinterpret_cast<char*&>(pDestEnd));
+			char* dest = reinterpret_cast<char*>(pDest);
+			char* destEnd = reinterpret_cast<char*>(pDestEnd);
+			bool result = DecodePart(pSrc, pSrcEnd, dest, destEnd);
+			pDest = reinterpret_cast<char8_t*>(dest);
+			return result;
 		}
 
 		inline bool DecodePart(const char32_t*& pSrc, const char32_t* pSrcEnd, char8_t*& pDest, char8_t* pDestEnd)
 		{
-			return DecodePart(pSrc, pSrcEnd, reinterpret_cast<char*&>(pDest), reinterpret_cast<char*&>(pDestEnd));
+			char* dest = reinterpret_cast<char*>(pDest);
+			char* destEnd = reinterpret_cast<char*>(pDestEnd);
+			bool result = DecodePart(pSrc, pSrcEnd, dest, destEnd);
+			pDest = reinterpret_cast<char8_t*>(dest);
+			return result;
 		}
     #endif
 

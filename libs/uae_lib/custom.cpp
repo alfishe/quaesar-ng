@@ -11968,7 +11968,7 @@ static bool framewait(void)
 
 #ifdef DEBUGGER
 		if (0 || (log_vsync & 2)) {
-			write_log (_T("%06lld %06lld/%06lld %03lld%%\n"), t, vsynctimeperline, vsynctimebase, t * 100 / vsynctimebase);
+			write_log (_T("%06" PRId64 " %06" PRId64 "/%06" PRId64 " %03" PRId64 "%%\n"), (int64_t)t, (int64_t)vsynctimeperline, (int64_t)vsynctimebase, (int64_t)(t * 100 / vsynctimebase));
 		}
 #endif
 
@@ -12032,7 +12032,7 @@ static bool framewait(void)
 		vsyncmaxtime = curr_time + max;
 
 		if (1)
-			write_log (_T("%06lld:%06lld/%06lld %d %d\n"), adjust, vsynctimeperline, vstb, (int)max, maxvpos_display);
+			write_log (_T("%06" PRId64 ":%06" PRId64 "/%06" PRId64 " %d %d\n"), (int64_t)adjust, (int64_t)vsynctimeperline, (int64_t)vstb, (int)max, maxvpos_display);
 	
 	} else {
 

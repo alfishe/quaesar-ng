@@ -403,8 +403,8 @@ static bool check_trace (void)
 		return true;
 	if (!cputrace.readcounter && !cputrace.writecounter && !cputrace.cyclecounter) {
 		if (cpu_tracer != -2) {
-			write_log (_T("CPU trace: dma_cycle() enabled. %08x %08x NOW=%08llx\n"),
-				cputrace.cyclecounter_pre, cputrace.cyclecounter_post, get_cycles ());
+			write_log (_T("CPU trace: dma_cycle() enabled. %08x %08x NOW=%08" PRIx64 "\n"),
+				cputrace.cyclecounter_pre, cputrace.cyclecounter_post, (uint64_t)get_cycles ());
 			cpu_tracer = -2; // dma_cycle() allowed to work now
 		}
 	}
@@ -427,7 +427,7 @@ static bool check_trace (void)
 	x_do_cycles_pre = x2_do_cycles_pre;
 	x_do_cycles_post = x2_do_cycles_post;
 	set_x_cp_funcs();
-	write_log(_T("CPU tracer playback complete. STARTCYCLES=%016llx NOWCYCLES=%016llx\n"), cputrace.startcycles, get_cycles());
+	write_log(_T("CPU tracer playback complete. STARTCYCLES=%016" PRIx64 " NOWCYCLES=%016" PRIx64 "\n"), (uint64_t)cputrace.startcycles, (uint64_t)get_cycles());
 	cputrace.needendcycles = 1;
 	cpu_tracer = 0;
 	return true;
@@ -440,10 +440,10 @@ static bool get_trace(uaecptr addr, int accessmode, int size, uae_u32 *data)
 		struct cputracememory *ctm = &cputrace.ctm[i];
 		if (ctm->addr == addr && ctm->mode == mode) {
 			ctm->mode = 0;
-			write_log(_T("CPU trace: GET %d: PC=%08x %08x=%08x %d %d %08x/%08x/%08x %d/%d (%08llx)\n"),
+			write_log(_T("CPU trace: GET %d: PC=%08x %08x=%08x %d %d %08x/%08x/%08x %d/%d (%08" PRIx64 ")\n"),
 				i, cputrace.pc, addr, ctm->data, accessmode, size,
 				cputrace.cyclecounter, cputrace.cyclecounter_pre, cputrace.cyclecounter_post,
-				cputrace.readcounter, cputrace.writecounter, get_cycles ());
+				cputrace.readcounter, cputrace.writecounter, (uint64_t)get_cycles ());
 			if (accessmode == 1)
 				cputrace.writecounter--;
 			else
@@ -5087,7 +5087,7 @@ static void m68k_run_1_ce (void)
 cont:
 				if (cputrace.needendcycles) {
 					cputrace.needendcycles = 0;
-					write_log(_T("STARTCYCLES=%016llx ENDCYCLES=%016llx\n"), cputrace.startcycles, get_cycles());
+					write_log(_T("STARTCYCLES=%016" PRIx64 " ENDCYCLES=%016" PRIx64 "\n"), (uint64_t)cputrace.startcycles, (uint64_t)get_cycles());
 #ifdef DEBUGGER
 					log_dma_record ();
 #endif
@@ -6854,7 +6854,7 @@ void m68k_dumpstate(uaecptr *nextpc, uaecptr prevpc)
 	}
 #endif
 	if (currprefs.mmu_model == 68030) {
-		console_out_f (_T("SRP: %llX CRP: %llX\n"), srp_030, crp_030);
+		console_out_f (_T("SRP: %" PRIX64 " CRP: %" PRIX64 "\n"), srp_030, crp_030);
 		console_out_f (_T("TT0: %08X TT1: %08X TC: %08X\n"), tt0_030, tt1_030, tc_030);
 	}
 	if (currprefs.cpu_compatible) {
@@ -7228,8 +7228,8 @@ uae_u8 *save_cpu_trace(size_t *len, uae_u8 *dstptr)
 	save_u32 (cputrace.readcounter);
 	save_u32 (cputrace.writecounter);
 	save_u32 (cputrace.memoryoffset);
-	write_log (_T("CPUT SAVE: PC=%08x C=%016llX %08x %08x %08x %d %d %d\n"),
-		cputrace.pc, cputrace.startcycles,
+	write_log (_T("CPUT SAVE: PC=%08x C=%016" PRIX64 " %08x %08x %08x %d %d %d\n"),
+		cputrace.pc, (uint64_t)cputrace.startcycles,
 		cputrace.cyclecounter, cputrace.cyclecounter_pre, cputrace.cyclecounter_post,
 		cputrace.readcounter, cputrace.writecounter, cputrace.memoryoffset);
 	for (int i = 0; i < cputrace.memoryoffset; i++) {

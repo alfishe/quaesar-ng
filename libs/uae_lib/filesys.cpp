@@ -3549,7 +3549,7 @@ static void	do_info(TrapContext *ctx, Unit *unit, dpacket *packet, uaecptr info,
 	} else {
 		uae_s64 numblocks, inuse;
 		get_usedblocks(&fsu, fs, &blocksize, &numblocks, &inuse, true);
-		//write_log(_T("total %lld avail %lld Blocks %lld Inuse %lld blocksize %d\n"), fsu.total, fsu.avail, numblocks, inuse, blocksize);
+		//write_log(_T("total %" PRId64 " avail %" PRId64 " Blocks %" PRId64 " Inuse %" PRId64 " blocksize %d\n"), fsu.total, fsu.avail, numblocks, inuse, blocksize);
 		put_long_host(buf + 12, (uae_u32)numblocks); /* numblocks */
 		put_long_host(buf + 16, (uae_u32)inuse); /* inuse */
 		put_long_host(buf + 20, blocksize); /* bytesperblock */
@@ -4401,7 +4401,7 @@ static void record_timeout(TrapContext *ctx, Unit *unit)
 					prev->next = lr->next;
 				else
 					unit->waitingrecords = lr->next;
-				write_log (_T("queued record timed out '%s',%lld,%lld,%d,%d\n"), k ? k->aino->nname : _T("NULL"), lr->pos, lr->len, lr->mode, lr->timeout);
+				write_log (_T("queued record timed out '%s',%" PRId64 ",%" PRId64 ",%d,%d\n"), k ? k->aino->nname : _T("NULL"), lr->pos, lr->len, lr->mode, lr->timeout);
 				xfree (lr);
 				retry = true;
 				break;
@@ -4424,7 +4424,7 @@ static void record_check_waiting(TrapContext *ctx, Unit *unit)
 					prev->next = lr->next;
 				else
 					unit->waitingrecords = lr->next;
-				write_log (_T("queued record released '%s',%llud,%llu,%d,%d\n"), k->aino->nname, lr->pos, lr->len, lr->mode, lr->timeout);
+				write_log (_T("queued record released '%s',%" PRIu64 "d,%" PRIu64 ",%d,%d\n"), k->aino->nname, lr->pos, lr->len, lr->mode, lr->timeout);
 				// mark packet as complete
 				trap_put_long(ctx, lr->msg + 4, 0xffffffff);
 				xfree (lr);
@@ -5760,7 +5760,7 @@ static void	action_seek(TrapContext *ctx, Unit *unit, dpacket *packet)
 		whence = SEEK_SET;
 
 	cur = k->file_pos;
-	TRACE((_T("ACTION_SEEK(%s,%d,%d)=%lld\n"), k->aino->nname, pos, mode, cur));
+	TRACE((_T("ACTION_SEEK(%s,%d,%d)=%" PRId64 "\n"), k->aino->nname, pos, mode, cur));
 	gui_flicker_led (UNIT_LED(unit), unit->unit, 1);
 
 	filesize = key_filesize(k);
@@ -6100,7 +6100,7 @@ static void	action_set_file_size(TrapContext *ctx, Unit *unit, dpacket *packet)
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_SET_FILE_SIZE(0x%x, %lld, 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
+	TRACE((_T("ACTION_SET_FILE_SIZE(0x%x, %" PRId64 ", 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
 
 	k = lookup_key (unit, GET_PCK_ARG1 (packet));
 	if (k == 0) {
@@ -6302,7 +6302,7 @@ static void	action_set_date(TrapContext *ctx, Unit *unit, dpacket *packet)
 	}
 	if (!a->vfso) {
 		amiga_to_timeval (&tv, trap_get_long(ctx, date), trap_get_long(ctx, date + 4), trap_get_long(ctx, date + 8), 50);
-		//write_log (_T("%llu.%u (%d,%d,%d) %s\n"), tv.tv_sec, tv.tv_usec, trap_get_long(ctx, date), trap_get_long(ctx, date + 4), trap_get_long(ctx, date + 8), a->nname);
+		//write_log (_T("%" PRIu64 ".%u (%d,%d,%d) %s\n"), tv.tv_sec, tv.tv_usec, trap_get_long(ctx, date), trap_get_long(ctx, date + 4), trap_get_long(ctx, date + 8), a->nname);
 		if (!my_utime (a->nname, &tv))
 			err = dos_errno ();
 	}
@@ -6606,7 +6606,7 @@ static void action_change_file_position64(TrapContext *ctx, Unit *unit, dpacket 
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_CHANGE_FILE_POSITION64(%s,%lld,%d)\n"), k->aino->nname, pos, mode));
+	TRACE((_T("ACTION_CHANGE_FILE_POSITION64(%s,%" PRId64 ",%d)\n"), k->aino->nname, pos, mode));
 	gui_flicker_led (UNIT_LED(unit), unit->unit, 1);
 
 	cur = k->file_pos;
@@ -6637,7 +6637,7 @@ static void action_change_file_position64(TrapContext *ctx, Unit *unit, dpacket 
 		PUT_PCK64_RES2 (packet, 0);
 		k->file_pos = key_seek(k, 0, SEEK_CUR);
 	}
-	TRACE((_T("= oldpos %lld newpos %lld\n"), cur, k->file_pos));
+	TRACE((_T("= oldpos %" PRId64 " newpos %" PRId64 "\n"), cur, k->file_pos));
 }
 
 static void action_get_file_position64(TrapContext *ctx, Unit *unit, dpacket *packet)
@@ -6651,7 +6651,7 @@ static void action_get_file_position64(TrapContext *ctx, Unit *unit, dpacket *pa
 		PUT_PCK64_RES2 (packet, ERROR_INVALID_LOCK);
 		return;
 	}
-	TRACE((_T("ACTION_GET_FILE_POSITION64(%s)=%lld\n"), k->aino->nname, k->file_pos));
+	TRACE((_T("ACTION_GET_FILE_POSITION64(%s)=%" PRId64 "\n"), k->aino->nname, k->file_pos));
 	PUT_PCK64_RES1 (packet, k->file_pos);
 	PUT_PCK64_RES2 (packet, 0);
 }
@@ -6670,7 +6670,7 @@ static void action_change_file_size64(TrapContext *ctx, Unit *unit, dpacket *pac
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_CHANGE_FILE_SIZE64(0x%x, %lld, 0x%x)\n"), GET_PCK64_ARG1 (packet), offset, mode));
+	TRACE((_T("ACTION_CHANGE_FILE_SIZE64(0x%x, %" PRId64 ", 0x%x)\n"), GET_PCK64_ARG1 (packet), offset, mode));
 
 	k = lookup_key (unit, GET_PCK64_ARG1 (packet));
 	if (k == 0) {
@@ -6722,7 +6722,7 @@ static void action_get_file_size64(TrapContext *ctx, Unit *unit, dpacket *packet
 	}
 	TRACE((_T("ACTION_GET_FILE_SIZE64(%s)\n"), k->aino->nname));
 	filesize = key_filesize(k);
-	TRACE((_T("ACTION_GET_FILE_SIZE64(%s)=%lld\n"), k->aino->nname, filesize));
+	TRACE((_T("ACTION_GET_FILE_SIZE64(%s)=%" PRId64 "\n"), k->aino->nname, filesize));
 	if (filesize >= 0) {
 		PUT_PCK64_RES1 (packet, filesize);
 		PUT_PCK64_RES2 (packet, 0);
@@ -6763,7 +6763,7 @@ static void action_set_file_size64(TrapContext *ctx, Unit *unit, dpacket *packet
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_SET_FILE_SIZE64(0x%x, %lld, 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
+	TRACE((_T("ACTION_SET_FILE_SIZE64(0x%x, %" PRId64 ", 0x%x)\n"), GET_PCK_ARG1 (packet), offset, mode));
 
 	k = lookup_key (unit, GET_PCK_ARG1 (packet));
 	if (k == 0) {
@@ -6820,7 +6820,7 @@ static void action_seek64(TrapContext *ctx, Unit *unit, dpacket *packet)
 	if (mode < 0)
 		whence = SEEK_SET;
 
-	TRACE((_T("ACTION_SEEK64(%s,%lld,%d)\n"), k->aino->nname, pos, mode));
+	TRACE((_T("ACTION_SEEK64(%s,%" PRId64 ",%d)\n"), k->aino->nname, pos, mode));
 	gui_flicker_led (UNIT_LED(unit), unit->unit, 1);
 
 	cur = k->file_pos;
@@ -6851,7 +6851,7 @@ static void action_seek64(TrapContext *ctx, Unit *unit, dpacket *packet)
 		set_quadp(ctx, GET_PCK_ARG3(packet), cur);
 		k->file_pos = key_seek(k, 0, SEEK_CUR);
 	}
-	TRACE((_T("= oldpos %lld newpos %lld\n"), cur, k->file_pos));
+	TRACE((_T("= oldpos %" PRId64 " newpos %" PRId64 "\n"), cur, k->file_pos));
 }
 
 static int action_lock_record64(TrapContext *ctx, Unit *unit, dpacket *packet, uae_u32 msg)
@@ -6864,7 +6864,7 @@ static int action_lock_record64(TrapContext *ctx, Unit *unit, dpacket *packet, u
 
 	bool exclusive = mode == REC_EXCLUSIVE || mode == REC_EXCLUSIVE_IMMED;
 
-	write_log (_T("action_lock_record64('%s',%lld,%lld,%d,%d)\n"), k ? k->aino->nname : _T("null"), pos, len, mode, timeout);
+	write_log (_T("action_lock_record64('%s',%" PRId64 ",%" PRId64 ",%d,%d)\n"), k ? k->aino->nname : _T("null"), pos, len, mode, timeout);
 
 	if (!k || mode > REC_SHARED_IMMED) {
 		PUT_PCK_RES1 (packet, DOS_FALSE);
@@ -6912,7 +6912,7 @@ static void action_free_record64(TrapContext *ctx, Unit *unit, dpacket *packet)
 	uae_u64 pos = get_quadp(ctx, GET_PCK_ARG2(packet));
 	uae_u64 len = get_quadp(ctx, GET_PCK_ARG3 (packet));
 
-	write_log (_T("action_free_record('%s',%lld,%lld)\n"), k ? k->aino->nname : _T("null"), pos, len);
+	write_log (_T("action_free_record('%s',%" PRId64 ",%" PRId64 ")\n"), k ? k->aino->nname : _T("null"), pos, len);
 
 	if (!k) {
 		PUT_PCK_RES1 (packet, DOS_FALSE);
@@ -8399,7 +8399,7 @@ static void dump_partinfo (struct hardfiledata *hfd, uae_u8 *pp)
 		spt, reserved, lowcyl, highcyl, (uae_u32)(size >> 20));
 	write_log (_T("Buffers: %d, BufMemType: %08x, MaxTransfer: %08x, Mask: %08x, BootPri: %d\n"),
 		rl (pp + 44), rl (pp + 48), rl (pp + 52), rl (pp + 56), rl (pp + 60));
-	write_log (_T("Total blocks: %lld, Total disk blocks: %lld\n"), (uae_s64)surfaces * spt * (highcyl - lowcyl + 1), hfd->virtsize / blocksize);
+	write_log (_T("Total blocks: %" PRId64 ", Total disk blocks: %" PRId64 "\n"), (uae_s64)surfaces * spt * (highcyl - lowcyl + 1), hfd->virtsize / blocksize);
 
 	if (hfd->drive_empty) {
 		write_log (_T("Empty drive\n"));
@@ -8412,7 +8412,7 @@ static void dump_partinfo (struct hardfiledata *hfd, uae_u8 *pp)
 		}
 		xfree (s);
 		if ((uae_u64)highcyl * spt * surfaces * blocksize > hfd->virtsize) {
-			write_log (_T("RDB: WARNING: end of partition > size of disk! (%llu > %llu)\n"),
+			write_log (_T("RDB: WARNING: end of partition > size of disk! (%" PRIu64 " > %" PRIu64 ")\n"),
 				(uae_u64)highcyl * spt * surfaces * blocksize, hfd->virtsize);
 		}
 	}
@@ -8524,7 +8524,7 @@ static void get_new_device (TrapContext *ctx, int type, uaecptr parmpacket, TCHA
 		mountinfo.ui[unit_no].rootdir);
 }
 
-#define rdbmnt write_log (_T("Mounting uaehf.device %d (%d) (size=%llu):\n"), unit_no, partnum, hfd->virtsize)
+#define rdbmnt write_log (_T("Mounting uaehf.device %d (%d) (size=%" PRIu64 "):\n"), unit_no, partnum, hfd->virtsize)
 
 static int pt_babe(TrapContext *ctx, uae_u8 *bufrdb, UnitInfo *uip, int unit_no, int partnum, uaecptr parmpacket)
 {
@@ -8661,7 +8661,7 @@ static int pt_rdsk (TrapContext *ctx, uae_u8 *bufrdb, int rdblock, UnitInfo *uip
 
 	if (showdebug) {
 		if ((uae_u64)hfd->rdbcylinders * hfd->rdbsectors * hfd->rdbheads * blocksize > hfd->virtsize)
-			write_log (_T("RDB: WARNING: RDSK header disk size > disk size! (%llu > %llu)\n"),
+			write_log (_T("RDB: WARNING: RDSK header disk size > disk size! (%" PRIu64 " > %" PRIu64 ")\n"),
 				(uae_u64)hfd->rdbcylinders * hfd->rdbsectors * hfd->rdbheads * blocksize, hfd->virtsize);
 		write_log (_T("RDSK dump start\n"));
 		write_log (_T("RDSK at %d, C=%d S=%d H=%d\n"),
@@ -8842,7 +8842,7 @@ static int rdb_mount (TrapContext *ctx, UnitInfo *uip, int unit_no, int partnum,
 	}
 	if (lastblock * hfd->ci.blocksize > hfd->virtsize) {
 		rdbmnt;
-		write_log (_T("failed, too small (%d*%d > %llu)\n"), lastblock, hfd->ci.blocksize, hfd->virtsize);
+		write_log (_T("failed, too small (%d*%d > %" PRIu64 ")\n"), lastblock, hfd->ci.blocksize, hfd->virtsize);
 		return -2;
 	}
 
@@ -9922,7 +9922,7 @@ static uae_u8 *restore_key (UnitInfo *ui, Unit *u, uae_u8 *src)
 	openmode = ((k->dosmode & A_FIBF_READ) == 0 ? O_WRONLY
 		: (k->dosmode & A_FIBF_WRITE) == 0 ? O_RDONLY
 		: O_RDWR);
-	write_log (_T("FS: open file '%s' ('%s'), pos=%llu\n"), p, pn, k->file_pos);
+	write_log (_T("FS: open file '%s' ('%s'), pos=%" PRIu64 "\n"), p, pn, k->file_pos);
 	a = get_aino (u, &u->rootnode, p, &err);
 	if (!a)
 		write_log (_T("*** FS: Open file aino creation failed '%s'\n"), p);
@@ -9962,9 +9962,9 @@ static uae_u8 *restore_key (UnitInfo *ui, Unit *u, uae_u8 *src)
 			uae_s64 s;
 			s = key_filesize(k);
 			if (s != savedsize)
-				write_log (_T("FS: restored file '%s' size changed! orig=%llu, now=%lld!!\n"), p, savedsize, s);
+				write_log (_T("FS: restored file '%s' size changed! orig=%" PRIu64 ", now=%" PRId64 "!!\n"), p, savedsize, s);
 			if (k->file_pos > s) {
-				write_log (_T("FS: restored filepos larger than size of file '%s'!! %llu > %lld\n"), p, k->file_pos, s);
+				write_log (_T("FS: restored filepos larger than size of file '%s'!! %" PRIu64 " > %" PRId64 "\n"), p, k->file_pos, s);
 				k->file_pos = s;
 			}
 			key_seek(k, k->file_pos, SEEK_SET);
@@ -10086,7 +10086,7 @@ static int recurse_aino (UnitInfo *ui, a_inode *a, int cnt, uae_u8 **dstp)
 		if (a->elock || a->shlock || a->uniq == 0) {
 			if (dst) {
 				TCHAR *fn = NULL;
-				write_log (_T("uniq=%d %lld s=%d e=%d d=%d '%s' '%s'\n"), a->uniq, a->uniq_external, a->shlock, a->elock, a->dir, a->aname, a->nname);
+				write_log (_T("uniq=%d %" PRId64 " s=%d e=%d d=%d '%s' '%s'\n"), a->uniq, a->uniq_external, a->shlock, a->elock, a->dir, a->aname, a->nname);
 				if (a->aname) {
 					fn = getfullaname (a);
 					write_log (_T("->'%s'\n"), fn);
@@ -10129,7 +10129,7 @@ static uae_u8 *save_key (uae_u8 *dst, Key *k)
 	save_string (fn);
 	save_u64 (k->file_pos);
 	save_u64 (size);
-	write_log (_T("'%s' uniq=%d size=%lld seekpos=%lld mode=%d dosmode=%d\n"),
+	write_log (_T("'%s' uniq=%d size=%" PRId64 " seekpos=%" PRId64 " mode=%d dosmode=%d\n"),
 		fn, k->uniq, size, k->file_pos, k->createmode, k->dosmode);
 	xfree (fn);
 	return dst;

@@ -45,6 +45,7 @@ using namespace std;
 #include <errno.h>
 #include <assert.h>
 #include <limits.h>
+#include <inttypes.h>
 
 #include <stdbool.h>
 

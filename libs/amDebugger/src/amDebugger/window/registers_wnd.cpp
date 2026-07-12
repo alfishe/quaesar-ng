@@ -51,7 +51,7 @@ void RegistersView::drawContentImp() {
     static char s_aBufs[8][16];
     static char s_dBufs[8][16];
     static char s_pcBuf[16];
-    static char s_flagBufs[5][4];
+    static char s_flagBufs[5][16];
 
     // Column widths: labels need ~24px, values need exactly 8 hex chars.
     // InputText outer width = text_width + FramePadding.x*2.
@@ -169,7 +169,7 @@ void RegistersView::drawContentImp() {
         ImGui::TableNextColumn();
         {
             if (bPaused)
-                editHexValue(s_flagBufs[4], 4, (uint32_t)cpu->getIntMask(), "IMASK");
+                editHexValue(s_flagBufs[4], sizeof(s_flagBufs[4]), (uint32_t)cpu->getIntMask(), "IMASK");
             else
                 showValue(cpu->getIntMask());
         }

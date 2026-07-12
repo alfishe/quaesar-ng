@@ -57,19 +57,8 @@
 #define _vsnprintf vsnprintf
 #define _vsntprintf vsnprintf
 
-// Replace _stprintf (unbounded sprintf) with snprintf.
-// We pass the size as a volatile to prevent -Wfortify-source from detecting
-// mismatches between the format output and buffer size. The destination
-// buffers in UAE code are always large stack arrays (>= 256 bytes).
-// The volatile ensures the compiler can't statically prove the size is too large.
-static inline int _uae_stprintf_impl(char *buf, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    int r = vsnprintf(buf, 0x7FFFFFFF, fmt, ap);
-    va_end(ap);
-    return r;
-}
-#define _stprintf _uae_stprintf_impl
+// _stprintf is a Windows sprintf equivalent - maps to sprintf on POSIX
+#define _stprintf sprintf
 #endif
 
 static inline size_t uae_tcslcpy(TCHAR *dst, const TCHAR *src, size_t size)

@@ -797,11 +797,11 @@ static size_t cfg_write (const void *b, struct zfile *z)
 static void cfg_dowrite(struct zfile *f, const TCHAR *option, const TCHAR *optionext, const TCHAR *value, int d, int target, int escape)
 {
 	char lf = 10;
-	TCHAR tmp[CONFIG_BLEN], tmpext[CONFIG_BLEN];
+	TCHAR tmp[CONFIG_BLEN * 2], tmpext[CONFIG_BLEN];
 	const TCHAR *optionp;
 	const TCHAR *new_value = NULL;
 	bool free_value = false;
-	char tmpa[CONFIG_BLEN];
+	char tmpa[CONFIG_BLEN * 2];
 	char *tmp1, *tmp2;
 	int utf8;
 
@@ -826,9 +826,9 @@ static void cfg_dowrite(struct zfile *f, const TCHAR *option, const TCHAR *optio
 		new_value = value;
 	}
 	if (target)
-		_stprintf(tmp, _T("%s.%s=%s"), TARGET_NAME, optionp, new_value);
+		snprintf(tmp, sizeof(tmp), _T("%s.%s=%s"), TARGET_NAME, optionp, new_value);
 	else
-		_stprintf(tmp, _T("%s=%s"), optionp, new_value);
+		snprintf(tmp, sizeof(tmp), _T("%s=%s"), optionp, new_value);
 	if (d && isdefault (tmp))
 		goto end;
 	cfg_write(tmp, f);
@@ -1226,7 +1226,7 @@ void cfgfile_resolve_path_save(TCHAR *path, int size, int type)
 
 static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 {
-	TCHAR tmp[MAX_DPATH], tmp2[MAX_DPATH], tmp3[MAX_DPATH], str1[MAX_DPATH], hdcs[MAX_DPATH];
+	TCHAR tmp[MAX_DPATH * 4], tmp2[MAX_DPATH * 4], tmp3[MAX_DPATH * 4], str1[MAX_DPATH], hdcs[MAX_DPATH];
 
 	for (int i = 0; i < p->mountitems; i++) {
 		struct uaedev_config_data *uci = &p->mountconfig[i];
@@ -1284,7 +1284,7 @@ static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 		str1c = cfgfile_escape_min(str1);
 		str2b = cfgfile_escape (str2, _T(":,"), true, false);
 		if (ci->type == UAEDEV_DIR) {
-			_stprintf (tmp, _T("%s,%s:%s:%s,%d"), ci->readonly ? _T("ro") : _T("rw"),
+			_sntprintf (tmp, sizeof(tmp) / sizeof(TCHAR), _T("%s,%s:%s:%s,%d"), ci->readonly ? _T("ro") : _T("rw"),
 				ci->devname[0] ? ci->devname : _T(""), ci->volname, str1c, bp);
 			cfgfile_write_str (f, _T("filesystem2"), tmp);
 			_tcscpy (tmp3, tmp);
@@ -1298,12 +1298,12 @@ static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 			cfgfile_to_path_save(ci->filesys, filesyspath, PATH_HDF);
 			TCHAR *sfilesys = cfgfile_escape_min(filesyspath);
 			TCHAR *sgeometry = cfgfile_escape(ci->geometry, NULL, true, false);
-			_stprintf (tmp, _T("%s,%s:%s,%d,%d,%d,%d,%d,%s,%s"),
+			_sntprintf (tmp, sizeof(tmp) / sizeof(TCHAR), _T("%s,%s:%s,%d,%d,%d,%d,%d,%s,%s"),
 				ci->readonly ? _T("ro") : _T("rw"),
 				ci->devname[0] ? ci->devname : _T(""), str1c,
 				ci->sectors, ci->surfaces, ci->reserved, ci->blocksize,
 				bp, ci->filesys[0] ? sfilesys : _T(""), hdcs);
-			_stprintf (tmp3, _T("%s,%s:%s%s%s,%d,%d,%d,%d,%d,%s,%s"),
+			_sntprintf (tmp3, sizeof(tmp3) / sizeof(TCHAR), _T("%s,%s:%s%s%s,%d,%d,%d,%d,%d,%s,%s"),
 				ci->readonly ? _T("ro") : _T("rw"),
 				ci->devname[0] ? ci->devname : _T(""), str1b, str2b[0] ? _T(":") : _T(""), str2b,
 				ci->sectors, ci->surfaces, ci->reserved, ci->blocksize,
@@ -1390,7 +1390,7 @@ static void write_filesys_config (struct uae_prefs *p, struct zfile *f)
 				add_extra = true;
 			}
 			if (add_extra) {
-				_stprintf(tmp2, _T("%s,inject_icons=%s"), ci->devname, ci->inject_icons ? _T("true") : _T("false"));
+				_sntprintf(tmp2, sizeof(tmp2) / sizeof(TCHAR), _T("%s,inject_icons=%s"), ci->devname, ci->inject_icons ? _T("true") : _T("false"));
 				cfgfile_write(f, _T("filesystem_extra"), tmp2);
 			}
 		}
@@ -4833,7 +4833,7 @@ struct uaedev_config_data *add_filesys_config (struct uae_prefs *p, int index, s
 	validatevolumename (uci->ci.volname, NULL);
 	if (!uci->ci.devname[0] && ci->type != UAEDEV_CD && ci->type != UAEDEV_TAPE) {
 		TCHAR base[32];
-		TCHAR base2[32];
+		TCHAR base2[64];
 		int num = 0;
 		if (uci->ci.rootdir[0] == 0 && ci->type == UAEDEV_DIR)
 			_tcscpy (base, _T("RDH"));
@@ -4841,7 +4841,7 @@ struct uaedev_config_data *add_filesys_config (struct uae_prefs *p, int index, s
 			_tcscpy (base, _T("DH"));
 		_tcscpy (base2, base);
 		for (i = 0; i < p->mountitems; i++) {
-			_stprintf (base2, _T("%s%d"), base, num);
+			_sntprintf (base2, sizeof(base2) / sizeof(TCHAR), _T("%s%d"), base, num);
 			if (!_tcsicmp(base2, p->mountconfig[i].ci.devname)) {
 				num++;
 				i = -1;
@@ -5001,7 +5001,7 @@ static bool parse_geo (const TCHAR *tname, struct uaedev_config_info *uci, struc
 		found = 1;
 	}
 	if (hfd) {
-		_stprintf(tmp, _T("%llu"), hfd->virtsize);
+		_stprintf(tmp, _T("%" PRIu64), (uint64_t)hfd->virtsize);
 		if (ini_getstring(ini, tmp, NULL, NULL)) {
 			_tcscpy(section, tmp);
 			found = 1;
@@ -5363,8 +5363,9 @@ static int cfgfile_parse_newfilesys (struct uae_prefs *p, int nr, int type, TCHA
 
 			TCHAR *pflags;
 			if ((pflags = cfgfile_option_get(tmpp2, _T("flags")))) {
+				TCHAR *pflags_orig = pflags;
 				getintval(&pflags, &uci.unit_special_flags, 0);
-				xfree(pflags);
+				xfree(pflags_orig);
 			}
 
 			if (cfgfile_option_find(tmpp2, _T("lock")))
@@ -5598,7 +5599,7 @@ invalid_fs:
 
 static bool cfgfile_read_board_rom(struct uae_prefs *p, const TCHAR *option, const TCHAR *value, struct multipath *mp)
 {
-	TCHAR buf[256], buf2[MAX_DPATH], buf3[MAX_DPATH];
+	TCHAR buf[512], buf2[MAX_DPATH], buf3[MAX_DPATH];
 	bool dummy;
 	int val;
 	const struct expansionromtype *ert;
@@ -7920,7 +7921,7 @@ int cfgfile_searchconfig(const TCHAR *in, int index, TCHAR *out, int outsize)
 			goto end;
 		}
 		if (b == '\n') {
-			if ((inlen <= 0 || !_tcsncmp (tmp, in, inlen)) && ((inlen > 0 && _tcslen (tmp) > inlen && tmp[inlen] == '=') || (joker))) {
+			if (inlen >= 0 && !_tcsncmp (tmp, in, (size_t)inlen) && ((inlen > 0 && _tcslen (tmp) > (size_t)inlen && tmp[inlen] == '=') || (joker))) {
 				if (index <= 0) {
 					TCHAR *p;
 					if (joker)
