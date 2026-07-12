@@ -57,8 +57,47 @@
 #define _vsnprintf vsnprintf
 #define _vsntprintf vsnprintf
 
-// _stprintf is a Windows sprintf equivalent - maps to sprintf on POSIX
+#ifdef __cplusplus
+#include <type_traits>
+
+template <size_t N>
+inline __attribute__((format(printf, 2, 3))) int _stprintf(char (&buffer)[N], const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    int ret = vsnprintf(buffer, N, format, args);
+    va_end(args);
+    return ret;
+}
+
+template <size_t N>
+inline __attribute__((format(printf, 2, 3))) int _stprintf(unsigned char (&buffer)[N], const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    int ret = vsnprintf((char*)buffer, N, format, args);
+    va_end(args);
+    return ret;
+}
+
+template <size_t N>
+inline __attribute__((format(printf, 2, 3))) int _stprintf(signed char (&buffer)[N], const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    int ret = vsnprintf((char*)buffer, N, format, args);
+    va_end(args);
+    return ret;
+}
+
+template <typename T, typename = typename std::enable_if<std::is_pointer<T>::value>::type>
+inline __attribute__((format(printf, 2, 3))) int _stprintf(T buffer, const char* format, ...) {
+    va_list args;
+    va_start(args, format);
+    int ret = vsnprintf((char*)buffer, 32768, format, args);
+    va_end(args);
+    return ret;
+}
+#else
 #define _stprintf sprintf
+#endif
 #endif
 
 static inline size_t uae_tcslcpy(TCHAR *dst, const TCHAR *src, size_t size)
