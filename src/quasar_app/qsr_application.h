@@ -32,7 +32,7 @@ class QuaesarApplication : public qd::Application {
 public:
     amD::DebuggerApp* m_pDebuggerApp = nullptr;
     qsr::QsrMainClientWndApp* m_pVmPlayerWndAppPart = nullptr;
-    bool m_bDebuggerVmConnected = false; // true once the real VM replaces the dummy bridge
+    bool m_bDebuggerVmConnected = false;  // true once the real VM replaces the dummy bridge
 
 public:
     QuaesarApplication();

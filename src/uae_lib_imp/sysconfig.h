@@ -42,7 +42,10 @@
 // #define X86_MSVC_ASSEMBLY
 // #define OPTIMIZED_FLAGS
 #define MSVC_LONG_DOUBLE
-#ifndef __i386__
+/* Only define __i386__ on actual 32-bit x86 builds.
+ * MinGW's winnt.h uses #ifndef __i386__ to guard x64-specific types like
+ * UNWIND_HISTORY_TABLE, so defining __i386__ on x64 breaks those declarations. */
+#if !defined(__i386__) && !defined(__x86_64__) && !defined(_M_X64) && !defined(_M_AMD64)
 #define __i386__
 #endif
 #endif
@@ -236,7 +239,7 @@ typedef long uae_atomic;
 /* Define to `int' if <sys/types.h> doesn't define.  */
 /* #undef mode_t */
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 #define mode_t int
 #endif
 

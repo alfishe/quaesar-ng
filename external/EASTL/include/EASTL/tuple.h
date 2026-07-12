@@ -57,7 +57,7 @@ template <size_t I>
 struct tuple_element<I, TupleTypes<>>
 {
 public:
-	static_assert(I != I, "tuple_element index out of range");
+	static_assert(sizeof(I) == 0, "tuple_element index out of range");
 };
 
 template <typename H, typename... Ts>

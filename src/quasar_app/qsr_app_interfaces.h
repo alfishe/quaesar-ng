@@ -20,7 +20,9 @@ public:
     // Returns SDL pixel format constant (SDL_PIXELFORMAT_ARGB8888 by default).
     // vAmiga overrides to SDL_PIXELFORMAT_ABGR8888 — GPU converts for free,
     // no per-pixel CPU swap needed.
-    virtual Uint32 getDisplayPixelFormat() const { return SDL_PIXELFORMAT_ARGB8888; }
+    virtual Uint32 getDisplayPixelFormat() const {
+        return SDL_PIXELFORMAT_ARGB8888;
+    }
     virtual ~IVmClientPlayer() = default;
 
 };  // class IVmClientPlayer

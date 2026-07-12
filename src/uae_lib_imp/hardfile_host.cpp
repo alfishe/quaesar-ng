@@ -24,8 +24,13 @@
 #include <sys/stat.h>
 #endif
 
+#ifndef _WIN32
 #include <sys/mman.h>
 #include <unistd.h>
+#else
+// Windows: disable mmap support - use fread/fwrite fallback
+#define MAP_FAILED ((void*)-1)
+#endif
 
 #ifdef OPENBSD
 #include <fcntl.h>
@@ -394,6 +399,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
             write_log("HDF '%s' failed to open. error = %d\n", name, errno);
         }
     }
+#ifndef _WIN32
     // Memory-map the file for zero-copy reads.
     // Only for HDF_HANDLE_LINUX (real file, not zfile). VHD dynamic images
     // do their own offset translation and call hdf_read_target per-sector,
@@ -415,6 +421,7 @@ int hdf_open_target(struct hardfiledata* hfd, const char* pname) {
             }
         }
     }
+#endif
 
     if (hfd->handle_valid || hfd->drive_empty) {
         hfd_log("HDF '%s' opened, size=%dK mode=%d empty=%d\n", name, (int)(hfd->physsize / 1024), hfd->handle_valid,
@@ -445,11 +452,13 @@ static void freehandle (struct hardfilehandle *h)
 void hdf_close_target(struct hardfiledata* hfd) {
     write_log("hdf_close_target\n");
     if (hfd->handle) {
+#ifndef _WIN32
         // Unmap memory-mapped region if active
         if (hfd->handle->mmap_base && hfd->handle->mmap_base != MAP_FAILED) {
             munmap(hfd->handle->mmap_base, (size_t)hfd->handle->mmap_len);
             hfd->handle->mmap_base = NULL;
         }
+#endif
         if (hfd->handle->h) {
             write_log("closing file handle %p\n", hfd->handle->h);
             fclose(hfd->handle->h);
@@ -575,8 +584,7 @@ static int hdf_read_2(struct hardfiledata* hfd, void* buffer, uae_u64 offset, in
     // This avoids fseeko64/fread entirely — the OS page cache handles
     // demand paging, making scattered 512-byte reads nearly free when
     // pages are already cached, and ~microseconds even on page fault.
-    if (hfd->handle && hfd->handle->mmap_base &&
-        offset + len <= hfd->handle->mmap_len) {
+    if (hfd->handle && hfd->handle->mmap_base && offset + len <= hfd->handle->mmap_len) {
         memcpy(buffer, hfd->handle->mmap_base + offset, len);
         return len;
     }
@@ -621,8 +629,7 @@ int hdf_read_target(struct hardfiledata* hfd, void* buffer, uae_u64 offset, int 
 
     // mmap fast path: handle the entire read in one memcpy, bypassing
     // the 16KB cache-chunk loop entirely.
-    if (hfd->handle && hfd->handle->mmap_base &&
-        offset + len <= hfd->handle->mmap_len) {
+    if (hfd->handle && hfd->handle->mmap_base && offset + len <= hfd->handle->mmap_len) {
         memcpy(buffer, hfd->handle->mmap_base + offset, len);
         return len;
     }
@@ -755,6 +762,7 @@ int hdf_resize_target(struct hardfiledata* hfd, uae_u64 newsize) {
     }
     uae_log("hdf_resize_target: %lld -> %lld\n", (int64_t)hfd->physsize, (int64_t)newsize);
 
+#ifndef _WIN32
     // Remap the mmap region to cover the new file size
     if (hfd->handle && hfd->handle->mmap_base && hfd->handle->mmap_base != MAP_FAILED) {
         munmap(hfd->handle->mmap_base, (size_t)hfd->handle->mmap_len);
@@ -771,6 +779,7 @@ int hdf_resize_target(struct hardfiledata* hfd, uae_u64 newsize) {
             }
         }
     }
+#endif
 
     hfd->physsize = newsize;
     return 1;

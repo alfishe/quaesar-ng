@@ -13,7 +13,9 @@
 #include <ctype.h>
 #include <cstdio>
 
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 #include "options.h"
 #include "uae.h"
@@ -7879,7 +7881,7 @@ int cfgfile_searchconfig(const TCHAR *in, int index, TCHAR *out, int outsize)
 	bool configsearchfound = false;
 	int index2 = index;
 
-	if (in[inlen - 1] == '*') {
+	if (inlen > 0 && in[inlen - 1] == '*') {
 		joker = 1;
 		inlen--;
 	}
@@ -7918,7 +7920,7 @@ int cfgfile_searchconfig(const TCHAR *in, int index, TCHAR *out, int outsize)
 			goto end;
 		}
 		if (b == '\n') {
-			if (!_tcsncmp (tmp, in, inlen) && ((inlen > 0 && _tcslen (tmp) > inlen && tmp[inlen] == '=') || (joker))) {
+			if ((inlen <= 0 || !_tcsncmp (tmp, in, inlen)) && ((inlen > 0 && _tcslen (tmp) > inlen && tmp[inlen] == '=') || (joker))) {
 				if (index <= 0) {
 					TCHAR *p;
 					if (joker)

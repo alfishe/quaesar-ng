@@ -9,8 +9,12 @@ EA_DISABLE_VC_WARNING(4702 4244) /*unreachable code*/ /*conversion from 'uae_u32
 #include <cstdio>
 #include <cstdlib>
 
+#ifdef _MSC_VER
+#include <sys/timeb.h>  // ftime(), struct timeb for MSVC
+#else
 #include <sys/timeb.h>
 #include <sys/time.h>  // utimes(), struct timeval
+#endif
 #include "sysdeps.h"
 #include "options.h"
 #include "memory.h"
@@ -190,17 +194,20 @@ static int dummy_get_widget_num(int /*device_id*/) {
 }
 
 // Dummy function to get the type and name of a widget
-static int dummy_get_widget_type(int /*device_id*/, int widget_id, TCHAR* /*widget_name*/,
-                                 uae_u32* widget_type) {
-    if (widget_type) *widget_type = widget_id;
-    if (widget_id < 2) return 2; // IDEV_WIDGET_AXIS
-    return 1; // IDEV_WIDGET_BUTTON
+static int dummy_get_widget_type(int /*device_id*/, int widget_id, TCHAR* /*widget_name*/, uae_u32* widget_type) {
+    if (widget_type)
+        *widget_type = widget_id;
+    if (widget_id < 2)
+        return 2;  // IDEV_WIDGET_AXIS
+    return 1;      // IDEV_WIDGET_BUTTON
 }
 
 // Dummy function to get the first widget (input element) in an input device
 static int dummy_get_widget_first(int /*device_id*/, int widget_type) {
-    if (widget_type == 2) return 0; // IDEV_WIDGET_AXIS
-    if (widget_type == 1) return 2; // IDEV_WIDGET_BUTTON
+    if (widget_type == 2)
+        return 0;  // IDEV_WIDGET_AXIS
+    if (widget_type == 1)
+        return 2;  // IDEV_WIDGET_BUTTON
     return 0;
 }
 
@@ -294,6 +301,8 @@ int my_truncate(const TCHAR* name, uae_u64 len) {
 #ifndef _WIN32
     return truncate(name, (off_t)len);
 #else
+    (void)name;
+    (void)len;
     UNIMPLEMENTED();
     return 0;
 #endif
@@ -317,8 +326,8 @@ bool my_issamepath(const TCHAR* path1, const TCHAR* path2) {
 #endif
 }
 
-int input_get_default_joystick(struct uae_input_device* uid, int i, int port, int af, int mode,
-                               bool gp, bool joymouseswap) {
+int input_get_default_joystick(struct uae_input_device* uid, int i, int port, int /*af*/, int /*mode*/, bool /*gp*/,
+                               bool /*joymouseswap*/) {
     uid[i].eventid[ID_AXIS_OFFSET + 0][0] = port ? INPUTEVENT_JOY2_HORIZ : INPUTEVENT_JOY1_HORIZ;
     uid[i].port[ID_AXIS_OFFSET + 0][0] = port + 1;
 
@@ -331,7 +340,8 @@ int input_get_default_joystick(struct uae_input_device* uid, int i, int port, in
     uid[i].eventid[ID_BUTTON_OFFSET + 1][0] = port ? INPUTEVENT_JOY2_2ND_BUTTON : INPUTEVENT_JOY1_2ND_BUTTON;
     uid[i].port[ID_BUTTON_OFFSET + 1][0] = port + 1;
 
-    if (i == 0) return 1;
+    if (i == 0)
+        return 1;
     return 0;
 }
 
@@ -395,12 +405,14 @@ bool my_utime(const TCHAR* name, struct mytimeval* tv) {
         return utimes(name, nullptr) == 0;
     }
     struct timeval times[2];
-    times[0].tv_sec = tv->tv_sec;       // access time
+    times[0].tv_sec = tv->tv_sec;  // access time
     times[0].tv_usec = tv->tv_usec;
-    times[1].tv_sec = tv->tv_sec;       // modification time
+    times[1].tv_sec = tv->tv_sec;  // modification time
     times[1].tv_usec = tv->tv_usec;
     return utimes(name, times) == 0;
 #else
+    (void)name;
+    (void)tv;
     UNIMPLEMENTED();
     return false;
 #endif
@@ -418,6 +430,8 @@ int my_rename(const TCHAR* oldname, const TCHAR* newname) {
 #ifndef _WIN32
     return rename(oldname, newname);
 #else
+    (void)oldname;
+    (void)newname;
     UNIMPLEMENTED();
     return 0;
 #endif
@@ -702,8 +716,8 @@ void cpuboard_dkb_add_scsi_unit(int, uaedev_config_info*, romconfig*) {
 
 bool cpuboard_forced_hardreset() {
     // DO NOT use UNIMPLEMENTED() here!
-    // The Amiga IDE controller (scsi.device) issues a CPU RESET instruction (0x4e70) 
-    // during initialization or reboot. Returning false allows the normal reset 
+    // The Amiga IDE controller (scsi.device) issues a CPU RESET instruction (0x4e70)
+    // during initialization or reboot. Returning false allows the normal reset
     // sequence to proceed without crashing the emulator.
     return false;
 }
@@ -1241,7 +1255,7 @@ void release_keys() {
     if (!keystate) {
         return;
     }
-    
+
     // Release all currently pressed keys
     for (int scancode = 0; scancode < SDL_NUM_SCANCODES; scancode++) {
         if (keystate[scancode]) {
@@ -1728,7 +1742,8 @@ int input_get_default_lightpen(uae_input_device*, int, int, int, bool, bool, int
     return 0;
 }
 
-int input_get_default_mouse(uae_input_device* uid, int i, int port, int af, bool gp, bool wheel, bool joymouseswap) {
+int input_get_default_mouse(uae_input_device* uid, int i, int port, int /*af*/, bool /*gp*/, bool /*wheel*/,
+                            bool /*joymouseswap*/) {
     uid[i].eventid[ID_AXIS_OFFSET + 0][0] = port ? INPUTEVENT_MOUSE2_HORIZ : INPUTEVENT_MOUSE1_HORIZ;
     uid[i].port[ID_AXIS_OFFSET + 0][0] = port + 1;
 
@@ -1744,7 +1759,8 @@ int input_get_default_mouse(uae_input_device* uid, int i, int port, int af, bool
     uid[i].eventid[ID_BUTTON_OFFSET + 2][0] = port ? INPUTEVENT_JOY2_3RD_BUTTON : INPUTEVENT_JOY1_3RD_BUTTON;
     uid[i].port[ID_BUTTON_OFFSET + 2][0] = port + 1;
 
-    if (i == 0) return 1;
+    if (i == 0)
+        return 1;
     return 0;
 }
 
@@ -2072,7 +2088,7 @@ const TCHAR* specialmonitorconfignames[] = {_T("none"), NULL};
 TCHAR avioutput_filename_gui[MAX_DPATH];
 void* pushall_call_handler = nullptr;
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(_MSC_VER)
 void gettimeofday(struct timeval* tv, void* /*blah*/) {
 #if 1
     struct timeb time;

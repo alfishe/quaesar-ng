@@ -120,8 +120,7 @@ void QsrMainClientWndApp::renderAppPart() {
         return;
 
     uint32_t curFrame = pVmPlayer->getScrFrameNo();
-    if (curFrame != m_renderedFrameNo)
-    {
+    if (curFrame != m_renderedFrameNo) {
         // New emulator frame available — upload it to the texture.
         int bufWidth, bufHeight;
         uint32_t* pSrcDisplayBuf = nullptr;
@@ -157,8 +156,7 @@ void QsrMainClientWndApp::renderAppPart() {
                 m_lastTexW = bufWidth;
                 m_lastTexH = origHeight;
 
-                SDL_Texture* hDisplayTex =
-                    tryRecreateEmuScreenTexture(bufWidth, origHeight);
+                SDL_Texture* hDisplayTex = tryRecreateEmuScreenTexture(bufWidth, origHeight);
                 void* texture_pixels = nullptr;
                 int pitch = 0;
                 if (SDL_LockTexture(hDisplayTex, nullptr, (void**)&texture_pixels, &pitch) == 0) {
@@ -205,9 +203,8 @@ SDL_Texture* QsrMainClientWndApp::tryRecreateEmuScreenTexture(int newWidth, int 
     // Destroy the old texture
     SDL_DestroyTexture(m_hVmDisplayTx);
     // Create a new texture with the desired dimensions and pixel format
-    m_hVmDisplayTx = SDL_CreateTexture(m_hWndRenderer, m_displayFormat,
-                                       SDL_TEXTUREACCESS_STREAMING,
-                                       newWidth, newHeight);
+    m_hVmDisplayTx =
+        SDL_CreateTexture(m_hWndRenderer, m_displayFormat, SDL_TEXTUREACCESS_STREAMING, newWidth, newHeight);
     return m_hVmDisplayTx;
 }
 
@@ -256,12 +253,12 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
             if (sym.sym == SDLK_F12) {
                 if (sym.mod & KMOD_SHIFT) {
                     // Handle shift + F12
-                    SDL_SetRelativeMouseMode(SDL_FALSE); // Release mouse for debugger
+                    SDL_SetRelativeMouseMode(SDL_FALSE);  // Release mouse for debugger
                     doOperation_<qsr::operations::ShowDebuggerWnd>();
                 } else {
                     setShowImgui(!m_bShowGui);
                     if (m_bShowGui) {
-                        SDL_SetRelativeMouseMode(SDL_FALSE); // Release mouse when UI opens
+                        SDL_SetRelativeMouseMode(SDL_FALSE);  // Release mouse when UI opens
                     }
                 }
                 return qd::EFlow::STOP;
@@ -269,8 +266,7 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                 // Ctrl+R: Reset Amiga core (works without GUI overlay)
                 if (pVmProvider)
                     pVmProvider->pushOperationMsg(
-                        qtd::unique_ptr<qd::operation::BaseOpArgs>(
-                            new amD::operation::VmEmuReset()));
+                        qtd::unique_ptr<qd::operation::BaseOpArgs>(new amD::operation::VmEmuReset()));
                 return qd::EFlow::STOP;
             } else if (sym.sym == SDLK_ESCAPE) {
                 if (g_cfg_vm_wnd.quitByEsc) {
@@ -290,9 +286,12 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
         case SDL_MOUSEBUTTONUP:
         case SDL_MOUSEWHEEL: {
             uint32_t eventWndId = 0;
-            if (event.type == SDL_MOUSEMOTION) eventWndId = event.motion.windowID;
-            else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP) eventWndId = event.button.windowID;
-            else if (event.type == SDL_MOUSEWHEEL) eventWndId = event.wheel.windowID;
+            if (event.type == SDL_MOUSEMOTION)
+                eventWndId = event.motion.windowID;
+            else if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
+                eventWndId = event.button.windowID;
+            else if (event.type == SDL_MOUSEWHEEL)
+                eventWndId = event.wheel.windowID;
 
             // For simplicity, if the UI is open, let ImGui consume the mouse entirely.
             if (m_bShowGui) {
@@ -335,8 +334,7 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                 SDL_free(droppedFile);
 
                 // Only accept floppy image extensions
-                bool isFloppy = qd::ends_with(path, ".adf") ||
-                                qd::ends_with(path, ".img") ||
+                bool isFloppy = qd::ends_with(path, ".adf") || qd::ends_with(path, ".img") ||
                                 qd::ends_with(path, ".dms");
                 if (!isFloppy) {
                     SDL_Log("Drag-and-drop: '%s' is not a floppy image", path.c_str());
@@ -350,8 +348,7 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                     // Trigger Amiga reset so it boots from the new disk
                     if (IVmClientPlayer* pProvider = getVmProvider())
                         pProvider->pushOperationMsg(
-                            qtd::unique_ptr<qd::operation::BaseOpArgs>(
-                                new amD::operation::VmEmuReset()));
+                            qtd::unique_ptr<qd::operation::BaseOpArgs>(new amD::operation::VmEmuReset()));
                 }
             }
             return qd::EFlow::STOP;

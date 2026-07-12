@@ -92,7 +92,7 @@ void MmuWnd::drawContentImp() {
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
-        clipper.Begin(m_filteredPages.size());
+        clipper.Begin(static_cast<int>(m_filteredPages.size()));
         while (clipper.Step()) {
             for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++) {
                 const auto& page = m_filteredPages[row_n];

@@ -36,7 +36,6 @@ public:
     int activateVmPlayerByIdStr(QuaesarApplication* pApp, const char* vmProviderId);
 
 
-
     qsr::IVmClientPlayer* getVmPlayer(int hIdx) {
         const ProviderItem* provItem = &m_vmServerAppParts[hIdx];
         qsr::IVmClientPlayer* pVmIO = nullptr;

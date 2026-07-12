@@ -3,11 +3,10 @@
 
 #include "crashhandler.h"
 
-class CrashHandlerLinux : public CrashHandler
-{
+class CrashHandlerLinux : public CrashHandler {
 public:
     void install() override;
     void uninstall() override;
 };
 
-#endif // __linux__
+#endif  // __linux__

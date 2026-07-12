@@ -3,11 +3,10 @@
 
 #include "crashhandler.h"
 
-class CrashHandlerWindows : public CrashHandler
-{
+class CrashHandlerWindows : public CrashHandler {
 public:
     void install() override;
     void uninstall() override;
 };
 
-#endif // _WIN32
+#endif  // _WIN32

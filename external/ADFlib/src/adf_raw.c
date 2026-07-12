@@ -33,7 +33,6 @@
 
 #include <string.h>
 
-#define NDEBUG
 #include <assert.h>
 
 #define SW_LONG  4

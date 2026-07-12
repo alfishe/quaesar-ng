@@ -56,8 +56,6 @@ static void show_bFileHeaderBlock (
 static void show_bFileExtBlock (
     const struct bFileExtBlock * const block );
 
-#else
-#define NDEBUG
 #endif
 
 #include <assert.h>

@@ -10,7 +10,7 @@ uint32_t SignatureManager::computeCrc32(const uint8_t* data, size_t length) cons
     for (size_t i = 0; i < length; i++) {
         crc ^= data[i];
         for (int j = 0; j < 8; j++) {
-            crc = (crc >> 1) ^ (0xEDB88320 & (-(crc & 1)));
+            crc = (crc >> 1) ^ (0xEDB88320 & ((crc & 1) ? 0xFFFFFFFF : 0));
         }
     }
     return ~crc;
@@ -28,7 +28,7 @@ std::string SignatureManager::identifyBlock(const uint8_t* buffer, size_t size) 
     return "Unknown";
 }
 
-bool SignatureManager::verifyIntegrity(const std::string& componentName, const uint8_t* buffer, size_t size) {
+bool SignatureManager::verifyIntegrity(const std::string& /*componentName*/, const uint8_t* buffer, size_t size) {
     if (!buffer || size == 0) return false;
 
     // Compute hash

@@ -57,7 +57,9 @@ public:
 
     void pauseEmulation();
     void resumeEmulation();
-    bool isPaused() const { return m_isPaused; }
+    bool isPaused() const {
+        return m_isPaused;
+    }
 
     void execConsoleCmd(qtd::string&& cmd);
     int uaeWaitConsoleCmdImpl(char* out, int maxlen);
