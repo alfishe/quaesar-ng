@@ -66,8 +66,12 @@ RETCODE adfRenameEntry ( struct AdfVolume * const vol,
     
     intl = isINTL(vol->dosType) || isDIRCACHE(vol->dosType);
     unsigned len = (unsigned) strlen ( newName );
+    if (len > MAXNAMELEN) len = MAXNAMELEN;
+    unsigned oldLen = (unsigned) strlen ( oldName );
+    if (oldLen > MAXNAMELEN) oldLen = MAXNAMELEN;
+
     adfStrToUpper ( (uint8_t *) name2, (uint8_t*) newName, len, intl );
-    adfStrToUpper ( (uint8_t *) name3, (uint8_t*) oldName, (unsigned) strlen(oldName), intl );
+    adfStrToUpper ( (uint8_t *) name3, (uint8_t*) oldName, oldLen, intl );
     /* newName == oldName ? */
 
     RETCODE rc = adfReadEntryBlock ( vol, pSect, &parent );
@@ -146,7 +150,7 @@ RETCODE adfRenameEntry ( struct AdfVolume * const vol,
             if (previous.nameLen==len) {
                 adfStrToUpper ( (uint8_t *) name3,
                                 (uint8_t *) previous.name,
-                                previous.nameLen, intl );
+                                len, intl );
                 if (strncmp(name3,name2,len)==0) {
                     (*adfEnv.wFct)("adfRenameEntry : entry already exists");
                     return RC_ERROR;
