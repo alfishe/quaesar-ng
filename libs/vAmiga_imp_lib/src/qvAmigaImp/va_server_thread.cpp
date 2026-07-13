@@ -5,6 +5,8 @@
 #include <VAmiga.h>
 
 #include <queue>
+#include <filesystem>
+#include <stdexcept>
 
 #include "SDL_log.h"
 #include "qd/debug/assert.h"
@@ -598,6 +600,18 @@ void VAmServerThread::onVAmigaThreadMain() {
             }
 
             m_pVm = new IVm::imp::VAmVmImp(this, m_pVAmiga);
+
+            // If a startup snapshot was detected from CLI, load it now.
+            // vAmiga's loadSnapshot handles suspend internally and has a
+            // built-in safety net (HARD_RESET on corruption).
+            if (!g_cfg_startup.snapshotPath.empty()) {
+                logDbg("VAmiga Startup: loading snapshot '%s'", g_cfg_startup.snapshotPath.c_str());
+                try {
+                    m_pVAmiga->amiga.loadSnapshot(std::filesystem::path(g_cfg_startup.snapshotPath.c_str()));
+                } catch (const std::exception &ex) {
+                    logErr("VAmiga Startup: snapshot load failed: %s", ex.what());
+                }
+            }
 
             setVAmInitialized(true);
             m_onVAmInitialized->set();  // sync with main thread

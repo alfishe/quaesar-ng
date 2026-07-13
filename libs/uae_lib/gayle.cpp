@@ -2287,6 +2287,9 @@ uae_u8 *restore_gayle_ide (uae_u8 *src)
 	_tcscpy (ide->hdhfd.hfd.ci.rootdir, path);
 	blocksize = restore_u32 ();
 	readonly = restore_u32 ();
+	ide->hdhfd.hfd.ci.type = UAEDEV_HDF;
+	ide->hdhfd.hfd.ci.blocksize = blocksize;
+	ide->hdhfd.hfd.ci.readonly = readonly;
 	src = ide_restore_state(src, ide);
 	if (ide->hdhfd.hfd.virtual_size)
 		gayle_add_ide_unit (num, NULL, NULL);

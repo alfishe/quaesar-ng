@@ -10298,7 +10298,7 @@ uae_u8 *save_filesys(int num, size_t *len)
 		return NULL;
 	write_log (_T("FS_FILESYS: '%s' '%s'\n"), ui->devname, ui->volname ? ui->volname : _T("<no name>"));
 	dstbak = dst = xmalloc (uae_u8, 100000);
-	save_u32 (2); /* version */
+	save_u32 (3); /* version */
 	save_u32 (ui->devno);
 	save_u16 (type);
 	if (type == FILESYS_VIRTUAL || type == FILESYS_CD)
@@ -10317,6 +10317,29 @@ uae_u8 *save_filesys(int num, size_t *len)
 	save_u8 (ui->readonly);
 	save_u32 (ui->startup);
 	save_u32 (filesys_configdev);
+	/* v3: extra config fields for proper remount */
+	struct uaedev_config_info *ci = &ui->hf.ci;
+	save_u32 (ci->controller_type);
+	save_u32 (ci->controller_unit);
+	save_u32 (ci->controller_type_unit);
+	save_u32 (ci->controller_media_type);
+	save_u32 (ci->unit_feature_level);
+	save_u32 (ci->blocksize);
+	save_u32 (ci->maxtransfer);
+	save_u32 (ci->bufmemtype);
+	save_u32 (ci->buffers);
+	save_u32 (ci->stacksize);
+	save_u32 (ci->priority);
+	save_u32 (ci->sectorsperblock);
+	save_u32 (ci->surfaces);
+	save_u32 (ci->sectors);
+	save_u32 (ci->reserved);
+	save_u32 (ci->highcyl);
+	save_u8 (ci->inject_icons ? 1 : 0);
+	save_u32 (ci->physical_geometry ? 1 : 0);
+	save_u32 (ci->pcyls);
+	save_u32 (ci->pheads);
+	save_u32 (ci->psecs);
 	if (type == FILESYS_VIRTUAL || type == FILESYS_CD)
 		dst = save_filesys_virtual (ui, dst);
 	if (type == FILESYS_HARDFILE || type == FILESYS_HARDFILE_RDB)
@@ -10343,7 +10366,8 @@ uae_u8 *restore_filesys(uae_u8 *src)
 	uae_u32 startup;
 	struct uaedev_config_info *ci;
 
-	if (restore_u32() != 2)
+	uae_u32 version = restore_u32();
+	if (version != 2 && version != 3)
 		goto end2;
 	devno = restore_u32 ();
 	ui = &mountinfo.ui[devno];
@@ -10371,6 +10395,31 @@ uae_u8 *restore_filesys(uae_u8 *src)
 	ci->readonly = restore_u8 () != 0;
 	startup = restore_u32 ();
 	filesys_configdev = restore_u32 ();
+
+	/* v3: extra config fields for proper remount */
+	if (version >= 3) {
+		ci->controller_type = restore_u32 ();
+		ci->controller_unit = restore_u32 ();
+		ci->controller_type_unit = restore_u32 ();
+		ci->controller_media_type = restore_u32 ();
+		ci->unit_feature_level = restore_u32 ();
+		ci->blocksize = restore_u32 ();
+		ci->maxtransfer = restore_u32 ();
+		ci->bufmemtype = restore_u32 ();
+		ci->buffers = restore_u32 ();
+		ci->stacksize = restore_u32 ();
+		ci->priority = restore_u32 ();
+		ci->sectorsperblock = restore_u32 ();
+		ci->surfaces = restore_u32 ();
+		ci->sectors = restore_u32 ();
+		ci->reserved = restore_u32 ();
+		ci->highcyl = restore_u32 ();
+		ci->inject_icons = restore_u8 () != 0;
+		ci->physical_geometry = restore_u32 () != 0;
+		ci->pcyls = restore_u32 ();
+		ci->pheads = restore_u32 ();
+		ci->psecs = restore_u32 ();
+	}
 
 	if (new_filesys_root_path) {
 		xfree(rootdir);

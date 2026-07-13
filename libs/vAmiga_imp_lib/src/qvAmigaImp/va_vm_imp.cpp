@@ -18,6 +18,9 @@
 #include "qd/thread/thread.h"
 #include "qd/typeSystem/typeInfo.h"
 #include "va_server_thread.h"
+#include "quasar_app/qsr_operations.h"
+#include <filesystem>
+#include <stdexcept>
 
 
 class QuaesarVAmigaInjectAccess {
@@ -141,11 +144,26 @@ VAmVmImp* vm = this;
 
   } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
     r = true;
-    //         if (pVAm->isWndAlwaysOnTop()) {
-    //             pVAm->setWndAlwaysOnTop(false);
-    //         } else {
-    //             pVAm->setWndAlwaysOnTop(true);
-    //         }
+  } else if (auto p = args->cast_<qsr::operations::SaveSnapshot>()) {
+    // vAmiga saveSnapshot handles suspend internally.
+    // The path can be any writable location.
+    SDL_Log("Snapshot: saving to '%s'", p->path.c_str());
+    try {
+      vm->m_vAmiga->amiga.saveSnapshot(std::filesystem::path(p->path.c_str()));
+    } catch (const std::exception& e) {
+      SDL_Log("Snapshot: save failed: %s", e.what());
+    }
+    r = true;
+  } else if (auto p = args->cast_<qsr::operations::LoadSnapshot>()) {
+    // vAmiga loadSnapshot handles suspend internally and has a built-in
+    // safety net: if the snapshot is corrupted, it issues HARD_RESET.
+    SDL_Log("Snapshot: loading from '%s'", p->path.c_str());
+    try {
+      vm->m_vAmiga->amiga.loadSnapshot(std::filesystem::path(p->path.c_str()));
+    } catch (const std::exception& e) {
+      SDL_Log("Snapshot: load failed: %s", e.what());
+    }
+    r = true;
   }
   QD_POP_VC_WARNING()
   return r ? EFlow::STOP : EFlow::NO_RESULT;

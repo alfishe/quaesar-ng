@@ -35,3 +35,4 @@ default_layout.ini
 .DS_Store
 Thumbs.db
 
+data/snapshots

@@ -12,6 +12,7 @@
 #include "qsr_application.h"
 #include "qsr_config.h"
 #include "qsr_main_wnd_client_app.h"  // g_cfg_vm_wnd (CfgQsrMain)
+#include "qsr_operations.h"          // isSnapshotFile
 #include "quaesar.h"
 #include "vm_player_selector.h"  // VmPlayersSelector::isKnownCoreId
 
@@ -50,6 +51,18 @@ int SDL_main(int argc, char* argv[]) {
         cliApp.parse(argc, argv);
     } catch (const CLI::ParseError& e) {
         return cliApp.exit(e);
+    }
+
+    // Detect snapshot files in the input positional argument.
+    // If the input is a .uss or .vasnap file (by magic bytes or extension),
+    // move it to snapshotPath so it's loaded after emulator init instead
+    // of being treated as a disk image.
+    if (!g_cfg_startup.input.empty()) {
+        if (qsr::operations::isSnapshotFile(g_cfg_startup.input)) {
+            g_cfg_startup.snapshotPath = g_cfg_startup.input;
+            g_cfg_startup.input.clear();
+            printf("Startup: detected snapshot file, will load after init\n");
+        }
     }
 
     // Apply --engine selection with validation.

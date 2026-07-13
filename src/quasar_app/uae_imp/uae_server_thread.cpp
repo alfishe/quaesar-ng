@@ -6,6 +6,8 @@
 #include "adf.h"
 #include "uae.h"
 #include "inputdevice.h"
+#include "keybuf.h"
+#include "savestate.h"
 // clang-format on
 
 #include "uae_server_thread.h"
@@ -215,6 +217,15 @@ void UaeServerThread::initialize() {
 
     // initialize after UAE is ready
     m_pVm->init();
+
+    // If a startup snapshot was detected from CLI, queue it for restore.
+    // savestate_check() at vpos==0 will perform the actual restore on the
+    // first frame boundary — this is the correct UAE state-machine protocol.
+    if (!g_cfg_startup.snapshotPath.empty()) {
+        SDL_Log("Startup: loading snapshot '%s'", g_cfg_startup.snapshotPath.c_str());
+        SDL_strlcpy(::savestate_fname, g_cfg_startup.snapshotPath.c_str(), MAX_DPATH);
+        ::savestate_state = STATE_DORESTORE;
+    }
 }
 
 void UaeServerThread::destroy() {
@@ -353,6 +364,10 @@ void UaeServerThread::applySdlEventProc(const SDL_Event& event) {
     switch (event.type) {
         case SDL_KEYDOWN: {
             const SDL_Keycode scancode = event.key.keysym.scancode;
+            // Track caps lock toggle state for savestate save/restore
+            if (scancode == SDL_SCANCODE_CAPSLOCK) {
+                setcapslockstate(getcapslockstate() ? 0 : 1);
+            }
             const int keyboard = 0;
             const bool newstate = true;
             const bool alwaysrelease = true;

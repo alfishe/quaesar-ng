@@ -160,6 +160,22 @@ qd::EFlow UaeVmImp::applyOperationMsgProcImp(qd::operation::BaseOpArgs* args) {
         r = true;
     } else if (args->cast_<amD::operation::VmPlayerWndAlwaysOnTop>()) {
         r = true;
+    } else if (auto p = args->cast_<qsr::operations::SaveSnapshot>()) {
+        // UAE state-machine save: set STATE_SAVE and let savestate_check()
+        // perform the actual save at the next frame boundary (vpos==0).
+        // This is the correct protocol — calling save_state() directly would
+        // bypass the frame-boundary gate and corrupt emulation state.
+        SDL_Log("Snapshot: saving to '%s'", p->path.c_str());
+        SDL_strlcpy(::savestate_fname, p->path.c_str(), MAX_DPATH);
+        ::savestate_state = STATE_SAVE;
+        r = true;
+    } else if (auto p = args->cast_<qsr::operations::LoadSnapshot>()) {
+        // UAE state-machine restore: set STATE_DORESTORE and let
+        // savestate_check() perform the actual restore at vpos==0.
+        SDL_Log("Snapshot: loading from '%s'", p->path.c_str());
+        SDL_strlcpy(::savestate_fname, p->path.c_str(), MAX_DPATH);
+        ::savestate_state = STATE_DORESTORE;
+        r = true;
     }
     return r ? EFlow::STOP : EFlow::NO_RESULT;
 }

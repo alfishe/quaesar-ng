@@ -279,6 +279,24 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                     }
                 }
                 return qd::EFlow::STOP;
+            } else if (sym.sym == SDLK_F5) {
+                // F5: Load quicksave snapshot
+                // Shift+F5: Save quicksave snapshot
+                {
+                    std::string qsPath = qsr::operations::getQuickSavePath();
+                    if (sym.mod & KMOD_SHIFT) {
+                        qsr::operations::SaveSnapshot args;
+                        args.path = qsPath.c_str();
+                        applyOperationMsgProc(&args);
+                        SDL_Log("Snapshot: quick-saved to '%s'", qsPath.c_str());
+                    } else {
+                        qsr::operations::LoadSnapshot args;
+                        args.path = qsPath.c_str();
+                        applyOperationMsgProc(&args);
+                        SDL_Log("Snapshot: quick-loaded from '%s'", qsPath.c_str());
+                    }
+                }
+                return qd::EFlow::STOP;
             } else if (sym.sym == SDLK_r && (sym.mod & KMOD_CTRL)) {
                 // Ctrl+R: Reset Amiga core (works without GUI overlay)
                 if (pVmProvider)
@@ -341,7 +359,8 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
         } break;
 
         case SDL_DROPFILE: {
-            // Mount dropped ADF/IMG/DMS into df0 and reboot
+            // Route dropped files: snapshots first (magic-byte detection),
+            // then floppy images.
             if (event.drop.windowID != uaeWndId)
                 return qd::EFlow::CONTINUE;
 
@@ -350,23 +369,32 @@ qd::EFlow QsrMainClientWndApp::onSdlEventProc(SDL_Event& event) {
                 std::string path(droppedFile);
                 SDL_free(droppedFile);
 
-                // Only accept floppy image extensions
-                bool isFloppy = qd::ends_with(path, ".adf") || qd::ends_with(path, ".img") ||
-                                qd::ends_with(path, ".dms");
-                if (!isFloppy) {
-                    SDL_Log("Drag-and-drop: '%s' is not a floppy image", path.c_str());
+                // 1. Check for snapshot file (magic bytes first, then extension)
+                if (qsr::operations::isSnapshotFile(path)) {
+                    qsr::operations::LoadSnapshot args;
+                    args.path = path.c_str();
+                    applyOperationMsgProc(&args);
+                    SDL_Log("Drag-and-drop: loading snapshot '%s'", path.c_str());
                     return qd::EFlow::STOP;
                 }
 
-                IVm::VM* vm = pVmProvider ? pVmProvider->getVm() : nullptr;
-                if (vm && vm->floppy0) {
-                    vm->floppy0->setAdfPath(path.c_str());
-                    SDL_Log("Drag-and-drop: Mounted '%s' into df0", path.c_str());
-                    // Trigger Amiga reset so it boots from the new disk
-                    if (IVmClientPlayer* pProvider = getVmProvider())
-                        pProvider->pushOperationMsg(
-                            qtd::unique_ptr<qd::operation::BaseOpArgs>(new amD::operation::VmEmuReset()));
+                // 2. Floppy image?
+                bool isFloppy = qd::ends_with(path, ".adf") || qd::ends_with(path, ".img") ||
+                                qd::ends_with(path, ".dms");
+                if (isFloppy) {
+                    IVm::VM* vm = pVmProvider ? pVmProvider->getVm() : nullptr;
+                    if (vm && vm->floppy0) {
+                        vm->floppy0->setAdfPath(path.c_str());
+                        SDL_Log("Drag-and-drop: Mounted '%s' into df0", path.c_str());
+                        // Trigger Amiga reset so it boots from the new disk
+                        if (IVmClientPlayer* pProvider = getVmProvider())
+                            pProvider->pushOperationMsg(
+                                qtd::unique_ptr<qd::operation::BaseOpArgs>(new amD::operation::VmEmuReset()));
+                    }
+                    return qd::EFlow::STOP;
                 }
+
+                SDL_Log("Drag-and-drop: '%s' is not a recognized file type", path.c_str());
             }
             return qd::EFlow::STOP;
         } break;

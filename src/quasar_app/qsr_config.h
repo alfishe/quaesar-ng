@@ -13,6 +13,8 @@ struct CfgQsrStartup : public CfgBase {
 
     // input file such as .adf, .dms, executable, etc.
     std::string input;
+    // snapshot file (.uss, .vasnap) — if detected in input, loaded after init
+    std::string snapshotPath;
     // serial port path ('/tmp/virtual-serial-port')
     std::string serialPort;
 
