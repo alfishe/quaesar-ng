@@ -139,8 +139,11 @@ extern "C" void qsr_bridge_get_vamiga_config(struct VAmigaExtConfig* out_config)
     out_config->cpu_model = currprefs.cpu_model;
     out_config->num_hds = 0;
 
-    for (int i = 0; i < MOUNT_CONFIG_SIZE && out_config->num_hds < 4; i++) {
+    SDL_Log("VAmiga Bridge: mountitems=%d", currprefs.mountitems);
+    for (int i = 0; i < currprefs.mountitems && out_config->num_hds < 4; i++) {
         struct uaedev_config_info* ci = &currprefs.mountconfig[i].ci;
+        SDL_Log("VAmiga Bridge: [%d] type=%d rootdir='%s' devname='%s' volname='%s'",
+                i, ci->type, ci->rootdir, ci->devname, ci->volname);
         if (ci->rootdir[0] == '\0')
             continue;  // Skip empty entries
         if (ci->type == UAEDEV_HDF) {

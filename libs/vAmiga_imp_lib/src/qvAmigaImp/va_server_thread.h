@@ -59,6 +59,7 @@ public:
     //void unlockVAmScreenTexBuf();
 
     virtual IVm::VM* getVm() const override;
+    virtual bool hasInitFailed() const override { return m_threadErr >= 0; }
     virtual int getScrFrameNo() override;
     virtual void pushSdlEvent(const SDL_Event& event) override;
     virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs> args) override;

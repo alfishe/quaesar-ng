@@ -490,52 +490,66 @@ void UaeVmImp::Cpu::getMmuPages(qtd::vector<MmuPage>& outPages, MmuStats* outSta
 }
 
 
-uint8_t* UaeVmImp::Memory::getRealAddr(AddrRef ptr) {
-    // Safety: validate the address is in an allocated memory bank before
-    // calling memory_get_real_address(), which dereferences mem_banks[].
-    // If UAE memory hasn't been initialized yet (mem_banks[] are NULL),
-    // or the address maps to a bank without allocated memory, return nullptr.
-    const uint32_t addr = (uint32_t)ptr;
+// Validate that the UAE memory bank for the given address is initialized.
+// Returns false if mem_banks[] is null/uninitialized (e.g. when the UAE
+// engine isn't running but UaeVmImp is still alive for config bridge purposes).
+static inline bool uae_mem_bank_valid(uint32_t addr) {
     const uint32_t bankIdx = addr >> 16;
     if (bankIdx >= MEMORY_BANKS)
-        return nullptr;
+        return false;
     addrbank* ab = mem_banks[bankIdx];
-    if (!ab)
-        return nullptr;
-    // Check if the bank has allocated memory
-    if (!ab->allocated_size)
+    if (!ab || !ab->allocated_size)
+        return false;
+    return true;
+}
+
+
+uint8_t* UaeVmImp::Memory::getRealAddr(AddrRef ptr) {
+    if (!uae_mem_bank_valid((uint32_t)ptr))
         return nullptr;
     return (uint8_t*)::memory_get_real_address(ptr);
 }
 
 
 bool UaeVmImp::Memory::getU16(AddrRef addr, uint16_t* out) {
+    if (!uae_mem_bank_valid((uint32_t)addr))
+        return false;
     *out = (uint16_t)::memory_get_word(addr);
     return true;
 }
 
 
 uint16_t UaeVmImp::Memory::getU16(AddrRef addr) {
+    if (!uae_mem_bank_valid((uint32_t)addr))
+        return 0;
     return (uint16_t)::memory_get_word(addr);
 }
 
 
 uint8_t UaeVmImp::Memory::getU8(AddrRef addr) {
+    if (!uae_mem_bank_valid((uint32_t)addr))
+        return 0;
     return (uint8_t)::memory_get_byte(addr);
 }
 
 
 void UaeVmImp::Memory::setU16(AddrRef addr, uint16_t v) {
+    if (!uae_mem_bank_valid((uint32_t)addr))
+        return;
     ::memory_put_word(addr, v);
 }
 
 
 uint32_t UaeVmImp::Memory::getU32(AddrRef addr) {
+    if (!uae_mem_bank_valid((uint32_t)addr))
+        return 0;
     return (uint32_t)::memory_get_long(addr);
 }
 
 
 void UaeVmImp::Memory::setU32(AddrRef addr, uint32_t v) {
+    if (!uae_mem_bank_valid((uint32_t)addr))
+        return;
     ::memory_put_long(addr, v);
 }
 

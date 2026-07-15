@@ -299,6 +299,73 @@ void M68CodeDisassembler::requestM68DisasmLines(
 
         neededBytes *= 2;
     }
+
+    // Post-decode verification: if we had a proven instruction boundary (PC)
+    // within the view range, verify it actually appears in the output.
+    // The backward walk can find false boundaries (mid-instruction starts
+    // that coincidentally chain), causing the forward decode to skip the
+    // real PC.  When this happens, do a split decode:
+    //   Phase 1: keep existing prefix lines (best effort, before anchor)
+    //   Phase 2: decode forward from the anchor (authoritative)
+    //   Merge them so the anchor is guaranteed to appear.
+    if (pProvedInstructionStart && *pProvedInstructionStart && !outItems->empty())
+    {
+        AddrRef anchor = *pProvedInstructionStart;
+        // Only intervene if anchor is within the view's address range
+        if (anchor >= startAddr)
+        {
+            bool bAnchorFound = false;
+            for (const cda::Item* pItem : *outItems)
+            {
+                if (pItem->m_addr == anchor)
+                {
+                    bAnchorFound = true;
+                    break;
+                }
+            }
+
+            if (!bAnchorFound)
+            {
+                // Split: collect prefix lines before anchor, then decode from anchor.
+                qtd::vector<cda::Item*> prefixLines;
+                for (cda::Item* pItem : *outItems)
+                {
+                    if (pItem->m_addr < anchor)
+                        prefixLines.push_back(pItem);
+                    else
+                        break;  // everything from here on is wrong
+                }
+
+                // Phase 2: decode forward from the anchor.
+                qtd::vector<qtd::unique_ptr<cda::CodeItem>> phase2Items;
+                qtd::vector<cda::Item*> phase2Out;
+                int remainingLines = nLines - (int)prefixLines.size();
+                if (remainingLines > 0)
+                {
+                    uint32_t phase2Bytes = (uint32_t)remainingLines * 6u + 16u;
+                    int phase2Max = remainingLines + 4;
+                    decode_range(handle, vm, anchor, phase2Bytes, phase2Max, &phase2Items, &phase2Out);
+                }
+
+                // Merge prefix + phase2 into the main output.
+                // Move phase2 ownership into m_curItems so they stay alive.
+                qtd::vector<cda::Item*> merged;
+                for (cda::Item* pItem : prefixLines)
+                    merged.push_back(pItem);
+                for (cda::Item* pItem : phase2Out)
+                    merged.push_back(pItem);
+                // Trim to nLines.
+                if ((int)merged.size() > nLines)
+                    merged.resize(nLines);
+
+                // Transfer phase2 ownership.
+                for (auto& up : phase2Items)
+                    m_curItems.push_back(qtd::move(up));
+
+                *outItems = qtd::move(merged);
+            }
+        }
+    }
 }
 
 

@@ -79,6 +79,19 @@ int SDL_main(int argc, char* argv[]) {
         }
     }
 
+    // Validate kickstart ROM exists before starting any subsystem.
+    // Without a valid ROM both UAE and vAmiga engines are non-functional,
+    // so there's no point proceeding to SDL init, window creation, etc.
+    if (!g_cfg_startup.kickRomPath.empty()) {
+        if (FILE* f = fopen(g_cfg_startup.kickRomPath.c_str(), "rb")) {
+            fclose(f);
+        } else {
+            fprintf(stderr, "ERROR: Kickstart ROM not found: '%s'\n",
+                    g_cfg_startup.kickRomPath.c_str());
+            return 1;
+        }
+    }
+
     // initialize SDL
 
     // Suppress SDL's built-in NSLog output — write_log() routes through
