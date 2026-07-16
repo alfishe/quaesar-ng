@@ -1274,9 +1274,9 @@ void restore_cdtv_finish() {
     // CDTV not emulated — no-op
 }
 
-bool samepath(char const*, char const*) {
-    UNIMPLEMENTED();
-    return false;
+bool samepath(const TCHAR* p1, const TCHAR* p2) {
+    // Simple path comparison - delegate to the full implementation
+    return my_issamepath(p1, p2);
 }
 
 void sampler_free() {
