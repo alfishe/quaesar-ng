@@ -85,4 +85,50 @@ template i16 Sampler::interpolate<SamplingMethod::NONE>(Cycle clock);
 template i16 Sampler::interpolate<SamplingMethod::NEAREST>(Cycle clock);
 template i16 Sampler::interpolate<SamplingMethod::LINEAR>(Cycle clock);
 
+i16
+Sampler::boxcar(Cycle from, Cycle to)
+{
+    /* Quaesar extension: time-weighted average of the staircase waveform
+     * over [from, to). Each stored sample holds its value from its own tag
+     * cycle until the tag cycle of the next sample. Entries that expire
+     * before the window ends are consumed (like interpolate does), while
+     * the entry covering 'to' is kept for the next window.
+     */
+
+    assert(!isEmpty());
+
+    if (to <= from) return elements[r];
+
+    isize r1 = r;
+    isize r2 = next(r1);
+
+    // Remove all entries that already ended before the window starts
+    while (r2 != w && keys[r2] <= from) {
+
+        skip();
+        r1 = r2;
+        r2 = next(r1);
+    }
+    assert(!isEmpty());
+
+    double sum = 0.0;
+    Cycle pos = from;
+
+    // Accumulate all segments that end inside the window
+    while (r2 != w && keys[r2] < to) {
+
+        sum += (double)(keys[r2] - pos) * (double)elements[r1];
+        pos = keys[r2];
+
+        skip();
+        r1 = r2;
+        r2 = next(r1);
+    }
+
+    // Accumulate the segment reaching the end of the window
+    sum += (double)(to - pos) * (double)elements[r1];
+
+    return (i16)(sum / (double)(to - from));
+}
+
 }

@@ -28,6 +28,7 @@ extern void sound_volume(int);
 extern void set_volume(int, int);
 extern void master_sound_volume(int);
 extern int audio_callback_sync_wait_ms(int max_wait_ms);
+extern int audio_pull_above_target(void);
 
 struct sound_dp;
 
@@ -63,6 +64,11 @@ extern int outputsample, doublesample;
 #endif
 
 extern int active_sound_stereo;
+
+// Quaesar PWM sound engine: enable punch/room post-processing on the Paula
+// output stream. room_mode is a qsr_dsp::RoomMode value (0 = off).
+// Call before the UAE thread starts (or while sound is closed).
+void qsr_pwm_post_configure(bool enabled, bool punch, int room_mode);
 
 #define PUT_SOUND_WORD(b)                                           \
     do {                                                            \

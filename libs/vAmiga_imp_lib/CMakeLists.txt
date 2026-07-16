@@ -22,8 +22,14 @@ set_target_properties(VAmigaImpLib PROPERTIES
 
 
 # Include directories for the library
+# - src:  quasar_app headers (qsr_config.h etc.)
+# - libs: shared PWM sound engine DSP (qsr_audio_dsp/qsr_audio_dsp.h), used by
+#         va_server_thread.cpp for punch/room post-processing in the SDL audio
+#         callback. The quaesar executable has 'libs' on its include path, but
+#         VAmigaImpLib is a separate target and needs it explicitly.
 target_include_directories(VAmigaImpLib PUBLIC
      ${CMAKE_SOURCE_DIR}/src
+     ${CMAKE_SOURCE_DIR}/libs
 #     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

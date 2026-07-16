@@ -10,6 +10,7 @@
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"
 #include "qd/thread/thread.h"
+#include "qsr_audio_dsp/qsr_audio_dsp.h"
 #include "quasar_app/qsr_config.h"
 #include "quasar_app/quaesar.h"
 #include "va_server_app_part.h"
@@ -202,6 +203,12 @@ public:
 // correction so the emulator produces audio at exactly the rate SDL consumes
 // it. Without detector feedback, the emulator's production rate drifts and
 // periodic underflows cause audio stutter.
+// PWM sound engine post chain (punch + room), shared with UAE.
+// Configured on the vAmiga server thread before the audio device is opened;
+// processed on SDL's audio thread inside the callback.
+static qsr_dsp::PwmPostChain s_pwm_post;
+static bool s_pwm_post_enabled = false;
+
 void SDLCALL vamiga_audio_callback(void *userdata, Uint8 *stream, int len) {
     auto *pThis = static_cast<VAmServerThread *>(userdata);
     vamiga::VAmiga *pVAmiga = pThis->m_pVAmiga;
@@ -214,7 +221,26 @@ void SDLCALL vamiga_audio_callback(void *userdata, Uint8 *stream, int len) {
 
     // Pull separate L/R streams — copyStereo feeds the SampleRateDetector
     float left[2048], right[2048];
-    pVAmiga->audioPort.copyStereo(left, right, nFrames);
+    auto copied = pVAmiga->audioPort.copyStereo(left, right, nFrames);
+    if (copied < nFrames) {
+        // vAmiga ringbuffer underflow (its handleBufferUnderflow zero-fills
+        // and lets ASR speed production back up) — log throttled for parity
+        // with the UAE-side underrun diagnostics.
+        static int s_underrun_cnt = 0;
+        static Uint32 s_underrun_log_ms = 0;
+        s_underrun_cnt++;
+        Uint32 now = SDL_GetTicks();
+        if (now - s_underrun_log_ms > 2000) {
+            SDL_Log("VAMIGA AUDIO UNDERRUN: got %d/%d frames (count: %d)", (int)copied, nFrames, s_underrun_cnt);
+            s_underrun_log_ms = now;
+        }
+    }
+
+    // PWM sound engine: punch + room post-processing
+    if (s_pwm_post_enabled) {
+        for (int i = 0; i < nFrames; i++)
+            s_pwm_post.process(left[i], right[i]);
+    }
 
     // Interleave for SDL
     float *out = reinterpret_cast<float *>(stream);
@@ -567,10 +593,21 @@ void VAmServerThread::onVAmigaThreadMain() {
             //   Default is 4096 (~93ms); 8192 (~186ms) gives more headroom.
             //
             // AUD_SAMPLING_METHOD: LINEAR interpolation for smoother output.
-            //   Default is NONE (no resampling).
+            //   Default is NONE (no resampling). The PWM sound engine uses
+            //   boxcar (CIC) averaging of the Paula staircase instead, plus
+            //   punch/room post-processing in the SDL audio callback.
             m_pVAmiga->set(vamiga::Opt::HOST_SAMPLE_RATE, 44100);
             m_pVAmiga->set(vamiga::Opt::AUD_BUFFER_SIZE, 8192);
-            m_pVAmiga->set(vamiga::Opt::AUD_SAMPLING_METHOD, (vamiga::i64)vamiga::SamplingMethod::LINEAR);
+            if (g_cfg_startup.isPwmSoundEngine()) {
+                m_pVAmiga->set(vamiga::Opt::AUD_SAMPLING_METHOD, (vamiga::i64)vamiga::SamplingMethod::PWM);
+                s_pwm_post.setup(44100.0, g_cfg_startup.soundPunch,
+                                 qsr_dsp::roomModeFromString(g_cfg_startup.soundRoom.c_str()));
+                s_pwm_post_enabled = true;
+                SDL_Log("VAmiga audio: PWM sound engine (punch=%d, room=%s)",
+                        (int)g_cfg_startup.soundPunch, g_cfg_startup.soundRoom.c_str());
+            } else {
+                m_pVAmiga->set(vamiga::Opt::AUD_SAMPLING_METHOD, (vamiga::i64)vamiga::SamplingMethod::LINEAR);
+            }
 
             m_pVAmiga->powerOn();
             m_pVAmiga->run();

@@ -46,6 +46,15 @@ int SDL_main(int argc, char* argv[]) {
 
     std::string engineId;
     cliApp.add_option("--engine", engineId, "Emulation engine to use (uae, vamiga, ...)");
+
+    cliApp.add_option("--sound-engine", g_cfg_startup.soundEngine,
+                      "Sound engine: 'native' (default, core's own path) or 'pwm' "
+                      "(CIC/boxcar resampling + punch enhancement)");
+    cliApp.add_flag("--sound-punch,!--no-sound-punch", g_cfg_startup.soundPunch,
+                    "Enable/disable punch transient enhancement (pwm sound engine only, default on)");
+    cliApp.add_option("--sound-room", g_cfg_startup.soundRoom,
+                      "Room simulation for headphones (pwm sound engine only): "
+                      "off, -15db, -14db, -13db, -12db, -9db");
     try {
         cliApp.parse(argc, argv);
     } catch (const CLI::ParseError& e) {

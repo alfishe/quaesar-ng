@@ -11,6 +11,7 @@
 #include "uae_server_thread.h"
 #include <SDL.h>
 #include <queue>
+#include "qsr_audio_dsp/qsr_audio_dsp.h"
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"
 #include "qd/thread/thread.h"
@@ -22,6 +23,8 @@
 extern void real_main(int argc, TCHAR** argv);
 extern void qs_keyboard_set_translation();
 extern void quae__parseCmdLine(int argc, TCHAR** argv);
+// sounddep/sound.cpp - PWM sound engine punch/room post-processing
+extern void qsr_pwm_post_configure(bool enabled, bool punch, int room_mode);
 
 namespace amD::uae {
 extern void do_console_cmd_immediate(const char* cmd);
@@ -85,6 +88,16 @@ static int uae_thread_main_func(void*) {
     currprefs.cpu_memory_cycle_exact = true;
     currprefs.blitter_cycle_exact = true;
     currprefs.sound_stereo_separation = 0;
+
+    // PWM sound engine: the "anti" interpolation mode is UAE's time-weighted
+    // boxcar average of the cycle-accurate Paula staircase - the same CIC
+    // decimation the PWM renderer uses. Punch/room are applied host-side in
+    // sounddep/sound.cpp. The user can still override sound_interpol via -s.
+    if (g_cfg_startup.isPwmSoundEngine()) {
+        currprefs.sound_interpol = changed_prefs.sound_interpol = 1;  // anti
+        qsr_pwm_post_configure(true, g_cfg_startup.soundPunch,
+                               (int)qsr_dsp::roomModeFromString(g_cfg_startup.soundRoom.c_str()));
+    }
 
     std::vector<const char*> argv;
     argv.push_back("quaesar.exe");

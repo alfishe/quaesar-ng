@@ -28,6 +28,8 @@
 #include <SDL.h>
 // clang-format on
 
+#include "qsr_audio_dsp/qsr_audio_dsp.h"
+
 #define AMIBERRY
 #define SOUND_DEVICE_SDL2 7
 
@@ -77,6 +79,52 @@ uae_u16* paula_sndbufpt;
 int paula_sndbufsize;
 int active_sound_stereo;
 
+// ---------------------------------------------------------------------------
+// PWM sound engine post-processing (punch + room), shared with vAmiga.
+// Configured once at startup (before the UAE thread runs) via
+// qsr_pwm_post_configure(); applied to the finished Paula stereo buffer in
+// finish_sound_buffer() on the emulation thread.
+// ---------------------------------------------------------------------------
+static qsr_dsp::PwmPostChain s_pwm_post;
+static bool s_pwm_post_enabled = false;
+static bool s_pwm_post_punch = true;
+static qsr_dsp::RoomMode s_pwm_post_room = qsr_dsp::RoomMode::Off;
+static int s_pwm_post_rate = 0;  // sample rate the chain was set up for
+
+void qsr_pwm_post_configure(bool enabled, bool punch, int room_mode) {
+    s_pwm_post_enabled = enabled;
+    s_pwm_post_punch = punch;
+    s_pwm_post_room = (qsr_dsp::RoomMode)room_mode;
+    s_pwm_post_rate = 0;  // force (re)setup on next buffer
+}
+
+static void qsr_pwm_post_process(uae_u16* buffer, int bytes, int freq) {
+    if (!s_pwm_post_enabled || bytes <= 0 || freq <= 0)
+        return;
+
+    if (s_pwm_post_rate != freq) {
+        s_pwm_post.setup(freq, s_pwm_post_punch, s_pwm_post_room);
+        s_pwm_post_rate = freq;
+        write_log(_T("PWM sound engine: post chain active (punch=%d, room=%d, rate=%d)\n"),
+                  s_pwm_post_punch ? 1 : 0, (int)s_pwm_post_room, freq);
+    }
+    if (!s_pwm_post.active())
+        return;
+
+    uae_s16* p = reinterpret_cast<uae_s16*>(buffer);
+    const int frames = bytes / 4;  // 16-bit interleaved stereo
+    for (int i = 0; i < frames; i++) {
+        float l = p[i * 2 + 0] * (1.0f / 32768.0f);
+        float r = p[i * 2 + 1] * (1.0f / 32768.0f);
+        s_pwm_post.process(l, r);
+        // Punch can add up to ~30% on hot transients - clamp to avoid wrap
+        l = l < -1.0f ? -1.0f : (l > 0.99996f ? 0.99996f : l);
+        r = r < -1.0f ? -1.0f : (r > 0.99996f ? 0.99996f : r);
+        p[i * 2 + 0] = (uae_s16)lrintf(l * 32768.0f);
+        p[i * 2 + 1] = (uae_s16)lrintf(r * 32768.0f);
+    }
+}
+
 #ifdef AMIBERRY
 void sdl2_audio_callback(void* userdata, Uint8* stream, int len);
 #endif
@@ -99,7 +147,6 @@ static int extrasndbuffered;
 // This implements the same crystal-locked timing pattern as unreal-ng's
 // MainLoop (see NC_AUDIO_BUFFER_HALF_FULL).
 static SDL_sem* s_frame_sync_sem = NULL;
-static unsigned int s_consumed_since_post = 0;  // bytes consumed since last semaphore post
 
 int setup_sound(void) {
     sound_available = 1;
@@ -254,7 +301,6 @@ static void resume_audio_sdl2(struct sound_data* sd) {
             prefill = s->pullbuffermaxlen / 2;
         s->pullbufferlen = prefill;
         // Buffer is already zeroed by clearbuffer, so silence is pre-filled
-        s_consumed_since_post = 0;
     }
 
     sd->waiting_for_buffer = 1;
@@ -307,6 +353,10 @@ static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) 
     static int s_overflow_cnt = 0;
     extern uae_u32 timeframes;
 
+    // Serialize pullbuffer/pullbufferlen access against sdl2_audio_callback
+    // (which runs on SDL's audio thread and also mutates both).
+    SDL_LockAudioDevice(s->dev);
+
     if (s->pullbufferlen + sd->sndbufsize > s->pullbuffermaxlen) {
         s_overflow_cnt++;
         if (s_push_log_throttle <= 0) {
@@ -316,7 +366,11 @@ static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) 
                 s->pullbufferlen, s->pullbuffermaxlen, sd->sndbufsize, s_overflow_cnt, (unsigned long)timeframes);
             s_push_log_throttle = 50;
         }
-        s->pullbufferlen = 0;
+        // Drop only the oldest half of the buffer instead of everything:
+        // loses ~93ms of stale audio instead of ~186ms, halving the artifact.
+        unsigned int keep = s->pullbuffermaxlen / 2;
+        memmove(s->pullbuffer, s->pullbuffer + (s->pullbufferlen - keep), keep);
+        s->pullbufferlen = keep;
         gui_data.sndbuf_status = 1;
     } else {
         gui_data.sndbuf_status = 0;
@@ -328,6 +382,8 @@ static void finish_sound_buffer_pull(struct sound_data* sd, uae_u16* sndbuffer) 
     s->pullbufferlen += sd->sndbufsize;
 
     gui_data.sndbuf = (int)(1000.0f * s->pullbufferlen) / s->pullbuffermaxlen;
+
+    SDL_UnlockAudioDevice(s->dev);
 }
 
 static int open_audio_sdl2(struct sound_data* sd, int index) {
@@ -388,15 +444,21 @@ static int open_audio_sdl2(struct sound_data* sd, int index) {
         else
             while (SDL_SemTryWait(s_frame_sync_sem) == 0) {
             }  // drain stale posts
-        s_consumed_since_post = 0;  // reset rate limiter
     }
 
     if (s->pullmode) {
-        // Generous pull buffer: 8x Paula buffer to absorb timing jitter
-        // between per-frame Paula pushes and smooth callback draining.
-        s->pullbuffermaxlen = sd->sndbufsize * 8;
+        // Small pull buffer with fill-level flow control (unreal-ng style):
+        // the emulation thread blocks in audio_callback_sync_wait_ms()
+        // whenever the VIRTUAL fill (pull buffer + pending Paula samples) is
+        // at or above the 50% target, so emulation speed is slaved to the
+        // sound card crystal by construction. Pre-primed to the target with
+        // silence: ~3.5 PAL frames (~70ms) of fixed latency. The margin
+        // between target and the pull-side floor covers one video frame of
+        // audio (~3.5KB) plus one un-pushed Paula chunk (~4KB), so the
+        // callback never starves while the invariant holds.
+        s->pullbuffermaxlen = sd->sndbufsize * 6;
         s->pullbuffer = xcalloc(uae_u8, s->pullbuffermaxlen);
-        s->pullbufferlen = 0;
+        s->pullbufferlen = s->pullbuffermaxlen / 2;
     }
     write_log("SDL2: CH=%d, FREQ=%d '%s' buffer %d/%d device_samples=%d (%s)\n", ch, freq, sound_devices[index]->name,
               s->sndbufsize, s->framesperbuffer, have.samples, !s->pullmode ? _T("push") : _T("pull"));
@@ -626,11 +688,15 @@ void restart_sound_buffer() {
 
 
 // Audio-callback-driven frame sync (pull/callback mode).
-// Waits on the semaphore posted by sdl2_audio_callback when the pull buffer
-// drops below 50%. This locks emulation frame timing to the sound card
-// crystal oscillator, providing sub-frame precision.
-// max_wait_ms: maximum time to block in milliseconds.
-//   20 = one PAL frame (standard pacing timeout).
+// Fill-level flow control (unreal-ng style): block while the pull buffer is
+// at or above its 50% target, waking on each audio callback (which posts the
+// semaphore after consuming). The emulation therefore runs a frame exactly
+// when the sound card has drained one frame's worth of audio below target -
+// crystal-locked pacing with no rate bookkeeping that could drift.
+// - Buffer below target (startup, after a stall): returns immediately, so
+//   the emulation runs frames back-to-back until the cushion is restored.
+// - Buffer at/above target: blocks until the device consumes.
+// max_wait_ms is a per-wait safety timeout; total blocking is bounded.
 // Returns: 0 = proceed with frame, -1 = fallback to wall clock.
 int audio_callback_sync_wait_ms(int max_wait_ms) {
     if (!have_sound || sdp->deactive || sdp->paused || sdp->reset)
@@ -641,14 +707,18 @@ int audio_callback_sync_wait_ms(int max_wait_ms) {
     if (!s_frame_sync_sem)
         return -1;
 
-    // Wait for the audio callback to signal that one frame's worth of audio
-    // has been consumed by the sound card crystal.
     int timeout_ms = max_wait_ms;
     if (timeout_ms < 0 || timeout_ms > 20)
         timeout_ms = 20;
-    SDL_SemWaitTimeout(s_frame_sync_sem, timeout_ms);
 
-    // Drain any additional posts to prevent semaphore value buildup.
+    int guard_ms = 0;
+    while (audio_pull_above_target() && guard_ms < 100) {
+        SDL_SemWaitTimeout(s_frame_sync_sem, timeout_ms);
+        guard_ms += timeout_ms;
+    }
+
+    // The semaphore is only a wakeup signal now (fill level is the authority);
+    // drain leftovers so its count cannot grow unboundedly.
     while (SDL_SemTryWait(s_frame_sync_sem) == 0) {
     }
 
@@ -757,6 +827,22 @@ int audio_is_pull() {
     return 0;
 }
 
+// Fill-level gate for audio-slaved frame advancement (unreal-ng style).
+// Returns 1 while the virtual fill (pull buffer + samples already rendered
+// into the Paula buffer but not yet pushed) is at or above the 50% target.
+// The emulation advances only while this returns 0, so emulation speed is
+// slaved to the sound card crystal by construction: below target it runs
+// (at full host speed if it needs to catch up after a stall), at target it
+// sleeps. Called from the emulation thread only.
+int audio_pull_above_target(void) {
+    sound_dp* s = sdp->data;
+    if (!s || !s->pullmode || !s->pullbuffer)
+        return 0;
+    ptrdiff_t pending = reinterpret_cast<uae_u8*>(paula_sndbufpt) - reinterpret_cast<uae_u8*>(paula_sndbuffer);
+    unsigned int vfill = s->pullbufferlen + (unsigned int)(pending > 0 ? pending : 0);
+    return vfill >= (unsigned int)(s->pullbuffermaxlen / 2) ? 1 : 0;
+}
+
 int audio_pull_buffer() {
     int cnt = 0;
     if (sdp->paused || sdp->deactive || sdp->reset)
@@ -847,6 +933,9 @@ void finish_sound_buffer() {
 #ifdef DRIVESOUND
     driveclick_mix(reinterpret_cast<uae_s16*>(paula_sndbuffer), bufsize / 2, currprefs.dfxclickchannelmask);
 #endif
+    // PWM sound engine post chain (punch + room) - stereo output only
+    if (get_audio_nativechannels(active_sound_stereo) == 2)
+        qsr_pwm_post_process(paula_sndbuffer, bufsize, sdp->obtainedfreq > 0 ? sdp->obtainedfreq : currprefs.sound_freq);
     // must be after driveclick_mix
     paula_sndbufpt = paula_sndbuffer;
 
@@ -1005,20 +1094,13 @@ void master_sound_volume(int dir) {
 // into exactly 50 Hz (PAL) or 60 Hz (NTSC) frame-sync signals.
 
 static void post_frame_sync_if_needed(const sound_data* sd) {
-    // Bytes of audio consumed per emulated video frame
-    extern float fake_vblank_hz;
-    float hz = fake_vblank_hz > 0.1f ? fake_vblank_hz : 50.0f;
-    unsigned int bytes_per_frame = (unsigned int)(sd->freq * sd->samplesize / hz);
-    if (bytes_per_frame < 1)
-        return;
-
-    // Use while loop: if a single callback consumed multiple frames' worth
-    // of audio (e.g., large device buffer), post multiple times to catch up.
-    while (s_consumed_since_post >= bytes_per_frame) {
-        s_consumed_since_post -= bytes_per_frame;
-        if (s_frame_sync_sem)
-            SDL_SemPost(s_frame_sync_sem);
-    }
+    // Wake the emulation thread: it decides whether to run a frame based on
+    // the pull buffer fill level (see audio_callback_sync_wait_ms). The
+    // semaphore carries no frame accounting - cap its value so it cannot
+    // grow when the emulation is not waiting (turbo mode, pause).
+    (void)sd;
+    if (s_frame_sync_sem && SDL_SemValue(s_frame_sync_sem) < 4)
+        SDL_SemPost(s_frame_sync_sem);
 }
 
 void sdl2_audio_callback(void* userdata, Uint8* stream, int len) {
@@ -1038,12 +1120,25 @@ void sdl2_audio_callback(void* userdata, Uint8* stream, int len) {
     }
 
     if (s->pullbufferlen <= 0) {
-        // Underrun: no audio data available — output silence
+        // Underrun: no audio data available — output silence (audible tick!)
+        static int s_underrun_cnt = 0;
+        static Uint32 s_underrun_log_ms = 0;
+        s_underrun_cnt++;
+        Uint32 now = SDL_GetTicks();
+        if (now - s_underrun_log_ms > 2000) {
+            SDL_Log("AUDIO PULL UNDERRUN: silence inserted (count: %d)", s_underrun_cnt);
+            s_underrun_log_ms = now;
+        }
         memset(stream, 0, len);
+        // Self-heal: re-prime the pull buffer half-full with silence. This
+        // restores ~93ms of jitter headroom so a long emulation stall (disk
+        // I/O, WHDLoad load phases) costs ONE tick instead of a burst of
+        // ticks while the buffer crawls along empty. Fill level is conserved
+        // by the frame-locked pacing, so the cushion persists afterwards.
+        s->pullbufferlen = s->pullbuffermaxlen / 2;
+        memset(s->pullbuffer, 0, s->pullbufferlen);
         gui_data.sndbuf_status = -1;
-        // Still accumulate consumed bytes so the frame-sync rate stays correct
-        s_consumed_since_post += (unsigned int)len;
-        // Signal emulation if a full frame's worth of audio has been consumed
+        // Wake the emulation thread so it can refill
         post_frame_sync_if_needed(sd);
         return;
     }
@@ -1067,10 +1162,7 @@ void sdl2_audio_callback(void* userdata, Uint8* stream, int len) {
     // Update buffer status for UI
     gui_data.sndbuf = (int)(1000.0f * s->pullbufferlen) / s->pullbuffermaxlen;
 
-    // Rate-limit semaphore posts to one per frame.
-    // The callback fires at ~86 Hz but we need exactly 50 (PAL) or 60 (NTSC)
-    // posts per second. Each post triggers one frame computation.
-    s_consumed_since_post += to_copy;
+    // Wake the emulation thread (fill-level flow control decides pacing).
     post_frame_sync_if_needed(sd);
 }
 

@@ -14278,16 +14278,13 @@ static void hsync_handler_post(bool onvsync)
 		static int nextwaitvpos;
 		if (vpos == 0)
 			nextwaitvpos = maxvpos_display * 1 / 4;
-		if (audio_is_pull() > 0 && !currprefs.turbo_emulation) {
-			maybe_process_pull_audio();
-			frame_time_t rpt = read_processor_time();
-			while (audio_pull_buffer() > 1 && (!isvsync() || (vsync_isdone(NULL) <= 0 && vsyncmintime - (rpt + vsynctimebase / 10) > 0 && vsyncmintime - rpt < vsynctimebase)) && !quit_program) {
-				cpu_sleep_millis(1);
-				maybe_process_pull_audio();
-				rpt = read_processor_time();
-			}
-		}
-		if (vpos + 1 < maxvpos + lof_store && vpos >= nextwaitvpos && vpos < maxvpos - (maxvpos / 3) && (audio_is_pull() <= 0 || (audio_is_pull() > 0 && audio_pull_buffer()))) {
+		// Pull-audio mode: NO per-line pacing at all. Frame advancement is
+		// gated once per frame at vsync time (framewait ->
+		// audio_callback_sync_wait_ms), which blocks while the audio buffer
+		// is at/above its 50% target. Emulation speed is thereby slaved to
+		// the sound card crystal; the legacy wall-clock sleep below remains
+		// only as the fallback when no pull audio is available.
+		if (vpos + 1 < maxvpos + lof_store && vpos >= nextwaitvpos && vpos < maxvpos - (maxvpos / 3) && audio_is_pull() <= 0) {
 			nextwaitvpos += maxvpos_display * 1 / 3;
 			vsyncmintime += vsynctimeperline;
 			if (vsync_isdone(NULL) <= 0 && !currprefs.turbo_emulation) {

@@ -31,6 +31,13 @@ struct Sampler : util::SortedRingBuffer <i16, VPOS_CNT * HPOS_CNT> {
     // Interpolates a sound sample for the specified target cycle
     template <SamplingMethod method> i16 interpolate(Cycle clock);
 
+    /* Quaesar extension (SamplingMethod::PWM): computes the time-weighted
+     * average of the Paula staircase waveform over the cycle window
+     * [from, to). This is an exact first-order CIC (boxcar) decimation of
+     * the cycle-tagged sample stream.
+     */
+    i16 boxcar(Cycle from, Cycle to);
+
     // Returns true if there are at least two sound samples
     bool isActive() { return count() != 1; }
 };

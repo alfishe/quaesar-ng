@@ -436,6 +436,7 @@ AudioPort::synthesize(Cycle clock, long count, double cyclesPerSample)
         case SamplingMethod::NONE:      synthesize<SamplingMethod::NONE>(clock, count, cyclesPerSample); break;
         case SamplingMethod::NEAREST:   synthesize<SamplingMethod::NEAREST>(clock, count, cyclesPerSample); break;
         case SamplingMethod::LINEAR:    synthesize<SamplingMethod::LINEAR>(clock, count, cyclesPerSample); break;
+        case SamplingMethod::PWM:       synthesize<SamplingMethod::PWM>(clock, count, cyclesPerSample); break;
 
         default:
             fatalError;
@@ -462,10 +463,25 @@ AudioPort::synthesize(Cycle clock, long count, double cyclesPerSample)
 
     for (isize i = 0; i < count; i++) {
 
-        float ch0 = sampler[0].interpolate <method> ((Cycle)cycle) * vol0;
-        float ch1 = sampler[1].interpolate <method> ((Cycle)cycle) * vol1;
-        float ch2 = sampler[2].interpolate <method> ((Cycle)cycle) * vol2;
-        float ch3 = sampler[3].interpolate <method> ((Cycle)cycle) * vol3;
+        float ch0, ch1, ch2, ch3;
+
+        if constexpr (method == SamplingMethod::PWM) {
+
+            // Quaesar extension: boxcar (CIC) average over the sample window
+            Cycle c1 = (Cycle)cycle;
+            Cycle c2 = (Cycle)(cycle + cyclesPerSample);
+            ch0 = sampler[0].boxcar(c1, c2) * vol0;
+            ch1 = sampler[1].boxcar(c1, c2) * vol1;
+            ch2 = sampler[2].boxcar(c1, c2) * vol2;
+            ch3 = sampler[3].boxcar(c1, c2) * vol3;
+
+        } else {
+
+            ch0 = sampler[0].interpolate <method> ((Cycle)cycle) * vol0;
+            ch1 = sampler[1].interpolate <method> ((Cycle)cycle) * vol1;
+            ch2 = sampler[2].interpolate <method> ((Cycle)cycle) * vol2;
+            ch3 = sampler[3].interpolate <method> ((Cycle)cycle) * vol3;
+        }
 
         // Compute left and right channel output
         double l = ch0 * (1 - pan0) + ch1 * (1 - pan1) + ch2 * (1 - pan2) + ch3 * (1 - pan3);
