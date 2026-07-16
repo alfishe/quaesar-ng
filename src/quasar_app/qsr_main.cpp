@@ -12,6 +12,7 @@
 #include "qsr_application.h"
 #include "qsr_config.h"
 #include "qsr_main_wnd_client_app.h"  // g_cfg_vm_wnd (CfgQsrMain)
+#include "qsr_operations.h"          // isSnapshotFile
 #include "quaesar.h"
 #include "vm_player_selector.h"  // VmPlayersSelector::isKnownCoreId
 
@@ -61,6 +62,18 @@ int SDL_main(int argc, char* argv[]) {
         return cliApp.exit(e);
     }
 
+    // Detect snapshot files in the input positional argument.
+    // If the input is a .uss or .vasnap file (by magic bytes or extension),
+    // move it to snapshotPath so it's loaded after emulator init instead
+    // of being treated as a disk image.
+    if (!g_cfg_startup.input.empty()) {
+        if (qsr::operations::isSnapshotFile(g_cfg_startup.input)) {
+            g_cfg_startup.snapshotPath = g_cfg_startup.input;
+            g_cfg_startup.input.clear();
+            printf("Startup: detected snapshot file, will load after init\n");
+        }
+    }
+
     // Apply --engine selection with validation.
     // Default engine is already WinUae (set in CfgQsrMain); only override
     // if the user passed --engine and the id maps to a known engine.
@@ -72,6 +85,19 @@ int SDL_main(int argc, char* argv[]) {
             qsr::g_cfg_vm_wnd.engine = qsr::EngineId::WinUae;
         } else {
             qsr::g_cfg_vm_wnd.engine = engine;
+        }
+    }
+
+    // Validate kickstart ROM exists before starting any subsystem.
+    // Without a valid ROM both UAE and vAmiga engines are non-functional,
+    // so there's no point proceeding to SDL init, window creation, etc.
+    if (!g_cfg_startup.kickRomPath.empty()) {
+        if (FILE* f = fopen(g_cfg_startup.kickRomPath.c_str(), "rb")) {
+            fclose(f);
+        } else {
+            fprintf(stderr, "ERROR: Kickstart ROM not found: '%s'\n",
+                    g_cfg_startup.kickRomPath.c_str());
+            return 1;
         }
     }
 

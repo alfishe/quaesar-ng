@@ -78,6 +78,9 @@ void QuaesarApplication::onConstruct(qd::CreateApplicationParams& in) {
                 pDbg->setDebugMode(IVm::EVmDebugMode::Live);
         }
         if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
+            // Don't forward ops if the engine failed to start.
+            if (pVmPlayer->hasInitFailed())
+                return;
             UaeServerThread* pUae = dynamic_cast<UaeServerThread*>(pVmPlayer);
             // When UAE's debug_1() is blocking (debugger_active), the ops queue
             // is stuck. Route step/continue directly via execConsoleCmd().
@@ -133,8 +136,18 @@ void QuaesarApplication::onFrameUpdate(float dt, float time) {
         if (qsr::IVmClientPlayer* pVmPlayer = m_pVmPlayerWndAppPart->getVmProvider()) {
             IVm::VM* vm = pVmPlayer->getVm();
             if (vm) {
+                // Swap the dummy bridge to the real engine VM.
+                // The debugger is now attached ONLY to the selected engine.
                 m_pDebuggerApp->getDbg()->setDbgServiceBridge(amD::create_shared_connection(vm));
                 m_bDebuggerVmConnected = true;
+            } else if (pVmPlayer->hasInitFailed()) {
+                // The selected engine failed to start (e.g. bad ROM).
+                // Without a real VM, the debugger would be stuck on a dummy
+                // UAE VM — which is wrong when vAmiga was selected.
+                // Shut down gracefully.
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                             "Selected engine failed to start — shutting down.");
+                requestAppToQuit();
             }
         }
     }

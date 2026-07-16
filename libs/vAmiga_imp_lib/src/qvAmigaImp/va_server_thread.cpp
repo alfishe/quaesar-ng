@@ -5,6 +5,8 @@
 #include <VAmiga.h>
 
 #include <queue>
+#include <filesystem>
+#include <stdexcept>
 
 #include "SDL_log.h"
 #include "qd/debug/assert.h"
@@ -482,50 +484,51 @@ void VAmServerThread::onVAmigaThreadMain() {
         m_pVAmiga->set(vamiga::ConfigScheme::A500_OCS_1MB);
 
         // Bypass hardcoded geometry limitations (e.g. max 16 heads or 504MB size limits)
-        // By default vAmiga will refuse to mount disks like the 30GB OS 3.2.3 VHD with 32 heads
-#ifndef NDEBUG
         vamiga::HDR_ACCEPT_ALL = 1;
-#endif
 
+        // Attach hard drives BEFORE launch().
+        // VAMIGA_PUBLIC_SUSPEND is instant pre-launch (no emulator thread).
+        // connect() is a no-op (no auto-creation), so revertToDefaultConfig()
+        // during launch() resetting HDC_CONNECT=true is harmless — the drive
+        // stays empty, pluggedIn() returns false.
+        //
+        // DIR-type drives: create and format an empty virtual drive but
+        // skip importFiles() (vAmiga's import is a static snapshot that
+        // hangs on large directories).
+        int hdsAttached = 0;
         for (int i = 0; i < ext_cfg.num_hds; i++) {
             if (ext_cfg.hd_paths[i]) {
+                SDL_Log("VAmiga Server: HD[%d] type=%d path='%s' volname='%s'",
+                        i, ext_cfg.hd_types[i], ext_cfg.hd_paths[i],
+                        ext_cfg.hd_volnames[i] ? ext_cfg.hd_volnames[i] : "(null)");
                 try {
-                    // Connect the HdController (Zorro board) so the drive is visible
-                    // to AmigaOS via autoconf. HDC_CONNECT defaults to true only for
-                    // slot 0; slots 1-3 default to false and need explicit connection.
-                    m_pVAmiga->set(vamiga::Opt::HDC_CONNECT, 1, (long)i);
-
                     if (ext_cfg.hd_types[i] == 0) { // HDF/VHD
-                        logDbg("VAmiga Server: Attaching file-backed hard drive: %s", ext_cfg.hd_paths[i]);
+                        SDL_Log("VAmiga Server: Attaching file-backed hard drive: %s", ext_cfg.hd_paths[i]);
                         m_pVAmiga->hd[i]->attachFileBacked(ext_cfg.hd_paths[i]);
                     } else if (ext_cfg.hd_types[i] == 1) { // DIR
-                        logDbg("VAmiga Server: Importing directory to virtual hard drive: %s", ext_cfg.hd_paths[i]);
-                        // Create a 500MB virtual drive: 1000 Cylinders, 16 Heads, 63 Sectors (1000 * 16 * 63 * 512 = ~504 MB)
-                        m_pVAmiga->hd[i]->attach(1000, 16, 63, 512); 
+                        SDL_Log("VAmiga Server: Creating virtual drive for directory '%s'", ext_cfg.hd_paths[i]);
+                        m_pVAmiga->hd[i]->attach(1000, 16, 63, 512);
                         m_pVAmiga->hd[i]->format(vamiga::FSFormat::FFS, ext_cfg.hd_volnames[i] ? ext_cfg.hd_volnames[i] : "DH");
-                        m_pVAmiga->hd[i]->importFiles(ext_cfg.hd_paths[i]);
                     }
+                    m_pVAmiga->set(vamiga::Opt::HDC_CONNECT, 1, (long)i);
+                    hdsAttached++;
                 } catch (const std::exception &ex) {
-                    logErr("VAmiga Server: Failed to attach hard drive '%s'. Reason: %s", ext_cfg.hd_paths[i], ex.what());
+                    auto msg = logErr("VAmiga Server: Failed to attach hard drive '%s'. Reason: %s", ext_cfg.hd_paths[i], ex.what());
+                    m_threadErrStr = msg->getLogStr();
+                    m_threadErr = 1;
+                    return;
                 } catch (...) {
-                    logErr("VAmiga Server: Failed to attach hard drive '%s'. Reason: Unknown error", ext_cfg.hd_paths[i]);
+                    auto msg = logErr("VAmiga Server: Failed to attach hard drive '%s'. Reason: Unknown error", ext_cfg.hd_paths[i]);
+                    m_threadErrStr = msg->getLogStr();
+                    m_threadErr = 1;
+                    return;
                 }
-                
+
                 free((void*)ext_cfg.hd_paths[i]);
                 if (ext_cfg.hd_volnames[i]) {
                     free((void*)ext_cfg.hd_volnames[i]);
                 }
             }
-        }
-
-        // Queue a hard reset so HdController re-evaluates pluggedIn() with HDC_CONNECT
-        // set to true for all populated slots. During initialize(), revertToDefaultConfig()
-        // resets HDC_CONNECT to defaults (true for slot 0, false for slots 1-3). The
-        // HDC_CONNECT commands queued above are processed after initialize(). This
-        // hardReset ensures _didReset() runs again with the correct HDC_CONNECT values,
-        // setting all HdController boards with attached drives to AUTOCONF state.
-        if (ext_cfg.num_hds > 0) {
-            m_pVAmiga->hardReset();
         }
 
         auto vaimga_delegate_cb = [](const void *ptr, vamiga::Message in_msg) {
@@ -534,6 +537,27 @@ void VAmServerThread::onVAmigaThreadMain() {
             pThis->vAmigaMsgQueueProc(msg);
             };
         m_pVAmiga->launch(this, vaimga_delegate_cb);
+
+        // Apply memory configuration AFTER launch().
+        // launch() → initialize() → revertToDefaultConfig() resets all options
+        // to defaults. Memory settings must be re-applied here.
+        if (ext_cfg.chip_ram_kb > 0) {
+            m_pVAmiga->set(vamiga::Opt::MEM_CHIP_RAM, ext_cfg.chip_ram_kb);
+        }
+        if (ext_cfg.slow_ram_kb > 0) {
+            m_pVAmiga->set(vamiga::Opt::MEM_SLOW_RAM, ext_cfg.slow_ram_kb);
+        }
+        if (ext_cfg.fast_ram_kb > 0) {
+            m_pVAmiga->set(vamiga::Opt::MEM_FAST_RAM, ext_cfg.fast_ram_kb);
+        }
+        SDL_Log("VAmiga Server: MEM chip=%dKB slow=%dKB fast=%dKB",
+                ext_cfg.chip_ram_kb, ext_cfg.slow_ram_kb, ext_cfg.fast_ram_kb);
+
+        // Hard reset so HdController re-evaluates pluggedIn() with the
+        // newly attached drives and memory configuration.
+        if (hdsAttached > 0) {
+            m_pVAmiga->hardReset();
+        }
 
         if (!g_cfg_startup.kickRomPath.empty()) {
             logDbg("VAMIGA: Loading Kick.rom from '%s' ...",
@@ -635,6 +659,18 @@ void VAmServerThread::onVAmigaThreadMain() {
             }
 
             m_pVm = new IVm::imp::VAmVmImp(this, m_pVAmiga);
+
+            // If a startup snapshot was detected from CLI, load it now.
+            // vAmiga's loadSnapshot handles suspend internally and has a
+            // built-in safety net (HARD_RESET on corruption).
+            if (!g_cfg_startup.snapshotPath.empty()) {
+                logDbg("VAmiga Startup: loading snapshot '%s'", g_cfg_startup.snapshotPath.c_str());
+                try {
+                    m_pVAmiga->amiga.loadSnapshot(std::filesystem::path(g_cfg_startup.snapshotPath.c_str()));
+                } catch (const std::exception &ex) {
+                    logErr("VAmiga Startup: snapshot load failed: %s", ex.what());
+                }
+            }
 
             setVAmInitialized(true);
             m_onVAmInitialized->set();  // sync with main thread

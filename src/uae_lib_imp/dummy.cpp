@@ -454,8 +454,9 @@ uae_u32 gfxboard_get_romtype(rtgboardconfig*) {
     return 0;
 }
 
-uae_u8* save_log(int, size_t*) {
-    UNIMPLEMENTED();
+uae_u8* save_log(int, size_t* len) {
+    // Log capture not implemented — return nullptr to skip chunk
+    *len = 0;
     return nullptr;
 }
 
@@ -910,9 +911,10 @@ void free_ahi_v2() {
     TRACE();
 }
 
+static int s_capslockstate = 0;
+
 int getcapslockstate() {
-    UNIMPLEMENTED();
-    return 0;
+    return s_capslockstate;
 }
 
 int get_guid_target(unsigned char*) {
@@ -1265,16 +1267,16 @@ void release_keys() {
 }
 
 void restore_cdtv_final() {
-    UNIMPLEMENTED();
+    // CDTV not emulated — no-op
 }
 
 void restore_cdtv_finish() {
-    UNIMPLEMENTED();
+    // CDTV not emulated — no-op
 }
 
-bool samepath(char const*, char const*) {
-    UNIMPLEMENTED();
-    return false;
+bool samepath(const TCHAR* p1, const TCHAR* p2) {
+    // Simple path comparison - delegate to the full implementation
+    return my_issamepath(p1, p2);
 }
 
 void sampler_free() {
@@ -1294,8 +1296,9 @@ void sampler_vsync() {
     TRACE();
 }
 
-uae_u8* save_screenshot(int, size_t*) {
-    UNIMPLEMENTED();
+uae_u8* save_screenshot(int, size_t* len) {
+    // Screenshot capture not implemented — return nullptr to skip chunk
+    *len = 0;
     return nullptr;
 }
 
@@ -1446,7 +1449,7 @@ void target_inputdevice_unacquire() {
 }
 
 bool target_isrelativemode() {
-    UNIMPLEMENTED();
+    // Relative paths mode not used — return false (absolute paths)
     return false;
 }
 
@@ -1777,23 +1780,25 @@ uae_u32 masoboshi_ncr9x_scsi_get(unsigned int, int) {
     return 0;
 }
 
-uae_u8* restore_cdtv_dmac(unsigned char*) {
-    UNIMPLEMENTED();
+uae_u8* restore_cdtv_dmac(unsigned char* src) {
+    // CDTV not emulated — skip restore data
+    return src;
+}
+
+uae_u8* restore_cdtv(unsigned char* src) {
+    // CDTV not emulated — skip restore data
+    return src;
+}
+
+uae_u8* save_cdtv_dmac(size_t* len, uae_u8*) {
+    // CDTV not emulated — return nullptr to skip chunk
+    *len = 0;
     return nullptr;
 }
 
-uae_u8* restore_cdtv(unsigned char*) {
-    UNIMPLEMENTED();
-    return nullptr;
-}
-
-uae_u8* save_cdtv_dmac(size_t*, uae_u8*) {
-    UNIMPLEMENTED();
-    return nullptr;
-}
-
-uae_u8* save_cdtv(size_t*, uae_u8*) {
-    UNIMPLEMENTED();
+uae_u8* save_cdtv(size_t* len, uae_u8*) {
+    // CDTV not emulated — return nullptr to skip chunk
+    *len = 0;
     return nullptr;
 }
 
@@ -1802,8 +1807,8 @@ int set_cache_state(int) {
     return 0;
 }
 
-void setcapslockstate(int) {
-    UNIMPLEMENTED();
+void setcapslockstate(int state) {
+    s_capslockstate = state;
 }
 
 void setmouseactivexy(int, int, int, int) {

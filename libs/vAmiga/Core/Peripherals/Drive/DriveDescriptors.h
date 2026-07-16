@@ -99,6 +99,12 @@ struct PartitionDescriptor : SerializableStruct
     u32 bootPri = 0;
     u32 dosType = 0x444f5300;
 
+    // Raw DosEnvec from RDB (17 longwords, big-endian).
+    // When present, processInit copies this verbatim into the DeviceNode
+    // packet instead of reconstructing field-by-field.
+    bool hasDosEnvec = false;
+    std::vector<u32> dosEnvec;
+
     template <class T>
     void serialize(T& worker)
     {
@@ -119,7 +125,9 @@ struct PartitionDescriptor : SerializableStruct
         << maxTransfer
         << mask
         << bootPri
-        << dosType;
+        << dosType
+        << hasDosEnvec
+        << dosEnvec;
 
     } STRUCT_SERIALIZERS(serialize);
 

@@ -16,7 +16,7 @@ reference for every flag. For the narrative, example-driven version, see
 
 | Argument | Shorthand | Type | Default | Description |
 |----------|-----------|------|---------|-------------|
-| `input` (positional) | — | path | — | Primary executable or image (`.adf`, `.dms`, `.ipf`, AmigaDOS exe). Auto-mounted into `DF0:`. |
+| `input` (positional) | — | path | — | Primary executable, image, or snapshot (`.adf`, `.dms`, `.ipf`, AmigaDOS exe, `.qsn`, `.uss`, `.vasnap`). Snapshots detected by magic bytes and loaded after init; disk images auto-mounted into `DF0:`. |
 | `--kickstart` | `-k` | path | *(required)* | Path to the Kickstart ROM (e.g. `kick13.rom`, `kick31.rom`). |
 | `--serial_port` | — | path/device | off | Bridges the Amiga serial port (`kprintf` output) to a host file, pipe, or TTY. |
 | `--uaeExtArgs` | `-s` | `key=value` (repeatable) | — | Pass-through to the WinUAE config parser. May be given many times. |
@@ -25,7 +25,7 @@ reference for every flag. For the narrative, example-driven version, see
 graph LR
     CLI["quaesar demo.adf -k kick.rom -s A -s B"]
     CLI --> P["CLI11 parse (qsr_main.cpp)"]
-    P --> NATIVE["native fields<br/>input · kickRomPath · serialPort"]
+    P --> NATIVE["native fields<br/>input · snapshotPath · kickRomPath · serialPort"]
     P --> EXT["g_cfg_startup.uaeExtArgs[]"]
     EXT --> CFG["cfgfile.cpp<br/>(WinUAE config parser)"]
     NATIVE --> CFG

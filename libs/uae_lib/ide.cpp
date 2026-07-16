@@ -1671,6 +1671,8 @@ struct ide_hdf *add_ide_unit (struct ide_hdf **idetable, int max, int ch, struct
 	ide = idetable[ch];
 	if (ci)
 		memcpy (&ide->hdhfd.hfd.ci, ci, sizeof (struct uaedev_config_info));
+	else
+		ci = &ide->hdhfd.hfd.ci;
 	if (ci->type == UAEDEV_CD && ci->device_emu_unit >= 0) {
 
 		device_func_init(0);
@@ -1799,14 +1801,14 @@ uae_u8 *ide_restore_state(uae_u8 *src, struct ide_hdf *ide)
 	ide->hdhfd.secspertrack = restore_u32 ();
 	ide->regs.ide_select = restore_u8 ();
 	ide->regs.ide_nsector = restore_u8 ();
-	ide->regs.ide_sector = restore_u8 ();
-	ide->regs.ide_lcyl = restore_u8 ();
-	ide->regs.ide_hcyl = restore_u8 ();
-	ide->regs.ide_feat = restore_u8 ();
 	ide->regs.ide_nsector2 = restore_u8 ();
+	ide->regs.ide_sector = restore_u8 ();
 	ide->regs.ide_sector2 = restore_u8 ();
+	ide->regs.ide_lcyl = restore_u8 ();
 	ide->regs.ide_lcyl2 = restore_u8 ();
+	ide->regs.ide_hcyl = restore_u8 ();
 	ide->regs.ide_hcyl2 = restore_u8 ();
+	ide->regs.ide_feat = restore_u8 ();
 	ide->regs.ide_feat2 = restore_u8 ();
 	ide->regs.ide_error = restore_u8 ();
 	ide->regs.ide_devcon = restore_u8 ();

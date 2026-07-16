@@ -415,13 +415,8 @@ HardDrive::setOption(Opt option, i64 value)
 void
 HardDrive::connect()
 {
-    // Attach a small default disk
-    if (!hasDisk()) {
-        
-        debug(WT_DEBUG, "Creating default disk...\n");
-        init(MB(10));
-        format(FSFormat::OFS, defaultName());
-    }
+    // No auto-disk creation. A drive without media stays empty.
+    // The emulator must never silently mount empty formatted drives.
 }
 
 void
@@ -719,6 +714,7 @@ HardDrive::read(isize offset, isize length, u32 addr)
             if (!fileStream) {
                 fileStream.clear();
                 error = IOERR_BADADDRESS;
+                debug(HDR_DEBUG, "read FAIL: file read failed at offset=%ld length=%ld\n", offset, length);
             } else {
                 mem.patch(addr, buf.ptr, length);
             }
@@ -821,25 +817,26 @@ HardDrive::verify(isize offset, isize length, u32 addr)
 
     if (length % 512) {
         
-        debug(HDR_DEBUG, "Length must be a multiple of 512 bytes");
+        debug(HDR_DEBUG, "verify FAIL: length=%ld not multiple of 512\n", length);
         return IOERR_BADLENGTH;
     }
 
     if (offset % 512) {
         
-        debug(HDR_DEBUG, "Offset is not aligned");
+        debug(HDR_DEBUG, "verify FAIL: offset=%ld not aligned to 512\n", offset);
         return IOERR_BADADDRESS;
     }
 
     if (offset + length > geometry.numBytes()) {
         
-        debug(HDR_DEBUG, "Invalid block location");
+        debug(HDR_DEBUG, "verify FAIL: offset+length=%ld > geometry.numBytes()=%ld (cyl=%ld h=%ld s=%ld bsize=%ld)\n",
+              offset + length, geometry.numBytes(), geometry.cylinders, geometry.heads, geometry.sectors, geometry.bsize);
         return IOERR_BADADDRESS;
     }
 
     if (!mem.inRam(addr) || !mem.inRam(u32(addr + length))) {
         
-        debug(HDR_DEBUG, "Invalid RAM location");
+        debug(HDR_DEBUG, "verify FAIL: addr=0x%X not in RAM\n", addr);
         return IOERR_BADADDRESS;
     }
 

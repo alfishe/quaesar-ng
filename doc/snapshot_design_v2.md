@@ -177,26 +177,49 @@ State that falls outside the common subset (UAE's Picasso96/RTG, FPU/MMU interna
 | `manifestSize` | `u32` | Size of JSON disk-image manifest in bytes. `0` if absent. |
 | `headerChecksum` | `u32` | CRC32 over bytes 0–507. Validates header integrity before any payload I/O. |
 
-### 3.4 Disk-image manifest
+### 3.4 Disk-image manifest and media policy
 
-The optional JSON manifest records external media references found in the native payload. On load, Quaesar checks each path for existence and warns the user if any are missing.
+#### 3.4.1 What gets embedded vs. referenced
+
+A snapshot cannot self-contain an entire Amiga system — hard drive images can be hundreds of megabytes or gigabytes. Quaesar uses a **split policy**:
+
+| Media type | In snapshot payload? | In manifest? | Notes |
+|---|---|---|---|
+| **Floppy disks** (up to 2) | **Yes** — embedded in native payload | Yes — path recorded for re-mount | Quaesar caps at **2 floppies** (DF0 + DF1). DF2/DF3 are reference-only. |
+| **Hard drives / hardfiles** | **No** — too large | Yes — path + geometry + size only | Always external references. Missing on load → drive unmounted with warning. |
+| **CD images** | **No** | Yes — path only | Always external references. |
+
+> **Design rationale:** Floppy images are small enough to embed (901 KB ADF or ~5.25 MB MFM raw per disk), making snapshots **self-contained for floppy-only scenarios**. Hard drive images range from a few MB to gigabytes — embedding them would bloat snapshots to unusable sizes. The QSN manifest provides path remapping so HDD-referencing snapshots remain portable.
+
+#### 3.4.2 Manifest format
+
+The optional JSON manifest records all external media references. On load, Quaesar checks each path for existence and warns the user if any are missing.
 
 ```json
 {
   "floppies": [
-    { "drive": 0, "path": "games/superfrog.adf", "writeProtect": false },
-    { "drive": 1, "path": "games/superfrog_disk2.adf", "writeProtect": true }
+    { "drive": 0, "path": "games/superfrog.adf", "writeProtect": false, "embedded": true },
+    { "drive": 1, "path": "games/superfrog_disk2.adf", "writeProtect": true, "embedded": true },
+    { "drive": 2, "path": "save/disks/disk3.adf", "writeProtect": false, "embedded": false }
   ],
   "hardfiles": [
-    { "device": "DH0", "path": "hd/system.hdf", "size": 134217728 }
+    { "device": "DH0", "path": "hd/system.hdf", "size": 134217728, "geometry": { "cyls": 262, "heads": 4, "secs": 32, "bsize": 512 } }
   ],
   "cdroms": []
 }
 ```
 
+The `"embedded": true/false` field on each floppy entry tells Quaesar whether the disk data is in the native payload (embedded) or must be re-mounted from the path at restore time (reference-only). For vAmiga, all inserted floppies are embedded. For UAE, floppies in DF0–DF1 have their current track buffer embedded; the full disk image must be re-mounted from the path.
+
 Paths are stored **relative to the snapshot file's directory** when possible, falling back to absolute paths. This enables snapshots to be moved between machines alongside their media.
 
-> **Note:** vAmiga embeds disk data inside `.vasnap`, so the manifest is informational only for that backend. UAE's `.uss` references external files, making the manifest essential.
+#### 3.4.3 The 2-floppy cap
+
+Only **DF0 and DF1** disk data is embedded in the snapshot. This covers the vast majority of use cases (most games and demos use 1–2 disks). DF2 and DF3 are recorded in the manifest as path references only — if the disk file exists at restore time, it is re-mounted; otherwise the drive is left empty.
+
+This cap keeps snapshot sizes bounded:
+- **vAmiga:** +5.25 MB uncompressed / +1.05 MB compressed per embedded disk → **max 2 disks = +2.1 MB compressed**
+- **UAE:** +~3 KB per disk (track buffer only) → negligible regardless of count
 
 ### 3.5 Container read/write pseudocode
 
@@ -896,6 +919,125 @@ The following Quaesar-layer state is **not** captured by either backend's native
 | Disk-image paths | `manifest` (JSON) | Path remapping for portability |
 | Quaesar container version | `containerVer` | Forward compatibility |
 
+### 8.7 Snapshot size estimates
+
+This section estimates QSN file sizes for typical Amiga workloads. The dominant cost factors are **RAM banks** (both backends) and **embedded floppy MFM data** (vAmiga only).
+
+#### Size drivers
+
+| Component | UAE contribution | vAmiga contribution |
+|---|---|---|
+| **RAM banks** | Full contents of chip + slow + fast + Zorro III, optionally zlib-compressed | Same: full bank contents, optionally GZIP/LZ4-compressed |
+| **Floppy disk data** (up to 2 disks, DF0+DF1) | **Current track only** (~3 KB per active drive). Full disk images are external path references. | **Full raw MFM** per inserted disk: `168 × 32768 = 5,505,024` bytes (5.25 MB) per disk uncompressed. All 168 tracks are serialized via `FloppyDisk::data.raw`. |
+| **Hard drive data** | **Never embedded.** External file references only (paths, geometry). Missing path → drive unmounted with warning. | **Never embedded.** External file references only (paths + geometry in manifest). |
+| **CPU/chipset state** | ~50 KB (registers, copper, blitter, CIA, audio, sprites, custom regs) | ~50–80 KB (same plus event scheduler queue, component tree overhead) |
+| **QSN envelope** | 512 B header + ~30 KB thumbnail + ~1 KB manifest | Same |
+
+> **Critical difference:** vAmiga embeds the **entire MFM-encoded floppy bitstream** for every inserted disk. Each disk is a fixed `168 × 32768 = 5,505,024` byte array (`FloppyDisk.h:75-78`), serialized element-by-element via `SerWriter::operator<<(T(&v)[N])` (`Serializable.h:656-662`). UAE, by contrast, stores only the current track's MFM buffer (~3 KB) in its `DSDx` chunk and references disk images by path. **Hard drive images are never embedded** by either backend — they are always external file references (see Section 3.4.1).
+
+#### Typical Amiga memory configurations
+
+| Machine | Chip RAM | Slow RAM | Fast RAM | Total RAM |
+|---|---|---|---|---|
+| A500 base (OCS) | 512 KB | 512 KB | 0 | **1 MB** |
+| A500 expanded (OCS) | 512 KB | 512 KB | 4 MB | **5 MB** |
+| A1200 base (AGA) | 2 MB | 0 | 0 | **2 MB** |
+| A1200 expanded (AGA) | 2 MB | 0 | 4 MB | **6 MB** |
+| A1200 maxed (AGA) | 2 MB | 0 | 8 MB | **10 MB** |
+| A3000 (ECS/Zorro III) | 2 MB | 0 | 8 MB Z3 | **10 MB** |
+
+#### Compression characteristics
+
+Amiga RAM and MFM data compress well. Typical ratios observed in practice:
+
+| Content type | Uncompressed | Compressed (zlib/GZIP) | Ratio |
+|---|---|---|---|
+| RAM — mostly zeroed (early boot) | 100% | ~10–15% | 85–90% reduction |
+| RAM — demo with graphics/bitmaps | 100% | ~40–55% | 45–60% reduction |
+| RAM — OS booted + programs loaded | 100% | ~50–65% | 35–50% reduction |
+| MFM floppy (vAmiga) — sparse tracks | 100% | ~15–25% | 75–85% reduction (32 KB track slots with ~12 KB data + zeros) |
+| CPU/chipset state | 100% | ~50% | 50% reduction |
+
+#### Scenario estimates
+
+**Scenario A: OCS floppy demo (A500, 1–2 disks, no OS)**
+
+| Component | UAE uncompressed | UAE compressed | vAmiga uncompressed | vAmiga compressed |
+|---|---|---|---|---|
+| Chip RAM (512 KB) | 524 KB | ~260 KB | 524 KB | ~260 KB |
+| Slow RAM (512 KB) | 524 KB | ~260 KB | 524 KB | ~260 KB |
+| Floppy data (2 disks) | ~6 KB | ~3 KB | **10,510 KB** | **~2,100 KB** |
+| CPU/chipset | ~50 KB | ~25 KB | ~60 KB | ~30 KB |
+| QSN envelope | ~31 KB | ~31 KB | ~31 KB | ~31 KB |
+| **Total** | **~1,135 KB** | **~579 KB** | **~11,649 KB** | **~2,681 KB** |
+| | | | | |
+| | | **≈ 0.6 MB** | | **≈ 2.6 MB** |
+
+**Scenario B: AGA demo (A1200 base, 1–2 disks, no OS)**
+
+| Component | UAE uncompressed | UAE compressed | vAmiga uncompressed | vAmiga compressed |
+|---|---|---|---|---|
+| Chip RAM (2 MB) | 2,048 KB | ~1,000 KB | 2,048 KB | ~1,000 KB |
+| Floppy data (2 disks) | ~6 KB | ~3 KB | **10,510 KB** | **~2,100 KB** |
+| CPU/chipset | ~50 KB | ~25 KB | ~60 KB | ~30 KB |
+| QSN envelope | ~31 KB | ~31 KB | ~31 KB | ~31 KB |
+| **Total** | **~2,135 KB** | **~1,059 KB** | **~12,649 KB** | **~3,161 KB** |
+| | | | | |
+| | | **≈ 1.0 MB** | | **≈ 3.1 MB** |
+
+**Scenario C: AmigaOS 3.1 booted + program running (A1200 base, 0–1 disks)**
+
+| Component | UAE uncompressed | UAE compressed | vAmiga uncompressed | vAmiga compressed |
+|---|---|---|---|---|
+| Chip RAM (2 MB, ~60% used) | 2,048 KB | ~1,100 KB | 2,048 KB | ~1,100 KB |
+| Floppy data (1 disk) | ~3 KB | ~2 KB | **5,505 KB** | **~1,100 KB** |
+| HDD state (external ref) | ~2 KB | ~1 KB | ~2 KB | ~1 KB |
+| CPU/chipset | ~50 KB | ~25 KB | ~60 KB | ~30 KB |
+| QSN envelope | ~31 KB | ~31 KB | ~31 KB | ~31 KB |
+| **Total** | **~2,134 KB** | **~1,159 KB** | **~7,646 KB** | **~2,262 KB** |
+| | | | | |
+| | | **≈ 1.1 MB** | | **≈ 2.2 MB** |
+
+**Scenario D: Developer workstation — OS + editor + assembler (A1200 expanded, 2MB chip + 8MB fast)**
+
+| Component | UAE uncompressed | UAE compressed | vAmiga uncompressed | vAmiga compressed |
+|---|---|---|---|---|
+| Chip RAM (2 MB, ~70% used) | 2,048 KB | ~1,200 KB | 2,048 KB | ~1,200 KB |
+| Fast RAM (8 MB, ~50% used) | 8,192 KB | ~4,100 KB | 8,192 KB | ~4,100 KB |
+| Floppy data (0 disks) | 0 | 0 | 0 | 0 |
+| HDD state (external ref) | ~2 KB | ~1 KB | ~2 KB | ~1 KB |
+| CPU/chipset + MMU | ~60 KB | ~30 KB | ~70 KB | ~35 KB |
+| QSN envelope | ~31 KB | ~31 KB | ~31 KB | ~31 KB |
+| **Total** | **~10,333 KB** | **~5,362 KB** | **~10,343 KB** | **~5,367 KB** |
+| | | | | |
+| | | **≈ 5.2 MB** | | **≈ 5.2 MB** |
+
+> **Note:** In Scenario D, both backends converge to similar sizes because there are no floppies — the vAmiga MFM embedding penalty disappears. The remaining difference is vAmiga's slightly larger component-tree overhead (~10 KB).
+
+#### Visual summary
+
+```mermaid
+graph LR
+    subgraph "Compressed .qsn sizes by scenario"
+        A_UAE["A: OCS demo<br/>UAE ≈ 0.6 MB"]
+        A_VA["A: OCS demo<br/>vAmiga ≈ 2.6 MB"]
+        B_UAE["B: AGA demo<br/>UAE ≈ 1.0 MB"]
+        B_VA["B: AGA demo<br/>vAmiga ≈ 3.1 MB"]
+        C_UAE["C: OS + program<br/>UAE ≈ 1.1 MB"]
+        C_VA["C: OS + program<br/>vAmiga ≈ 2.2 MB"]
+        D_UAE["D: Dev workstation<br/>UAE ≈ 5.2 MB"]
+        D_VA["D: Dev workstation<br/>vAmiga ≈ 5.2 MB"]
+    end
+```
+
+#### The vAmiga floppy penalty
+
+The 4–5× size difference in floppy scenarios (A–C) is almost entirely due to vAmiga's decision to embed full MFM bitstreams. Each inserted disk adds ~1.05 MB compressed to the snapshot (vs. ~1.5 KB for UAE's track-only buffer). This is by design — it makes vAmiga snapshots self-contained (no external disk dependencies), but at a significant storage cost.
+
+For auto-snapshot ring buffers (Section 15), this means:
+- **UAE auto-snapshots** are cheap (RAM-dominated, no floppy overhead).
+- **vAmiga auto-snapshots** with disks inserted are 2–4× larger. The ring buffer count or interval may need tuning to avoid excessive disk usage.
+
 ---
 
 ## 9. Snapshot Lifecycle
@@ -1010,6 +1152,195 @@ graph TD
     F --> I[Resume / remain paused]
     I --> J[Notification: snapshot loaded]
 ```
+
+### 9.4 Startup snapshot loading via CLI
+
+A snapshot file passed on the command line is loaded **immediately after emulator initialization**, before the user interacts with the machine. This enables scripts, desktop shortcuts, and double-click-on-`.qsn` workflows.
+
+#### Detection
+
+The existing `input` positional argument in `qsr_main.cpp` currently accepts `.adf`/`.dms`/`.exe` files. It must also recognize snapshot files:
+
+```cpp
+// qsr_main.cpp — after CLI11 parse
+if (!g_cfg_startup.input.empty()) {
+    if (isSnapshotFile(g_cfg_startup.input)) {
+        g_cfg_startup.snapshotPath = g_cfg_startup.input;
+        g_cfg_startup.input.clear();  // don't treat as disk image
+    }
+}
+```
+
+Where `isSnapshotFile()` checks magic bytes first, then extension:
+
+| File type | Magic (first 8 bytes) | Extension fallback |
+|---|---|---|
+| QSN container | `QUASAR01` | `.qsn` |
+| UAE savestate | `ASF ` (4 bytes + version) | `.uss` |
+| vAmiga snapshot | `VASNAP` | `.vasnap` |
+
+**Magic bytes are authoritative.** A file named `demo.adf` with `QUASAR01` magic is treated as a snapshot.
+
+#### Config addition
+
+A new field on `CfgQsrStartup` (`qsr_config.h`):
+
+```cpp
+struct CfgQsrStartup : public CfgBase {
+    // ...existing fields...
+    std::string input;          // .adf, .dms, .exe
+    std::string snapshotPath;   // .qsn, .uss, .vasnap — loaded after init
+    // ...
+};
+```
+
+#### Load sequence
+
+The startup snapshot is loaded **after** the emulator thread has initialized and the ROM has been verified, but **before** the main loop starts processing frames. This is a one-shot operation — it does not go through the operations queue. Instead, it is handled in the emulator thread's initialization path:
+
+```mermaid
+sequenceDiagram
+    participant CLI as qsr_main.cpp
+    participant App as QuaesarApplication
+    participant Emu as Emulator Thread
+
+    CLI->>CLI: Parse argv, detect snapshot in input
+    CLI->>CLI: Set g_cfg_startup.snapshotPath
+    CLI->>App: Create QuaesarApplication
+    App->>Emu: Initialize emulator (ROM, memory, devices)
+    Emu-->>App: Initialization complete
+    App->>Emu: Load startup snapshot (if snapshotPath set)
+    Note over Emu: Validate → restore → flush cache<br/>Same path as LoadSnapshot operation
+    Emu-->>App: Snapshot loaded (or error)
+    App->>App: Begin main loop
+```
+
+#### Backend differences
+
+| Aspect | UAE | vAmiga |
+|---|---|---|
+| **Restore mechanism** | Set `savestate_state = STATE_DORESTORE` + `savestate_fname` before first frame. `savestate_check()` at `vpos==0` restores at the first frame boundary. | Call `loadSnapshot(Snapshot&)` after `powerOn()` + `run()`. The `VAMIGA_PUBLIC_SUSPEND` macro handles thread safety. |
+| **Native UAE path** | UAE already supports `-statefile=<path>` in its own `parse_cmdline()`. Quaesar's startup snapshot sets the same globals. | N/A — vAmiga has no CLI. Quaesar calls the API directly. |
+| **Engine match** | QSN header `engineId` must be `WinUae`. `.uss` files assumed UAE. | QSN header `engineId` must be `VAmiga`. `.vasnap` files assumed vAmiga. |
+
+> **Note:** UAE's built-in `-statefile=` handling (in `libs/uae_lib/main.cpp:974-978`) already sets `savestate_state = STATE_DORESTORE` and copies the path to `savestate_fname`. Quaesar's startup path can leverage this for the UAE backend by setting the same globals before the emulator thread starts its first frame.
+
+#### Error handling
+
+| Error | Behavior |
+|---|---|
+| File not found | Log error, continue with normal boot (no snapshot). |
+| Magic bytes unrecognized | Log warning, treat as regular input (attempt as disk image). |
+| Wrong engine (QSN says UAE, running vAmiga) | Log error: "Snapshot was created by [engine], cannot load on [engine]." Continue with normal boot. |
+| Restore failure | Log error, continue with normal boot. The machine boots from ROM as if no snapshot was given. |
+| Missing disk references in manifest | Warning per missing disk. Floppy drives left empty. |
+
+> **Startup is best-effort.** A snapshot load failure never prevents Quaesar from starting — the user always gets a running emulator, either with the restored state or a fresh boot.
+
+### 9.5 Fast rollback performance analysis
+
+**Scenario:** A developer is debugging a demo — stepping through code, hitting a breakpoint, inspecting state. They want to rewind to a known-good snapshot and try again without rebooting the Amiga. How fast can this round-trip be?
+
+The total rollback latency is the sum of: **save time** (to create the snapshot before debugging) + **restore time** (to roll back). In practice, the developer saves once, then restores repeatedly.
+
+#### Restore latency breakdown
+
+| Phase | UAE | vAmiga | Notes |
+|---|---|---|---|
+| **1. Op queue dispatch** | 0–20 ms | 0–5 ms | UAE: `handle_events()` runs at every vsync (every ~20 ms at 50 Hz). Operation is drained on next vsync. vAmiga: thread loop polls every ~5 ms (`SDL_Delay(5)` in `va_server_thread.cpp`). |
+| **2. Frame-boundary wait** | 0–20 ms | 0 ms | UAE: `savestate_check()` runs at `vpos==0` — next frame start. Worst case: mid-frame, wait ~20 ms. vAmiga: `VAMIGA_PUBLIC_SUSPEND` acquires mutex immediately; no frame-boundary requirement. |
+| **3. Suspend / pause** | ~0 ms | ~1 ms | UAE: already on emu thread. vAmiga: `suspend()` acquires two locks (`suspensionLock` + `lock`), blocks until emu thread releases at next sleep point (max 50 ms timeout, typically <5 ms). |
+| **4. Native restore (CPU + chipset)** | ~1–3 ms | ~2–5 ms | Deserialize registers, custom chip state, copper, blitter, CIA. Small data (~50–80 KB). |
+| **5. Native restore (RAM)** | ~2–8 ms | ~3–10 ms | Memcpy chip + slow + fast RAM. 2 MB chip: ~1 ms. 10 MB total: ~5 ms. vAmiga also recompresses/reallocates bank layout via `Memory::operator<<(SerReader)`. |
+| **6. Native restore (floppy MFM)** | ~0 ms | ~5–15 ms | UAE: ~3 KB track buffer. vAmiga: up to 2 disks × 5.25 MB MFM = 10.5 MB decompressed copy. Dominates vAmiga restore for floppy scenarios. |
+| **7. Post-restore hooks** | ~1–5 ms | ~1–2 ms | UAE: `savestate_restore_finish()` reconfigures memory, event scheduler. vAmiga: `markAsDirty()` + run-ahead rebuild queued. |
+| **8. Debugger cache flush** | ~1 ms | ~1 ms | `fetchStateFromEmu()` iterates all `IVm` sub-modules, re-reads from backend. |
+| **9. QSN envelope unwrap** | ~0.5 ms | ~0.5 ms | Read 512 B header + extract payload to temp file. Negligible. |
+
+#### Estimated total restore times
+
+| Scenario | UAE total | vAmiga total |
+|---|---|---|
+| **A: OCS demo (1 MB RAM, 2 disks)** | **5–45 ms** | **15–65 ms** |
+| **B: AGA demo (2 MB RAM, 2 disks)** | **5–48 ms** | **15–70 ms** |
+| **C: OS + program (2 MB RAM, 1 disk)** | **5–45 ms** | **10–45 ms** |
+| **D: Dev workstation (10 MB RAM, 0 disks)** | **8–55 ms** | **8–35 ms** |
+
+> **Perceived latency:** At 50 Hz (20 ms/frame), a 40 ms restore spans 2 frames. The user sees a brief flicker (1–2 dropped frames), then the restored state. This is **imperceptible** for debugging — it feels instantaneous, like a "undo" button.
+
+#### The fast-rollback workflow
+
+```mermaid
+sequenceDiagram
+    participant Dev as Developer
+    participant UI as Quaesar UI
+    participant Emu as Emulator Thread
+    participant FS as File System
+
+    Note over Dev,FS: Phase 1: Save checkpoint (once)
+    Dev->>UI: Hit checkpoint hotkey (Shift+F5)
+    UI->>Emu: pushOperationMsg(SaveSnapshot)
+    Note over Emu: UAE: STATE_SAVE → vsync save<br/>vAmiga: suspend → saveSnapshot
+    Emu->>FS: Write .qsn (~0.6–5.2 MB)
+    FS-->>Emu: done (~5–30 ms disk I/O)
+    Emu-->>UI: Checkpoint saved
+
+    Note over Dev,FS: Phase 2: Debug (step, breakpoint, etc.)
+    Dev->>UI: Step / trace / set breakpoint
+    Note over Dev: ... time passes, state diverges ...
+
+    Note over Dev,FS: Phase 3: Rollback (repeatable)
+    Dev->>UI: Hit rollback hotkey (F5)
+    UI->>Emu: pushOperationMsg(LoadSnapshot)
+    Note over Emu: Validate → restore → flush cache
+    Emu-->>UI: Snapshot restored
+    UI-->>Dev: Debugger shows restored state
+    Note over Dev: Ready to debug again. Total: 5–70 ms
+```
+
+#### Optimization: in-memory snapshots for hot rollback
+
+For the debugging scenario, the disk I/O to write/read the `.qsn` file adds latency that is unnecessary when the developer just wants a quick undo. An **in-memory fast-rollback mode** bypasses the QSN container entirely:
+
+| Mode | Path | Latency |
+|---|---|---|
+| **File save + restore** | QSN on disk | 15–100 ms total (includes disk I/O) |
+| **In-memory save + restore** | Native snapshot in RAM | **5–70 ms total** (no disk I/O) |
+
+The in-memory path uses the backend's native in-memory snapshot API directly:
+
+- **UAE:** `savestate_capture()` captures lightweight state into the rewind buffer (already in RAM). This is separate from file save — it's faster but captures less state (no disk image paths).
+- **vAmiga:** `Amiga::takeSnapshot()` returns an in-memory `Snapshot*` object. No file I/O at all — pure memcpy. `loadSnapshot(Snapshot&)` restores from memory.
+
+```mermaid
+graph LR
+    subgraph "Hot Rollback Path (in-memory)"
+        CKPT[Checkpoint: takeSnapshot\nto in-memory buffer]
+        DBG[Debug: step / trace /<br/>breakpoint / edit]
+        RB[Rollback: loadSnapshot\nfrom in-memory buffer]
+        CKPT --> DBG --> RB
+        RB -.->|repeat| DBG
+    end
+
+    subgraph "Cold Rollback Path (file-based)"
+        SAVE[Save: writeQSN to disk]
+        DBG2[Debug / close / reopen]
+        LOAD[Load: readQSN from disk]
+        SAVE --> DBG2 --> LOAD
+    end
+
+    CKPT -.->|optional: persist| SAVE
+```
+
+#### Summary: fast-rollback is practical
+
+| Question | Answer |
+|---|---|
+| Can rollback feel instant? | **Yes.** 5–70 ms is 1–3 frames at 50 Hz — imperceptible. |
+| Is disk I/O required? | **No** for hot rollback — use in-memory snapshots. Only for persistent checkpoints. |
+| Does vAmiga's MFM embedding hurt? | **Moderately.** Adds ~10–15 ms for 2 disks. UAE is faster here because it stores track buffers only. |
+| Does frame-boundary gating add latency? | **UAE only:** up to 20 ms worst case. vAmiga has no frame-boundary requirement for restore. |
+| Can the developer repeat rollbacks quickly? | **Yes.** The workflow is: checkpoint once (Shift+F5), rollback repeatedly (F5). Each rollback is a single keypress. |
 
 ---
 
@@ -1175,35 +1506,53 @@ Disk-image-missing is a **warning, not a hard failure**. The user may continue; 
 
 ### 12.1 Overview
 
-In addition to the menu-driven Save/Load flow, snapshots should be loadable by **dragging a `.qsn` file onto the main emulator window**. This requires adding `SDL_DROPFILE` handling to the event loop.
+In addition to the menu-driven Save/Load flow and CLI startup (Section 9.4), snapshots should be loadable by **dragging a `.qsn` file onto the main emulator window**. The existing `SDL_DROPFILE` handler in `QsrMainClientWndApp::onSdlEventProc()` (`qsr_main_wnd_client_app.cpp:343`) currently only accepts floppy images (`.adf`, `.img`, `.dms`). It must be extended to detect and route snapshot files before the floppy check.
 
 The sequence is: **detect drop → read QSN header → dispatch validated load → restore → resume**.
 
-### 12.2 SDL event handling
+### 12.2 Extending the existing SDL_DROPFILE handler
 
-The main window's event handler is `QsrMainClientWndApp::onSdlEventProc()` in `src/quasar_app/qsr_main_wnd_client_app.cpp`. A new `SDL_DROPFILE` case must be added:
+The current handler (`qsr_main_wnd_client_app.cpp:343-372`) checks for floppy extensions only and rejects everything else. It must be restructured to check for **snapshots first** (via magic bytes), then fall through to floppy/disk handling:
 
 ```cpp
 case SDL_DROPFILE: {
     if (event.drop.windowID != uaeWndId)
-        break;
+        return qd::EFlow::CONTINUE;
 
-    // Take ownership of the file path — SDL allocates it, we must free it
-    char* droppedPath = event.drop.file;
-    std::string path(droppedPath);
-    SDL_free(droppedPath);
+    char* droppedFile = event.drop.file;
+    if (!droppedFile)
+        return qd::EFlow::STOP;
+    std::string path(droppedFile);
+    SDL_free(droppedFile);
 
-    // Dispatch through the operations pipeline.
-    // The QSN header is read on the UI thread (pure file I/O, no emulator state).
-    // Compatibility validation + restore run on the emulator thread.
-    doOperation_<qsr::operations::LoadSnapshot>(
-        qsr::operations::LoadSnapshot{ path });
+    // 1. Snapshot files — check magic bytes first, then extension
+    if (isSnapshotFile(path)) {
+        doOperation_<qsr::operations::LoadSnapshot>(
+            qsr::operations::LoadSnapshot{ path });
+        return qd::EFlow::STOP;
+    }
 
+    // 2. Floppy images — existing behavior
+    bool isFloppy = qd::ends_with(path, ".adf") || qd::ends_with(path, ".img") ||
+                    qd::ends_with(path, ".dms");
+    if (isFloppy) {
+        IVm::VM* vm = pVmProvider ? pVmProvider->getVm() : nullptr;
+        if (vm && vm->floppy0) {
+            vm->floppy0->setAdfPath(path.c_str());
+            // ...existing mount + reset logic...
+        }
+        return qd::EFlow::STOP;
+    }
+
+    // 3. Unknown file type
+    SDL_Log("Drag-and-drop: unrecognized file type '%s'", path.c_str());
     return qd::EFlow::STOP;
 } break;
 ```
 
-This is purely a UI-layer concern — the event is received on the UI thread, and the operation is queued to the emulator thread via the existing pipeline. No SDL event reaches the emulator core.
+The `isSnapshotFile()` helper is shared between the CLI startup path (Section 9.4) and this handler. It reads the first 8 bytes and checks for `QUASAR01`, `ASF `, or `VASNAP` magic, falling back to extension matching.
+
+> **Why snapshots take priority:** Magic bytes are authoritative. A file named `backup.adf` with `QUASAR01` magic is a snapshot, not a disk image. Checking snapshots first prevents misinterpreting such files.
 
 ### 12.3 File-type routing
 
@@ -1242,3 +1591,471 @@ graph LR
 - **Unsaved state warning:** If the emulator has unsaved floppy writes (dirty disk buffer), the user is warned before restoring. UAE tracks this; vAmiga embeds disk data so there's no data loss.
 - **Auto-resume:** After a successful restore, the emulator resumes if it was running before the drop. If paused, it remains paused.
 - **Thumbnail gallery:** The QSN header's thumbnail enables a future gallery view where users browse snapshots visually.
+
+---
+
+## 13. Debugger Cache Coherence
+
+### 13.1 The stale-cache problem
+
+> **This is the gap the original design missed entirely.** Without an explicit cache flush after restore, the debugger displays pre-restore values.
+
+The `IVm::VM` abstraction is a **snapshot-style view** of the machine. Each sub-module (`Cpu`, `Memory`, `CustomRegs`, `Copper`, `Blitter`, `Floppy`) caches emulator state in `fetch()`, which is called periodically at the UI refresh rate (~15fps). Between `fetch()` calls, getters return these cached values — not live emulator state.
+
+For example, `UaeVmImp::Cpu` stores cached register values in `uae_vm_imp.h`:
+
+```cpp
+struct Cpu : public IVm::Cpu {
+    // Snapshot populated by fetch(). Reads from getters return these
+    // cached values, not live emulator state.
+    uint32_t snap_regs_d[8] = {};
+    uint32_t snap_regs_a[8] = {};
+    uint32_t snap_pc = 0;
+    uint32_t snap_intmask = 0;
+    bool snap_flg_z, snap_flg_c, snap_flg_v, snap_flg_n, snap_flg_x;
+    // ...
+};
+```
+
+After a `restore_state()` or `loadSnapshot()`, the emulator's internal state has changed completely — new CPU registers, new memory contents, new chipset register values. But the `IVm` modules still hold **stale cached values** from before the restore. Until the next periodic `fetch()` fires, the debugger displays the old state.
+
+### 13.2 The flush protocol
+
+After every successful restore, Quaesar must explicitly trigger `fetchStateFromEmu()` to flush and re-populate all `IVm` module caches:
+
+```mermaid
+sequenceDiagram
+    participant Restore as Restore Operation
+    participant VM as IVm::VM
+    participant Modules as IVm sub-modules
+    participant Emu as Emulator Core
+
+    Restore->>Emu: restore_state() / loadSnapshot()
+    Note over Emu: Internal state fully replaced
+    Note over Modules: Caches still hold<br/>pre-restore values (STALE)
+
+    Restore->>VM: fetchStateFromEmu()
+    VM->>Modules: iterate all sub-modules
+    Modules->>Modules: Cpu.fetch() — re-read regs
+    Modules->>Modules: Memory.fetch() — re-read banks
+    Modules->>Modules: CustomRegs.fetch() — re-read custom regs
+    Modules->>Modules: Copper.fetch() — re-read copper state
+    Modules->>Modules: Blitter.fetch() — re-read blitter state
+    Modules->>Modules: Floppy.fetch() — re-read drive state
+    Note over Modules: Caches now reflect<br/>restored state (FRESH)
+```
+
+The `fetchStateFromEmu()` call is already defined in `vmInterface.h:29` — it iterates all sub-modules and calls `fetch()` on each:
+
+```cpp
+void VM::fetchStateFromEmu()
+{
+    for (IModule* curModule : qtd::span<IModule *>(&m_modSectBeg, &m_modSecEnd)) {
+        IModule* pCurMod = curModule;
+        if (pCurMod)
+            pCurMod->fetch();
+    }
+}
+```
+
+### 13.3 Implementation in the operation handler
+
+The cache flush is added to the restore operation handler in both `UaeVmImp` and `VAmVmImp`, **after** the backend's native restore completes:
+
+```cpp
+// In UaeVmImp::applyOperationMsgProcImp(), after restore:
+// (STATE_DORESTORE has been consumed by savestate_check)
+// ... restore has completed ...
+
+// CRITICAL: Flush debugger cache so IVm modules reflect restored state.
+// Without this, register/memory widgets show stale pre-restore values
+// until the next periodic fetch (~66ms at 15fps).
+fetchStateFromEmu();
+```
+
+```cpp
+// In VAmVmImp::applyOperationMsgProcImp(), after loadSnapshot:
+m_vAmiga->loadSnapshot(op->nativePayloadPath);
+
+// Flush debugger cache for the same reason.
+fetchStateFromEmu();
+```
+
+### 13.4 Memory bank reconfiguration
+
+UAE's `restore_state()` may **reconfigure the memory layout** (different chip/bogo/fast sizes from the snapshot's `CONF` chunk). The `IVm::Memory` module's `m_banks` array must be rebuilt to reflect the new bank topology. This happens inside `Memory::fetch()` for each backend implementation, but only if the fetch implementation detects bank layout changes.
+
+The `UaeVmImp::Memory::fetch()` must:
+1. Re-enumerate memory banks from UAE's `memory_map`.
+2. Rebuild `m_banks` array with new start addresses and sizes.
+3. Copy bank contents (or set up zero-copy pointers to UAE's memory).
+
+---
+
+## 14. Multi-Instance and Run-Ahead
+
+### 14.1 Current architecture
+
+Quaesar currently runs a single emulator instance. However, the project has a **multi-instance requirement** (see memory: "Multi-Instance Emulation Requirement"), and vAmiga internally uses a **run-ahead instance** for input latency compensation.
+
+Snapshots must be designed to work correctly in a multi-instance world:
+
+### 14.2 Snapshot scope: per-instance
+
+Each snapshot captures **one instance's** state. A `.qsn` file contains:
+- One native payload (`.uss` or `.vasnap` for a single instance).
+- The `engineId` identifies the backend.
+- The `configHash` identifies the specific configuration of that instance.
+
+Multi-instance workspace files (saving all instances at once) are a **future extension** — the QSN container format's `containerVer` field supports adding a multi-instance mode in v2.
+
+### 14.3 Run-ahead instance rebuild
+
+vAmiga uses a run-ahead instance that mirrors the main instance, running a few frames ahead for latency compensation. When a snapshot is loaded into the main instance:
+
+1. `AmigaAPI::loadSnapshot()` calls `emu->markAsDirty()`.
+2. The run-ahead instance detects the dirty flag.
+3. On the next emulation step, the run-ahead instance is **rebuilt from scratch** using the restored main-instance state.
+
+Quaesar does not need to handle this explicitly — vAmiga's internal mechanism takes care of it. But Quaesar must not interfere: no snapshot operation should target the run-ahead instance directly.
+
+```mermaid
+graph LR
+    subgraph "vAmiga Instance Topology"
+        Main[Main Instance<br/>user-visible]
+        RunAhead[Run-Ahead Instance<br/>latency compensation]
+    end
+
+    Load[loadSnapshot] -->|targets| Main
+    Main -->|markAsDirty| RunAhead
+    RunAhead -->|rebuilds from Main| RunAhead
+```
+
+### 14.4 UAE multi-instance implications
+
+UAE's process-global singletons prevent true multi-instance operation today. The ongoing refactoring effort ("UAE per-instance context refactoring strategy") aims to eliminate these globals. Once complete:
+
+- Each UAE instance will have its own `savestate_state`, `currprefs`, `::regs`, and memory banks.
+- Snapshot operations will target a specific instance's context.
+- The QSN `configHash` will distinguish between instances.
+
+Until then, the snapshot system is designed for single-instance UAE but does not assume globals will exist forever — all snapshot code routes through `IVm::VM`, which is per-instance.
+
+---
+
+## 15. Auto-Snapshot and Crash Recovery
+
+### 15.1 Unified auto-snapshot vision
+
+Both backends have auto-snapshot infrastructure, but they differ significantly:
+
+| Feature | UAE | vAmiga |
+|---|---|---|
+| Mechanism | `savestate_capture()` — in-memory rewind buffer | `serviceSnpEvent()` — periodic disk snapshots |
+| Persistence | Memory only (lost on crash) | Disk file (survives crash) |
+| Purpose | Rewind/time-travel | Crash recovery + rewind |
+| Configurability | Buffer size (`statecapturebuffersize`) | Interval (`AMIGA_SNAP_DELAY`), compressor |
+
+### 15.2 Quaesar unified auto-snapshot
+
+Quaesar provides a **unified auto-snapshot layer** that wraps both backends:
+
+```mermaid
+graph TB
+    subgraph "Quaesar Auto-Snapshot Manager"
+        Timer[Configurable Timer<br/>default: every 60s]
+        Retention[Ring Buffer<br/>default: keep last 10]
+        QSN_Wrap[QSN Wrapping<br/>wrap native payload + metadata]
+    end
+
+    Timer -->|trigger| Save[doOperation SaveSnapshot]
+    Save --> QSN_Wrap
+    QSN_Wrap --> Store[Store in<br/>~/.quaesar/autosaves/]
+    Store --> Retention
+
+    Note1["On startup: scan autosaves directory"]
+    Note2["Offer: 'Recover previous session'"]
+```
+
+### 15.3 Configuration
+
+```ini
+[snapshot]
+; Auto-snapshot interval in seconds (0 = disabled)
+auto_interval = 60
+
+; Maximum auto-snapshots to keep (ring buffer)
+auto_max_count = 10
+
+; Auto-snapshot storage directory
+auto_dir = ~/.quaesar/autosaves/
+
+; Compression for QSN payload (none, zlib)
+compress = zlib
+
+; Include thumbnail in auto-snapshots
+auto_thumbnail = true
+```
+
+### 15.4 Crash recovery
+
+On startup, Quaesar scans the auto-snapshot directory. If snapshots exist from a previous session:
+
+1. The most recent snapshot is offered as a recovery point.
+2. The user sees: "Previous session ended at [timestamp]. Resume? [Yes] [No]"
+3. If the user accepts, the snapshot is loaded via the standard `LoadSnapshot` flow.
+4. If declined, the snapshots remain on disk for manual access.
+
+This provides crash recovery for **both** backends — UAE gains disk-persisted auto-snapshots it never had natively.
+
+---
+
+## 16. Snapshot Portability
+
+### 16.1 Within-backend portability
+
+**UAE `.uss` / QSN-with-UAE-payload:**
+- Forward-compatible: unknown chunks are skipped on load.
+- `is_savestate_incompatible()` validates CPU model, chipset mask, memory, and feature flags.
+- Snapshots from UAE 4.x can usually be loaded by later builds.
+
+**vAmiga `.vasnap` / QSN-with-vAmiga-payload:**
+- Strict version match required: `SnapshotHeader` version fields must match.
+- `SNAP_TOO_OLD` or `SNAP_TOO_NEW` error on mismatch.
+- No forward/backward compatibility between major versions.
+
+### 16.2 Cross-backend portability
+
+**QSN files are NOT directly portable between UAE and vAmiga.** The native payloads use completely different binary layouts. A QSN with `engineId=0` (UAE) cannot be restored on a vAmiga backend, and vice versa.
+
+The QSN header's `engineId` field makes this explicit — the wrong-backend case is caught during validation, not during a failed restore.
+
+### 16.3 Path to cross-engine migration (Tier 2)
+
+Future cross-engine migration requires a **canonical state IR** — a normalized representation of the common Amiga subset:
+
+```mermaid
+graph TB
+    subgraph "Tier 2 — Canonical State IR"
+        IR_Schema[Normalized Schema]
+        IR_CPU[CPU: D0-D7, A0-A6, PC, SR, USP/ISP, VBR]
+        IR_Mem[Memory: chip, slow, fast banks + contents]
+        IR_Custom[Custom Regs: INTENA, INTREQ, BPLCON, colors, etc.]
+        IR_CIA[CIA A/B: timers, IO ports]
+        IR_Floppy[Floppy: motor, track, raw bitstream]
+    end
+
+    UAE_Map[UAE Mapper<br/>native chunks ↔ IR]
+    VA_Map[vAmiga Mapper<br/>CoreComponent ↔ IR]
+
+    IR_Schema --> IR_CPU
+    IR_Schema --> IR_Mem
+    IR_Schema --> IR_Custom
+    IR_Schema --> IR_CIA
+    IR_Schema --> IR_Floppy
+
+    UAE_Map -.-> IR_Schema
+    VA_Map -.-> IR_Schema
+```
+
+**What the IR covers** (the `IVm` interface subset):
+- CPU registers (D0–D7, A0–A6, PC, SR/CCR, USP/ISP, interrupt mask)
+- Memory banks (chip, slow, fast — contents and layout)
+- Custom chipset registers (the subset exposed by `IVm::CustomRegs`)
+- Copper state (instruction pointer, list registers)
+- Blitter state (BLTCONx, masks, addresses)
+- Floppy drive state (motor, track, head position)
+
+**What the IR does NOT cover** (non-portable, carried only in Tier-1 native payload):
+- UAE-only: Picasso96/RTG, SCSI, bsdsocket, input recording, CPU instruction cache lines, FPU internals
+- vAmiga-only: strict version fields, internal component tree structure
+- Backend-specific: exact event-queue representation, internal timing artifacts
+
+> **Scope note:** The detailed IR schema is deferred to a separate design document. The QSN container format is designed to accommodate an optional `irPayload` section in `containerVer=2` without breaking `containerVer=1` readers.
+
+---
+
+## 17. Operations Declaration
+
+### 17.1 New operations in `qsr_operations.h`
+
+Two new operations carry the snapshot file path through the pipeline:
+
+```cpp
+struct SaveSnapshot : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(qsr::operations::SaveSnapshot);
+
+    qtd::string path;              // .qsn destination path
+    qtd::string nativePayloadPath; // temp file for backend's native save
+
+    static void setup(qd::operation::OpDesc& d) {
+        d.m_name = "Save Snapshot";
+    }
+};
+
+struct LoadSnapshot : public amD::operation::OperationArgs {
+    DECLARE_OPERATION_1(qsr::operations::LoadSnapshot);
+
+    qtd::string path;              // .qsn source path
+    qtd::string nativePayloadPath; // temp file extracted from QSN payload
+    bool nativeImport = false;     // true = legacy .uss/.vasnap direct import
+
+    static void setup(qd::operation::OpDesc& d) {
+        d.m_name = "Load Snapshot";
+    }
+};
+```
+
+These operations flow through the existing pipeline: `doOperation_()` → `pushOperationMsg()` → drained on emulator thread → `applyOperationMsgProcImp()`.
+
+### 17.2 No separate `LoadSnapshotWithValidation` operation
+
+> **Resolves the ambiguity from the original design** which defined both `LoadSnapshot` and `LoadSnapshotWithValidation` without picking one.
+
+There is **one** `LoadSnapshot` operation. Validation is built into the load flow — it always runs before any state is touched. This eliminates the need for a separate `LoadSnapshotWithValidation` type and removes the dispatch ambiguity.
+
+### 17.3 UI integration
+
+| UI element | Action |
+|---|---|
+| **File → Save State…** | Open native file dialog (NFD) → dispatch `SaveSnapshot{path}` |
+| **File → Load State…** | Open NFD → dispatch `LoadSnapshot{path}` |
+| **Quick Save (Shift+F5)** | Save to default slot (`~/.quaesar/quicksave.qsn`) |
+| **Quick Load (F5)** | Load from default slot |
+| **CLI: `quaesar checkpoint.qsn`** | Detect snapshot in `input` positional → load after init (Section 9.4) |
+| **CLI: `quaesar --snapshot state.uss`** | Explicit `--snapshot` flag → same startup load path |
+| **Drag-and-drop `.qsn`** | Dispatch `LoadSnapshot{path}` |
+| **Drag-and-drop `.uss`/`.vasnap`** | Dispatch `LoadSnapshot{path, nativeImport=true}` |
+| **OS double-click on `.qsn`** | OS launches `quaesar <file>` → CLI startup path |
+
+---
+
+## 18. Implementation Plan
+
+### 18.1 Phase breakdown
+
+```mermaid
+graph TB
+    subgraph "Phase 1: QSN Container + Core Save/Load"
+        P1A["1. QSN header struct + read/write/validate"]
+        P1B["2. SaveSnapshot / LoadSnapshot operations"]
+        P1C["3. UaeVmImp handlers (STATE_SAVE / STATE_DORESTORE)"]
+        P1D["4. VAmVmImp handlers (saveSnapshot / loadSnapshot)"]
+        P1E["5. fetchStateFromEmu() cache flush after restore"]
+        P1F["6. UI: File menu + quick save/load"]
+        P1G["7. CLI startup snapshot detection + isSnapshotFile() helper"]
+        P1H["8. CfgQsrStartup::snapshotPath + emulator thread startup load"]
+    end
+
+    subgraph "Phase 2: Validation + Safety"
+        P2A["9. validateQSN() — format + compatibility checks"]
+        P2B["10. UAE pre-restore safety snapshot + hard-reset fallback"]
+        P2C["11. Error/warning modal dialogs"]
+    end
+
+    subgraph "Phase 3: Drag-and-Drop + Auto-Snapshot"
+        P3A["12. SDL_DROPFILE handler restructure: snapshot-first routing"]
+        P3B["13. Legacy .uss/.vasnap import path"]
+        P3C["14. Auto-snapshot manager (timer + ring buffer)"]
+        P3D["15. Crash recovery on startup"]
+    end
+
+    subgraph "Phase 4: Thumbnail + Gallery (future)"
+        P4A["16. Thumbnail capture from display buffer"]
+        P4B["17. Snapshot gallery UI"]
+    end
+
+    P1A --> P1B --> P1C & P1D --> P1E --> P1F
+    P1F --> P1G --> P1H
+    P1H --> P2A --> P2B --> P2C
+    P2C --> P3A & P3B --> P3C --> P3D
+    P3D --> P4A --> P4B
+```
+
+### 18.2 File-level implementation steps
+
+| Step | Phase | Files touched | Description |
+|---|---|---|---|
+| 1 | 1 | New: `qsr_snapshot.h` | QSN header struct, `writeQSN()`, `readQSN()`, `validateQSN()` declarations |
+| 2 | 1 | New: `qsr_snapshot.cpp` | QSN container read/write/validate implementation |
+| 3 | 1 | `qsr_operations.h` | Declare `SaveSnapshot` and `LoadSnapshot` operations |
+| 4 | 1 | `uae_vm_imp.cpp` | Add operation handlers: `STATE_SAVE` for save, `STATE_DORESTORE` for restore + `fetchStateFromEmu()` flush |
+| 5 | 1 | `va_vm_imp.cpp` | Add operation handlers: `saveSnapshot()` / `loadSnapshot()` + `fetchStateFromEmu()` flush |
+| 6 | 1 | `uae_wnd_desktop.cpp` | Wire File menu items: Save State…, Load State…, Quick Save/Load |
+| 7 | 2 | `qsr_snapshot.cpp` | Implement `validateQSN()` — header CRC, engine match, config/ROM hash compare, disk-path existence |
+| 8 | 2 | `uae_vm_imp.cpp` | Add pre-restore safety snapshot + hard-reset on failure |
+| 9 | 2 | UI layer (ImGui) | Error/warning modal dialog for validation failures and disk-missing warnings |
+| 10 | 3 | `qsr_main_wnd_client_app.cpp` | Add `SDL_DROPFILE` case in `onSdlEventProc()` with file-type routing |
+| 11 | 3 | `qsr_snapshot.cpp` | Legacy import path: detect `.uss`/`.vasnap` magic, skip QSN wrapping |
+| 12 | 3 | New: `qsr_autosnapshot.h/.cpp` | Auto-snapshot manager: timer, ring buffer, QSN wrapping |
+| 13 | 3 | `qsr_main_wnd_client_app.cpp` | Startup crash-recovery scan + "Resume?" dialog |
+| 14 | 4 | `qsr_snapshot.cpp` | Thumbnail capture from display buffer at save time |
+| 15 | 4 | UI layer (ImGui) | Snapshot gallery view with thumbnails |
+
+### 18.3 Dependencies on existing infrastructure
+
+| Dependency | Status | Notes |
+|---|---|---|
+| `IVm::VM` operations pipeline | Ready | `pushOperationMsg()` → drain on emu thread |
+| UAE `savestate_check()` state machine | Ready | Frame-boundary gate at `vpos==0` |
+| UAE `is_savestate_incompatible()` | Ready | Feature/config mismatch detection |
+| vAmiga `VAMIGA_PUBLIC_SUSPEND` | Ready | Auto suspend/resume on public API |
+| vAmiga auto-snapshot (`serviceSnpEvent`) | Ready | Periodic snapshot infrastructure |
+| `VM::fetchStateFromEmu()` | Ready | Cache flush mechanism |
+| Native file dialog (NFD) | Ready | `nativefiledialog-extended` library |
+| zlib | Ready | For optional QSN payload compression |
+
+---
+
+## 19. Risks and Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|
+| UAE save called outside frame boundary → inconsistent state | Was **certain** with old design's direct `save_state()` call | High — corrupt snapshots | **Fixed:** use `STATE_SAVE` flag + `savestate_check()` gate (Section 5.2) |
+| UAE restore failure leaves emulator inconsistent | Medium — corrupted/truncated `.uss` payload | High — crash or silent corruption | Pre-restore safety snapshot + hard-reset fallback (Section 9.3) |
+| Debugger shows stale values after restore | **Certain** without cache flush | Medium — user confusion, wrong debug data | Mandatory `fetchStateFromEmu()` after restore (Section 13) |
+| `currprefs` data race during validation | Was **certain** with old design's UI-thread validation | High — nondeterministic crash | **Fixed:** validation runs on emu thread (Section 11.2) |
+| vAmiga version mismatch on snapshot load | Medium — user upgrades vAmiga | Medium — restore rejected | `isTooOld()` / `isTooNew()` check in validation (Section 11.3.3) |
+| UAE memory layout changes after restore | Low — only on config-changing snapshots | Medium — debugger memory view wrong | `Memory::fetch()` rebuilds bank topology (Section 13.4) |
+| Large QSN files slow down UI | Low — payload is backend file I/O, not UI | Low — save/load is inherently async | Non-blocking state-machine save (UAE), suspend-based save (vAmiga) |
+| Path portability across machines | Medium — absolute paths in UAE snapshots | Medium — snapshot unusable on different machine | QSN manifest with relative paths + path remapping (Section 3.4) |
+| Auto-snapshot disk space exhaustion | Low — configurable interval + ring buffer | Low — oldest snapshots auto-deleted | Ring buffer with configurable max count (Section 15.2) |
+
+---
+
+## 20. Changes from Original Design
+
+This section documents the issues identified in the original `snapshot_design.md` and how this document resolves them:
+
+| Issue in original | Resolution in v2 |
+|---|---|
+| **Save code bypassed frame-boundary gate** — called `save_state()` directly instead of using `STATE_SAVE` + `savestate_check()` | Section 5.2–5.5: Corrected two-phase state-machine protocol with sequence diagrams |
+| **Thread-safety contradiction** — proposed validation on UI thread reading `currprefs` global | Section 11.2: All compatibility validation dispatched to emu thread |
+| **Ambiguous operation types** — defined both `LoadSnapshot` and `LoadSnapshotWithValidation` | Section 17.2: Single `LoadSnapshot` operation with built-in validation |
+| **UAE restore atomicity unmitigated** — noted lack of rollback but proposed no fix | Section 9.3: Pre-restore safety snapshot + hard-reset fallback |
+| **No debugger cache flush** — stale `IVm` caches after restore not addressed | Section 13: Mandatory `fetchStateFromEmu()` flush protocol |
+| **No universal container** — bare `.uss`/`.vasnap` with no Quaesar metadata | Section 3: QSN container format with metadata, thumbnail, manifest |
+| **No portability roadmap** — cross-engine dismissed as "significant undertaking" | Section 16.3: Tier-2 canonical IR architecture with clear scope |
+| **No crash recovery** — auto-snapshot not unified across backends | Section 15: Unified auto-snapshot manager with ring buffer + startup recovery |
+| **No thumbnail capture** — mentioned but not designed | Section 3.3 + Step 14: Thumbnail embedded in QSN header |
+| **No CLI startup loading** — original did not address loading snapshots from command line | Section 9.4: Startup snapshot detection via `isSnapshotFile()` + `snapshotPath` config field, best-effort load after init |
+| **No drag-and-drop snapshot support** — existing handler accepts floppy images only | Section 12: Restructured `SDL_DROPFILE` handler with snapshot-first routing via shared `isSnapshotFile()` helper |
+| **No multi-instance / run-ahead design** — `markAsDirty()` mentioned without design | Section 14: Per-instance snapshot scope + run-ahead rebuild design |
+
+---
+
+## 21. Summary
+
+Both backends already contain **production-grade** snapshot/restore systems. The work required is **wiring and wrapping** — not building:
+
+1. **QSN container layer** (new): A lightweight metadata envelope that wraps native payloads, enabling one file extension, drag-and-drop routing, portability, and future gallery UI.
+
+2. **UAE path** (wiring): Set `STATE_SAVE` / `STATE_DORESTORE` flags and let `savestate_check()` perform the save/restore at frame boundaries. Add pre-restore safety snapshot and post-restore cache flush.
+
+3. **vAmiga path** (wiring): Call `saveSnapshot()` / `loadSnapshot()` — the public API handles thread safety. Add post-restore cache flush.
+
+4. **Shared layer**: Two new operations (`SaveSnapshot`, `LoadSnapshot`) in `qsr_operations.h`, a file dialog + drag-and-drop in the UI, validation in the container layer, and handler dispatch in both `UaeVmImp` and `VAmVmImp`.
+
+No changes to the core emulator libraries (`uae_lib`, `vAmiga`) are needed — their snapshot infrastructure is self-contained and complete. The QSN container wraps their output without reinterpreting it.
+
+The Tier-2 canonical IR (Section 16.3) provides a forward path to cross-engine snapshot portability without compromising the Tier-1 design.

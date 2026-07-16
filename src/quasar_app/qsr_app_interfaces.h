@@ -12,6 +12,10 @@ namespace qsr {
 class IVmClientPlayer {
 public:
     virtual IVm::VM* getVm() const = 0;
+    // Returns true once the emulator thread has finished initialisation and
+    // getVm() will never become non-null (engine startup failed). The debugger
+    // uses this to avoid hanging on a dummy UAE VM when vAmiga was selected.
+    virtual bool hasInitFailed() const { return false; }
     virtual int getScrFrameNo() = 0;
     virtual void pushSdlEvent(const SDL_Event&) = 0;
     virtual void pushOperationMsg(qtd::unique_ptr<qd::operation::BaseOpArgs>) = 0;
