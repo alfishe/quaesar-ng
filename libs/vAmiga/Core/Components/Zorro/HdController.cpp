@@ -259,9 +259,12 @@ HdController::spypeek16(u32 addr) const
         case EXPROM_SIZE + 4:
             
             // Should auto boot be disabled?
-            if (df0.hasDisk() || !drive.isBootable()) {
+            // Pass through: only disable if the drive has no partitions.
+            // The RDB partition flags (pb_Flags bit 0 = PBFF_BOOTABLE)
+            // are the authoritative source of bootability.
+            if (drive.numPartitions() == 0) {
 
-                debug(HDR_DEBUG, "Disabling auto boot\n");
+                debug(HDR_DEBUG, "Disabling auto boot (no partitions)\n");
                 return u16(true);
             }
             
@@ -343,7 +346,10 @@ HdController::processCmd(u32 ptr)
     auto offset = isize(stdReq.io_Offset);
     auto length = isize(stdReq.io_Length);
     auto addr = u32(stdReq.io_Data);
-    //auto unit = mem.spypeek32 <Accessor::CPU> (stdReq.io_Unit + 0x2A);
+
+    // AmigaOS filesystem handlers compute absolute offsets from the
+    // DosEnvec in the DeviceNode. io_Offset is already the absolute
+    // byte position in the HDF file. Do NOT add any partition base.
 
     // Update the usage profile
     if (IoCommandEnum::isValid(cmd)) stats.cmdCount[long(cmd)]++;
@@ -400,7 +406,7 @@ HdController::processInit(u32 ptr)
 {
     debug(HDR_DEBUG, "processInit(%x)\n", ptr);
 
-    auto assignDosName = [&](isize partition) {
+    auto assignDosName = [&](isize partition) -> string {
 
         if (objid >= 1) partition += amiga.hd0.numPartitions();
         if (objid >= 2) partition += amiga.hd1.numPartitions();
@@ -408,30 +414,16 @@ HdController::processInit(u32 ptr)
 
         // Use the partition name from the RDB if available
         if (partition < isize(drive.ptable.size()) && !drive.ptable[partition].name.empty()) {
-            return drive.ptable[partition].name + (char)0;
+            return drive.ptable[partition].name;
         }
-        return string("DH") + std::to_string(partition) + (char)0;
+        return string("DH") + std::to_string(partition);
     };
 
     // Keep in check with exprom.asm
     constexpr u16 devn_dosName      = 0x00;  // APTR  Pointer to DOS file handler name
     constexpr u16 devn_unit         = 0x08;  // ULONG Unit number
     constexpr u16 devn_flags        = 0x0C;  // ULONG OpenDevice flags
-    constexpr u16 devn_sizeBlock    = 0x14;  // ULONG # longwords in a block
-    constexpr u16 devn_secOrg       = 0x18;  // ULONG sector origin -- unused
-    constexpr u16 devn_numHeads     = 0x1C;  // ULONG number of surfaces
-    constexpr u16 devn_secsPerBlk   = 0x20;  // ULONG secs per logical block
-    constexpr u16 devn_blkTrack     = 0x24;  // ULONG secs per track
-    constexpr u16 devn_resBlks      = 0x28;  // ULONG reserved blocks -- MUST be at least 1!
-    constexpr u16 devn_interleave   = 0x30;  // ULONG interleave
-    constexpr u16 devn_lowCyl       = 0x34;  // ULONG lower cylinder
-    constexpr u16 devn_upperCyl     = 0x38;  // ULONG upper cylinder
-    constexpr u16 devn_numBuffers   = 0x3C;  // ULONG number of buffers
-    constexpr u16 devn_memBufType   = 0x40;  // ULONG Type of memory for AmigaDOS buffers
-    constexpr u16 devn_transferSize = 0x44;  // LONG  largest transfer size (largest signed #)
-    constexpr u16 devn_addMask      = 0x48;  // ULONG address mask
-    constexpr u16 devn_bootPrio     = 0x4c;  // ULONG boot priority
-    constexpr u16 devn_dName        = 0x50;  // char[4] DOS file handler name
+    constexpr u16 devn_envecStart   = 0x10;  // ULONG DosEnvec starts here (index 0 = tableSize)
     constexpr u16 devn_bootflags    = 0x54;  // boot flags (not part of DOS packet)
     constexpr u16 devn_segList      = 0x58;  // filesystem segment list (not part of DOS packet)
     
@@ -444,12 +436,16 @@ HdController::processInit(u32 ptr)
         
         // Collect hard drive information
         auto &part = drive.ptable[unit];
-        auto dosName = part.name.empty() ? assignDosName(unit) : (part.name + (char)0);
+        auto dosName = part.name.empty() ? assignDosName(unit) : part.name;
 
+        // Write the device name as a null-terminated C string.
+        // The exprom stores a raw pointer in devn_dosName, and MakeDosNode
+        // in this exprom variant reads it as a plain string.
         u32 name_ptr = mem.spypeek32 <Accessor::CPU> (ptr + devn_dosName);
-        for (usize i = 0; i < dosName.length(); i++) {
+        for (usize i = 0; i <= dosName.length() && i < 31; i++) {
             mem.patch(u32(name_ptr + i), u8(dosName[i]));
         }
+        debug(HDR_DEBUG, "Partition %d: name='%s'\n", unit, dosName.c_str());
 
         u32 segList = 0;
         for (auto &driver : drive.drivers) {
@@ -459,33 +455,66 @@ HdController::processInit(u32 ptr)
             }
         }
         
-        // Experimental (don't boot from empty drives such as the default drive)
+        // Pass through the RDB partition boot flag directly.
         auto bootFlag = part.flags & 1;
-        
-        if (!drive.isBootable()) {
-            
-            debug(HDR_DEBUG, "Removing boot flag\n");
-            bootFlag = 0;
+
+        // OpenDevice flags: always 0
+        mem.patch(ptr + devn_flags, u32(0));
+
+        // Copy the raw DosEnvec from the RDB partition block verbatim.
+        // The DosEnvec occupies 17 longwords (indices 0-16) starting at
+        // devn_envecStart (0x10) in the devn packet. This includes:
+        //   tableSize, sizeBlock, secOrg, surfaces, sectorPerBlock,
+        //   blocksPerTrack, reserved, preAlloc, interleave,
+        //   lowCyl, highCyl, numBuffers, bufMemType, maxTransfer,
+        //   mask, bootPri, dosType.
+        // No reconstruction — just raw passthrough from the RDB.
+        if (part.hasDosEnvec) {
+            for (usize i = 0; i < part.dosEnvec.size() && i < 17; i++) {
+                mem.patch(ptr + devn_envecStart + u16(i * 4), part.dosEnvec[i]);
+            }
+        } else {
+            // Fallback: synthesize DosEnvec from parsed fields
+            constexpr u16 devn_tableSize    = 0x10;
+            constexpr u16 devn_sizeBlock    = 0x14;
+            constexpr u16 devn_secOrg       = 0x18;
+            constexpr u16 devn_numHeads     = 0x1C;
+            constexpr u16 devn_secsPerBlk   = 0x20;
+            constexpr u16 devn_blkTrack     = 0x24;
+            constexpr u16 devn_resBlks      = 0x28;
+            constexpr u16 devn_prefac       = 0x2C;
+            constexpr u16 devn_interleave   = 0x30;
+            constexpr u16 devn_lowCyl       = 0x34;
+            constexpr u16 devn_upperCyl     = 0x38;
+            constexpr u16 devn_numBuffers   = 0x3C;
+            constexpr u16 devn_memBufType   = 0x40;
+            constexpr u16 devn_transferSize = 0x44;
+            constexpr u16 devn_addMask      = 0x48;
+            constexpr u16 devn_bootPrio     = 0x4c;
+            constexpr u16 devn_dName        = 0x50;
+
+            mem.patch(ptr + devn_tableSize,    u32(16));
+            mem.patch(ptr + devn_sizeBlock,    u32(part.sizeBlock));
+            mem.patch(ptr + devn_secOrg,       u32(0));
+            mem.patch(ptr + devn_numHeads,     u32(part.heads));
+            mem.patch(ptr + devn_secsPerBlk,   u32(part.sectorPerBlock));
+            mem.patch(ptr + devn_blkTrack,     u32(part.sectors));
+            mem.patch(ptr + devn_resBlks,      u32(part.reserved));
+            mem.patch(ptr + devn_prefac,       u32(0));
+            mem.patch(ptr + devn_interleave,   u32(part.interleave));
+            mem.patch(ptr + devn_lowCyl,       u32(part.lowCyl));
+            mem.patch(ptr + devn_upperCyl,     u32(part.highCyl));
+            mem.patch(ptr + devn_numBuffers,   u32(part.numBuffers));
+            mem.patch(ptr + devn_memBufType,   u32(part.bufMemType));
+            mem.patch(ptr + devn_transferSize, u32(part.maxTransfer));
+            mem.patch(ptr + devn_addMask,      u32(part.mask));
+            mem.patch(ptr + devn_bootPrio,     u32(part.bootPri));
+            mem.patch(ptr + devn_dName,        u32(part.dosType));
         }
-        
-        mem.patch(ptr + devn_flags,         u32(part.flags));
-        mem.patch(ptr + devn_sizeBlock,     u32(part.sizeBlock));
-        mem.patch(ptr + devn_secOrg,        u32(0));
-        mem.patch(ptr + devn_numHeads,      u32(part.heads));
-        mem.patch(ptr + devn_secsPerBlk,    u32(part.sectorPerBlock));
-        mem.patch(ptr + devn_blkTrack,      u32(part.sectors));
-        mem.patch(ptr + devn_interleave,    u32(part.interleave));
-        mem.patch(ptr + devn_resBlks,       u32(part.reserved));
-        mem.patch(ptr + devn_lowCyl,        u32(part.lowCyl));
-        mem.patch(ptr + devn_upperCyl,      u32(part.highCyl));
-        mem.patch(ptr + devn_numBuffers,    u32(part.numBuffers));
-        mem.patch(ptr + devn_memBufType,    u32(part.bufMemType));
-        mem.patch(ptr + devn_transferSize,  u32(part.maxTransfer));
-        mem.patch(ptr + devn_addMask,       u32(part.mask));
-        mem.patch(ptr + devn_bootPrio,      u32(part.bootPri));
-        mem.patch(ptr + devn_dName,         u32(part.dosType));
-        mem.patch(ptr + devn_bootflags,     u32(bootFlag)); // u32(part.flags & 1));
-        mem.patch(ptr + devn_segList,       u32(segList));
+
+        // Boot flags and segList are host-specific, not part of DosEnvec
+        mem.patch(ptr + devn_bootflags, u32(bootFlag));
+        mem.patch(ptr + devn_segList,   u32(segList));
 
         if ((part.dosType & 0xFFFFFFF0) != 0x444f5300) {
             debug(HDR_DEBUG, "Unusual DOS type %x\n", part.dosType);

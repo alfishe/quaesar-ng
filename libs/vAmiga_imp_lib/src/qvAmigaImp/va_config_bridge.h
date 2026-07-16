@@ -11,6 +11,9 @@ struct VAmigaExtConfig {
     int hd_types[4];       // 0 = HDF, 1 = DIR
     const char* hd_volnames[4];
     int num_hds;
+    int chip_ram_kb;       // Chip RAM size in KB (0 = use vAmiga default)
+    int slow_ram_kb;       // Slow (bogo) RAM size in KB
+    int fast_ram_kb;       // Fast RAM size in KB
 };
 
 // This function is implemented in quaesar (e.g. uae_server_thread.cpp)

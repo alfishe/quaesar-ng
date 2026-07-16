@@ -134,11 +134,21 @@ HDFFile::getPartitionDescriptor(isize part) const
     PartitionDescriptor result;
     
     if (auto pb = seekPB(part); pb) {
-        
+
         // Extract information from the partition block
         isize nameLen = std::min(isize(pb[36]), isize(31));
         result.name           = util::createStr(pb + 37, nameLen);
         result.flags          = R32BE(pb + 20);
+
+        // Capture the raw DosEnvec (17 longwords starting at pb+128).
+        // This is copied verbatim into the DeviceNode by processInit,
+        // avoiding any field-by-field reconstruction errors.
+        for (isize i = 0; i < 17; i++) {
+            result.dosEnvec.push_back(R32BE(pb + 128 + i * 4));
+        }
+        result.hasDosEnvec = true;
+
+        // Also parse individual fields for internal use
         result.sizeBlock      = R32BE(pb + 132);
         result.sectorPerBlock = R32BE(pb + 144);
         result.heads          = R32BE(pb + 140);

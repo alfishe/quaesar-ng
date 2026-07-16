@@ -12,6 +12,7 @@
 
 #include "uae_server_thread.h"
 #include <SDL.h>
+#include <filesystem>
 #include <queue>
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"
@@ -20,6 +21,8 @@
 #include "quasar_app/quaesar.h"
 #include "uae_server_app_part.h"
 #include "uae_vm_imp.h"
+
+namespace fs = std::filesystem;
 
 extern void real_main(int argc, TCHAR** argv);
 extern void qs_keyboard_set_translation();
@@ -135,9 +138,42 @@ extern "C" void qsr_bridge_get_vamiga_config(struct VAmigaExtConfig* out_config)
     }
     quae__parseCmdLine((int)argv.size(), const_cast<char**>(&argv[0]));
 
-    // 3. Populate out_config for vAmiga
+    // 3. Check if the user intended to mount a hardfile but it failed to parse.
+    //    The UAE hardfile2 parser requires a volume name prefix (e.g. "DH0:")
+    //    before the file path. Without it, the argument is silently rejected.
+    bool userWantsHardfile = false;
+    for (const auto& s : g_cfg_startup.uaeExtArgs) {
+        if (s.find("hardfile2=") != std::string::npos ||
+            s.find("filesystem2=") != std::string::npos) {
+            userWantsHardfile = true;
+            break;
+        }
+    }
+    if (userWantsHardfile && currprefs.mountitems == 0) {
+        fprintf(stderr,
+            "\n=== CONFIGURATION ERROR ===\n"
+            "hardfile2/filesystem2 argument was provided but could not be parsed.\n"
+            "The hardfile2 format requires a volume name before the file path.\n\n"
+            "CORRECT:   hardfile2=rw,DH0:/path/to/file.hdf,0,0,0,512,0,,ide0\n"
+            "INCORRECT: hardfile2=rw,/path/to/file.hdf,0,0,0,512,0,,ide0\n"
+            "                                   ^ missing DH0: volume name\n\n"
+            "Aborting.\n");
+        SDL_Log("CONFIGURATION ERROR: hardfile2 argument could not be parsed. Missing DH0: volume name prefix?");
+        out_config->num_hds = 0;
+        return;
+    }
+
+    // 4. Populate out_config for vAmiga
     out_config->cpu_model = currprefs.cpu_model;
     out_config->num_hds = 0;
+
+    // Extract memory configuration from UAE prefs.
+    // UAE stores sizes in bytes; convert to KB for vAmiga.
+    out_config->chip_ram_kb = (int)(currprefs.chipmem.size / 1024);
+    out_config->slow_ram_kb = (int)(currprefs.bogomem.size / 1024);
+    out_config->fast_ram_kb = (int)(currprefs.fastmem[0].size / 1024);
+    SDL_Log("VAmiga Bridge: chip_ram=%dKB slow_ram=%dKB fast_ram=%dKB",
+            out_config->chip_ram_kb, out_config->slow_ram_kb, out_config->fast_ram_kb);
 
     SDL_Log("VAmiga Bridge: mountitems=%d", currprefs.mountitems);
     for (int i = 0; i < currprefs.mountitems && out_config->num_hds < 4; i++) {
@@ -147,12 +183,32 @@ extern "C" void qsr_bridge_get_vamiga_config(struct VAmigaExtConfig* out_config)
         if (ci->rootdir[0] == '\0')
             continue;  // Skip empty entries
         if (ci->type == UAEDEV_HDF) {
+            // Validate: HDF file must exist before passing to vAmiga
+            if (!fs::exists(ci->rootdir)) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                    "\n=== FILE NOT FOUND ===\n"
+                    "Hardfile '%s' does not exist.\n"
+                    "Aborting — no empty drive will be auto-created.\n",
+                    ci->rootdir);
+                out_config->num_hds = 0;
+                return;
+            }
             out_config->hd_paths[out_config->num_hds] = strdup(ci->rootdir);
             out_config->hd_types[out_config->num_hds] = 0;  // HDF
             out_config->hd_volnames[out_config->num_hds] = (ci->volname[0] != '\0') ? strdup(ci->volname)
                                                                                     : strdup("DH");
             out_config->num_hds++;
         } else if (ci->type == UAEDEV_DIR) {
+            // Validate: DIR must exist before passing to vAmiga
+            if (!fs::exists(ci->rootdir)) {
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                    "\n=== DIRECTORY NOT FOUND ===\n"
+                    "Filesystem directory '%s' does not exist.\n"
+                    "Aborting — no empty drive will be auto-created.\n",
+                    ci->rootdir);
+                out_config->num_hds = 0;
+                return;
+            }
             out_config->hd_paths[out_config->num_hds] = strdup(ci->rootdir);
             out_config->hd_types[out_config->num_hds] = 1;  // DIR
             out_config->hd_volnames[out_config->num_hds] = (ci->volname[0] != '\0') ? strdup(ci->volname)
