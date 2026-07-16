@@ -1,30 +1,59 @@
-name: Clang Format Check
+name: Format Check
 
-on: [push, pull_request]
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+concurrency:
+  group: format-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pin the clang-format version so formatting is deterministic across runs
+  # and matches what developers install locally. Bump this when upgrading.
+  CLANG_FORMAT_VERSION: "18"
 
 jobs:
-  format:
-    runs-on: ubuntu-latest
+  clang-format:
+    name: clang-format (LLVM ${{ env.CLANG_FORMAT_VERSION }})
+    runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v7
-      with:
-        fetch-depth: 0 # Fetch all history for all tags and branches
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need history for changed-file detection in PRs
 
-    - name: Install clang-format
-      run: sudo apt-get install -y clang-format
+      - name: Install clang-format (LLVM ${{ env.CLANG_FORMAT_VERSION }})
+        run: |
+          # Add the official LLVM apt repo for a pinned, reproducible version
+          wget -qO- https://apt.llvm.org/llvm.sh | sudo bash -s -- ${{ env.CLANG_FORMAT_VERSION }}
+          sudo apt-get install -y clang-format-${{ env.CLANG_FORMAT_VERSION }}
+          # Verify and expose on PATH
+          clang-format-${{ env.CLANG_FORMAT_VERSION }} --version
+          sudo update-alternatives --install /usr/bin/clang-format clang-format \
+            /usr/bin/clang-format-${{ env.CLANG_FORMAT_VERSION }} 100
 
-    - name: Check code formatting
-      run: |
-        # Find all C/C++ files, format them and check for differences
-        find src -regex '.*\.\(cpp\|hpp\|c\|h\)' | while read file; do
-          clang-format -style=file "$file" | diff -u "$file" -
-          if [ $? -ne 0 ]; then
-            echo "::error file=$file::File is not formatted correctly"
-            FORMAT_STATUS=1
+      - name: Determine changed files
+        id: changed
+        run: |
+          # For PRs: compare against the PR base (merge-base semantics)
+          # For pushes: compare against the previous commit
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE_SHA="${{ github.event.before }}"
+            # Guard against initial pushes (before == all-zeros)
+            if ! git rev-parse --verify "$BASE_SHA" >/dev/null 2>&1; then
+              BASE_SHA=$(git rev-list --max-parents=0 HEAD | tail -1)
+            fi
           fi
-        done
-        # Fail the job if any files were not formatted correctly
-        if [ $FORMAT_STATUS -ne 0 ]; then
-          exit 1
-        fi
+          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "Comparing changed files against: $BASE_SHA"
+
+      - name: Run format check
+        run: |
+          chmod +x scripts/ci/check-format.sh
+          scripts/ci/check-format.sh --changed "${{ steps.changed.outputs.base_sha }}"
