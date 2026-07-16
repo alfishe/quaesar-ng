@@ -11,10 +11,10 @@
 #include "uae_server_thread.h"
 #include <SDL.h>
 #include <queue>
-#include "qsr_audio_dsp/qsr_audio_dsp.h"
 #include "qd/debug/assert.h"
 #include "qd/log/log.h"
 #include "qd/thread/thread.h"
+#include "qsr_audio_dsp/qsr_audio_dsp.h"
 #include "qsr_config.h"
 #include "quasar_app/quaesar.h"
 #include "uae_server_app_part.h"
