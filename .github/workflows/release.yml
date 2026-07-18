@@ -52,7 +52,7 @@ jobs:
           cp default_layout.ini package/ || true
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quaesar-linux
           path: package/
@@ -86,7 +86,7 @@ jobs:
           copy default_layout.ini package\
 
       - name: Upload Windows MSVC artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quaesar-windows-msvc
           path: package\
@@ -134,7 +134,7 @@ jobs:
           cp /mingw64/bin/libwinpthread-1.dll package/ 2>/dev/null || true
 
       - name: Upload Windows MinGW artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quaesar-windows-mingw
           path: package/
@@ -168,7 +168,7 @@ jobs:
           cp default_layout.ini package/ || true
 
       - name: Upload macOS ARM64 artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: quaesar-macos-arm64
           path: package/
@@ -187,7 +187,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
 
