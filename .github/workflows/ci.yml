@@ -2,9 +2,9 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "main", "debugger-start" ]
+    branches: [ "main", "dbg-dev" ]
   pull_request:
-    branches: [ "main", "debugger-start" ]
+    branches: [ "main", "dbg-dev" ]
 
 jobs:
   #GCC on Ubuntu 22.04
