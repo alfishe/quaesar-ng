@@ -1,4 +1,4 @@
-# Quaesar /ˈkweɪ.zɑr/ ![ci](https://github.com/theblacklotus/quaesar/actions/workflows/ci.yml/badge.svg) [![Download](https://img.shields.io/github/v/release/alfishe/quaesar-ng?label=Download&logo=github)](https://github.com/alfishe/quaesar-ng/releases)
+# Quaesar /ˈkweɪ.zɑr/ [![CI](https://github.com/alfishe/quaesar-ng/actions/workflows/ci.yml/badge.svg)](https://github.com/alfishe/quaesar-ng/actions/workflows/ci.yml) [![Download](https://img.shields.io/github/v/release/alfishe/quaesar-ng?label=Download&logo=github)](https://github.com/alfishe/quaesar-ng/releases)
 
 <img src="https://raw.githubusercontent.com/theblacklotus/quaesar/main/bin/quaesar.png">
 
