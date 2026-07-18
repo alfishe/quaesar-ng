@@ -1,7 +1,7 @@
 #pragma once
 #include "amDebugger/debuggerOps.h"
-#include "qsr_application.h"
 #include "qd/stl/string.h"
+#include "qsr_application.h"
 
 namespace qsr::operations {
 
@@ -32,7 +32,6 @@ struct QuitQuasarApp : public amD::operation::OperationArgs {
         d.m_name = "Quit";
     }
 };
-
 
 
 //------------------------------------------------------------------------

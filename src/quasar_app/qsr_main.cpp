@@ -12,7 +12,7 @@
 #include "qsr_application.h"
 #include "qsr_config.h"
 #include "qsr_main_wnd_client_app.h"  // g_cfg_vm_wnd (CfgQsrMain)
-#include "qsr_operations.h"          // isSnapshotFile
+#include "qsr_operations.h"           // isSnapshotFile
 #include "quaesar.h"
 #include "vm_player_selector.h"  // VmPlayersSelector::isKnownCoreId
 
@@ -95,8 +95,7 @@ int SDL_main(int argc, char* argv[]) {
         if (FILE* f = fopen(g_cfg_startup.kickRomPath.c_str(), "rb")) {
             fclose(f);
         } else {
-            fprintf(stderr, "ERROR: Kickstart ROM not found: '%s'\n",
-                    g_cfg_startup.kickRomPath.c_str());
+            fprintf(stderr, "ERROR: Kickstart ROM not found: '%s'\n", g_cfg_startup.kickRomPath.c_str());
             return 1;
         }
     }

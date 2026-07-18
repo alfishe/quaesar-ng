@@ -105,8 +105,8 @@ static void qsr_pwm_post_process(uae_u16* buffer, int bytes, int freq) {
     if (s_pwm_post_rate != freq) {
         s_pwm_post.setup(freq, s_pwm_post_punch, s_pwm_post_room);
         s_pwm_post_rate = freq;
-        write_log(_T("PWM sound engine: post chain active (punch=%d, room=%d, rate=%d)\n"),
-                  s_pwm_post_punch ? 1 : 0, (int)s_pwm_post_room, freq);
+        write_log(_T("PWM sound engine: post chain active (punch=%d, room=%d, rate=%d)\n"), s_pwm_post_punch ? 1 : 0,
+                  (int)s_pwm_post_room, freq);
     }
     if (!s_pwm_post.active())
         return;
@@ -935,7 +935,8 @@ void finish_sound_buffer() {
 #endif
     // PWM sound engine post chain (punch + room) - stereo output only
     if (get_audio_nativechannels(active_sound_stereo) == 2)
-        qsr_pwm_post_process(paula_sndbuffer, bufsize, sdp->obtainedfreq > 0 ? sdp->obtainedfreq : currprefs.sound_freq);
+        qsr_pwm_post_process(paula_sndbuffer, bufsize,
+                             sdp->obtainedfreq > 0 ? sdp->obtainedfreq : currprefs.sound_freq);
     // must be after driveclick_mix
     paula_sndbufpt = paula_sndbuffer;
 

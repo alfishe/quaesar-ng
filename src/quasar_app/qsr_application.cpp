@@ -145,8 +145,7 @@ void QuaesarApplication::onFrameUpdate(float dt, float time) {
                 // Without a real VM, the debugger would be stuck on a dummy
                 // UAE VM — which is wrong when vAmiga was selected.
                 // Shut down gracefully.
-                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                             "Selected engine failed to start — shutting down.");
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Selected engine failed to start — shutting down.");
                 requestAppToQuit();
             }
         }

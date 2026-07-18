@@ -21,8 +21,8 @@ bool isSnapshotFile(const std::string& path) {
             if (magic[0] == 'A' && magic[1] == 'S' && magic[2] == 'F' && magic[3] == ' ')
                 return true;
             // vAmiga snapshot: starts with "VASNAP"
-            if (n >= 7 && magic[0] == 'V' && magic[1] == 'A' && magic[2] == 'S' &&
-                magic[3] == 'N' && magic[4] == 'A' && magic[5] == 'P')
+            if (n >= 7 && magic[0] == 'V' && magic[1] == 'A' && magic[2] == 'S' && magic[3] == 'N' && magic[4] == 'A' &&
+                magic[5] == 'P')
                 return true;
         }
     }
