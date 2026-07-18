@@ -6,6 +6,11 @@ on:
       - dbg-dev
     tags:
       - 'v*'
+    paths-ignore:
+      - '.github/**'
+      - '**.md'
+      - '**.py'
+      - 'docs/**'
   workflow_dispatch:
 
 concurrency:

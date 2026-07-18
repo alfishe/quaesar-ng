@@ -3,8 +3,16 @@ name: Format Check
 on:
   push:
     branches: ["**"]
+    paths:
+      - 'src/**'
+      - '.clang-format'
+      - 'scripts/ci/check-format.sh'
   pull_request:
     branches: ["**"]
+    paths:
+      - 'src/**'
+      - '.clang-format'
+      - 'scripts/ci/check-format.sh'
 
 concurrency:
   group: format-${{ github.ref }}
